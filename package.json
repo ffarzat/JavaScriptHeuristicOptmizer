@@ -4,7 +4,11 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "postinstall": "tsd install"
+        "postinstall": "tsd install",
+        "build": "tsc",
+        "test": "mocha build/test",
+        "pretest": "npm run build"
+        
     },
     "author": {
         "name": "Fabio Farzat",
