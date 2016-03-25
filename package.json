@@ -6,9 +6,9 @@
     "scripts": {
         "postinstall": "tsd install",
         "build": "tsc",
-        "test": "mocha build/test",
-        "pretest": "npm run build"
-        
+        "test": "mocha --recursive build/test",
+        "pretest": "npm run clean && npm run build",
+        "clean": "rm -rf build"
     },
     "author": {
         "name": "Fabio Farzat",
