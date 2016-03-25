@@ -1,0 +1,22 @@
+{
+    "name": "javascript-heuristic-optmizer",
+    "version": "0.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        
+    },
+    "author": {
+        "name": "Fabio Farzat",
+        "email": "ffarzat@cos.ufrj.br"
+    },
+    "license": "ISC",
+    "dependencies": {
+        "typescript": "1.8.9"
+    },
+    "devDependencies": {
+        "mocha":"2.4.5",
+        "expect.js": "0.3.1",
+        "tsd": "0.6.5"
+    }    
+}

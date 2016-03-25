@@ -279,3 +279,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# NodeJs
+node_modules/
