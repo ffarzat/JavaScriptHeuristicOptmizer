@@ -1,20 +1,39 @@
 import IHeuristic from './IHeuristic';
 import IConfiguration from '../IConfiguration';
+import ITester from '../ITester';
 
 /**
  * Genetic Algorithm for Code Improvement
  */
 export default class GA implements IHeuristic {
     
-    constructor() {
+    /**
+     * Parse especific config for GA
+     */
+    Setup(config: IConfiguration): void{
+      
+    }
+    
+    /**
+     * Initializes all trials
+     */
+    RunTrials(){
         
     }
     
     /**
-     * Parse especific config for GA
+     * Executes the unit Tests over GA's perspective
      */
-    setup(config: IConfiguration): void{
-      
+    Test(tester: ITester){
+        
+    }
+    
+    
+    /**
+     * Notifies about results of all trials
+     */
+    Notify(){
+        
     }
     
 }
