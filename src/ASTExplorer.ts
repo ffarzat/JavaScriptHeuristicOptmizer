@@ -27,7 +27,7 @@ export default class ASTExplorer {
      */
     Generate(file:string): ESTree.Program {
         
-        return  esprima.parse(code, this.globalOptions);
+        return  esprima.parse(file, this.globalOptions);
     }
     
     /**
