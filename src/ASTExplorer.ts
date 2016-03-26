@@ -22,11 +22,12 @@ export default class ASTExplorer {
         "source": true
     }
     
-    /**
+     /**
      * Generates the AST for especified code
      */
-    Generate(code:string): ESTree.Program {
-        return  esprima.parse('var oi = "teste";', this.globalOptions);
+    Generate(file:string): ESTree.Program {
+        
+        return  esprima.parse(code, this.globalOptions);
     }
     
     /**
