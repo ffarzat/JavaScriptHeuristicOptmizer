@@ -1,5 +1,5 @@
 import IHeuristic from './IHeuristic';
-import Configuration from '../Configuration';
+import IConfiguration from '../IConfiguration';
 
 /**
  * Genetic Algorithm for Code Improvement
@@ -13,7 +13,7 @@ export default class GA implements IHeuristic {
     /**
      * Parse especific config for GA
      */
-    setup(config: Configuration): void{
+    setup(config: IConfiguration): void{
       
     }
     
