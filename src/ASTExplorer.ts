@@ -1,4 +1,5 @@
  import esprima = require('esprima');
+ import fs = require('fs');
  import Individual from './Individual';
  import OperatorContext from './OperatorContext';
  
@@ -11,23 +12,20 @@ export default class ASTExplorer {
 /**
  * Esprima Global Parser options 
  */
-    globalOptions: esprima.Options ={
-        "loc": true,
-        "range": true,
-        "raw":true,
-        "tokens":true,
-        "comment": true,
-        "attachComment": true,
-        "tolerant": false,
-        "source": true
-    }
+    globalOptions: esprima.Options = {range: true, tokens: true, comment: true};
     
      /**
      * Generates the AST for especified code
      */
-    Generate(file:string): ESTree.Program {
+    Generate(file:string): Individual {
         
-        return  esprima.parse(file, this.globalOptions);
+        var sourceCode: string = fs.readFileSync(file, 'utf8');
+        var generatedAST = esprima.parse(sourceCode, this.globalOptions);
+        var newIndividual: Individual = new Individual();
+        
+        newIndividual.AST = generatedAST;
+        
+        return  newIndividual;
     }
     
     /**
