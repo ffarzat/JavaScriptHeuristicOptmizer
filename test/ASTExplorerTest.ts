@@ -20,9 +20,5 @@ describe('ASTExplorer Tests', () => {
             var generatedAST: ESTree.Program = astExplorer.Generate(libFile);
             expect(generatedAST).not.be.a('undefined');    
         });
-        
-        
-        
-    });
-    
+    });    
 })
