@@ -17,7 +17,7 @@ describe('ASTExplorer Tests', () => {
         
         configuration.libraries.forEach(element => {
             var libFile :string  = element.path;
-            console.log(`       lib: ${element.name}`);
+            //console.log(`       lib: ${element.name}`);
             var generatedAST: Individual = astExplorer.Generate(libFile);
             
             expect(generatedAST).not.be.a('undefined');    

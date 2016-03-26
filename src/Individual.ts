@@ -15,15 +15,13 @@ export default class Individual {
      * Options to generate new code
      * https://github.com/estools/escodegen/wiki/API
      */
-    Options: any =     { 
-        comment: true
-    };
+    Options: any =     {comment: true};
     
     /**
      * Generates the Source Code based on this.AST
      * 
      */
     ToCode() :string{
-        return escodegen.generate(this.AST, this.Options) ;
+        return escodegen.generate(this.AST, this.Options);
     }
 }

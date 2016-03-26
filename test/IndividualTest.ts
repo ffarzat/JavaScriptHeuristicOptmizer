@@ -17,13 +17,14 @@ describe('Individual Tests', () => {
         
         configuration.libraries.forEach(element => {
             var libFile :string  = element.path;
-            console.log(`       lib: ${element.name}`);
+            //console.log(`       lib: ${element.name}`);
             var generatedIndividual: Individual = astExplorer.Generate(libFile);
 
             expect(generatedIndividual).not.be.a('undefined');  
             expect(generatedIndividual.AST ).not.be.a('undefined');
             
             var generatedCode = generatedIndividual.ToCode(); 
+            //console.log(generatedCode);
             
             expect(generatedCode).not.be.a('undefined');
             expect(generatedCode).to.be.a('string');
