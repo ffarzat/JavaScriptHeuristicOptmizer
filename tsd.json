@@ -16,6 +16,9 @@
     },
     "esprima/esprima.d.ts": {
       "commit": "dc6d1ebfaa554e85b91846574728930972ca9868"
+    },
+    "node/node.d.ts": {
+      "commit": "dc6d1ebfaa554e85b91846574728930972ca9868"
     }
   }
 }

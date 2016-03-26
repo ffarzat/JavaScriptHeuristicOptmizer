@@ -1,0 +1,13 @@
+{
+    "file": "Configuration.json",
+    "libraries" : [
+        {"name":"exectimer", "path":"Libraries/exectimer/index.js" },
+        {"name":"Jade", "path":"Libraries/Jade/lib/index.js" },
+        {"name":"lodash", "path":"Libraries/lodash/lodash.js" },
+        {"name":"minimist", "path":"Libraries/minimist/index.js" },
+        {"name":"moment", "path":"Libraries/moment/moment.js" },
+        {"name":"underscore", "path":"Libraries/underscore/index.js" },
+        {"name":"uuid", "path":"Libraries/uuid/lib/uuid.js" },
+        {"name":"xml2js", "path":"Libraries/xml2js/lib/xml2js/lib/xml2js.js" }
+    ]
+}
