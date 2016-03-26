@@ -12,9 +12,7 @@ export default class Optmizer {
     logger: ILogger;
     tester: ITester;
     outter: IOutWritter;
-    
-    
-    
+        
     /**
      * Initializes intire Setup chain
      */
