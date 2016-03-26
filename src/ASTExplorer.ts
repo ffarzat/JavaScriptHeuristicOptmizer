@@ -25,9 +25,12 @@ export default class ASTExplorer {
      /**
      * Generates the AST for especified code
      */
-    Generate(file:string): ESTree.Program {
+    Generate(file:string): Individual {
+        var generatedAST = esprima.parse(file, this.globalOptions);
+        var newIndividual: Individual = new Individual();
+        newIndividual.AST = generatedAST;
         
-        return  esprima.parse(file, this.globalOptions);
+        return  newIndividual;
     }
     
     /**
