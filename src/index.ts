@@ -1,1 +1,3 @@
-console.log('Qualquer coisa mesmo...');
+/**
+ * Starts the Improvment Process based on cofigFile [Configuration.Json]
+ */

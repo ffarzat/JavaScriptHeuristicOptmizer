@@ -1,26 +1,27 @@
 {
-    "name": "javascript-heuristic-optmizer",
-    "version": "0.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "postinstall": "tsd install",
-        "build": "tsc",
-        "test": "mocha --recursive build/test",
-        "pretest": "npm run clean && npm run build",
-        "clean": "rmdir build /s /q"
-    },
-    "author": {
-        "name": "Fabio Farzat",
-        "email": "ffarzat@cos.ufrj.br"
-    },
-    "license": "ISC",
-    "dependencies": {
-        "typescript": "1.8.9"
-    },
-    "devDependencies": {
-        "mocha":"2.4.5",
-        "expect.js": "0.3.1",
-        "tsd": "0.6.5"
-    }    
+  "name": "javascript-heuristic-optmizer",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "tsd install",
+    "build": "tsc",
+    "test": "mocha --recursive build/test",
+    "pretest": "npm run clean && npm run build",
+    "clean": "rmdir build /s /q"
+  },
+  "author": {
+    "name": "Fabio Farzat",
+    "email": "ffarzat@cos.ufrj.br"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "esprima": "2.7.2",
+    "typescript": "1.8.9"
+  },
+  "devDependencies": {
+    "mocha": "2.4.5",
+    "expect.js": "0.3.1",
+    "tsd": "0.6.5"
+  }
 }
