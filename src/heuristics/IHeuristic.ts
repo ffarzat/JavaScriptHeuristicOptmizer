@@ -4,18 +4,26 @@ import ITester from '../ITester';
 /**
  * Generic interface for Heuristics 
  */
-interface IHeuristic
+export default class IHeuristic
 {
+    
+    
     /**
      * Forces the Heuristic to validate config
      */
-    Setup(config: IConfiguration): void;
+    Setup(config: IConfiguration): void{
+        
+    }
     
-    RunTrials();
+    RunTrials(){
+        
+    }
     
-    Test(tester: ITester);
+    Test(tester: ITester){
+        
+    }
     
-    Notify();
+    Notify(){
+        
+    }
 }
-
-export default IHeuristic;
