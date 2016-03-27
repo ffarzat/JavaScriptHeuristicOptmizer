@@ -18,7 +18,10 @@
       "commit": "dc6d1ebfaa554e85b91846574728930972ca9868"
     },
     "node/node.d.ts": {
-      "commit": "dc6d1ebfaa554e85b91846574728930972ca9868"
+      "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
+    },
+    "npm/npm.d.ts": {
+      "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
     }
   }
 }
