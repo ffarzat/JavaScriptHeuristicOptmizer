@@ -9,5 +9,7 @@
         {"name":"underscore", "path":"Libraries/underscore/underscore.js" },
         {"name":"uuid", "path":"Libraries/uuid/lib/uuid.js" },
         {"name":"xml2js", "path":"Libraries/xml2js/lib/xml2js.js" }
-    ]
+    ],
+    "trials":50,
+    "testUntil": 20
 }

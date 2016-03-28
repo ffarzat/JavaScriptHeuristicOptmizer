@@ -4,8 +4,8 @@ var escodegen = require('escodegen');
  /**
  * Individual - Represents an Individual Code over Improvement process
  */
-export default class Individual {
-    
+export default class Individual {  
+   
     /**
      * Keeps all tree for this individual
      */
@@ -19,7 +19,6 @@ export default class Individual {
     
     /**
      * Generates the Source Code based on this.AST
-     * 
      */
     ToCode() :string{
         return escodegen.generate(this.AST, this.Options);

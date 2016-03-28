@@ -31,5 +31,5 @@ describe('Individual Tests', () => {
              
         });
     });    
-})
+});
 

@@ -1,4 +1,5 @@
 /// <reference path="../src/typings/tsd.d.ts" />
+
 import fs = require('fs');
 import expect = require('expect.js');
 
@@ -23,4 +24,4 @@ describe('ASTExplorer Tests', () => {
             expect(generatedAST).not.be.a('undefined');    
         });
     });    
-})
+});

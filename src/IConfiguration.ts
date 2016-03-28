@@ -10,6 +10,8 @@ interface IConfiguration {
     libraries: Library[];
     heuristics: IHeuristic[];
     logWritter: ILogger;
+    trials:number;
+    testUntil:number;
 }
 
 export default IConfiguration;

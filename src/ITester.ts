@@ -4,7 +4,7 @@ import Individual from './Individual';
 interface ITester{
     Setup(configuration: IConfiguration);
     
-    Test(individual:Individual);
+    Test(individual:Individual): number;
     
     Clean();
 }
