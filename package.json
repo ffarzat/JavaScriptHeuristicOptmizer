@@ -20,6 +20,7 @@
     "esprima": "2.7.2",
     "exectimer": "^2.0.0",
     "npm": "^3.8.3",
+    "shelljs": "^0.6.0",
     "typescript": "1.8.9"
   },
   "devDependencies": {

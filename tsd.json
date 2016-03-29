@@ -18,10 +18,13 @@
       "commit": "dc6d1ebfaa554e85b91846574728930972ca9868"
     },
     "node/node.d.ts": {
-      "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
+      "commit": "4bd9b47f0ea79ba83c2e831c56bcaf8ba3a2c8ad"
     },
     "npm/npm.d.ts": {
       "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
+    },
+    "shelljs/shelljs.d.ts": {
+      "commit": "4bd9b47f0ea79ba83c2e831c56bcaf8ba3a2c8ad"
     }
   }
 }
