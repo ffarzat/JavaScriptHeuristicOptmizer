@@ -28,7 +28,7 @@ describe('ASTExplorer Tests', () => {
         });
     });    
     
-    
+    /*
     it('Should generate Exactly same code for uuid lib ', () => {
         var astExplorer:ASTExplorer = new ASTExplorer();
         
@@ -48,6 +48,6 @@ describe('ASTExplorer Tests', () => {
         expect(newCode).to.be.equal(oldCode);
         
     });
-    
+    */
     
 });
