@@ -5,11 +5,13 @@ import IConfiguration from './IConfiguration';
 import Individual from './Individual';
 import OperatorContext from './OperatorContext';
 import Library from './Library';
+import TestResults from './TestResults';
 
 import path = require('path');
 import Shell = require('shelljs');
 var exectimer = require('exectimer');
 import fs = require('fs');
+import fse = require('fs-extra');
 
 
 /**
@@ -43,37 +45,83 @@ export default class CommandTester implements ITester {
         this.testOldDirectory = process.cwd();
         this.fitnessTopValue = context.FitnessTopValue;
 
-        //fse.copySync(jadeLib.path, path.join(jadeLibDirectory, 'oldCode.js'));
+        //fse.copySync(lib.mainFilePath, path.join(lib.path, '_oldCode.js'));
     }
 
     /**
      * Do the test for an individual
      */
-    Test(individual: Individual): number {
-
-        var agvFit = 1;   //avg of all runs
-
+    Test(individual: Individual): TestResults {
         //output new code over main file js
         this.WriteCodeToFile(individual);
+        var outputsFromCmd: string[] = [];
+        var passedAllTests = true;
+        
+        try {
+            process.chdir(this.libDirectoryPath);
+            
+            var Tick = exectimer.Tick;
+            
+            for (var index = 0; index < this.testUntil; index++) {
+            
+                var testExecutionTimeTick = new Tick("unitTests");
+                testExecutionTimeTick.start();
+                var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('npm test', {silent:true}) as Shell.ExecOutputReturnValue);
+                testExecutionTimeTick.stop();    
+                
+                //TODO: Log the returnedOutput.output for debug
+                outputsFromCmd.push(returnedOutput.output);
+                
+                if (returnedOutput.code > 0)
+                {
+                    passedAllTests = false;
+                    break;
+                }        
+            }    
+        } catch (error) {
+            console.log(error);
+            passedAllTests = false;
+        }
+        finally{
+            process.chdir(this.testOldDirectory);    
+        }
+                
+        var unitTestsTimer = exectimer.timers.unitTests;
+        //this.ShowConsoleResults(unitTestsTimer);
+        
+        
+        var results:TestResults = new TestResults();
+        results.rounds = this.testUntil;
+        results.min = unitTestsTimer.min();
+        results.max = unitTestsTimer.max();
+        results.mean = unitTestsTimer.mean();
+        results.median = unitTestsTimer.median();
+        results.duration = unitTestsTimer.duration();
+        results.outputs = outputsFromCmd;
+        results.passedAllTests = passedAllTests
 
-        //TODO: Try/catch
-        process.chdir(this.libDirectoryPath);
-
-        var ExecutionCode = (Shell.exec('npm test', {silent:false}) as Shell.ExecOutputReturnValue).code;
-
-        process.chdir(this.testOldDirectory);
-
-        if (ExecutionCode > 0)
-            return this.fitnessTopValue;
-
-        return agvFit;
+        return results;
     }
 
     /**
-     * Backs to initial state
+     * Backs to initial state when necessary
      */
     Clean() {
+        
+        
 
+    }
+
+    /**
+     * Just for Debug
+     */
+    private ShowConsoleResults(timer:any){
+        
+        console.log('       total duration:' + timer.parse(timer.duration())); // total duration of all ticks
+        console.log('       min:' + timer.parse(timer.min()));      // minimal tick duration
+        console.log('       max:' + timer.parse(timer.max()));      // maximal tick duration
+        console.log('       mean:' + timer.parse(timer.mean()));     // mean tick duration
+        console.log('       median:' + timer.parse(timer.median()));   // median tick duration
     }
 
     /**

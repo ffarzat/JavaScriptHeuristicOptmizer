@@ -1,7 +1,8 @@
 {
     "file": "Configuration.json",
     "trials":50,
-    "testUntil": 20,
+    "FitType":"mean",
+    "testUntil": 2,
     "libraries" : [
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
         {"name":"Jade",         "path":"Libraries/Jade/",       "mainFilePath":"Libraries/Jade/lib/index.js"  },

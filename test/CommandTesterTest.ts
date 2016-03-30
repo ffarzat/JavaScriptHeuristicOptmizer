@@ -12,20 +12,20 @@ import ASTExplorer from '../src/ASTExplorer';
 
 describe('CommandTester Tests', function () {
 
-    this.timeout(60000);
+    this.timeout(60*10*1000); //10 minutes
 
-    it('Should execute Tests from Jade Lib', function () {
+    it('Should execute Tests from uuid Lib', function () {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[6];
+        var lib = configuration.libraries[6]; //uuid
 
         /**
          * Creates a ctx object to test  lib 1 - Jade
          *  */
         var context: OperatorContext = new OperatorContext();
         context.LibrarieOverTest = lib;
-        context.FitnessTopValue = 5000;
+        context.FitnessTopValue = 9999999999999;
 
         //Creates the Inidividual for tests
         var astExplorer: ASTExplorer = new ASTExplorer();
@@ -36,12 +36,16 @@ describe('CommandTester Tests', function () {
         commandTester.Setup(configuration, context);
 
         //Exec the test
-        var fit = commandTester.Test(individualOverTests);
-
-
-        expect(fit).to.be.a('number');
-        expect(fit).to.be(1);
-
-
+        var testResults = commandTester.Test(individualOverTests);
+        
+        expect(testResults).not.to.be(undefined);
+        expect(testResults.duration).not.to.be(undefined);
+        expect(testResults.min).not.to.be(undefined);
+        expect(testResults.max).not.to.be(undefined);
+        expect(testResults.mean).not.to.be(undefined);
+        expect(testResults.median).not.to.be(undefined);
+        expect(testResults.outputs).not.to.be(undefined);
+        expect(testResults.passedAllTests).not.to.be(undefined);
+        expect(testResults.rounds).not.to.be(undefined);
     });
 });

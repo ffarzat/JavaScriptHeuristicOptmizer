@@ -1,6 +1,7 @@
 /// <reference path="../src/typings/tsd.d.ts" />
 var escodegen = require('escodegen');
 import esprima = require('esprima');
+import TestResults from './TestResults';
 
  /**
  * Individual - Represents an Individual Code over Improvement process
@@ -25,6 +26,11 @@ export default class Individual {
              quotes: 'auto'
          }
      };
+        
+     /**
+      * Keeps the results from Tests 
+      */   
+     testResults: TestResults;   
         
     /**
      * Generates the Source Code based on this.AST
