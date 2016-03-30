@@ -16,7 +16,7 @@ describe('Individual Tests', () => {
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         
         configuration.libraries.forEach(element => {
-            var libFile :string  = element.path;
+            var libFile :string  = element.mainFilePath;
             //console.log(`       lib: ${element.name}`);
             var generatedIndividual: Individual = astExplorer.Generate(libFile);
 

@@ -2,35 +2,42 @@
 
 import fs = require('fs');
 import expect = require('expect.js');
-import path = require('path');
 
 import IConfiguration from '../src/IConfiguration';
 import CommandTester from '../src/CommandTester';
 import Individual from '../src/Individual';
+import OperatorContext from '../src/OperatorContext';
+import ASTExplorer from '../src/ASTExplorer';
 
 describe('CommandTester Tests', function () {
     
     this.timeout(60000);
     
-    it('Should execute Tests from all libs ', function () {
+    it('Should execute Tests from Jade Lib', function () {
                 
         var configurationFile: string = process.cwd() + '\\test\\Configuration.json';
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[1];
-    
-        var libFile :string  = lib.path;
+        var lib = configuration.libraries[6];
+           
+        /**
+         * Creates a ctx object to test  lib 1 - Jade
+         *  */    
+        var context: OperatorContext = new OperatorContext();
+        context.LibrarieOverTest = lib;
+        context.FitnessTopValue = 5000;
         
-        var oldDir = process.cwd();
-        
-        process.chdir(path.dirname(libFile));
+        //Creates the Inidividual for tests
+        var astExplorer:ASTExplorer = new ASTExplorer();
+        var individualOverTests: Individual = astExplorer.Generate(lib.mainFilePath);
     
+        //Setup
         var commandTester = new CommandTester();
-        commandTester.Setup(configuration);
+        commandTester.Setup(configuration, context);
         
-        var fit = commandTester.Test(new Individual());
+        //Exec the test        
+        var fit = commandTester.Test( individualOverTests);
         
-        process.chdir(oldDir);
-        
+      
         expect(fit).to.be.a('number');
         expect(fit).to.be(1);
         
