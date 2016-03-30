@@ -41,4 +41,15 @@ export default class Individual {
 
         return escodegen.generate(generatedAST, this.Options);
     }
+    
+    /**
+     * Clones this individual instance
+     */
+    Clone(): Individual
+    {
+        var newOne = new Individual();
+        newOne.AST = this.AST;
+        
+        return newOne;
+    }
 }

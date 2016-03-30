@@ -32,4 +32,21 @@ describe('Individual Tests', () => {
 
         });
     });
+    
+    it('Should Clone itself ', () => {
+        var astExplorer: ASTExplorer = new ASTExplorer();
+
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var lib = configuration.libraries[0];
+        var generatedIndividual: Individual = astExplorer.Generate(lib.mainFilePath);
+        expect(generatedIndividual).not.be.a('undefined');
+        expect(generatedIndividual.AST ).not.be.a('undefined');
+        
+        var generatedClone: Individual = generatedIndividual.Clone();
+        
+        expect(generatedIndividual).not.be.equal(generatedClone);
+        expect(generatedIndividual.AST).to.be.equal(generatedClone.AST);
+    });
+    
 });
