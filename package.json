@@ -16,6 +16,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "ast-types": "^0.8.16",
     "escodegen": "1.8.0",
     "esprima": "2.7.2",
     "exectimer": "^2.0.0",
