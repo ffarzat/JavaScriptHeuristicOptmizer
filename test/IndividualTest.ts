@@ -19,7 +19,7 @@ describe('Individual Tests', () => {
         configuration.libraries.forEach(element => {
             var libFile: string  = element.mainFilePath;
             //console.log(`       lib: ${element.name}`);
-            var generatedIndividual: Individual = astExplorer.Generate(libFile);
+            var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
 
             expect(generatedIndividual).not.be.a('undefined');
             expect(generatedIndividual.AST ).not.be.a('undefined');
@@ -39,7 +39,7 @@ describe('Individual Tests', () => {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var lib = configuration.libraries[0];
-        var generatedIndividual: Individual = astExplorer.Generate(lib.mainFilePath);
+        var generatedIndividual: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
         expect(generatedIndividual).not.be.a('undefined');
         expect(generatedIndividual.AST ).not.be.a('undefined');
         
