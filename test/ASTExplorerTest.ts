@@ -7,9 +7,7 @@ import expect = require('expect.js');
 import IConfiguration from '../src/IConfiguration';
 import ASTExplorer from '../src/ASTExplorer';
 import Individual from '../src/Individual';
-
-
-
+import OperatorContext from '../src/OperatorContext';
 
 describe('ASTExplorer Tests', () => {
 
@@ -27,6 +25,24 @@ describe('ASTExplorer Tests', () => {
             expect(generatedAST).not.be.a('undefined');
         });
 
-    });    
+    });  
+       
+    it('Should Count Nodes From Lodash', () => {
+        
+        var astExplorer:ASTExplorer = new ASTExplorer();
+        var context: OperatorContext = new OperatorContext();
+
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var lib = configuration.libraries[2];
+        var libFile :string  = lib.mainFilePath;
+        var generatedIndividual: Individual = astExplorer.Generate(libFile);
+        
+        var total:number = astExplorer.CountNodes(generatedIndividual);
+        
+        expect(total).to.be(26048);
+    });
+    
+      
     
 });

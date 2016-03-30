@@ -3,7 +3,7 @@
  import Individual from './Individual';
  import OperatorContext from './OperatorContext';
  
- var escodegen = require('escodegen');
+ var types = require("ast-types"); 
  
  
  /**
@@ -30,6 +30,27 @@ export default class ASTExplorer {
         
         return  newIndividual;
     }
+    
+    /**
+     * Count the total number of nodes inside an AST
+     */
+    CountNodes(individual: Individual): number
+    {
+        var totalNodes:number = 0;
+        types.visit(individual.AST , {
+            //This method will visit every node on AST            
+            visitNode: function(path) {
+                
+                var node = path.node;
+                totalNodes ++;
+
+                this.traverse(path); //continue
+            }
+        });
+        
+        return totalNodes;
+    }
+    
     
     /**
      * Executes the single point CrossOver
