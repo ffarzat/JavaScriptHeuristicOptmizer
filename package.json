@@ -8,7 +8,7 @@
     "build": "tsc",
     "test": "mocha --recursive build/test",
     "pretest": "npm run clean && npm run build",
-    "clean": "rmdir build /s /q"
+    "clean": "rm -rf build"
   },
   "author": {
     "name": "Fabio Farzat",
