@@ -104,11 +104,9 @@ describe('ASTExplorer Tests', function () {
         expect(newTotal).to.be(1267);
         
         var firstNew: number = astExplorer.CountNodes(newOnes[0]);
-        console.log('firstNew:', firstNew);
         expect(firstNew).not.to.be.equal(1267);
         
         var secondNew: number = astExplorer.CountNodes(newOnes[1]);
-        console.log('secondNew:', secondNew);
         expect(secondNew).not.to.be.equal(1267);
         
         expect(newOnes[0].AST).not.equal(originalIndividual.AST);   
