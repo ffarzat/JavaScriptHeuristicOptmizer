@@ -77,6 +77,7 @@ export default class ASTExplorer {
                 if(counter == randonNodeToPrune)
                 {
                     var nodeExcluded = path.prune();    
+                    //console.log(JSON.stringify(nodeExcluded.node));
                     //TODO: keeps the excluded node for reports
                 }
                 

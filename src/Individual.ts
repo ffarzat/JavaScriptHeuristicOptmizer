@@ -1,6 +1,7 @@
 /// <reference path="../src/typings/tsd.d.ts" />
 var escodegen = require('escodegen');
-import esprima = require('esprima');
+var deepcopy = require("deepcopy");
+
 import TestResults from './TestResults';
 
  /**
@@ -48,7 +49,7 @@ export default class Individual {
     Clone(): Individual
     {
         var newOne = new Individual();
-        newOne.AST = this.AST;
+        newOne.AST = deepcopy(this.AST);
         
         return newOne;
     }

@@ -46,7 +46,11 @@ describe('Individual Tests', () => {
         var generatedClone: Individual = generatedIndividual.Clone();
         
         expect(generatedIndividual).not.be.equal(generatedClone);
-        expect(generatedIndividual.AST).to.be.equal(generatedClone.AST);
+        
+        var Total:number = astExplorer.CountNodes(generatedIndividual);
+        var CloneTotal:number = astExplorer.CountNodes(generatedClone);
+        
+        expect(Total).to.be.equal(CloneTotal);
     });
     
 });

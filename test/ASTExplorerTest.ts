@@ -43,7 +43,9 @@ describe('ASTExplorer Tests', () => {
         expect(total).to.be(26048);
     });
     
-    it('Should Mutate Nodes from uuid', () => {
+    it('Should Mutate Nodes from uuid', function() {
+        
+        this.timeout(5000);
         
         var astExplorer:ASTExplorer = new ASTExplorer();
         var context: OperatorContext = new OperatorContext();
@@ -55,14 +57,20 @@ describe('ASTExplorer Tests', () => {
         var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
         
         var total:number = astExplorer.CountNodes(generatedIndividual);
-        expect(total).to.be(1267);
+        
         
         var context: OperatorContext = new OperatorContext();
         context.TotalNodesCount = total;
         context.First = generatedIndividual;
         var newOne = astExplorer.Mutate(context);
 
-        expect(newOne.AST).not.equal(generatedIndividual.AST);       
+        var newTotal:number = astExplorer.CountNodes(generatedIndividual);
+        expect(newTotal).to.be(1267);
+        
+        var newOneTotal:number = astExplorer.CountNodes(newOne);
+        expect(newOneTotal).to.be.lessThan(1267);
+        
+        //expect(newOne.AST).not.equal(generatedIndividual.AST);       
     });
     
       
