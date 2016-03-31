@@ -9,7 +9,9 @@ import ASTExplorer from '../src/ASTExplorer';
 import Individual from '../src/Individual';
 import OperatorContext from '../src/OperatorContext';
 
-describe('ASTExplorer Tests', () => {
+describe('ASTExplorer Tests', function () {
+
+    this.timeout(60*10*1000); //10 minutes
 
     it('Should generate Ast from libraries configuration ', () => {
         var astExplorer:ASTExplorer = new ASTExplorer();
@@ -27,7 +29,7 @@ describe('ASTExplorer Tests', () => {
 
     });  
        
-    it('Should Count Nodes From Lodash', () => {
+    it('Should Count Nodes From Lodash', function () {
         
         var astExplorer:ASTExplorer = new ASTExplorer();
         var context: OperatorContext = new OperatorContext();
@@ -44,8 +46,6 @@ describe('ASTExplorer Tests', () => {
     });
     
     it('Should Mutate Nodes from uuid', function() {
-        
-        this.timeout(5000);
         
         var astExplorer:ASTExplorer = new ASTExplorer();
         var context: OperatorContext = new OperatorContext();
@@ -70,7 +70,7 @@ describe('ASTExplorer Tests', () => {
         var newOneTotal:number = astExplorer.CountNodes(newOne);
         expect(newOneTotal).to.be.lessThan(1267);
         
-        //expect(newOne.AST).not.equal(generatedIndividual.AST);       
+        expect(newOne.AST).not.equal(generatedIndividual.AST);       
     });
     
       
