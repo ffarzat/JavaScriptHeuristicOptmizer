@@ -70,7 +70,11 @@ describe('ASTExplorer Tests', function () {
         var newOneTotal:number = astExplorer.CountNodes(newOne);
         expect(newOneTotal).to.be.lessThan(1267);
         
-        expect(newOne.AST).not.equal(generatedIndividual.AST);       
+        expect(newOne.AST).not.equal(generatedIndividual.AST);   
+        
+        expect(newOne.ToCode()).not.equal(generatedIndividual.ToCode());
+        
+            
     });
     
       
