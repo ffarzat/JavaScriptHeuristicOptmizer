@@ -1,6 +1,7 @@
 /// <reference path="../src/typings/tsd.d.ts" />
 var escodegen = require('escodegen');
-import esprima = require('esprima');
+var deepcopy = require("deepcopy");
+
 import TestResults from './TestResults';
 
  /**
@@ -40,5 +41,16 @@ export default class Individual {
         var generatedAST = escodegen.attachComments(this.AST, this.AST.comments, this.AST.tokens);
 
         return escodegen.generate(generatedAST, this.Options);
+    }
+    
+    /**
+     * Clones this individual instance
+     */
+    Clone(): Individual
+    {
+        var newOne = new Individual();
+        newOne.AST = deepcopy(this.AST);
+        
+        return newOne;
     }
 }

@@ -29,7 +29,7 @@ describe('CommandTester Tests', function () {
 
         //Creates the Inidividual for tests
         var astExplorer: ASTExplorer = new ASTExplorer();
-        var individualOverTests: Individual = astExplorer.Generate(lib.mainFilePath);
+        var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
 
         //Setup
         var commandTester = new CommandTester();
