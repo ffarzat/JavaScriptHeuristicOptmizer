@@ -30,17 +30,27 @@ interface IConfiguration {
     /**
      * #Time to run optmization process
      */
-    trials:number;
+    trials: number;
     
     /**
      * #Time to run tests 
      */
-    testUntil:number;
+    testUntil: number;
     
     /**
      * Fit type: can be mean or median 
      */
-    FitType:string; 
+    FitType: string; 
+    
+    /**
+     * Path to Log File [Relative]
+     */
+    LogFilePath: string;
+    
+    /**
+     * Category for Logger
+     */
+    LogCategory: string;
 }
 
 export default IConfiguration;
