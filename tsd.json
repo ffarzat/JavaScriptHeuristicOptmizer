@@ -18,7 +18,7 @@
       "commit": "dc6d1ebfaa554e85b91846574728930972ca9868"
     },
     "node/node.d.ts": {
-      "commit": "ee9c524295333250ddbc7364f27c8b2ccd84b18a"
+      "commit": "e8f8e7471b8ca92ca417f8c878f64ae4d1067972"
     },
     "npm/npm.d.ts": {
       "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
@@ -28,6 +28,21 @@
     },
     "fs-extra/fs-extra.d.ts": {
       "commit": "ee9c524295333250ddbc7364f27c8b2ccd84b18a"
+    },
+    "serve-static/serve-static.d.ts": {
+      "commit": "e8f8e7471b8ca92ca417f8c878f64ae4d1067972"
+    },
+    "log4js/log4js.d.ts": {
+      "commit": "e8f8e7471b8ca92ca417f8c878f64ae4d1067972"
+    },
+    "express/express.d.ts": {
+      "commit": "e8f8e7471b8ca92ca417f8c878f64ae4d1067972"
+    },
+    "express-serve-static-core/express-serve-static-core.d.ts": {
+      "commit": "e8f8e7471b8ca92ca417f8c878f64ae4d1067972"
+    },
+    "mime/mime.d.ts": {
+      "commit": "e8f8e7471b8ca92ca417f8c878f64ae4d1067972"
     }
   }
 }
