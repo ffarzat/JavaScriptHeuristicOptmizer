@@ -3,6 +3,9 @@
     "trials":50,
     "FitType":"mean",
     "testUntil": 2,
+    "LogFilePath": "build/optmization.log",
+    "LogCategory":"optmization",
+    "LogFileClearing": true,
     "libraries" : [
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
         {"name":"Jade",         "path":"Libraries/Jade/",       "mainFilePath":"Libraries/Jade/lib/index.js"  },
@@ -12,5 +15,6 @@
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
         {"name":"xml2js",       "path":"Libraries/xml2js/",         "mainFilePath":"Libraries/xml2js/lib/xml2js.js" }
-    ]
+    ],
+    "logWritter": "ConcreteLogger"
 }
