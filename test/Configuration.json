@@ -3,7 +3,7 @@
     "trials":50,
     "FitType":"mean",
     "testUntil": 2,
-    "LogFilePath": "optmization.log",
+    "LogFilePath": "build/optmization.log",
     "LogCategory":"optmization",
     "libraries" : [
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },

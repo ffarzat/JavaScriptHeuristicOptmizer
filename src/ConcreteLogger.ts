@@ -10,33 +10,43 @@ import path = require('path');
  */
 export default class ConcreteLogger implements ILogger {
 
+     _file: string;
+     _category: string;
+     _logger: Log4js.Logger;
+     
+
     /**
      * Pull path for log file
      * 
      */
-    File: string;
+    File(): string{
+        return this._file;
+    }
     
     /**
      * Category of logger
      */
-    Category: string;
+    Category(): string{
+        return this._category;
+    }
     
   /**
    * 
    */
     Initialize(configuration: IConfiguration){
        
-       this.File = path.join(process.cwd(), configuration.LogFilePath);
-       this.Category = configuration.LogCategory;
+       this._file = path.join(process.cwd(), configuration.LogFilePath);
+       this._category = configuration.LogCategory;
        
        Log4js.configure({
            appenders: [
-               { type: 'console' },
-               { type: 'file', filename: this.File , category: this.Category }
+               { type: 'console', level: Log4js.levels.ALL  },
+               { type: 'file', filename: this._file , category: this._category}
             ]
         });
         
-        var logger = Log4js.getLogger(this.Category);
+       this._logger = Log4js.getLogger(this._category);
+       //this._logger.setLevel(Log4js.levels.DEBUG);
         
     }
     
@@ -44,8 +54,7 @@ export default class ConcreteLogger implements ILogger {
      * Writes a message in Log 
      */
     Write(message:string){
-        var logger = Log4js.getLogger(this.Category);
-        logger.trace(message);
+        this._logger.trace(message);
     }
     
     /**
