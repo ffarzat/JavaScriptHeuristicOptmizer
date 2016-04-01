@@ -51,6 +51,11 @@ interface IConfiguration {
      * Category for Logger
      */
     LogCategory: string;
+    
+    /**
+     * Determines delete or not a Log file at the begining of process
+     */
+    LogFileClearing: boolean;
 }
 
 export default IConfiguration;

@@ -2,7 +2,9 @@
 
 import ILogger from './ILogger';
 import IConfiguration from './IConfiguration';
+
 import Log4js = require('log4js');
+import fs = require('fs');
 import path = require('path');
 
 /**
@@ -13,6 +15,7 @@ export default class ConcreteLogger implements ILogger {
      _file: string;
      _category: string;
      _logger: Log4js.Logger;
+     _clearLogFile: boolean;
      
 
     /**
@@ -37,6 +40,11 @@ export default class ConcreteLogger implements ILogger {
        
        this._file = path.join(process.cwd(), configuration.LogFilePath);
        this._category = configuration.LogCategory;
+       
+       if(this._clearLogFile && fs.existsSync( this._file))
+       {
+           fs.unlinkSync(this._file);
+       }
        
        Log4js.configure({
            appenders: [
