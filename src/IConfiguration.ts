@@ -18,17 +18,29 @@ interface IConfiguration {
     libraries: Library[];
     
     /**
-     * Configurated Heuristics to run over libs #trial times 
+     * Configurated Heuristics 
+     * 
+     * By now can be:
+     * [GA, HC, RD]
      */
     heuristics: string[];
     
     /**
      * Logtype
+     * 
+     * By now can be:
+     * [ConcreteLogger]
+     * 
      */
     logWritter: string;
     
     /**
      * Tester Type
+     * 
+     * By now can be:
+     * 
+     * [CommandTester]
+     * 
      */
     tester: string;
     
@@ -61,6 +73,7 @@ interface IConfiguration {
      * Determines delete or not a Log file at the begining of process
      */
     logFileClearing: boolean;
+    
 }
 
 export default IConfiguration;
