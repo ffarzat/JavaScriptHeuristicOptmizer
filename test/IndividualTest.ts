@@ -8,7 +8,9 @@ import IConfiguration from '../src/IConfiguration';
 import ASTExplorer from '../src/ASTExplorer';
 import Individual from '../src/Individual';
 
-describe('Individual Tests', () => {
+describe('Individual Tests', function () {
+    
+    this.timeout(60000);
 
     it('Should generate Code from libraries AST ', () => {
         var astExplorer: ASTExplorer = new ASTExplorer();
@@ -33,7 +35,7 @@ describe('Individual Tests', () => {
         });
     });
     
-    it('Should Clone itself ', () => {
+    it('Should Clone itself ', function () {
         var astExplorer: ASTExplorer = new ASTExplorer();
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
