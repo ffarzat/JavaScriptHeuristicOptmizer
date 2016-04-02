@@ -16,12 +16,16 @@ import RD from '../src/heuristics/RD';
 describe('IHeuristic Tests', () => {
 
     it('Should Validate Configuration ', () => {
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var rdInstance = new HeuristicFactory().CreateByName(configuration.heuristics[1]);
         
+        rdInstance.Setup(configuration);
         
-    });
-    
-    it('Should Creates Concretes Logger and Tester from configuration ', () => {
-        
+        expect(rdInstance).not.be.an('undefined');
+        expect(rdInstance._config).not.be.an('undefined');
+        expect(rdInstance._logger).not.be.an('undefined');
+        expect(rdInstance._tester).not.be.an('undefined');
     });
     
     it('Should Creates Concretes Heuristics from configuration ', () => {
