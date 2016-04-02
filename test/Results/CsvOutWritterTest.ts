@@ -16,6 +16,8 @@ describe('CsvOutWritterTest Tests', () => {
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 
         var concrete = new IOutWriterFactory().CreateByName(configuration.outWriter);
+        concrete.Initialize(configuration);
+        
         expect(concrete).not.be.an('undefined');       
     });
     
