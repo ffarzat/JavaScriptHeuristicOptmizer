@@ -18,5 +18,6 @@
     ],
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
-    "heuristics": ["GA", "RD"]
+    "heuristics": ["GA", "RD", "HC"],
+    "trialConfiguration":{"neighborApproach":"FirstAscent", "restart":false, "trialsToRestart":5}
 }

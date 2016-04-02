@@ -1,6 +1,7 @@
 import IHeuristic from './heuristics/IHeuristic';
 import ILogger from './ILogger';
 import Library from './Library';
+import TrialConfiguration from './TrialConfiguration';
 
 /**
  * Configuration Interface for Json file
@@ -73,6 +74,11 @@ interface IConfiguration {
      * Determines delete or not a Log file at the begining of process
      */
     logFileClearing: boolean;
+    
+    /**
+     * Global trial configurations
+     */
+    trialConfiguration: TrialConfiguration;
     
 }
 

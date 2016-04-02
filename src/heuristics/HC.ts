@@ -7,6 +7,22 @@ import ITester from '../ITester';
  */
 export default class HC extends IHeuristic {
     
+    neighborApproach: string;
+    restart: boolean;
+    trialsToRestart: number;
+    
+    /**
+     * Especific Setup
+     */
+    Setup(config: IConfiguration): void{
+        super.Setup(config);
+        
+        this.neighborApproach = config.trialConfiguration.neighborApproach;
+        this.restart = config.trialConfiguration.restart;
+        this.trialsToRestart = config.trialConfiguration.trialsToRestart;
+    }
+    
+    
     /**
      * Initializes all trials
      */
