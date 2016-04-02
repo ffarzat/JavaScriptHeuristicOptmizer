@@ -76,9 +76,16 @@ interface IConfiguration {
     logFileClearing: boolean;
     
     /**
-     * Global trial configurations
+     * Each trial configurations
+     * 
+     * Works with a IConfiguration.trials. #trials * each(TrialConfiguration)
+     * 
+     * Sample:
+     *  #trials = 60
+     *  #TrialConfiguration = 2 (global, function scope)
+     * #total executions = 120 per Heuristic (360 by now)
      */
-    trialConfiguration: TrialConfiguration;
+    trialsConfiguration: TrialConfiguration [];
     
 }
 

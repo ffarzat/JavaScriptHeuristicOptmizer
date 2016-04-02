@@ -1,5 +1,7 @@
 /// <reference path="../src/typings/tsd.d.ts" />
 
+import TrialEspecificConfiguration from './TrialEspecificConfiguration';
+
 /**
  * TrialConfiguration - Respresents Trial Global configuration for each Heuristic
  */
@@ -10,7 +12,7 @@ export default class TrialConfiguration {
      * 
      * By now can be:
      * 
-     * [global, NodeType]
+     * [Global, NodeType]
      * 
      */
     nodesSelectionApproach: string;
@@ -26,51 +28,7 @@ export default class TrialConfiguration {
     nodesType: string [];
     
     /**
-     * Neighbor approach for HC 
-     * 
-     * By now can be:
-     * [FirstAscent, LastAscent]
+     * Especific details for heurisitics runs
      */
-    neighborApproach: string;
-    
-    /**
-     * Commands to HC restart every N avaliations unsuccessful
-     * 
-     */
-    restart: boolean;
-    
-    /**
-     * How many avaliations before restart
-     */
-    trialsToRestart: number;
-    
-    /**
-     * GA #generations
-     */
-    generations: number;
-    
-    /**
-     * GA #individuals
-     */
-    individuals: number;
-    
-    /**
-     * Crossover probability 
-     */
-    crossoverProbability: number;
-    
-    /**
-     * Mutation probability 
-     */
-    mutationProbability: number;
-    
-    /**
-     * Use or not Elitism
-     */
-    elitism: boolean;
-    
-    /**
-     * % of individuals for elitism
-     *  */    
-    elitismPercentual: number;
+    especific: TrialEspecificConfiguration;
 }

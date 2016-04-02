@@ -1,4 +1,4 @@
-import IConfiguration from '../IConfiguration';
+import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
 import ITester from '../ITester';
 import ILogger from '../ILogger';
 import LogFactory from '../LogFactory';
@@ -10,23 +10,17 @@ import Individual from '../Individual';
  */
 abstract  class IHeuristic
 {
-    _config: IConfiguration;
+    _config: TrialEspecificConfiguration;
     _logger: ILogger;
     _tester: ITester;
+    
+    public Trials:number;
     
     /**
      * Forces the Heuristic to validate config
      */
-    Setup(config: IConfiguration): void{
-         
-        this.DoValidation(config); 
+    Setup(config: TrialEspecificConfiguration): void{
         this._config = config;
-        
-        //Creates the ILogger especific fro this config
-        this._logger = new LogFactory().CreateByName(this._config.logWritter);
-        
-        //Creates the Tester especific fro this config
-        this._tester = new TesterFactory().CreateByName(this._config.tester);
     }
     
     /**
@@ -48,33 +42,6 @@ abstract  class IHeuristic
      */
     Notify(){
         
-    }
-    
-    /**
-     * Do the configuration object validation
-     */
-    private DoValidation(config: IConfiguration){
-      
-      if(config.libraries.length == 0)
-      {
-          throw "Needs some Lib to run Improvement Process";    
-      }
-      
-      if(config.logWritter.length == 0)
-      {
-          throw "Needs LogWritter configuration";    
-      }
-      
-      if(!config.trials && config.trials == 0)
-      {
-          throw "Needs Total Trials configuration";    
-      }
-      
-      if(config.heuristics.length == 0)
-      {
-          throw "Needs some Heuristic to run Improvement Process";    
-      }
-      
     }
 }
 

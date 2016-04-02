@@ -20,20 +20,21 @@ describe('IHeuristic Tests', () => {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var rdInstance = new HeuristicFactory().CreateByName(configuration.heuristics[1]);
+        var especific = configuration.trialsConfiguration[0].especific;
         
-        rdInstance.Setup(configuration);
+        rdInstance.Setup(especific);
         
         expect(rdInstance).not.be.an('undefined');
         expect(rdInstance._config).not.be.an('undefined');
-        expect(rdInstance._logger).not.be.an('undefined');
-        expect(rdInstance._tester).not.be.an('undefined');
     });
     
     it('Should Validate Especific Configuration ', () => {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var hcInstance: HC  = new HeuristicFactory().CreateByName(configuration.heuristics[2]) as HC;
-        hcInstance.Setup(configuration);
+        var especific = configuration.trialsConfiguration[0].especific;
+        
+        hcInstance.Setup(especific);
         
         expect(hcInstance).not.be.an('undefined');
         expect(hcInstance.neighborApproach).to.be("FirstAscent");
