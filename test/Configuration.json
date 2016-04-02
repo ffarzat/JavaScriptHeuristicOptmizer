@@ -17,5 +17,6 @@
         {"name":"xml2js",       "path":"Libraries/xml2js/",         "mainFilePath":"Libraries/xml2js/lib/xml2js.js" }
     ],
     "logWritter": "ConcreteLogger",
-    "tester": "CommandTester"
+    "tester": "CommandTester",
+    "heuristics": ["GA", "RD"]
 }

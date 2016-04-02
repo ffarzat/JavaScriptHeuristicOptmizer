@@ -20,7 +20,7 @@ interface IConfiguration {
     /**
      * Configurated Heuristics to run over libs #trial times 
      */
-    heuristics: IHeuristic[];
+    heuristics: string[];
     
     /**
      * Logtype
