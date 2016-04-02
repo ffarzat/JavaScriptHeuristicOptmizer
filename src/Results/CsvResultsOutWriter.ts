@@ -21,9 +21,9 @@ export default class CsvResultsOutWriter implements IOutWriter {
     file: string;
     
     options = {
-        separator: ',',
+        separator: '|',
         newline: '\n',
-        headers: undefined,
+        headers: ["trial", "originalIndividualAvgTime", "originalIndividualLOC", "originalIndividualCharacters", "bestIndividualAvgTime", "bestIndividualLOC", "bestIndividualCharacters"],
         sendHeaders: true
     }
     
@@ -35,7 +35,9 @@ export default class CsvResultsOutWriter implements IOutWriter {
         
         this.directory = configuration.resultsDirectory;
         this.file = path.join(configuration.resultsDirectory, configuration.trialResultsFile);
-                
+        
+        console.log('           csv:', this.file);
+                        
         this.writer = csvWriter(this.options);
         this.writer.pipe(fs.createWriteStream(this.file));
     }
@@ -48,6 +50,8 @@ export default class CsvResultsOutWriter implements IOutWriter {
         {
             fs.unlinkSync(configuration.resultsDirectory);
         }
+        
+        fs.mkdir(configuration.resultsDirectory);
     }
     
     /**
@@ -57,6 +61,7 @@ export default class CsvResultsOutWriter implements IOutWriter {
      * 
      */
     WriteTrialResults(result: TrialResults){
+        
         this.writer.write({
             "trial": result.trial, 
             "originalIndividualAvgTime": result.originalIndividualAvgTime, 
