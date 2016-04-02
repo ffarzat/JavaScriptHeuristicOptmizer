@@ -6,6 +6,8 @@ import ITester from './ITester';
 import IOutWriter from './IOutWriter';
 import LogFactory from './LogFactory';
 import TesterFactory from './TesterFactory';
+import IOutWriterFactory from './IOutWriterFactory';
+import TrialResults from './Results/TrialResults';
 
 /**
  * Optmizer
@@ -32,6 +34,11 @@ export default class Optmizer {
         this.trialIndex = trialIndex;
         this.nodesSelectionApproach = this.configuration.trialsConfiguration[trialIndex].nodesSelectionApproach;
         this.nodesType = this.configuration.trialsConfiguration[trialIndex].nodesType;
+        
+        this.InitializeLogger();
+        this.InitializeTester();
+        this.InitializeOutWritter();
+        this.IntializeHeuristics();
     }
     
     /**
@@ -66,13 +73,14 @@ export default class Optmizer {
      */
     private InitializeLogger(){
         this.logger = new LogFactory().CreateByName(this.configuration.logWritter);
+        this.logger.Initialize(this.configuration);
     }
     
     /**
      * Initializes configurated Tester class
      */
     private InitializeTester(){
-        this.tester = new TesterFactory().CreateByName(this.configuration.tester);   
+        this.tester = new TesterFactory().CreateByName(this.configuration.tester);
     }
     
     
@@ -81,7 +89,8 @@ export default class Optmizer {
      * 
      */
     private InitializeOutWritter(){
-        
+        this.outter = new IOutWriterFactory().CreateByName(this.configuration.outWriter);
+        this.outter.Initialize(this.configuration);
     }
     
     /**
@@ -102,14 +111,17 @@ export default class Optmizer {
     /**
      * Notifies about results of improvement
      */
-    private Notify(){
-        
+    private Notify(result: TrialResults){
+
+  
     }
     
     /**
      * Initializes intire Improvement Process
      */
     DoOptmization(){
+        
+        this.Notify(new TrialResults());
         
     }
     

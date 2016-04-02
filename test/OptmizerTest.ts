@@ -18,12 +18,13 @@ describe('Optmizer Tests', function () {
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var optmizer = new Optmizer();
         optmizer.Setup(configuration, 0);
+        optmizer.DoOptmization();
         
         expect(optmizer.trialIndex).to.be(0);
 
     });  
        
-    it('Should Count Nodes From Lodash', function () {
+    it('Should Run DoOptmization', function () {
         
 
     });
