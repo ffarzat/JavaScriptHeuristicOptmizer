@@ -36,7 +36,7 @@ export default class CsvResultsOutWriter implements IOutWriter {
         this.directory = configuration.resultsDirectory;
         this.file = path.join(configuration.resultsDirectory, configuration.trialResultsFile);
         
-        console.log('           csv:', this.file);
+        //console.log('           csv:', this.file);
                         
         this.writer = csvWriter(this.options);
         this.writer.pipe(fs.createWriteStream(this.file));
@@ -46,6 +46,7 @@ export default class CsvResultsOutWriter implements IOutWriter {
      * Clean or not old files
      */
     private DoClean(configuration: IConfiguration){
+        
         if(fs.existsSync(configuration.resultsDirectory) && configuration.logFileClearing)
         {
             fs.unlinkSync(configuration.resultsDirectory);

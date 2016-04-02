@@ -18,6 +18,8 @@ describe('CsvOutWritterTest Tests', () => {
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 
         var concrete = new IOutWriterFactory().CreateByName(configuration.outWriter);
+        
+        configuration.logFileClearing = false; //just here for testing purpose
         concrete.Initialize(configuration);
         var fakeResult = new TrialResults();
         
