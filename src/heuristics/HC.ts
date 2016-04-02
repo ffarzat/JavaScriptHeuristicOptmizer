@@ -1,6 +1,7 @@
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
 import IHeuristic from './IHeuristic';
 import ITester from '../ITester';
+import TrialResults from '../Results/TrialResults';
 
 /**
  * Hill Climbing Search for Code Improvement
@@ -23,12 +24,14 @@ export default class HC extends IHeuristic {
     }
    
     /**
-     * Initializes all trials
+     * Run the trial
      */
-    RunTrials(){
+    RunTrial(trialIndex: number): TrialResults{
         
         for (var index = 0; index < this.Trials; index++) {
             console.log("Runing HC!");
         }
+        
+        return;
     }
 }

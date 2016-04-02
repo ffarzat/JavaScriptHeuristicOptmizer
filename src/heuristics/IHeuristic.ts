@@ -1,4 +1,5 @@
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
+import TrialResults from '../Results/TrialResults';
 import ITester from '../ITester';
 import ILogger from '../ILogger';
 import LogFactory from '../LogFactory';
@@ -26,7 +27,7 @@ abstract  class IHeuristic
     /**
      * Especific Run for each Heuristic
      */
-    abstract RunTrials();
+    abstract RunTrial(trialIndex: number): TrialResults;
     
     /**
      * Global Test configuration
@@ -35,13 +36,6 @@ abstract  class IHeuristic
         // creates a new instance
         //Delegate for any available client
         //save results over individual it self
-    }
-    
-    /**
-     * Global notifications about process run status
-     */
-    Notify(){
-        
     }
 }
 

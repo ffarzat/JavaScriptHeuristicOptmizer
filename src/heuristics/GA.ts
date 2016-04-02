@@ -1,6 +1,7 @@
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
 import IHeuristic from './IHeuristic';
 import ITester from '../ITester';
+import TrialResults from '../Results/TrialResults';
 
 /**
  * Genetic Algorithm for Code Improvement
@@ -34,11 +35,13 @@ export default class GA extends IHeuristic {
     /**
      * Initializes all trials
      */
-    RunTrials(){
+    RunTrial(trialIndex: number): TrialResults{
         
         for (var index = 0; index < this.Trials; index++) {
             console.log("Runing GA!");
         }
         
+        
+        return;
     }
 }
