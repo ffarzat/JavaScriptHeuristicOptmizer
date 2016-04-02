@@ -38,9 +38,16 @@ export default class Individual {
      */
     ToCode() :string{
 
-        var generatedAST = escodegen.attachComments(this.AST, this.AST.comments, this.AST.tokens);
+        var code: string = "";
+        
+        try {
+            var generatedAST = escodegen.attachComments(this.AST, this.AST.comments, this.AST.tokens);
+            code = escodegen.generate(generatedAST, this.Options);     
+        } catch (error) {
+            console.error(error);
+        }
 
-        return escodegen.generate(generatedAST, this.Options);
+        return code; 
     }
     
     /**
