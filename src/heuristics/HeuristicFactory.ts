@@ -2,6 +2,7 @@ import IConfiguration from '../IConfiguration';
 import IHeuristic from './IHeuristic';
 import GA from './GA';
 import RD from './RD';
+import HC from './HC';
 
  /**
  * HeuristicFactory
@@ -13,7 +14,9 @@ export default class HeuristicFactory {
      */
     CreateByName(name:string): IHeuristic {
         
-        switch (name) {            
+        switch (name) {
+            case "HC":
+                return new HC();            
             case "RD":
                 return new RD();
             case "GA":

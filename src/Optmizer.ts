@@ -12,12 +12,16 @@ export default class Optmizer {
     logger: ILogger;
     tester: ITester;
     outter: IOutWritter;
+    nodesSelectionApproach: string;
+    nodesType: string [];
         
     /**
      * Initializes intire Setup chain
      */
     Setup(config: IConfiguration) {
-        //Instantiates and calls all others Setup methods
+        
+        this.nodesSelectionApproach = config.trialConfiguration.nodesSelectionApproach;
+        this.nodesType = config.trialConfiguration.nodesType; 
     }
     
     /**

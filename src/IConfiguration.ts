@@ -1,6 +1,7 @@
 import IHeuristic from './heuristics/IHeuristic';
 import ILogger from './ILogger';
 import Library from './Library';
+import TrialConfiguration from './TrialConfiguration';
 
 /**
  * Configuration Interface for Json file
@@ -18,17 +19,29 @@ interface IConfiguration {
     libraries: Library[];
     
     /**
-     * Configurated Heuristics to run over libs #trial times 
+     * Configurated Heuristics 
+     * 
+     * By now can be:
+     * [GA, HC, RD]
      */
     heuristics: string[];
     
     /**
      * Logtype
+     * 
+     * By now can be:
+     * [ConcreteLogger]
+     * 
      */
     logWritter: string;
     
     /**
      * Tester Type
+     * 
+     * By now can be:
+     * 
+     * [CommandTester]
+     * 
      */
     tester: string;
     
@@ -61,6 +74,12 @@ interface IConfiguration {
      * Determines delete or not a Log file at the begining of process
      */
     logFileClearing: boolean;
+    
+    /**
+     * Global trial configurations
+     */
+    trialConfiguration: TrialConfiguration;
+    
 }
 
 export default IConfiguration;
