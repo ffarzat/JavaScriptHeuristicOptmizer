@@ -6,6 +6,8 @@
     "logFilePath": "build/optmization.log",
     "logCategory":"optmization",
     "logFileClearing": true,
+    "resultsDirectory": "build/out",
+    "trialResultsFile": "trialsresult.csv",
     "libraries" : [
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
         {"name":"Jade",         "path":"Libraries/Jade/",       "mainFilePath":"Libraries/Jade/lib/index.js"  },
@@ -18,6 +20,7 @@
     ],
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
+    "outWriter": "CsvResultsOutWriter",
     "heuristics": ["GA", "RD", "HC"],
     "trialsConfiguration":[
         {"nodesSelectionApproach":"Global", "especific": {"neighborApproach":"FirstAscent", "restart":false, "trialsToRestart":5}},
