@@ -1,11 +1,11 @@
 {
     "file": "Configuration.json",
     "trials":50,
-    "FitType":"mean",
+    "fitType":"mean",
     "testUntil": 2,
-    "LogFilePath": "build/optmization.log",
-    "LogCategory":"optmization",
-    "LogFileClearing": true,
+    "logFilePath": "build/optmization.log",
+    "logCategory":"optmization",
+    "logFileClearing": true,
     "libraries" : [
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
         {"name":"Jade",         "path":"Libraries/Jade/",       "mainFilePath":"Libraries/Jade/lib/index.js"  },
@@ -16,5 +16,6 @@
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
         {"name":"xml2js",       "path":"Libraries/xml2js/",         "mainFilePath":"Libraries/xml2js/lib/xml2js.js" }
     ],
-    "logWritter": "ConcreteLogger"
+    "logWritter": "ConcreteLogger",
+    "tester": "CommandTester"
 }
