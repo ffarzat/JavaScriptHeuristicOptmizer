@@ -38,8 +38,8 @@ export default class ConcreteLogger implements ILogger {
    */
     Initialize(configuration: IConfiguration){
        
-       this._file = path.join(process.cwd(), configuration.LogFilePath);
-       this._category = configuration.LogCategory;
+       this._file = path.join(process.cwd(), configuration.logFilePath);
+       this._category = configuration.logCategory;
        
        if(this._clearLogFile && fs.existsSync( this._file))
        {

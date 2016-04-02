@@ -20,12 +20,17 @@ interface IConfiguration {
     /**
      * Configurated Heuristics to run over libs #trial times 
      */
-    heuristics: IHeuristic[];
+    heuristics: string[];
     
     /**
      * Logtype
      */
-    logWritter: ILogger;
+    logWritter: string;
+    
+    /**
+     * Tester Type
+     */
+    tester: string;
     
     /**
      * #Time to run optmization process
@@ -40,22 +45,22 @@ interface IConfiguration {
     /**
      * Fit type: can be mean or median 
      */
-    FitType: string; 
+    fitType: string; 
     
     /**
      * Path to Log File [Relative]
      */
-    LogFilePath: string;
+    logFilePath: string;
     
     /**
      * Category for Logger
      */
-    LogCategory: string;
+    logCategory: string;
     
     /**
      * Determines delete or not a Log file at the begining of process
      */
-    LogFileClearing: boolean;
+    logFileClearing: boolean;
 }
 
 export default IConfiguration;

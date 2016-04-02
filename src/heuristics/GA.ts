@@ -5,14 +5,7 @@ import ITester from '../ITester';
 /**
  * Genetic Algorithm for Code Improvement
  */
-export default class GA implements IHeuristic {
-    
-    /**
-     * Parse especific config for GA
-     */
-    Setup(config: IConfiguration): void{
-      
-    }
+export default class GA extends IHeuristic {
     
     /**
      * Initializes all trials
@@ -20,20 +13,4 @@ export default class GA implements IHeuristic {
     RunTrials(){
         
     }
-    
-    /**
-     * Executes the unit Tests over GA's perspective
-     */
-    Test(tester: ITester){
-        
-    }
-    
-    
-    /**
-     * Notifies about results of all trials
-     */
-    Notify(){
-        
-    }
-    
 }
