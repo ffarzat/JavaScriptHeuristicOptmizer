@@ -4,6 +4,7 @@ import Individual from './Individual';
 import OperatorContext from './OperatorContext';
 
 var types = require("ast-types");
+import path = require('path');
 var deepcopy = require("deepcopy");
 
 

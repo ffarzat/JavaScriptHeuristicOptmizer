@@ -3,7 +3,7 @@ import IHeuristic from './heuristics/IHeuristic';
 import HeuristicFactory from './heuristics/HeuristicFactory';
 import ILogger from './ILogger';
 import ITester from './ITester';
-import IOutWritter from './IOutWritter';
+import IOutWriter from './IOutWriter';
 import LogFactory from './LogFactory';
 import TesterFactory from './TesterFactory';
 
@@ -15,7 +15,7 @@ export default class Optmizer {
     configuration: IConfiguration;
     logger: ILogger;
     tester: ITester;
-    outter: IOutWritter;
+    outter: IOutWriter;
     nodesSelectionApproach: string;
     nodesType: string [] = [];
     heuristics: IHeuristic [] = [];

@@ -14,6 +14,16 @@ interface IConfiguration {
     file: string;
     
     /**
+     * Diretory for Code Files and csv files 
+     */
+    resultsDirectory: string
+    
+    /**
+     * Filename for results.csv
+     */
+    trialResultsFile: string;
+    
+    /**
      * Subjects
      */
     libraries: Library[];
@@ -34,6 +44,11 @@ interface IConfiguration {
      * 
      */
     logWritter: string;
+
+    /**
+     * Results writter
+     *  */    
+    outWriter: string;
     
     /**
      * Tester Type
