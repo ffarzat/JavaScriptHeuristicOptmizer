@@ -19,13 +19,16 @@ export default class Optmizer {
     nodesSelectionApproach: string;
     nodesType: string [] = [];
     heuristics: IHeuristic [] = [];
-    trialIndex: number;
+    
+    public trialIndex: number;
             
     /**
      * Initializes intire Setup chain
      */
     Setup(config: IConfiguration, trialIndex: number) {
         this.DoValidation(config)
+        this.configuration = config;
+        
         this.trialIndex = trialIndex;
         this.nodesSelectionApproach = this.configuration.trialsConfiguration[trialIndex].nodesSelectionApproach;
         this.nodesType = this.configuration.trialsConfiguration[trialIndex].nodesType;
