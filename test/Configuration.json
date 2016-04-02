@@ -19,5 +19,8 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "heuristics": ["GA", "RD", "HC"],
-    "trialConfiguration":{"neighborApproach":"FirstAscent", "restart":false, "trialsToRestart":5}
+    "trialsConfiguration":[
+        {"nodesSelectionApproach":"Global", "especific": {"neighborApproach":"FirstAscent", "restart":false, "trialsToRestart":5}},
+        {"nodesSelectionApproach":"NodeType", "nodesType": ["CallExpression", "IfStatement"], "especific": {"neighborApproach":"FirstAscent", "restart":false, "trialsToRestart":5}}  
+    ]
 }

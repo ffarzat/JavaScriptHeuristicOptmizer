@@ -12,8 +12,8 @@ export default class RD extends IHeuristic {
      */
     RunTrials(){
         
-        for (var index = 0; index < this._config.trials; index++) {
-            console.log("Runing!");
+        for (var index = 0; index < this.Trials; index++) {
+            console.log("Runing RD!");
             
         }
         
