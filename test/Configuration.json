@@ -23,7 +23,7 @@
     "outWriter": "CsvResultsOutWriter",
     "heuristics": ["GA", "RD", "HC"],
     "trialsConfiguration":[
-        {"nodesSelectionApproach":"Global", "especific": {"neighborApproach":"FirstAscent", "restart":false, "trialsToRestart":5}},
+        {"nodesSelectionApproach":"Global", "especific": {"neighborApproach":"FirstAscent", "restart":false, "trialsToRestart":5, "individuals": 2, "generations": 1}},
         {"nodesSelectionApproach":"NodeType", "nodesType": ["CallExpression", "IfStatement"], "especific": {"neighborApproach":"FirstAscent", "restart":false, "trialsToRestart":5}}  
     ]
 }

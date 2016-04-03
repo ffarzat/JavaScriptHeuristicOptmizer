@@ -31,7 +31,7 @@ abstract  class IHeuristic
     /**
      * Especific Run for each Heuristic
      */
-    abstract RunTrial(trialIndex: number): TrialResults;
+    abstract RunTrial(trialIndex: number, original: Individual): TrialResults;
     
     /**
      *  Releases a Mutation over context 

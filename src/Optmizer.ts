@@ -104,6 +104,9 @@ export default class Optmizer {
             heuristic.Setup(this.configuration.trialsConfiguration[this.trialIndex].especific);
             heuristic.Trials = this.configuration.trials;
             
+            heuristic._logger = this.logger;
+            heuristic._tester = this.tester;
+            
             this.heuristics.push(heuristic);
         });
     }
