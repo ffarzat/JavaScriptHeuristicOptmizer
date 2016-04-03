@@ -5,7 +5,7 @@
     "testUntil": 2,
     "logFilePath": "build/optmization.log",
     "logCategory":"optmization",
-    "logFileClearing": true,
+    "logFileClearing": false,
     "resultsDirectory": "build/out",
     "trialResultsFile": "trialsresult.csv",
     "libraries" : [

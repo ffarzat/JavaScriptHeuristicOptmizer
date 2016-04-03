@@ -6,6 +6,10 @@ import LogFactory from '../LogFactory';
 import TesterFactory from '../TesterFactory';
 import Individual from '../Individual';
 
+import ASTExplorer from '../ASTExplorer';
+import OperatorContext from '../OperatorContext';
+
+
 /**
  * Generic interface for Heuristics 
  */
@@ -28,6 +32,14 @@ abstract  class IHeuristic
      * Especific Run for each Heuristic
      */
     abstract RunTrial(trialIndex: number): TrialResults;
+    
+    /**
+     *  Releases a Mutation over context 
+     */
+    Mutate(context: OperatorContext): Individual{
+        var astExplorer: ASTExplorer = new ASTExplorer();
+        return astExplorer.Mutate(context); 
+    }
     
     /**
      * Global Test configuration

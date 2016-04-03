@@ -121,8 +121,11 @@ export default class Optmizer {
      */
     DoOptmization(){
         
-        this.Notify(new TrialResults());
+        //Para cada Heuristica
+            //Executar um trial
+            //Voltar resultados
         
+        //this.Notify(new TrialResults());
     }
     
 }
