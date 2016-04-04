@@ -22,7 +22,7 @@ export default class TrialConfiguration {
      * 
      * By now can be:
      * 
-     * [CallExpression, IfStatement]
+     * [Function]
      * 
      */
     nodesType: string [];

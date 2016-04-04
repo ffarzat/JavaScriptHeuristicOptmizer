@@ -12,6 +12,8 @@ export default class HC extends IHeuristic {
     neighborApproach: string;
     restart: boolean;
     trialsToRestart: number;
+    trials: number
+    nodesType: string [];
     
     /**
      * Especific Setup
@@ -22,6 +24,8 @@ export default class HC extends IHeuristic {
         this.neighborApproach = config.neighborApproach;
         this.restart = config.restart;
         this.trialsToRestart = config.trialsToRestart;
+        this.trials = config.trials;
+        this.nodesType = config.nodesType;
     }
    
     /**
@@ -29,10 +33,23 @@ export default class HC extends IHeuristic {
      */
     RunTrial(trialIndex: number, original: Individual): TrialResults{
         
-        for (var index = 0; index < this.Trials; index++) {
+        
+        
+        for (var index = 0; index < this.trials; index++) {
             console.log("Runing HC!");
         }
         
         return;
     }
+    
+    /**
+     * Creates a List with
+     */
+    CreateNodesIteratorList(): number {
+        
+        
+        
+        return;
+    }
+    
 }

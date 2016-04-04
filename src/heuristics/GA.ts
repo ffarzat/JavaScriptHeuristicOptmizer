@@ -20,9 +20,6 @@ export default class GA extends IHeuristic {
     elitism: boolean;
     elitismPercentual: number;
     
-    bestFit: number;
-    bestIndividual: Individual;
-    
      /**
      * Especific Setup
      */
@@ -153,14 +150,6 @@ export default class GA extends IHeuristic {
         
         this.Test(newOnes[1]);
         population.push(newOnes[1]);
-    }
-    
-    /**
-     * Update global best info
-     */
-    UpdateBest(newBest: Individual){
-        this.bestFit =  this._tester.RetrieveConfiguratedFitFor(newBest);
-        this.bestIndividual = newBest;  
     }
     
     /**

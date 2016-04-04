@@ -6,34 +6,35 @@ import expect = require('expect.js');
 
 import Individual from '../../src/Individual';
 import IConfiguration from '../../src/IConfiguration';
-import GA from '../../src/heuristics/GA';
+import HC from '../../src/heuristics/HC';
 import ASTExplorer from '../../src/ASTExplorer';
 import LogFactory from '../../src/LogFactory';
 import TesterFactory from '../../src/TesterFactory';
 
-describe('GA Tests', function() {
+
+describe('HC Tests', function() {
     
     this.timeout(60*10*1000);//ten minutes
     
     it('Should creates an instance', function() {
-        var ga: GA = new GA();
-        expect(ga).not.be.a('undefined');
+        var hc: HC = new HC();
+        expect(hc).not.be.a('undefined');
     });
     
     it('Should Creates a new Population Based on config', function () {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var lib = configuration.libraries[3]; //minimist
-        var ga: GA = new GA();
+        var hc: HC = new HC();
         
         var astExplorer: ASTExplorer = new ASTExplorer();
         var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
         
-        ga.Setup(configuration.trialsConfiguration[0].especific);
+        hc.Setup(configuration.trialsConfiguration[0].especific);
         
         var logger = new LogFactory().CreateByName(configuration.logWritter);
         logger.Initialize(configuration);
-        ga._logger = logger;
+        hc._logger = logger;
         
         var tester = new TesterFactory().CreateByName(configuration.tester);
         tester.Setup(configuration.testUntil, lib, configuration.fitType);
@@ -42,24 +43,17 @@ describe('GA Tests', function() {
         tester.Test(individualOverTests); //test orginal
         tester.SetLogger(logger);
         
-        ga._tester = tester;
+        hc._tester = tester;
         
         var totalNodes = astExplorer.CountNodes(individualOverTests);
-        ga._totalNodeCount = totalNodes;
+        hc._totalNodeCount = totalNodes;
         
-        ga.UpdateBest(individualOverTests);
+        hc.UpdateBest(individualOverTests);
         //====================>
-        //var population: Individual [] = ga.CreatesFirstGeneration(individualOverTests);
-        
-         //expect(population).not.be.an('undefined');
-         //expect(population.length).to.be.equal(configuration.trialsConfiguration[0].especific.individuals);
-         
-         //TODO: Remove this line
-         var results = ga.RunTrial(0, individualOverTests);
+         var results = hc.RunTrial(0, individualOverTests);
          
          expect(results).not.be.an('undefined');
          expect(results.trial).to.be.equal(0);
     });
     
-    
-})
+});

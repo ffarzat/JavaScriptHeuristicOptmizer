@@ -23,6 +23,9 @@ abstract  class IHeuristic
     
     public Trials:number;
     
+    bestFit: number;
+    bestIndividual: Individual;
+    
     
     /**
      * Forces the Heuristic to validate config
@@ -82,6 +85,15 @@ abstract  class IHeuristic
         results.originalIndividualLOC =   originalCode.split(/\r\n|\r|\n/).length;
         
         return results;
+    }
+    
+        
+    /**
+     * Update global best info
+     */
+    UpdateBest(newBest: Individual){
+        this.bestFit =  this._tester.RetrieveConfiguratedFitFor(newBest);
+        this.bestIndividual = newBest;  
     }
 }
 
