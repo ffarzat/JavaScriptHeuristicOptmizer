@@ -33,6 +33,9 @@ export default class CommandTester implements ITester {
     fitType: string;
     
     logger: ILogger;
+    
+    oldLibFilePath: string;
+    
 
     /**
      * Initializes NPM packages if necessary
@@ -46,6 +49,10 @@ export default class CommandTester implements ITester {
         this.libDirectoryPath = path.join(process.cwd(), LibrarieOverTest.path);
         this.testOldDirectory = process.cwd();
         this.fitType = fitType;
+        this.oldLibFilePath = path.join(this.libDirectoryPath, 'old.js');
+        
+        fse.copySync(this.libMainFilePath, this.oldLibFilePath, {"clobber": true});
+        
     }
 
     /**
@@ -93,6 +100,7 @@ export default class CommandTester implements ITester {
         }
         finally{
             process.chdir(this.testOldDirectory);    
+            fse.copySync(this.oldLibFilePath, this.libMainFilePath, {"clobber": true});
         }
                 
         var unitTestsTimer = exectimer.timers[testUuid];

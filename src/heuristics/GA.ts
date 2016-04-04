@@ -83,9 +83,7 @@ export default class GA extends IHeuristic {
             });
             
             //Cut off
-            
-            
-            
+            this.DoPopuplationCut(population);
         }
 
         return this.ProcessResult(trialIndex, original, this.bestIndividual);
@@ -113,13 +111,17 @@ export default class GA extends IHeuristic {
      */
     private Repopulate(population: Individual [], untill: number)
     {
-        //Repopulate 
-           for (var index = 0; index < untill; index++) {
+           this._logger.Write(`Initializing a new population with [${untill}]`);
+            
+           for (var localIndex = 0; localIndex < untill; localIndex++) {
                
                 var context: OperatorContext = new OperatorContext();
+            
                 var clone: Individual = this.bestIndividual.Clone();
+                
                 context.First = clone;
-
+                context.TotalNodesCount = this._totalNodeCount;
+            
                 var mutant = this.Mutate(context)
 
                 this.Test(mutant);
@@ -165,8 +167,6 @@ export default class GA extends IHeuristic {
      * Returns a list of Mutated new individuals
      */
     CreatesFirstGeneration(original: Individual): Individual []{
-        this._logger.Write(`Initializing a new population [${this.individuals}]`);
-        
         var localPopulation: Individual [] = [];
         localPopulation.push(original);
         

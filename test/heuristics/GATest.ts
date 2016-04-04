@@ -23,7 +23,7 @@ describe('GA Tests', function() {
     it('Should Creates a new Population Based on config', function () {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[6]; //uuid
+        var lib = configuration.libraries[3]; //minimist
         var ga: GA = new GA();
         
         var astExplorer: ASTExplorer = new ASTExplorer();
