@@ -9,6 +9,7 @@ import CommandTester from '../src/CommandTester';
 import Individual from '../src/Individual';
 import OperatorContext from '../src/OperatorContext';
 import ASTExplorer from '../src/ASTExplorer';
+import LogFactory from '../src/LogFactory';
 
 describe('CommandTester Tests', function () {
 
@@ -24,9 +25,15 @@ describe('CommandTester Tests', function () {
         var astExplorer: ASTExplorer = new ASTExplorer();
         var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
 
+        
+        var logger = new LogFactory().CreateByName(configuration.logWritter);
+        logger.Initialize(configuration);
+         
+
         //Setup
         var commandTester = new CommandTester();
         commandTester.Setup(configuration.testUntil, lib, configuration.fitType);
+        commandTester.SetLogger(logger);
 
         //Exec the test
         commandTester.Test(individualOverTests);

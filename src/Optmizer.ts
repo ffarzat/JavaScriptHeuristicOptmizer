@@ -121,7 +121,7 @@ export default class Optmizer {
      */
     DoOptmization(){
         //Testar o original antes de começar aqui e configurar as heuristicas novamente
-        
+        //Contar os nos do Orignal e setar na _totalNodeCount da Heurisitca
         
         //Para cada Heuristica
             //Executar um trial

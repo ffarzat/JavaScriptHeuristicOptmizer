@@ -13,7 +13,7 @@ import TesterFactory from '../../src/TesterFactory';
 
 describe('GA Tests', function() {
     
-    this.timeout(60000);
+    this.timeout(60*10*1000);//ten minutes
     
     it('Should creates an instance', function() {
         var ga: GA = new GA();
@@ -36,16 +36,27 @@ describe('GA Tests', function() {
         ga._logger = logger;
         
         var tester = new TesterFactory().CreateByName(configuration.tester);
-        tester.Setup(configuration.testUntil, lib, configuration.fitType);        
+        tester.Setup(configuration.testUntil, lib, configuration.fitType);
+        tester.SetLogger(logger);        
         
         tester.Test(individualOverTests); //test orginal
+        tester.SetLogger(logger);
         
         ga._tester = tester;
         
+        var totalNodes = astExplorer.CountNodes(individualOverTests);
+        ga._totalNodeCount = totalNodes;
+        
+        ga.UpdateBest(individualOverTests);
+        //====================>
         var population: Individual [] = ga.CreatesFirstGeneration(individualOverTests);
         
          expect(population).not.be.an('undefined');
          expect(population.length).to.be.equal(configuration.trialsConfiguration[0].especific.individuals);
+         
+         //TODO: Remove this line
+         ga.RunTrial(0, individualOverTests);
+         
     });
     
     

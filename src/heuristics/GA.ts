@@ -38,38 +38,126 @@ export default class GA extends IHeuristic {
         this.elitismPercentual = config.elitismPercentual;
     }
     
-    
     /**
-     * Run a trial
+     * Run a single trial
      */
     RunTrial(trialIndex: number, original: Individual): TrialResults{
-        this._logger.Write(` Starting a GA trail #${trialIndex} for ${this.Trials} times`);
-        
-        this.UpdateBest(this._tester.RetrieveConfiguratedFitFor(original), original);
+        this._logger.Write(`Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
         
         var population: Individual [] = this.CreatesFirstGeneration(original);
-        
-        for (var index = 0; index < this.Trials; index++) {
-            this._logger.Write(` Starting time ${this.Trials}`);
+
+        for (var generationIndex = 1; generationIndex < this.generations; generationIndex++) {
+            this._logger.Write(`Starting generation ${generationIndex}`);
             
-            for (var indexG = 0; indexG < this.generations; indexG++) {
-                //Do cross for % of population [inside a for]
-                //mutation
-                //Testing evaluation
-                //FInd new best? UpdateBest
-                //Again untill generations over
+            for (var individualIndex = 0; individualIndex < this.individuals -1; individualIndex++) {
+                
+                //Crossover
+                var crossoverChance = this.GenereateRandom(0, 100);
+                
+                if(this.crossoverProbability >= crossoverChance)
+                {
+                    this._logger.Write(`Doing a crossover with individual ${individualIndex}`);
+                    this.DoCrossOver(population, individualIndex);
+                }
+                
+                
+                //Mutation
+                var mutationChance = this.GenereateRandom(0, 100);
+
+                if(this.mutationProbability >= mutationChance)
+                {
+                    this._logger.Write(`Doing a mutation with individual ${individualIndex}`);
+                    var context: OperatorContext = new OperatorContext();
+                    context.First = population[individualIndex];
+                    
+                    var mutant = this.Mutate(context);
+                    this.Test(mutant);
+                    population.push(mutant);
+                }
             }
+
+            //Looking for a new best            
+            population.forEach(element => {
+                if(this._tester.RetrieveConfiguratedFitFor(element) < this.bestFit)
+                    this.UpdateBest(element);
+            });
+            
+            //Cut off
+            
+            
+            
         }
+
+        return this.ProcessResult(trialIndex, original, this.bestIndividual);
+    }
+    
+    /**
+     * Releases Elitism over population
+     */
+    private DoPopuplationCut(population: Individual [])
+    {
+        if(this.elitism){
+           population.sort(function (a,b){ return this._tester.RetrieveConfiguratedFitFor(a) > this._tester.RetrieveConfiguratedFitFor(b)? 1: 0; });
+           var countElitism = (this.individuals * this.elitismPercentual) / 100;
+           this._logger.Write(`Using Elitism. Keeping ${countElitism} best individuals`);
+           population.splice(0, countElitism);
+           this.Repopulate(population, countElitism);
+        }
+        else{
+           population.splice(0, this.individuals); 
+        }
+    }
+    
+    /**
+     * Repopulates using Mutation
+     */
+    private Repopulate(population: Individual [], untill: number)
+    {
+        //Repopulate 
+           for (var index = 0; index < untill; index++) {
+               
+                var context: OperatorContext = new OperatorContext();
+                var clone: Individual = this.bestIndividual.Clone();
+                context.First = clone;
+
+                var mutant = this.Mutate(context)
+
+                this.Test(mutant);
+                
+                //this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(mutant)}`);
+
+                if(this._tester.RetrieveConfiguratedFitFor(mutant) <= this.bestFit)
+                {
+                    this.UpdateBest(mutant);
+                }
+
+                population.push(mutant);  
+           }
+    }
+    
+    
+    /**
+     * Execute crossover
+     */
+    private DoCrossOver(population: Individual [], individualIndex: number)
+    {
+        var context: OperatorContext = new OperatorContext();
+        context.First = population[individualIndex];
+        context.Second = population[this.GenereateRandom(0, population.length)];
+        var newOnes = this.CrossOver(context);
         
+        this.Test(newOnes[0]);
+        population.push(newOnes[0]);
         
-        return;
+        this.Test(newOnes[1]);
+        population.push(newOnes[1]);
     }
     
     /**
      * Update global best info
      */
-    UpdateBest(newFit: number, newBest: Individual){
-        this.bestFit =  newFit;
+    UpdateBest(newBest: Individual){
+        this.bestFit =  this._tester.RetrieveConfiguratedFitFor(newBest);
         this.bestIndividual = newBest;  
     }
     
@@ -82,25 +170,16 @@ export default class GA extends IHeuristic {
         var localPopulation: Individual [] = [];
         localPopulation.push(original);
         
-        for (var index = 0; index < this.individuals -1; index++) {
-            var context: OperatorContext = new OperatorContext();
-            var clone: Individual = original.Clone();
-            context.First = clone;
-            this.Mutate(context)
-            this.Test(clone);
-
-            this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(clone)}`);
-            
-            if(this._tester.RetrieveConfiguratedFitFor(clone) <= this.bestFit)
-            {
-                this.UpdateBest(this._tester.RetrieveConfiguratedFitFor(clone), clone);
-            }
-            
-            
-            localPopulation.push(clone);
-        }
+       this.Repopulate(localPopulation, this.individuals -1);
         
         return localPopulation;
+    }
+    
+    /**
+     * Generates random integer between two numbers low (inclusive) and high (inclusive) ([low, high])  
+     */
+    private GenereateRandom(low, high): number {
+        return Math.floor(Math.random() * (high - low + 1) + low);
     }
     
 }

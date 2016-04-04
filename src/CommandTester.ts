@@ -6,13 +6,15 @@ import Individual from './Individual';
 import OperatorContext from './OperatorContext';
 import Library from './Library';
 import TestResults from './TestResults';
+import ILogger from './ILogger';
 
 import path = require('path');
 import Shell = require('shelljs');
-var exectimer = require('exectimer');
 import fs = require('fs');
 import fse = require('fs-extra');
 
+var uuid = require('node-uuid');
+var exectimer = require('exectimer');
 
 /**
  * CommandTester
@@ -29,6 +31,8 @@ export default class CommandTester implements ITester {
     testOldDirectory:string;
     //Attr for Fit evaluation
     fitType: string;
+    
+    logger: ILogger;
 
     /**
      * Initializes NPM packages if necessary
@@ -59,15 +63,17 @@ export default class CommandTester implements ITester {
         this.WriteCodeToFile(individual);
         var outputsFromCmd: string[] = [];
         var passedAllTests = true;
-        
+        var testUuid = uuid.v4();
         try {
             process.chdir(this.libDirectoryPath);
             
             var Tick = exectimer.Tick;
             
+            this.logger.Write(`Doing ${this.testUntil} evaluations`);
+            
             for (var index = 0; index < this.testUntil; index++) {
             
-                var testExecutionTimeTick = new Tick("unitTests");
+                var testExecutionTimeTick = new Tick(testUuid);
                 testExecutionTimeTick.start();
                 var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('npm test', {silent:true}) as Shell.ExecOutputReturnValue);
                 testExecutionTimeTick.stop();    
@@ -89,8 +95,7 @@ export default class CommandTester implements ITester {
             process.chdir(this.testOldDirectory);    
         }
                 
-        var unitTestsTimer = exectimer.timers.unitTests;
-        //this.ShowConsoleResults(unitTestsTimer);
+        var unitTestsTimer = exectimer.timers[testUuid];
         
         if(passedAllTests)
         {
@@ -121,6 +126,9 @@ export default class CommandTester implements ITester {
 
             individual.testResults = results;
         }
+        
+        this.logger.Write(`All Tests: ${passedAllTests}`);
+        this.ShowConsoleResults(unitTestsTimer);
     }
 
     /**
@@ -142,19 +150,27 @@ export default class CommandTester implements ITester {
      * Just for Debug
      */
     private ShowConsoleResults(timer:any){
-        
-        console.log('       total duration:' + timer.parse(timer.duration())); // total duration of all ticks
-        console.log('       min:' + timer.parse(timer.min()));      // minimal tick duration
-        console.log('       max:' + timer.parse(timer.max()));      // maximal tick duration
-        console.log('       mean:' + timer.parse(timer.mean()));     // mean tick duration
-        console.log('       median:' + timer.parse(timer.median()));   // median tick duration
+        //this.logger.Write('Results:');
+        this.logger.Write('total duration:' + timer.parse(timer.duration())); // total duration of all ticks
+        this.logger.Write('min:' + timer.parse(timer.min()));      // minimal tick duration
+        this.logger.Write('max:' + timer.parse(timer.max()));      // maximal tick duration
+        this.logger.Write('mean:' + timer.parse(timer.mean()));     // mean tick duration
+        this.logger.Write('median:' + timer.parse(timer.median()));   // median tick duration
     }
 
     /**
      * Writes the new code Over old Main File of the lib over tests
      */
     private WriteCodeToFile(individual: Individual) {
+        //this.logger.Write(`Saving over file ${this.libMainFilePath}`);
         fs.writeFileSync(this.libMainFilePath, individual.ToCode());
+    }
+
+    /**
+     * Updating logger
+     *  */    
+    SetLogger(logger: ILogger){
+        this.logger = logger;
     }
 
 }
