@@ -67,13 +67,14 @@ export default class GA extends IHeuristic {
         localPopulation.push(original);
         
         for (var index = 0; index < this.individuals -1; index++) {
-            var clone: Individual = original.Clone();
             var context: OperatorContext = new OperatorContext();
+            var clone: Individual = original.Clone();
             context.First = clone;
-            
-            //Testing all new?
-            
-            localPopulation.push(this.Mutate(context));
+            this.Mutate(context)
+            this.Test(clone);
+
+            //this._logger.Write(`        FIT: ${clone.testResults.median}`);
+            localPopulation.push(clone);
         }
         
         return localPopulation;

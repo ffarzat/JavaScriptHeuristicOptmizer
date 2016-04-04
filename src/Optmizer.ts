@@ -33,7 +33,7 @@ export default class Optmizer {
         
         this.trialIndex = trialIndex;
         this.nodesSelectionApproach = this.configuration.trialsConfiguration[trialIndex].nodesSelectionApproach;
-        this.nodesType = this.configuration.trialsConfiguration[trialIndex].nodesType;
+        this.nodesType = this.configuration.trialsConfiguration[this.trialIndex].nodesType;
         
         this.InitializeLogger();
         this.InitializeTester();
@@ -105,7 +105,7 @@ export default class Optmizer {
             heuristic.Trials = this.configuration.trials;
             
             heuristic._logger = this.logger;
-            heuristic._tester = this.tester;
+
             
             this.heuristics.push(heuristic);
         });
@@ -127,6 +127,8 @@ export default class Optmizer {
         //Para cada Heuristica
             //Executar um trial
             //Voltar resultados
+
+            //this.heuristics[0]._tester = this.tester; Precisa configurar o Testador
         
         //this.Notify(new TrialResults());
     }

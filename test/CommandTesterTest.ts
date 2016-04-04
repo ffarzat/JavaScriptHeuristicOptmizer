@@ -20,32 +20,25 @@ describe('CommandTester Tests', function () {
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var lib = configuration.libraries[6]; //uuid
 
-        /**
-         * Creates a ctx object to test  lib 1 - Jade
-         *  */
-        var context: OperatorContext = new OperatorContext();
-        context.LibrarieOverTest = lib;
-        context.FitnessTopValue = 9999999999999;
-
         //Creates the Inidividual for tests
         var astExplorer: ASTExplorer = new ASTExplorer();
         var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
 
         //Setup
         var commandTester = new CommandTester();
-        commandTester.Setup(configuration, context);
+        commandTester.Setup(configuration.testUntil, lib);
 
         //Exec the test
-        var testResults = commandTester.Test(individualOverTests);
+        commandTester.Test(individualOverTests);
         
-        expect(testResults).not.to.be(undefined);
-        expect(testResults.duration).not.to.be(undefined);
-        expect(testResults.min).not.to.be(undefined);
-        expect(testResults.max).not.to.be(undefined);
-        expect(testResults.mean).not.to.be(undefined);
-        expect(testResults.median).not.to.be(undefined);
-        expect(testResults.outputs).not.to.be(undefined);
-        expect(testResults.passedAllTests).not.to.be(undefined);
-        expect(testResults.rounds).not.to.be(undefined);
+        expect(individualOverTests.testResults).not.to.be(undefined);
+        expect(individualOverTests.testResults.duration).not.to.be(undefined);
+        expect(individualOverTests.testResults.min).not.to.be(undefined);
+        expect(individualOverTests.testResults.max).not.to.be(undefined);
+        expect(individualOverTests.testResults.mean).not.to.be(undefined);
+        expect(individualOverTests.testResults.median).not.to.be(undefined);
+        expect(individualOverTests.testResults.outputs).not.to.be(undefined);
+        expect(individualOverTests.testResults.passedAllTests).not.to.be(undefined);
+        expect(individualOverTests.testResults.rounds).not.to.be(undefined);
     });
 });

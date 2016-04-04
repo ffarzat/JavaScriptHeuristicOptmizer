@@ -42,12 +42,14 @@ abstract  class IHeuristic
     }
     
     /**
-     * Global Test configuration
+     * Global Test execution
      */
     Test(individual: Individual){
-        // creates a new instance
-        //Delegate for any available client
-        //save results over individual it self
+        
+        this._tester.Test(individual);
+        
+        //TODO: Delegate for any available client or processor available
+        //TODO: save results over individual it self
     }
 }
 

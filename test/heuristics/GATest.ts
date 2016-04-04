@@ -9,8 +9,7 @@ import IConfiguration from '../../src/IConfiguration';
 import GA from '../../src/heuristics/GA';
 import ASTExplorer from '../../src/ASTExplorer';
 import LogFactory from '../../src/LogFactory';
-
-
+import TesterFactory from '../../src/TesterFactory';
 
 describe('GA Tests', function() {
     
@@ -35,6 +34,10 @@ describe('GA Tests', function() {
         var logger = new LogFactory().CreateByName(configuration.logWritter);
         logger.Initialize(configuration);
         ga._logger = logger;
+        
+        
+        ga._tester = new TesterFactory().CreateByName(configuration.tester);
+        ga._tester.Setup(configuration.testUntil, lib);
         
         var population: Individual [] = ga.CreatesFirstGeneration(individualOverTests);
         

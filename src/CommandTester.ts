@@ -18,7 +18,6 @@ import fse = require('fs-extra');
  * CommandTester
  */
 export default class CommandTester implements ITester {
-    config: IConfiguration;
 
     //Number of times to run tests over a single individual
     testUntil: number;
@@ -28,30 +27,24 @@ export default class CommandTester implements ITester {
     libDirectoryPath: string;
     //Actual dir
     testOldDirectory:string;
-    fitnessTopValue:number;
 
     /**
      * Initializes NPM packages if necessary
      */
-    Setup(configuration: IConfiguration, context: OperatorContext){
+    Setup(testUntil: number, LibrarieOverTest: Library) {
 
-        this.config = configuration;
-        this.testUntil = configuration.testUntil;
+        this.testUntil = testUntil;
 
         //Setup tests with Lib context
-        var lib = context.LibrarieOverTest;
-        this.libMainFilePath = lib.mainFilePath;
-        this.libDirectoryPath = path.join(process.cwd(), lib.path);
+        this.libMainFilePath = LibrarieOverTest.mainFilePath;
+        this.libDirectoryPath = path.join(process.cwd(), LibrarieOverTest.path);
         this.testOldDirectory = process.cwd();
-        this.fitnessTopValue = context.FitnessTopValue;
-
-        //fse.copySync(lib.mainFilePath, path.join(lib.path, '_oldCode.js'));
     }
 
     /**
      * Do the test for an individual
      */
-    Test(individual: Individual): TestResults {
+    Test(individual: Individual)  {
         //output new code over main file js
         this.WriteCodeToFile(individual);
         var outputsFromCmd: string[] = [];
@@ -100,16 +93,22 @@ export default class CommandTester implements ITester {
         results.outputs = outputsFromCmd;
         results.passedAllTests = passedAllTests
 
-        return results;
+        individual.testResults = results;
     }
 
     /**
-     * Backs to initial state when necessary
+     * Return a copy ready for testing again
      */
-    Clean() {
-        
-        
+    Clone(): ITester {
+        var tester = new CommandTester();
+        tester.testUntil = this.testUntil;
 
+        //Setup tests with Lib context
+        tester.libMainFilePath = this.libMainFilePath;
+        tester.libDirectoryPath = this.libDirectoryPath;
+        tester.testOldDirectory = this.testOldDirectory;
+        
+        return tester;
     }
 
     /**
