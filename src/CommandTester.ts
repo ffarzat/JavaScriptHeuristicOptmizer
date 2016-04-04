@@ -92,18 +92,35 @@ export default class CommandTester implements ITester {
         var unitTestsTimer = exectimer.timers.unitTests;
         //this.ShowConsoleResults(unitTestsTimer);
         
-        
-        var results:TestResults = new TestResults();
-        results.rounds = this.testUntil;
-        results.min = unitTestsTimer.min();
-        results.max = unitTestsTimer.max();
-        results.mean = unitTestsTimer.mean();
-        results.median = unitTestsTimer.median();
-        results.duration = unitTestsTimer.duration();
-        results.outputs = outputsFromCmd;
-        results.passedAllTests = passedAllTests
+        if(passedAllTests)
+        {
+            var results:TestResults = new TestResults();
+            results.rounds = this.testUntil;
+            results.min = unitTestsTimer.min();
+            results.max = unitTestsTimer.max();
+            results.mean = unitTestsTimer.mean();
+            results.median = unitTestsTimer.median();
+            results.duration = unitTestsTimer.duration();
+            results.outputs = outputsFromCmd;
+            results.passedAllTests = passedAllTests
 
-        individual.testResults = results;
+            individual.testResults = results;
+        }
+        else
+        {
+            var results:TestResults = new TestResults();
+            results.rounds = this.testUntil;
+            
+            results.min = 0;
+            results.max = 0;
+            results.mean = 0;
+            results.median = 0;
+            results.duration = 0;
+            results.outputs = outputsFromCmd;
+            results.passedAllTests = passedAllTests
+
+            individual.testResults = results;
+        }
     }
 
     /**
