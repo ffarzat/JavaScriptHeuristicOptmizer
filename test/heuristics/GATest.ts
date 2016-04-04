@@ -35,9 +35,12 @@ describe('GA Tests', function() {
         logger.Initialize(configuration);
         ga._logger = logger;
         
+        var tester = new TesterFactory().CreateByName(configuration.tester);
+        tester.Setup(configuration.testUntil, lib, configuration.fitType);        
         
-        ga._tester = new TesterFactory().CreateByName(configuration.tester);
-        ga._tester.Setup(configuration.testUntil, lib, configuration.fitType);
+        tester.Test(individualOverTests); //test orginal
+        
+        ga._tester = tester;
         
         var population: Individual [] = ga.CreatesFirstGeneration(individualOverTests);
         

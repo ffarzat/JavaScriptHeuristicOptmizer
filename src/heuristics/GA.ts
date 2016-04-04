@@ -44,22 +44,33 @@ export default class GA extends IHeuristic {
      */
     RunTrial(trialIndex: number, original: Individual): TrialResults{
         this._logger.Write(` Starting a GA trail #${trialIndex} for ${this.Trials} times`);
+        
+        this.UpdateBest(this._tester.RetrieveConfiguratedFitFor(original), original);
+        
         var population: Individual [] = this.CreatesFirstGeneration(original);
-
-        this.bestFit =  this._tester.RetrieveConfiguratedFitFor(original);           
-
-        //Testing the original?        
         
         for (var index = 0; index < this.Trials; index++) {
             this._logger.Write(` Starting time ${this.Trials}`);
             
-            
-            
-            
+            for (var indexG = 0; indexG < this.generations; indexG++) {
+                //Do cross for % of population [inside a for]
+                //mutation
+                //Testing evaluation
+                //FInd new best? UpdateBest
+                //Again untill generations over
+            }
         }
         
         
         return;
+    }
+    
+    /**
+     * Update global best info
+     */
+    UpdateBest(newFit: number, newBest: Individual){
+        this.bestFit =  newFit;
+        this.bestIndividual = newBest;  
     }
     
     /**
@@ -79,6 +90,13 @@ export default class GA extends IHeuristic {
             this.Test(clone);
 
             this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(clone)}`);
+            
+            if(this._tester.RetrieveConfiguratedFitFor(clone) <= this.bestFit)
+            {
+                this.UpdateBest(this._tester.RetrieveConfiguratedFitFor(clone), clone);
+            }
+            
+            
             localPopulation.push(clone);
         }
         
