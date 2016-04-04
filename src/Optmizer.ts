@@ -33,7 +33,7 @@ export default class Optmizer {
         
         this.trialIndex = trialIndex;
         this.nodesSelectionApproach = this.configuration.trialsConfiguration[trialIndex].nodesSelectionApproach;
-        this.nodesType = this.configuration.trialsConfiguration[trialIndex].nodesType;
+        this.nodesType = this.configuration.trialsConfiguration[this.trialIndex].nodesType;
         
         this.InitializeLogger();
         this.InitializeTester();
@@ -103,7 +103,7 @@ export default class Optmizer {
             var heuristic = factory.CreateByName(element);
             heuristic.Setup(this.configuration.trialsConfiguration[this.trialIndex].especific);
             heuristic.Trials = this.configuration.trials;
-            
+            heuristic._logger = this.logger;
             this.heuristics.push(heuristic);
         });
     }
@@ -120,9 +120,16 @@ export default class Optmizer {
      * Initializes intire Improvement Process
      */
     DoOptmization(){
+        //Testar o original antes de começar aqui e configurar as heuristicas novamente
+        //Contar os nos do Orignal e setar na _totalNodeCount da Heurisitca
         
-        this.Notify(new TrialResults());
+        //Para cada Heuristica
+            //Executar um trial
+            //Voltar resultados
+
+            //this.heuristics[0]._tester = this.tester; Precisa configurar o Testador
         
+        //this.Notify(new TrialResults());
     }
     
 }

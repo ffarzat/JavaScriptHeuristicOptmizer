@@ -5,7 +5,7 @@
     "testUntil": 2,
     "logFilePath": "build/optmization.log",
     "logCategory":"optmization",
-    "logFileClearing": true,
+    "logFileClearing": false,
     "resultsDirectory": "build/out",
     "trialResultsFile": "trialsresult.csv",
     "libraries" : [
@@ -23,7 +23,23 @@
     "outWriter": "CsvResultsOutWriter",
     "heuristics": ["GA", "RD", "HC"],
     "trialsConfiguration":[
-        {"nodesSelectionApproach":"Global", "especific": {"neighborApproach":"FirstAscent", "restart":false, "trialsToRestart":5}},
-        {"nodesSelectionApproach":"NodeType", "nodesType": ["CallExpression", "IfStatement"], "especific": {"neighborApproach":"FirstAscent", "restart":false, "trialsToRestart":5}}  
+        {"nodesSelectionApproach":"Global", "especific": {
+                                                "neighborApproach":"FirstAscent", 
+                                                "restart":false, 
+                                                "trialsToRestart":5, 
+                                                "individuals": 2, 
+                                                "generations": 1,
+                                                "crossoverProbability": 75,
+                                                "mutationProbability": 25,
+                                                "elitism": true,
+                                                "elitismPercentual": 30
+                                                }
+        },
+        {"nodesSelectionApproach":"NodeType", "nodesType": ["CallExpression", "IfStatement"], "especific": {
+                                                                                                    "neighborApproach":"FirstAscent", 
+                                                                                                    "restart":false, 
+                                                                                                    "trialsToRestart":5
+                                                                                                    }
+        }  
     ]
 }

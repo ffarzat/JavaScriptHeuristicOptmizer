@@ -24,7 +24,8 @@
     "exectimer": "2.0.0",
     "fs-extra": "0.26.7",
     "log4js": "0.6.33",
-    "npm": "3.8.3",
+    "node-uuid": "1.4.7",
+    "randomizer": "0.0.1",
     "shelljs": "0.6.0",
     "typescript": "1.8.9"
   },
