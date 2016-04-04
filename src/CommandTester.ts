@@ -27,11 +27,13 @@ export default class CommandTester implements ITester {
     libDirectoryPath: string;
     //Actual dir
     testOldDirectory:string;
+    //Attr for Fit evaluation
+    fitType: string;
 
     /**
      * Initializes NPM packages if necessary
      */
-    Setup(testUntil: number, LibrarieOverTest: Library) {
+    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string) {
 
         this.testUntil = testUntil;
 
@@ -39,6 +41,14 @@ export default class CommandTester implements ITester {
         this.libMainFilePath = LibrarieOverTest.mainFilePath;
         this.libDirectoryPath = path.join(process.cwd(), LibrarieOverTest.path);
         this.testOldDirectory = process.cwd();
+        this.fitType = fitType;
+    }
+
+    /**
+     * Knows what attribute uses for Fit evaluation
+     */
+    RetrieveConfiguratedFitFor(individual: Individual): number{
+        return individual.testResults[this.fitType];
     }
 
     /**

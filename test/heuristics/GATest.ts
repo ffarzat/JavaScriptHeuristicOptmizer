@@ -37,7 +37,7 @@ describe('GA Tests', function() {
         
         
         ga._tester = new TesterFactory().CreateByName(configuration.tester);
-        ga._tester.Setup(configuration.testUntil, lib);
+        ga._tester.Setup(configuration.testUntil, lib, configuration.fitType);
         
         var population: Individual [] = ga.CreatesFirstGeneration(individualOverTests);
         

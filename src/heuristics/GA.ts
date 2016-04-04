@@ -20,6 +20,9 @@ export default class GA extends IHeuristic {
     elitism: boolean;
     elitismPercentual: number;
     
+    bestFit: number;
+    bestIndividual: Individual;
+    
      /**
      * Especific Setup
      */
@@ -42,6 +45,8 @@ export default class GA extends IHeuristic {
     RunTrial(trialIndex: number, original: Individual): TrialResults{
         this._logger.Write(` Starting a GA trail #${trialIndex} for ${this.Trials} times`);
         var population: Individual [] = this.CreatesFirstGeneration(original);
+
+        this.bestFit =  this._tester.RetrieveConfiguratedFitFor(original);           
 
         //Testing the original?        
         
@@ -73,7 +78,7 @@ export default class GA extends IHeuristic {
             this.Mutate(context)
             this.Test(clone);
 
-            //this._logger.Write(`        FIT: ${clone.testResults.median}`);
+            this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(clone)}`);
             localPopulation.push(clone);
         }
         

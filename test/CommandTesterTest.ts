@@ -26,7 +26,7 @@ describe('CommandTester Tests', function () {
 
         //Setup
         var commandTester = new CommandTester();
-        commandTester.Setup(configuration.testUntil, lib);
+        commandTester.Setup(configuration.testUntil, lib, configuration.fitType);
 
         //Exec the test
         commandTester.Test(individualOverTests);
