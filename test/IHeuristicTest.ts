@@ -38,7 +38,7 @@ describe('IHeuristic Tests', () => {
         
         expect(hcInstance).not.be.an('undefined');
         expect(hcInstance.neighborApproach).to.be("FirstAscent");
-        expect(hcInstance.restart).to.be(false);
+        expect(hcInstance.restart).to.be(true);
         expect(hcInstance.trialsToRestart).to.be(5);
     });
     

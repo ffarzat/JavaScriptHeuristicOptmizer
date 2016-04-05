@@ -51,7 +51,8 @@ export default class CommandTester implements ITester {
         this.fitType = fitType;
         this.oldLibFilePath = path.join(this.libDirectoryPath, 'old.js');
         
-        fse.copySync(this.libMainFilePath, this.oldLibFilePath, {"clobber": true});
+        if(!fse.existsSync(this.oldLibFilePath))
+            fse.copySync(this.libMainFilePath, this.oldLibFilePath, {"clobber": true});
         
     }
 

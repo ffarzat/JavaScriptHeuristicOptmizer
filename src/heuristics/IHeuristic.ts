@@ -10,6 +10,11 @@ import ASTExplorer from '../ASTExplorer';
 import OperatorContext from '../OperatorContext';
 
 
+import Node from './Node';
+
+var nodes = require('nodes');
+
+
 /**
  * Generic interface for Heuristics 
  */
@@ -94,6 +99,21 @@ abstract  class IHeuristic
     UpdateBest(newBest: Individual){
         this.bestFit =  this._tester.RetrieveConfiguratedFitFor(newBest);
         this.bestIndividual = newBest;  
+    }
+    
+    
+     /**
+     * Releases a mutation over an AST  by nodetype and index
+     * 
+     */
+     MutateBy(clone: Individual, nodeType: string, nodeindex: number){
+        var emptyNode = {"type": "EmptyStatement"};
+        var program = nodes.build(clone.AST);
+        var nodeToExclude = program.search(nodeType)[nodeindex];
+
+        nodeToExclude = undefined;
+
+        clone.AST = program;
     }
 }
 

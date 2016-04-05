@@ -3,10 +3,11 @@ import fs = require('fs');
 import Individual from './Individual';
 import OperatorContext from './OperatorContext';
 
-var types = require("ast-types");
 import path = require('path');
-var deepcopy = require("deepcopy");
 
+var types = require("ast-types");
+var deepcopy = require("deepcopy");
+var escodegen = require('escodegen');
 
 /**
 * ASTExplorer
@@ -27,7 +28,9 @@ export default class ASTExplorer {
         var generatedAST = esprima.parse(sourceCode, this.globalOptions) as any;
 
         var newIndividual: Individual = new Individual();
-
+        
+        var generatedAST = escodegen.attachComments(generatedAST, generatedAST.comments, generatedAST.tokens);
+        
         newIndividual.AST = generatedAST;
 
         return newIndividual;

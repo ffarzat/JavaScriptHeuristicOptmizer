@@ -10,7 +10,7 @@ import HC from '../../src/heuristics/HC';
 import ASTExplorer from '../../src/ASTExplorer';
 import LogFactory from '../../src/LogFactory';
 import TesterFactory from '../../src/TesterFactory';
-
+import fse = require('fs-extra');
 
 describe('HC Tests', function() {
     
@@ -21,7 +21,7 @@ describe('HC Tests', function() {
         expect(hc).not.be.a('undefined');
     });
     
-    it('Should Creates a new Population Based on config', function () {
+    it('Should Iterate Based on config', function () {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var lib = configuration.libraries[3]; //minimist
@@ -29,6 +29,7 @@ describe('HC Tests', function() {
         
         var astExplorer: ASTExplorer = new ASTExplorer();
         var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
+        fse.writeFileSync(path.join(process.cwd(), "original.js"), individualOverTests.ToCode(), "UTF8" ); //saving file for comparsion purpose
         
         hc.Setup(configuration.trialsConfiguration[0].especific);
         
@@ -41,7 +42,7 @@ describe('HC Tests', function() {
         tester.SetLogger(logger);        
         
         tester.Test(individualOverTests); //test orginal
-        tester.SetLogger(logger);
+        
         
         hc._tester = tester;
         
@@ -49,11 +50,17 @@ describe('HC Tests', function() {
         hc._totalNodeCount = totalNodes;
         
         hc.UpdateBest(individualOverTests);
+
+        //====================>
+        var mutant = individualOverTests.Clone();
+        hc.MutateBy(mutant, "#IfStatement", 0);
+        fse.writeFileSync(path.join(process.cwd(), "mutant.js"), mutant.ToCode(), "UTF8");
+        expect(mutant.AST).not.be.equal(individualOverTests.AST);
         //====================>
          var results = hc.RunTrial(0, individualOverTests);
          
-         expect(results).not.be.an('undefined');
-         expect(results.trial).to.be.equal(0);
+         //expect(results).not.be.an('undefined');
+         //expect(results.trial).to.be.equal(0);
     });
     
 });
