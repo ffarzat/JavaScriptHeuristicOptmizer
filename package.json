@@ -21,6 +21,7 @@
     "deepcopy": "0.6.1",
     "escodegen": "1.8.0",
     "esprima": "2.7.2",
+    "estraverse": "^4.2.0",
     "exectimer": "2.0.0",
     "fs-extra": "0.26.7",
     "log4js": "0.6.33",

@@ -5,7 +5,7 @@ import OperatorContext from './OperatorContext';
 
 import path = require('path');
 
-var types = require("ast-types");
+var estraverse = require("estraverse");
 var deepcopy = require("deepcopy");
 var escodegen = require('escodegen');
 
@@ -41,14 +41,10 @@ export default class ASTExplorer {
      */
     CountNodes(individual: Individual): number {
         var totalNodes: number = 0;
-        types.visit(individual.AST, {
-            //This method will visit every node on AST            
-            visitNode: function(path) {
-
-                var node = path.node;
+        
+        estraverse.traverse(individual.AST, {
+            enter: function (node) {
                 totalNodes++;
-
-                this.traverse(path); //continue
             }
         });
 
@@ -60,15 +56,30 @@ export default class ASTExplorer {
      * Executes the single point CrossOver
      */
     CrossOver(context: OperatorContext): Individual[] {
-        var randomIndexNode: number = this.GenereateRandom(0, context.TotalNodesCount);
+        var randomIndexNodeOne: number = this.GenereateRandom(0, context.TotalNodesCount);
+        var randomIndexNodeTwo: number = this.GenereateRandom(0, context.TotalNodesCount);
 
         //Gets the nodes
-        var firstNode = this.GetNode(context.First, randomIndexNode);
-        var secondNode = this.GetNode(context.Second, randomIndexNode);
+        var firstNode = this.GetNode(context.First, randomIndexNodeOne);
+        var secondNode = this.GetNode(context.Second, randomIndexNodeTwo);
 
         //Do Crossover
-        var newSon: Individual = this.ReplaceNode(context.Second, randomIndexNode, firstNode);
-        var newDaughter: Individual = this.ReplaceNode(context.First, randomIndexNode, secondNode);
+        var newSon: Individual = this.ReplaceNode(context.Second, randomIndexNodeTwo, firstNode);
+        var newDaughter: Individual = this.ReplaceNode(context.First, randomIndexNodeOne, secondNode);
+        
+        //If err in cross...
+        try {
+            newSon.ToCode();
+        } catch (error) {
+            newSon = undefined;
+        }
+        
+        try {
+            newDaughter.ToCode();
+        } catch (error) {
+            newDaughter = undefined;
+        }
+
 
         var result: Individual[] = [newSon, newDaughter];
 
@@ -82,19 +93,20 @@ export default class ASTExplorer {
         var newOne = individual.Clone();
         var counter = 0;
 
-        types.visit(newOne.AST, {
-            visitNode: function(path) {
-                var node = path.node;
-                if (counter == nodeIndex) {
-                    path.replace(nodeReplacement);
-                    this.abort();
-                }
-
-                counter++;
-                this.traverse(path); //continue
-            }
-        });
-
+        try {
+            estraverse.replace(individual.AST, {
+                    enter: function (node) {
+                        if (counter == nodeIndex) {
+                            return nodeReplacement;
+                        }
+                        
+                        counter++;
+                    }
+                });
+        } catch (error) {
+            console.log('Error due Crossover operator');
+        }
+        
         return newOne;
     }
 
@@ -105,16 +117,13 @@ export default class ASTExplorer {
         var counter = 0;
         var nodeOverIndex: any = {};
 
-        types.visit(individual.AST, {
-            visitNode: function(path) {
-                var node = path.node;
+        estraverse.traverse(individual.AST, {
+            enter: function (node) {
                 if (counter == nodeIndex) {
                     nodeOverIndex = deepcopy(node);
-                    this.abort();
+                    this.break();
                 }
-
                 counter++;
-                this.traverse(path); //continue
             }
         });
 
@@ -130,23 +139,7 @@ export default class ASTExplorer {
         var counter = 0;
         var randonNodeToPrune: number = this.GenereateRandom(0, context.TotalNodesCount);
 
-        types.visit(mutant.AST, {
-            //This method will visit every node on AST            
-            visitNode: function(path) {
-
-                var node = path.node;
-
-                if (counter == randonNodeToPrune) {
-                    var nodeExcluded = path.prune();
-                    this.abort();
-                    //console.log(JSON.stringify(nodeExcluded.node));
-                    //TODO: keeps the excluded node for reports
-                }
-
-                counter++;
-                this.traverse(path); //continue
-            }
-        });
+        this.ReplaceNode(mutant, randonNodeToPrune, {"type": "EmptyStatement"});
 
         return mutant;
     }

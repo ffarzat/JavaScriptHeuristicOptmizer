@@ -15,11 +15,11 @@ describe('CommandTester Tests', function () {
 
     this.timeout(60*10*1000); //10 minutes
 
-    it('Should execute Tests from uuid Lib', function () {
+    it('Should execute Tests from minimist Lib', function () {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[6]; //uuid
+        var lib = configuration.libraries[3]; //minimist
 
         //Creates the Inidividual for tests
         var astExplorer: ASTExplorer = new ASTExplorer();
@@ -37,7 +37,9 @@ describe('CommandTester Tests', function () {
 
         //Exec the test
         commandTester.Test(individualOverTests);
+        //logger.Write(individualOverTests.testResults.outputs.toString());
         
+        expect(individualOverTests.testResults.passedAllTests).to.be(true);
         expect(individualOverTests.testResults).not.to.be(undefined);
         expect(individualOverTests.testResults.duration).not.to.be(undefined);
         expect(individualOverTests.testResults.min).not.to.be(undefined);
