@@ -15,11 +15,11 @@ describe('CommandTester Tests', function () {
 
     this.timeout(60*10*1000); //10 minutes
 
-    it('Should execute Tests from minimist Lib', function () {
+    it('Should execute Tests from uuid Lib', function () {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[3]; //minimist
+        var lib = configuration.libraries[6]; //uuid
 
         //Creates the Inidividual for tests
         var astExplorer: ASTExplorer = new ASTExplorer();

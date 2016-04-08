@@ -24,7 +24,7 @@ describe('HC Tests', function() {
     it('Should Iterate Based on config', function () {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[3]; //minimist
+        var lib = configuration.libraries[6]; //minimist
         var hc: HC = new HC();
         
         var astExplorer: ASTExplorer = new ASTExplorer();

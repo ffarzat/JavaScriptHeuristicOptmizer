@@ -45,14 +45,14 @@ describe('ASTExplorer Tests', function () {
         expect(total).to.be(1235);
     });
     
-    it('Should Mutate Nodes from minimist lib', function() {
+    it('Should Mutate Nodes from uuid lib', function() {
         
         var astExplorer:ASTExplorer = new ASTExplorer();
         var context: OperatorContext = new OperatorContext();
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[3]; // minimist;
+        var lib = configuration.libraries[6]; // uuid;
         var libFile :string  = lib.mainFilePath;
         var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
         
@@ -70,20 +70,20 @@ describe('ASTExplorer Tests', function () {
         //var newOneTotal:number = astExplorer.CountNodes(newOne);
         //expect(newOneTotal).to.be.lessThan(1235);
         
-        expect(newOne.AST).not.equal(generatedIndividual.AST);   
+        //expect(newOne.AST).not.equal(generatedIndividual.AST);   
         expect(newOne.ToCode()).not.equal(generatedIndividual.ToCode());
         
             
     });
     
-    it('Should Cross over Nodes from minimist lib', function() {
+    it('Should Cross over Nodes from uuid lib', function() {
         
         var astExplorer:ASTExplorer = new ASTExplorer();
         var context: OperatorContext = new OperatorContext();
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[3]; // uuid;
+        var lib = configuration.libraries[6]; // uuid;
         var libFile :string  = lib.mainFilePath;
         var originalIndividual: Individual = astExplorer.GenerateFromFile(libFile);
         var total:number = astExplorer.CountNodes(originalIndividual);
@@ -94,27 +94,22 @@ describe('ASTExplorer Tests', function () {
         context.TotalNodesCount = total;
         context.First = originalIndividual.Clone();
         
-        var mutant = astExplorer.Mutate(context);
-        context.Second = mutant.Clone();
+        var mutantOne = astExplorer.Mutate(context);
+        var mutantTwo = astExplorer.Mutate(context);
+        
+        context.First = mutantOne.Clone();
+        context.Second = mutantTwo.Clone();
         
         var newOnes = astExplorer.CrossOver(context);
 
-        //var newTotal:number = astExplorer.CountNodes(originalIndividual);
-        //expect(newTotal).to.be(1235);
+        //console.log(newOnes[0]);
+        //console.log(newOnes[1]);
         
-        //var firstNew: number = astExplorer.CountNodes(newOnes[0]);
-        //expect(firstNew).not.to.be.equal(1267);
-        
-        //var secondNew: number = astExplorer.CountNodes(newOnes[1]);
-        //expect(secondNew).not.to.be.equal(1267);
-        
-        //expect(newOnes[0].AST).not.equal(originalIndividual.AST);   
         if(newOnes[0] != undefined)
-            expect(newOnes[0].ToCode()).not.equal(originalIndividual.ToCode());
+            expect(newOnes[0].ToCode()).not.equal(mutantOne.ToCode());
         
-        //expect(newOnes[1].AST).not.equal(originalIndividual.AST);
         if(newOnes[1] != undefined)   
-            expect(newOnes[1].ToCode()).not.equal(originalIndividual.ToCode());
+            expect(newOnes[1].ToCode()).not.equal(mutantTwo.ToCode());
         
             
     });

@@ -1,193 +1,209 @@
-module.exports = function (args, opts) {
-    if (!opts)
-        opts = {};
-    var flags = {
-        bools: {},
-        strings: {},
-        unknownFn: null
-    };
-    if (typeof opts['unknown'] === 'function') {
-        flags.unknownFn = opts['unknown'];
-    }
-    if (typeof opts['boolean'] === 'boolean' && opts['boolean']) {
-        flags.allBools = true;
-    } else {
-        [].concat(opts['boolean']).filter(Boolean).forEach(function (key) {
-            flags.bools[key] = true;
-        });
-    }
-    var aliases = {};
-    Object.keys(opts.alias || {}).forEach(function (key) {
-        aliases[key] = [].concat(opts.alias[key]);
-        aliases[key].forEach(function (x) {
-            aliases[x] = [key].concat(aliases[key].filter(function (y) {
-                return x !== y;
-            }));
-        });
-    });
-    [].concat(opts.string).filter(Boolean).forEach(function (key) {
-        flags.strings[key] = true;
-        if (aliases[key]) {
-            flags.strings[aliases[key]] = true;
-        }
-    });
-    var defaults = opts['default'] || {};
-    var argv = { _: [] };
-    Object.keys(flags.bools).forEach(function (key) {
-        setArg(key, defaults[key] === undefined ? false : defaults[key]);
-    });
-    var notFlags = [];
-    if (args.indexOf('--') !== -1) {
-        notFlags = args.slice(args.indexOf('--') + 1);
-        args = args.slice(0, args.indexOf('--'));
-    }
-    function argDefined(key, arg) {
-        return flags.allBools && /^--[^=]+$/.test(arg) || flags.strings[key] || flags.bools[key] || aliases[key];
-    }
-    function setArg(key, val, arg) {
-        if (arg && flags.unknownFn && !argDefined(key, arg)) {
-            if (flags.unknownFn(arg) === false)
-                return;
-        }
-        var value = !flags.strings[key] && isNumber(val) ? Number(val) : val;
-        setKey(argv, key.split('.'), value);
-        (aliases[key] || []).forEach(function (x) {
-            setKey(argv, x.split('.'), value);
-        });
-    }
-    function setKey(obj, keys, value) {
-        var o = obj;
-        keys.slice(0, -1).forEach(function (key) {
-            if (o[key] === undefined)
-                o[key] = {};
-            o = o[key];
-        });
-        var key = keys[keys.length - 1];
-        if (o[key] === undefined || flags.bools[key] || typeof o[key] === 'boolean') {
-            o[key] = value;
-        } else if (Array.isArray(o[key])) {
-            o[key].push(value);
-        } else {
-            o[key] = [
-                o[key],
-                value
-            ];
-        }
-    }
-    function aliasIsBoolean(key) {
-        return aliases[key].some(function (x) {
-            return flags.bools[x];
-        });
-    }
-    for (var i = 0; i < args.length; i++) {
-        var arg = args[i];
-        if (/^--.+=/.test(arg)) {
-            // Using [\s\S] instead of . because js doesn't support the
-            // 'dotall' regex modifier. See:
-            // http://stackoverflow.com/a/1068308/13216
-            var m = arg.match(/^--([^=]+)=([\s\S]*)$/);
-            var key = m[1];
-            var value = m[2];
-            if (flags.bools[key]) {
-                value = value !== 'false';
-            }
-            setArg(key, value, arg);
-        } else if (/^--no-.+/.test(arg)) {
-            var key = arg.match(/^--no-(.+)/)[1];
-            setArg(key, false, arg);
-        } else if (/^--.+/.test(arg)) {
-            var key = arg.match(/^--(.+)/)[1];
-            var next = args[i + 1];
-            if (next !== undefined && !/^-/.test(next) && !flags.bools[key] && !flags.allBools && (aliases[key] ? !aliasIsBoolean(key) : true)) {
-                setArg(key, next, arg);
-                i++;
-            } else if (/^(true|false)$/.test(next)) {
-                setArg(key, next === 'true', arg);
-                i++;
-            } else {
-                setArg(key, flags.strings[key] ? '' : true, arg);
-            }
-        } else if (/^-[^-]+/.test(arg)) {
-            var letters = arg.slice(1, -1).split('');
-            var broken = false;
-            for (var j = 0; j < letters.length; j++) {
-                var next = arg.slice(j + 2);
-                if (next === '-') {
-                    setArg(letters[j], next, arg);
-                    continue;
-                }
-                if (/[A-Za-z]/.test(letters[j]) && /=/.test(next)) {
-                    setArg(letters[j], next.split('=')[1], arg);
-                    broken = true;
-                    break;
-                }
-                if (/[A-Za-z]/.test(letters[j]) && /-?\d+(\.\d*)?(e-?\d+)?$/.test(next)) {
-                    setArg(letters[j], next, arg);
-                    broken = true;
-                    break;
-                }
-                if (letters[j + 1] && letters[j + 1].match(/\W/)) {
-                    setArg(letters[j], arg.slice(j + 2), arg);
-                    broken = true;
-                    break;
-                } else {
-                    setArg(letters[j], flags.strings[letters[j]] ? '' : true, arg);
-                }
-            }
-            var key = arg.slice(-1)[0];
-            if (!broken && key !== '-') {
-                if (args[i + 1] && !/^(-|--)[^-]/.test(args[i + 1]) && !flags.bools[key] && (aliases[key] ? !aliasIsBoolean(key) : true)) {
-                    setArg(key, args[i + 1], arg);
-                    i++;
-                } else if (args[i + 1] && /true|false/.test(args[i + 1])) {
-                    setArg(key, args[i + 1] === 'true', arg);
-                    i++;
-                } else {
-                    setArg(key, flags.strings[key] ? '' : true, arg);
-                }
-            }
-        } else {
-            if (!flags.unknownFn || flags.unknownFn(arg) !== false) {
-                argv._.push(flags.strings['_'] || !isNumber(arg) ? arg : Number(arg));
-            }
-            if (opts.stopEarly) {
-                argv._.push.apply(argv._, args.slice(i + 1));
-                break;
-            }
-        }
-    }
-    Object.keys(defaults).forEach(function (key) {
-        if (!hasKey(argv, key.split('.'))) {
-            setKey(argv, key.split('.'), defaults[key]);
-            (aliases[key] || []).forEach(function (x) {
-                setKey(argv, x.split('.'), defaults[key]);
-            });
-        }
-    });
-    if (opts['--']) {
-        argv['--'] = new Array();
-        notFlags.forEach(function (key) {
-            argv['--'].push(key);
-        });
-    } else {
-        notFlags.forEach(function (key) {
-            argv._.push(key);
-        });
-    }
-    return argv;
+/*
+ * UUID-js: A js library to generate and parse UUIDs, TimeUUIDs and generate
+ * TimeUUID based on dates for range selections.
+ * @see http://www.ietf.org/rfc/rfc4122.txt
+ **/
+function UUIDjs() {
+}
+;
+UUIDjs.maxFromBits = function (bits) {
+    return Math.pow(2, bits);
 };
-function hasKey(obj, keys) {
-    var o = obj;
-    keys.slice(0, -1).forEach(function (key) {
-        o = o[key] || {};
-    });
-    var key = keys[keys.length - 1];
-    return key in o;
+UUIDjs.limitUI04 = UUIDjs.maxFromBits(4);
+UUIDjs.limitUI06 = UUIDjs.maxFromBits(6);
+UUIDjs.limitUI08 = UUIDjs.maxFromBits(8);
+UUIDjs.limitUI12 = UUIDjs.maxFromBits(12);
+UUIDjs.limitUI14 = UUIDjs.maxFromBits(14);
+UUIDjs.limitUI16 = UUIDjs.maxFromBits(16);
+UUIDjs.limitUI32 = UUIDjs.maxFromBits(32);
+UUIDjs.limitUI40 = UUIDjs.maxFromBits(40);
+UUIDjs.limitUI48 = UUIDjs.maxFromBits(48);
+// Returns a random integer between min and max
+// Using Math.round() will give you a non-uniform distribution!
+// @see https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Math/random
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-function isNumber(x) {
-    if (typeof x === 'number')
-        return true;
-    if (/^0x[0-9a-f]+$/i.test(x))
-        return true;
-    return /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(e[-+]?\d+)?$/.test(x);
-}
+UUIDjs.randomUI04 = function () {
+    return getRandomInt(0, UUIDjs.limitUI04 - 1);
+};
+UUIDjs.randomUI06 = function () {
+    return getRandomInt(0, UUIDjs.limitUI06 - 1);
+};
+UUIDjs.randomUI08 = function () {
+    return getRandomInt(0, UUIDjs.limitUI08 - 1);
+};
+UUIDjs.randomUI12 = function () {
+    return getRandomInt(0, UUIDjs.limitUI12 - 1);
+};
+UUIDjs.randomUI14 = function () {
+    return getRandomInt(0, UUIDjs.limitUI14 - 1);
+};
+UUIDjs.randomUI16 = function () {
+    return getRandomInt(0, UUIDjs.limitUI16 - 1);
+};
+UUIDjs.randomUI32 = function () {
+    return getRandomInt(0, UUIDjs.limitUI32 - 1);
+};
+UUIDjs.randomUI40 = function () {
+    return (0 | Math.random() * (1 << 30)) + (0 | Math.random() * (1 << 40 - 30)) * (1 << 30);
+};
+UUIDjs.randomUI48 = function () {
+    return (0 | Math.random() * (1 << 30)) + (0 | Math.random() * (1 << 48 - 30)) * (1 << 30);
+};
+UUIDjs.paddedString = function (string, length, z) {
+    string = String(string);
+    z = !z ? '0' : z;
+    var i = length - string.length;
+    for (; i > 0; i >>>= 1, z += z) {
+        if (i & 1) {
+            string = z + string;
+        }
+    }
+    return string;
+};
+UUIDjs.prototype.fromParts = function (timeLow, timeMid, timeHiAndVersion, clockSeqHiAndReserved, clockSeqLow, node) {
+    this.version = timeHiAndVersion >> 12 & 15;
+    this.hex = UUIDjs.paddedString(timeLow.toString(16), 8) + '-' + UUIDjs.paddedString(timeMid.toString(16), 4) + '-' + UUIDjs.paddedString(timeHiAndVersion.toString(16), 4) + '-' + UUIDjs.paddedString(clockSeqHiAndReserved.toString(16), 2) + UUIDjs.paddedString(clockSeqLow.toString(16), 2) + '-' + UUIDjs.paddedString(node.toString(16), 12);
+    return this;
+};
+UUIDjs.prototype.toString = function () {
+    return this.hex;
+};
+UUIDjs.prototype.toURN = function () {
+    return 'urn:uuid:' + this.hex;
+};
+UUIDjs.prototype.toBytes = function () {
+    var parts = this.hex.split('-');
+    var ints = [];
+    var intPos = 0;
+    for (var i = 0; i < parts.length; i++) {
+        for (var j = 0; j < parts[i].length; j += 2) {
+            ints[intPos++] = parseInt(parts[i].substr(j, 2), 16);
+        }
+    }
+    return ints;
+};
+UUIDjs.prototype.equals = function (uuid) {
+    if (!(uuid instanceof UUID)) {
+        return false;
+    }
+    if (this.hex !== uuid.hex) {
+        return false;
+    }
+    return true;
+};
+UUIDjs.getTimeFieldValues = function (time) {
+    var ts = time - Date.UTC(1582, 9, 15);
+    var hm = ts / 4294967296 * 10000 & 268435455;
+    return {
+        low: (ts & 268435455) * 10000 % 4294967296,
+        mid: hm & 65535,
+        hi: hm >>> 16,
+        timestamp: ts
+    };
+};
+UUIDjs._create4 = function () {
+    return new UUIDjs().fromParts(UUIDjs.randomUI32(), UUIDjs.randomUI16(), 16384 | UUIDjs.randomUI12(), 128 | UUIDjs.randomUI06(), UUIDjs.randomUI08(), UUIDjs.randomUI48());
+};
+UUIDjs._create1 = function () {
+    var now = new Date().getTime();
+    var sequence = UUIDjs.randomUI14();
+    var node = (UUIDjs.randomUI08() | 1) * 1099511627776 + UUIDjs.randomUI40();
+    var tick = UUIDjs.randomUI04();
+    var timestamp = 0;
+    var timestampRatio = 1 / 4;
+    if (now != timestamp) {
+        if (now < timestamp) {
+            sequence++;
+        }
+        timestamp = now;
+        tick = UUIDjs.randomUI04();
+    } else if (Math.random() < timestampRatio && tick < 9984) {
+        tick += 1 + UUIDjs.randomUI04();
+    } else {
+        sequence++;
+    }
+    var tf = UUIDjs.getTimeFieldValues(timestamp);
+    var tl = tf.low + tick;
+    var thav = tf.hi & 4095 | 4096;
+    sequence &= 16383;
+    var cshar = sequence >>> 8 | 128;
+    var csl = sequence & 255;
+    return new UUIDjs().fromParts(tl, tf.mid, thav, cshar, csl, node);
+};
+UUIDjs.create = function (version) {
+    version = version || 4;
+    return this['_create' + version]();
+};
+UUIDjs.fromTime = function (time, last) {
+    last = !last ? false : last;
+    var tf = UUIDjs.getTimeFieldValues(time);
+    var tl = tf.low;
+    var thav = tf.hi & 4095 | 4096;
+    // set version '0001'
+    if (last === false) {
+        return new UUIDjs().fromParts(tl, tf.mid, thav, 0, 0, 0);
+    } else {
+        return new UUIDjs().fromParts(tl, tf.mid, thav, 128 | UUIDjs.limitUI06, UUIDjs.limitUI08 - 1, UUIDjs.limitUI48 - 1);
+    }
+};
+UUIDjs.firstFromTime = function (time) {
+    return UUIDjs.fromTime(time, false);
+};
+UUIDjs.lastFromTime = function (time) {
+    return UUIDjs.fromTime(time, true);
+};
+UUIDjs.fromURN = function (strId) {
+    var r, p = /^(?:urn:uuid:|\{)?([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{2})([0-9a-f]{2})-([0-9a-f]{12})(?:\})?$/i;
+    if (r = p.exec(strId)) {
+        return new UUIDjs().fromParts(parseInt(r[1], 16), parseInt(r[2], 16), parseInt(r[3], 16), parseInt(r[4], 16), parseInt(r[5], 16), parseInt(r[6], 16));
+    }
+    return null;
+};
+UUIDjs.fromBytes = function (ints) {
+    if (ints.length < 5) {
+        return null;
+    }
+    var str = '';
+    var pos = 0;
+    var parts = [
+        4,
+        2,
+        2,
+        2,
+        6
+    ];
+    for (var i = 0; i < parts.length; i++) {
+        for (var j = 0; j < parts[i]; j++) {
+            var octet = ints[pos++].toString(16);
+            if (octet.length == 1) {
+                octet = '0' + octet;
+            }
+            str += octet;
+        }
+        if (parts[i] !== 6) {
+            str += '-';
+        }
+    }
+    return UUIDjs.fromURN(str);
+};
+UUIDjs.fromBinary = function (binary) {
+    var ints = [];
+    for (var i = 0; i < binary.length; i++) {
+        ints[i] = binary.charCodeAt(i);
+        if (ints[i] > 255 || ints[i] < 0) {
+            throw new Error('Unexpected byte in binary data.');
+        }
+    }
+    return UUIDjs.fromBytes(ints);
+};
+// Aliases to support legacy code. Do not use these when writing new code as
+// they may be removed in future versions!
+UUIDjs['new'] = function () {
+    return this.create(4);
+};
+UUIDjs.newTS = function () {
+    return this.create(1);
+};
+module.exports = UUIDjs;
