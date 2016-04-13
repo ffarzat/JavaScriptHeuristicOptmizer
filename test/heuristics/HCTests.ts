@@ -29,7 +29,7 @@ describe('HC Tests', function() {
         
         var astExplorer: ASTExplorer = new ASTExplorer();
         var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
-        fse.writeFileSync(path.join(process.cwd(), "original.js"), individualOverTests.ToCode(), "UTF8" ); //saving file for comparsion purpose
+        //fse.writeFileSync(path.join(process.cwd(), "original.js"), individualOverTests.ToCode(), "UTF8" ); //saving file for comparsion purpose
         
         hc.Setup(configuration.trialsConfiguration[0].especific);
         
@@ -54,7 +54,7 @@ describe('HC Tests', function() {
         //====================>
         var mutant = individualOverTests.Clone();
         hc.MutateBy(mutant, "#IfStatement", 0);
-        fse.writeFileSync(path.join(process.cwd(), "mutant.js"), mutant.ToCode(), "UTF8");
+        //fse.writeFileSync(path.join(process.cwd(), "mutant.js"), mutant.ToCode(), "UTF8");
         expect(mutant.AST).not.be.equal(individualOverTests.AST);
         //====================>
          var results = hc.RunTrial(0, individualOverTests);

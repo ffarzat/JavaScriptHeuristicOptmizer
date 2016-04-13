@@ -7,7 +7,6 @@ import path = require('path');
 import traverse = require('traverse');
 
 var estraverse = require("estraverse");
-var deepcopy = require("deepcopy");
 var escodegen = require('escodegen');
 
 /**
@@ -43,7 +42,6 @@ export default class ASTExplorer {
     CountNodes(individual: Individual): number {
         return traverse(individual.AST).nodes().length;
     }
-
 
     /**
      * Executes the single point CrossOver
@@ -84,61 +82,42 @@ export default class ASTExplorer {
      */
     private ReplaceNode(individual: Individual, nodeIndex: number, nodeReplacement: any): Individual {
         var newOne = individual.Clone();
-        var counter = 0;
-
-        try {
-            estraverse.replace(individual.AST, {
-                    enter: function (node) {
-                        if (counter == nodeIndex) {
-                            return nodeReplacement;
-                        }
-                        
-                        counter++;
-                    }
-                });
-        } catch (error) {
-            console.log('Error due Crossover operator');
-        }
+        var counter=0;
+        traverse(newOne.AST).forEach( function (x) {
+            if(counter == nodeIndex){
+                this.update(nodeReplacement, true);
+            }
+            counter++;
+        });
+     
+        return 
         
-        return newOne;
     }
 
     /**
      * Retrivies a node by index
      */
     private GetNode(individual: Individual, nodeIndex: number): any {
-        var counter = 0;
-        var nodeOverIndex: any = {};
-
-        estraverse.traverse(individual.AST, {
-            enter: function (node) {
-                if (counter == nodeIndex) {
-                    nodeOverIndex = deepcopy(node);
-                    this.break();
-                }
-                counter++;
-            }
-        });
-
-        return nodeOverIndex;
+        return traverse(individual.AST).nodes()[nodeIndex];
     }
 
     /**
      * Executes a mutation over the AST
      */
     Mutate(context: OperatorContext): Individual {
-        
-        var mutant: Individual;
-        var original: Individual = context.First;
-        
-        for (var index = 0; index < 100; index++) {
-            console.log(`   trial ${index} to mutate`)
-            mutant = this.TryMutate(context);
-            
-            if(mutant.AST != original.AST)
-                break;
-        }
-        
+       var mutant: Individual;
+       var originalCode = context.First.ToCode();
+       
+       for (var index = 0; index < 100; index++) { //todo: adds top limit to mutation tries in config.json or ctx
+           //console.log(`Mutation trial ${index}`)
+           mutant = this.TryMutate(context);
+           var mutantCode = mutant.ToCode();
+           
+           if(mutantCode != "" && mutantCode != originalCode){
+               break;    
+           }
+       }
+       
         return mutant;
     }
     
@@ -147,13 +126,14 @@ export default class ASTExplorer {
      */
     private TryMutate(context: OperatorContext): Individual {
         var mutant = context.First.Clone();
+        var indexes: number [] = this.IndexNodes(mutant);
         var counter = 0;
-        var randonNodeToPrune: number = this.GenereateRandom(0, context.TotalNodesCount);
+        var randonNodeToPrune: number = this.GenereateRandom(0, indexes.length);
 
-        traverse(mutant.AST).forEach(function (node) {
-            if(counter == randonNodeToPrune)
-            {
-                console.log(node);
+        //console.log(`rd node to remove ${randonNodeToPrune} of ${indexes.length}`);
+
+        mutant.AST = traverse(mutant.AST).map(function (node) {
+            if(counter == indexes[randonNodeToPrune]){
                 this.remove(true);
             }
 
@@ -169,5 +149,26 @@ export default class ASTExplorer {
     private GenereateRandom(low, high): number {
         return Math.floor(Math.random() * (high - low + 1) + low);
     }
-
+    
+    /**
+     * 
+     */
+    IndexNodes(individual: Individual): number [] {
+        var nodes = traverse(individual.AST).nodes();
+        var nodesIndex: number [] = [];
+        var index: number = 0;
+        
+        traverse(individual.AST).forEach(function (node) {
+            if(node && node.type && (node.type != 'Line' || node.type != 'Block' )){ //comments - Line and Block
+                //console.log('Indice: ' + index);
+                //console.log('Tipo ' + node.type);
+                nodesIndex.push(index);
+            }
+            
+            index++;
+        });
+        
+        return nodesIndex;
+    }    
+    
 }
