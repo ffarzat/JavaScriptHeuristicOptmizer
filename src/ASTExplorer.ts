@@ -4,6 +4,7 @@ import Individual from './Individual';
 import OperatorContext from './OperatorContext';
 
 import path = require('path');
+import traverse = require('traverse');
 
 var estraverse = require("estraverse");
 var deepcopy = require("deepcopy");
@@ -40,15 +41,7 @@ export default class ASTExplorer {
      * Count the total number of nodes inside an AST
      */
     CountNodes(individual: Individual): number {
-        var totalNodes: number = 0;
-        
-        estraverse.traverse(individual.AST, {
-            enter: function (node) {
-                totalNodes++;
-            }
-        });
-
-        return totalNodes;
+        return traverse(individual.AST).nodes().length;
     }
 
 
@@ -134,12 +127,38 @@ export default class ASTExplorer {
      * Executes a mutation over the AST
      */
     Mutate(context: OperatorContext): Individual {
-
+        
+        var mutant: Individual;
+        var original: Individual = context.First;
+        
+        for (var index = 0; index < 100; index++) {
+            console.log(`   trial ${index} to mutate`)
+            mutant = this.TryMutate(context);
+            
+            if(mutant.AST != original.AST)
+                break;
+        }
+        
+        return mutant;
+    }
+    
+    /**
+     * Try to mutate an individual
+     */
+    private TryMutate(context: OperatorContext): Individual {
         var mutant = context.First.Clone();
         var counter = 0;
         var randonNodeToPrune: number = this.GenereateRandom(0, context.TotalNodesCount);
 
-        this.ReplaceNode(mutant, randonNodeToPrune, {"type": "EmptyStatement"});
+        traverse(mutant.AST).forEach(function (node) {
+            if(counter == randonNodeToPrune)
+            {
+                console.log(node);
+                this.remove(true);
+            }
+
+            counter++;
+        });
 
         return mutant;
     }

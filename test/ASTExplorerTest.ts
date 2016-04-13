@@ -42,7 +42,7 @@ describe('ASTExplorer Tests', function () {
         
         var total:number = astExplorer.CountNodes(generatedIndividual);
         
-        expect(total).to.be(1235);
+        expect(total).to.be(38659);
     });
     
     it('Should Mutate Nodes from uuid lib', function() {
