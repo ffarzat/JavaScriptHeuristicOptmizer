@@ -47,8 +47,10 @@ export default class ASTExplorer {
      * Executes the single point CrossOver
      */
     CrossOver(context: OperatorContext): Individual[] {
-        var randomIndexNodeOne: number = this.GenereateRandom(0, context.TotalNodesCount);
-        var randomIndexNodeTwo: number = this.GenereateRandom(0, context.TotalNodesCount);
+        var indexesOne: number [] = this.IndexNodes(context.First);
+        var indexesTwo: number [] = this.IndexNodes(context.Second);
+        var randomIndexNodeOne: number = this.GenereateRandom(0, indexesOne.length);
+        var randomIndexNodeTwo: number = this.GenereateRandom(0, indexesTwo.length);
 
         //Gets the nodes
         var firstNode = this.GetNode(context.First, randomIndexNodeOne);
@@ -108,8 +110,8 @@ export default class ASTExplorer {
        var mutant: Individual;
        var originalCode = context.First.ToCode();
        
-       for (var index = 0; index < 100; index++) { //todo: adds top limit to mutation tries in config.json or ctx
-           //console.log(`Mutation trial ${index}`)
+       for (var index = 0; index < context.MutationTrials; index++) { //todo: adds top limit to mutation tries in config.json or ctx
+           console.log(`Mutation trial ${index}`)
            mutant = this.TryMutate(context);
            var mutantCode = mutant.ToCode();
            
@@ -117,6 +119,11 @@ export default class ASTExplorer {
                break;    
            }
        }
+       
+       if(!mutant){ //no way to mutate! Dammit!
+           mutant = context.First.Clone();
+       } 
+       
        
         return mutant;
     }

@@ -44,8 +44,9 @@ describe('GA Tests', function() {
         
         ga._tester = tester;
         
+        ga.mutationTrials = configuration.mutationTrials;
+        
         var totalNodes = astExplorer.CountNodes(individualOverTests);
-        ga._totalNodeCount = totalNodes;
         
         ga.UpdateBest(individualOverTests);
         //====================>

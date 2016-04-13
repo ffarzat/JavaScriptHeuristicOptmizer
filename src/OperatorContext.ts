@@ -28,7 +28,7 @@ export default class OperatorContext {
     Second: Individual;
     
     /**
-     * Total Count of Original AST 
+     * Do mutation until...
      */
-    TotalNodesCount:number;
+    MutationTrials: number;
 }

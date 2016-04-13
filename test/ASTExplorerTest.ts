@@ -77,20 +77,11 @@ describe('ASTExplorer Tests', function () {
         
         var context: OperatorContext = new OperatorContext();
         context.First = generatedIndividual;
+        context.MutationTrials = configuration.mutationTrials;
         var newOne = astExplorer.Mutate(context);
         //fs.writeFileSync("mutantFromTest.js", newOne.ToCode());
-        
-
-        //var newTotal:number = astExplorer.CountNodes(generatedIndividual);
-        //expect(newTotal).to.be(1235);
-        
-        //var newOneTotal:number = astExplorer.CountNodes(newOne);
-        //expect(newOneTotal).to.be.lessThan(1235);
-        
-        //expect(newOne.AST).not.equal(generatedIndividual.AST);   
-        expect(newOne.ToCode()).not.equal(generatedIndividual.ToCode());
-        
-            
+ 
+        expect(newOne.ToCode()).not.equal(generatedIndividual.ToCode());            
     });
     
     it('Should Cross over Nodes from minimist lib', function() {
@@ -106,9 +97,7 @@ describe('ASTExplorer Tests', function () {
         var total:number = astExplorer.CountNodes(originalIndividual);
         fs.writeFileSync("original.js", originalIndividual.ToCode());
         
-        
         var context: OperatorContext = new OperatorContext();
-        context.TotalNodesCount = total;
         context.First = originalIndividual.Clone();
         
         var mutantOne = astExplorer.Mutate(context);
@@ -116,25 +105,15 @@ describe('ASTExplorer Tests', function () {
         
         context.First = mutantOne.Clone();
         context.Second = mutantTwo.Clone();
+        context.MutationTrials = configuration.mutationTrials;
         
         var newOnes = astExplorer.CrossOver(context);
-        
-        //console.log(newOnes[0]);
-        //console.log(newOnes[1]);
-        
-        if(newOnes[0] != undefined){
-            fs.writeFileSync("CrossOver0.js", newOnes[0].ToCode());
-            expect(newOnes[0].ToCode()).not.equal(mutantOne.ToCode());
-        }
-            
-        
-        if(newOnes[1] != undefined){
-            fs.writeFileSync("CrossOver1.js", newOnes[1].ToCode());
-            expect(newOnes[1].ToCode()).not.equal(mutantTwo.ToCode());
-        }   
-            
-        
-            
+
+        fs.writeFileSync("CrossOver0.js", newOnes[0].ToCode());
+        expect(newOnes[0].ToCode()).not.equal(mutantOne.ToCode());
+    
+        fs.writeFileSync("CrossOver1.js", newOnes[1].ToCode());
+        expect(newOnes[1].ToCode()).not.equal(mutantTwo.ToCode());            
     });
     
       

@@ -117,7 +117,6 @@ export default class GA extends IHeuristic {
                 var clone: Individual = this.bestIndividual.Clone();
                 
                 context.First = clone;
-                context.TotalNodesCount = this._totalNodeCount;
             
                 var mutant = this.Mutate(context)
 

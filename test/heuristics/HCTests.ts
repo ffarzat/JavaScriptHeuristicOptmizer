@@ -46,9 +46,10 @@ describe('HC Tests', function() {
         
         hc._tester = tester;
         
-        var totalNodes = astExplorer.CountNodes(individualOverTests);
-        hc._totalNodeCount = totalNodes;
+        hc.mutationTrials = configuration.mutationTrials;
         
+        var totalNodes = astExplorer.CountNodes(individualOverTests);
+                
         hc.UpdateBest(individualOverTests);
 
         //====================>

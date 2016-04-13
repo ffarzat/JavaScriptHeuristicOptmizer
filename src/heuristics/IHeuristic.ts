@@ -24,13 +24,13 @@ abstract  class IHeuristic
     _logger: ILogger;
     _tester: ITester;
     _astExplorer: ASTExplorer;
-    _totalNodeCount: number;
+    
+    
     
     public Trials:number;
-    
-    bestFit: number;
-    bestIndividual: Individual;
-    
+    public bestFit: number;
+    public bestIndividual: Individual;
+    public mutationTrials: number;
     
     /**
      * Forces the Heuristic to validate config
@@ -38,7 +38,6 @@ abstract  class IHeuristic
     Setup(config: TrialEspecificConfiguration): void{
         this._config = config;
         this._astExplorer = new ASTExplorer();
-        this._totalNodeCount = 0;
     }
     
     /**
@@ -57,7 +56,6 @@ abstract  class IHeuristic
      * Releases a CrossOver over context
      */
     CrossOver(context: OperatorContext): Individual []{
-       context.TotalNodesCount = this._totalNodeCount;
        return this._astExplorer.CrossOver(context); 
     }
     
@@ -104,7 +102,6 @@ abstract  class IHeuristic
     
      /**
      * Releases a mutation over an AST  by nodetype and index
-     * 
      */
      MutateBy(clone: Individual, nodeType: string, nodeindex: number){
         var emptyNode = {"type": "EmptyStatement"};

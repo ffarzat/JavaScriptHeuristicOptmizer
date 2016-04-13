@@ -3,6 +3,7 @@
     "trials":60,
     "fitType":"mean",
     "testUntil": 2,
+    "mutationTrials": 100,
     "logFilePath": "build/optmization.log",
     "logCategory":"optmization",
     "logFileClearing": false,
