@@ -33,16 +33,10 @@ export default class HC extends IHeuristic {
     }
    
     /**
-     * Run the trial
+     * Populates the indexes for NodeType inside Code
      */
-    RunTrial(trialIndex: number, original: Individual): TrialResults{
-        this._logger.Write(`Initializing HC ${this.neighborApproach}`);
-        
-        
+    private DoIndexes(original: Individual): NodeIndex [] {
         var nodesIndexList: NodeIndex [] = [];
-        
-        if(this.restart)
-            this._logger.Write(`HC will restart search after ${this.trialsToRestart} bad neighbors`);
         
         if(this.nodesType.length > 0){
             this.nodesType.forEach(element => {
@@ -51,38 +45,68 @@ export default class HC extends IHeuristic {
                 this._logger.Write(`        ${element}: ${nodeIndex.Indexes.length}`);
             });    
         }
+        else{
+            this._logger.Write(`FATAL: There is no configuration for NodeType for HC Optmization`);
+            throw "There is no configuration for NodeType for HC Optmization";
+        }
+        
+        return nodesIndexList;
+    }
+    
+    /**
+     * Run the trial
+     */
+    RunTrial(trialIndex: number, original: Individual): TrialResults{
+        this._logger.Write(`Initializing HC ${this.neighborApproach}`);
+                
+        if(this.restart)
+            this._logger.Write(`HC will restart search after ${this.trialsToRestart} bad neighbors`);
+        
+        var nodesIndexList: NodeIndex [] = this.DoIndexes(original);
         
         var counterToRestart = 0;
+        var typeIndexCounter = 0;
+        var nodeIndex = nodesIndexList[typeIndexCounter];
         
         for (var index = 0; index < this.trials; index++) {//for trials
             
-            for (var typeIndexCounter = 0; typeIndexCounter < nodesIndexList.length; typeIndexCounter++) { //for node type
-                var typeIndex = nodesIndexList[typeIndexCounter];
-                
-                //get next neighbor by typeIndex.ActualIndex
-                var neighbor: Individual = this.MutateBy(this.bestIndividual, typeIndex.Type, typeIndex.Indexes[typeIndex.ActualIndex]) //refactoring
-                typeIndex.ActualIndex++;
-                
-                //Testing
-                this.Test(neighbor);
-                
-                //update best?
-                this.UpdateBest(neighbor);
-                
-                //Restart?
-                if(this.restart)
-                {
-                    if(neighbor.AST != this.bestIndividual.AST){
-                        counterToRestart++;
-                    }
-                    else{
-                        counterToRestart = 0;
-                    }
-                        
-                    if(counterToRestart == this.trialsToRestart) //totally randon 
-                        typeIndexCounter = this.GenereateRandom(0, nodesIndexList.length);
-                }
+            
+            
+            if(nodeIndex.Indexes.length == nodeIndex.ActualIndex)
+            {
+                typeIndexCounter++; // next type
             }
+            else{
+                nodeIndex.ActualIndex++;
+            }
+                            
+                            
+                            
+                            
+                            
+            //get next neighbor by typeIndex.ActualIndex
+            var neighbor: Individual = this.MutateBy(this.bestIndividual, nodesIndexList);
+            
+            //Testing
+            this.Test(neighbor);
+            
+            //update best?
+            this.UpdateBest(neighbor);
+            
+            //Restart?
+            if(this.restart)
+            {
+                if(neighbor.AST != this.bestIndividual.AST){
+                    counterToRestart++;
+                }
+                else{
+                    counterToRestart = 0;
+                }
+                    
+                if(counterToRestart == this.trialsToRestart) //totally randon 
+                    typeIndexCounter = this.GenereateRandom(0, nodesIndexList.length);
+            }
+            
         }
         
         return this.ProcessResult(index, original, this.bestIndividual);;

@@ -115,13 +115,9 @@ abstract  class IHeuristic
      /**
      * Releases a mutation over an AST  by nodetype and index
      */
-     MutateBy(clone: Individual, nodeType: string, nodeindex: number): Individual{
-        //var emptyNode = {"type": "EmptyStatement"};
-        //var program = nodes.build(clone.AST);
-        //var nodeToExclude = program.search(nodeType)[nodeindex];
-        //nodeToExclude = undefined;
-        //clone.AST = program;
-        
+     MutateBy(clone: Individual, nodesIndexList: NodeIndex [] ): Individual{
+        //typeIndex.Type, typeIndex.Indexes[typeIndex.ActualIndex]
+        //typeIndex.ActualIndex++;
         return clone.Clone();
     }
     
