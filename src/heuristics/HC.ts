@@ -36,6 +36,7 @@ export default class HC extends IHeuristic {
      * Run the trial
      */
     RunTrial(trialIndex: number, original: Individual): TrialResults{
+        this._logger.Write(`Starting  Trial ${trialIndex}`);
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
                
         if(this.restart)

@@ -56,7 +56,7 @@ describe('HC Tests', function() {
          var results = hc.RunTrial(0, individualOverTests);
          
          expect(results).not.be.an('undefined');
-         expect(results.trial).to.be.equal(1);
+         expect(results.trial).to.be.equal(2); //see Configuration.json
     });
     
 });
