@@ -44,8 +44,10 @@ describe('GA Tests', function() {
         
         ga._tester = tester;
         
+        ga.mutationTrials = configuration.mutationTrials;
+        ga.crossOverTrials = configuration.crossOverTrials;
+        
         var totalNodes = astExplorer.CountNodes(individualOverTests);
-        ga._totalNodeCount = totalNodes;
         
         ga.UpdateBest(individualOverTests);
         //====================>

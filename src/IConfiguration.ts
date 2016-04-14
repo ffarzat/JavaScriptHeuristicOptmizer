@@ -71,6 +71,16 @@ interface IConfiguration {
     testUntil: number;
     
     /**
+     * Mutation until this number
+     */
+    mutationTrials: number;
+    
+    /**
+     * crossOverTrials until this number
+     */
+    crossOverTrials: number;
+    
+    /**
      * Fit type: can be mean or median 
      */
     fitType: string; 

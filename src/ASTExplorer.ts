@@ -4,9 +4,9 @@ import Individual from './Individual';
 import OperatorContext from './OperatorContext';
 
 import path = require('path');
+import traverse = require('traverse');
 
 var estraverse = require("estraverse");
-var deepcopy = require("deepcopy");
 var escodegen = require('escodegen');
 
 /**
@@ -40,44 +40,69 @@ export default class ASTExplorer {
      * Count the total number of nodes inside an AST
      */
     CountNodes(individual: Individual): number {
-        var totalNodes: number = 0;
-        
-        estraverse.traverse(individual.AST, {
-            enter: function (node) {
-                totalNodes++;
-            }
-        });
-
-        return totalNodes;
+        return traverse(individual.AST).nodes().length;
     }
-
 
     /**
      * Executes the single point CrossOver
      */
     CrossOver(context: OperatorContext): Individual[] {
-        var randomIndexNodeOne: number = this.GenereateRandom(0, context.TotalNodesCount);
-        var randomIndexNodeTwo: number = this.GenereateRandom(0, context.TotalNodesCount);
+       var newSon: Individual;
+       var newDaughter: Individual;
+       var originalCode = context.First.ToCode();
+       
+       for (var index = 0; index < context.CrossOverTrials; index++) { //todo: adds top limit to mutation tries in config.json or ctx
+           console.log(`Crossover trial ${index}`)
+           var news = this.TryCrossOver(context);
+           
+           newSon = news[0];
+           newDaughter = news[1];
+           
+           if((newSon.ToCode() != "" && newSon.ToCode() != originalCode) && (newDaughter.ToCode() != "" && newDaughter.ToCode() != originalCode)){
+               break;    
+           }
+       }
+       
+       if(!newSon || !newDaughter){ //no way to cross! Dammit!
+           newSon = context.First.Clone();
+           newDaughter = context.Second.Clone();
+       } 
+       
+
+        return [newSon, newDaughter];
+    }
+    
+    /**
+     * Try to execute single point CrossOver operation
+     */
+    private TryCrossOver(context: OperatorContext): Individual[] {
+        var indexesOne: number [] = this.IndexNodes(context.First);
+        var indexesTwo: number [] = this.IndexNodes(context.Second);
+        var randomIndexNodeOne: number = this.GenereateRandom(0, indexesOne.length);
+        var randomIndexNodeTwo: number = this.GenereateRandom(0, indexesTwo.length);
 
         //Gets the nodes
-        var firstNode = this.GetNode(context.First, randomIndexNodeOne);
-        var secondNode = this.GetNode(context.Second, randomIndexNodeTwo);
+        var firstNode = this.GetNode(context.First, indexesOne[randomIndexNodeOne]);
+        var secondNode = this.GetNode(context.Second, indexesTwo[randomIndexNodeTwo]);
+        
+        //console.log('Node #1:' + JSON.stringify(firstNode));
+        //console.log('Node #2:' + JSON.stringify(secondNode));
 
         //Do Crossover
-        var newSon: Individual = this.ReplaceNode(context.Second, randomIndexNodeTwo, firstNode);
-        var newDaughter: Individual = this.ReplaceNode(context.First, randomIndexNodeOne, secondNode);
+        var newSon: Individual = this.ReplaceNode(context.Second, indexesTwo[randomIndexNodeTwo], firstNode);
+        var newDaughter: Individual = this.ReplaceNode(context.First, indexesOne[randomIndexNodeOne], secondNode);
         
         //If err in cross...
         try {
             newSon.ToCode();
         } catch (error) {
-            newSon = undefined;
+            newSon = context.First.Clone();
         }
         
         try {
             newDaughter.ToCode();
         } catch (error) {
-            newDaughter = undefined;
+            newDaughter = context.Second.Clone();
         }
 
 
@@ -85,61 +110,80 @@ export default class ASTExplorer {
 
         return result;
     }
+    
 
     /**
      * Replaces a node by index returning a brand new Individual
      */
     private ReplaceNode(individual: Individual, nodeIndex: number, nodeReplacement: any): Individual {
         var newOne = individual.Clone();
-        var counter = 0;
-
-        try {
-            estraverse.replace(individual.AST, {
-                    enter: function (node) {
-                        if (counter == nodeIndex) {
-                            return nodeReplacement;
-                        }
-                        
-                        counter++;
-                    }
-                });
-        } catch (error) {
-            console.log('Error due Crossover operator');
-        }
+        var counter=0;
+        traverse(newOne.AST).forEach( function (x) {
+            if(counter == nodeIndex){
+                //console.log('Actual Node' + JSON.stringify(this.node));
+                //console.log('Replacement Node' + JSON.stringify(nodeReplacement));
+                this.update(nodeReplacement, true);
+                //console.log('New Node' + JSON.stringify(this.node));
+                //this.remove(true);
+            }
+            counter++;
+        });
+     
         
-        return newOne;
+     
+        return  newOne;
     }
 
     /**
      * Retrivies a node by index
      */
     private GetNode(individual: Individual, nodeIndex: number): any {
-        var counter = 0;
-        var nodeOverIndex: any = {};
-
-        estraverse.traverse(individual.AST, {
-            enter: function (node) {
-                if (counter == nodeIndex) {
-                    nodeOverIndex = deepcopy(node);
-                    this.break();
-                }
-                counter++;
-            }
-        });
-
-        return nodeOverIndex;
+        return traverse(individual.AST).nodes()[nodeIndex];
     }
 
     /**
      * Executes a mutation over the AST
      */
     Mutate(context: OperatorContext): Individual {
-
+       var mutant: Individual;
+       var originalCode = context.First.ToCode();
+       
+       for (var index = 0; index < context.MutationTrials; index++) { //todo: adds top limit to mutation tries in config.json or ctx
+           //console.log(`Mutation trial ${index}`)
+           mutant = this.TryMutate(context);
+           var mutantCode = mutant.ToCode();
+           
+           if(mutantCode != "" && mutantCode != originalCode){
+               break;    
+           }
+       }
+       
+       if(!mutant){ //no way to mutate! Dammit!
+           mutant = context.First.Clone();
+       } 
+       
+       
+        return mutant;
+    }
+    
+    /**
+     * Try to mutate an individual
+     */
+    private TryMutate(context: OperatorContext): Individual {
         var mutant = context.First.Clone();
+        var indexes: number [] = this.IndexNodes(mutant);
         var counter = 0;
-        var randonNodeToPrune: number = this.GenereateRandom(0, context.TotalNodesCount);
+        var randonNodeToPrune: number = this.GenereateRandom(0, indexes.length);
 
-        this.ReplaceNode(mutant, randonNodeToPrune, {"type": "EmptyStatement"});
+        //console.log(`rd node to remove ${randonNodeToPrune} of ${indexes.length}`);
+
+        mutant.AST = traverse(mutant.AST).map(function (node) {
+            if(counter == indexes[randonNodeToPrune]){
+                this.remove(true);
+            }
+
+            counter++;
+        });
 
         return mutant;
     }
@@ -150,5 +194,26 @@ export default class ASTExplorer {
     private GenereateRandom(low, high): number {
         return Math.floor(Math.random() * (high - low + 1) + low);
     }
-
+    
+    /**
+     * 
+     */
+    IndexNodes(individual: Individual): number [] {
+        var nodes = traverse(individual.AST).nodes();
+        var nodesIndex: number [] = [];
+        var index: number = 0;
+        
+        traverse(individual.AST).forEach(function (node) {
+            if(node && node.type && (node.type != 'Line' || node.type != 'Block' )){ //comments - Line and Block
+                //console.log('Indice: ' + index);
+                //console.log('Tipo ' + node.type);
+                nodesIndex.push(index);
+            }
+            
+            index++;
+        });
+        
+        return nodesIndex;
+    }    
+    
 }

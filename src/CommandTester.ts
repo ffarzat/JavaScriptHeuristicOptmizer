@@ -67,12 +67,15 @@ export default class CommandTester implements ITester {
      * Do the test for an individual
      */
     Test(individual: Individual)  {
-        //output new code over main file js
-        this.WriteCodeToFile(individual);
+        
         var outputsFromCmd: string[] = [];
         var passedAllTests = true;
         var testUuid = uuid.v4();
+        
         try {
+            //output new code over main file js
+            this.WriteCodeToFile(individual);
+        
             process.chdir(this.libDirectoryPath);
             
             var Tick = exectimer.Tick;
