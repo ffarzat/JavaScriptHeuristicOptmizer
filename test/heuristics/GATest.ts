@@ -51,16 +51,11 @@ describe('GA Tests', function() {
         ga.bestFit = individualOverTests.testResults.median;
         ga.bestIndividual = individualOverTests;
         //====================>
-        //var population: Individual [] = ga.CreatesFirstGeneration(individualOverTests);
         
-         //expect(population).not.be.an('undefined');
-         //expect(population.length).to.be.equal(configuration.trialsConfiguration[0].especific.individuals);
-         
-         //TODO: Remove this line
-         var results = ga.RunTrial(0, individualOverTests);
-         
-         expect(results).not.be.an('undefined');
-         expect(results.trial).to.be.equal(0);
+        var results = ga.RunTrial(0, individualOverTests);
+        
+        expect(results).not.be.an('undefined');
+        expect(results.trial).to.be.equal(0);
     });
     
     

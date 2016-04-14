@@ -7,8 +7,9 @@
     "postinstall": "tsd install",
     "build": "tsc",
     "test": "mocha --recursive build/test",
-    "pretest": "npm run clean && npm run build",
-    "clean": "rmdir build /s /q"
+    "pretest": "npm run clean && npm run wait && npm run build",
+    "clean": "rmdir build /s /q",
+    "wait": "ping 127.0.0.1 -n 1 > nul"
   },
   "author": {
     "name": "Fabio Farzat",
