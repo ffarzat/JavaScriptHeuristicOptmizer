@@ -33,32 +33,11 @@ export default class HC extends IHeuristic {
     }
    
     /**
-     * Populates the indexes for NodeType inside Code
-     */
-    private DoIndexes(original: Individual): NodeIndex [] {
-        var nodesIndexList: NodeIndex [] = [];
-        
-        if(this.nodesType.length > 0){
-            this.nodesType.forEach(element => {
-                var nodeIndex = this.IndexBy(element, original);
-                nodesIndexList.push(nodeIndex);
-                this._logger.Write(`        ${element}: ${nodeIndex.Indexes.length}`);
-            });    
-        }
-        else{
-            this._logger.Write(`FATAL: There is no configuration for NodeType for HC Optmization`);
-            throw "There is no configuration for NodeType for HC Optmization";
-        }
-        
-        return nodesIndexList;
-    }
-    
-    /**
      * Run the trial
      */
     RunTrial(trialIndex: number, original: Individual): TrialResults{
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
-                
+               
         if(this.restart)
             this._logger.Write(`HC will restart search after ${this.trialsToRestart} bad neighbors`);
         
@@ -66,26 +45,12 @@ export default class HC extends IHeuristic {
         
         var counterToRestart = 0;
         var typeIndexCounter = 0;
-        var nodeIndex = nodesIndexList[typeIndexCounter];
+        var indexes: NodeIndex = nodesIndexList[typeIndexCounter];
         
         for (var index = 0; index < this.trials; index++) {//for trials
-            
-            
-            
-            if(nodeIndex.Indexes.length == nodeIndex.ActualIndex)
-            {
-                typeIndexCounter++; // next type
-            }
-            else{
-                nodeIndex.ActualIndex++;
-            }
-                            
-                            
-                            
-                            
-                            
+
             //get next neighbor by typeIndex.ActualIndex
-            var neighbor: Individual = this.MutateBy(this.bestIndividual, nodesIndexList);
+            var neighbor: Individual = this.MutateBy(this.bestIndividual, indexes);
             
             //Testing
             this.Test(neighbor);
@@ -107,10 +72,37 @@ export default class HC extends IHeuristic {
                     typeIndexCounter = this.GenereateRandom(0, nodesIndexList.length);
             }
             
+            //Next NodeIndex?
+            if(indexes.ActualIndex == indexes.Indexes.length -1) {
+                typeIndexCounter++;
+                
+                if(typeIndexCounter <= nodesIndexList.length -1)
+                    indexes = nodesIndexList[typeIndexCounter];
+            }
         }
         
         return this.ProcessResult(index, original, this.bestIndividual);;
     }
     
+    /**
+     * Populates the indexes for NodeType inside Code
+     */
+    private DoIndexes(original: Individual): NodeIndex [] {
+        var nodesIndexList: NodeIndex [] = [];
+        
+        if(this.nodesType.length > 0){
+            this.nodesType.forEach(element => {
+                var nodeIndex = this.IndexBy(element, original);
+                nodesIndexList.push(nodeIndex);
+                this._logger.Write(`        ${element}: ${nodeIndex.Indexes.length}`);
+            });    
+        }
+        else{
+            this._logger.Write(`FATAL: There is no configuration for NodeType for HC Optmization`);
+            throw "There is no configuration for NodeType for HC Optmization";
+        }
+        
+        return nodesIndexList;
+    }
     
 }

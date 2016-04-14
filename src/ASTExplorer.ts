@@ -122,15 +122,14 @@ export default class ASTExplorer {
             if(counter == nodeIndex){
                 //console.log('Actual Node' + JSON.stringify(this.node));
                 //console.log('Replacement Node' + JSON.stringify(nodeReplacement));
-                this.update(nodeReplacement, true);
+                this.update(nodeReplacement);
+                this.stop();
                 //console.log('New Node' + JSON.stringify(this.node));
                 //this.remove(true);
             }
             counter++;
         });
-     
-        
-     
+
         return  newOne;
     }
 
@@ -161,10 +160,29 @@ export default class ASTExplorer {
        if(!mutant){ //no way to mutate! Dammit!
            mutant = context.First.Clone();
        } 
-       
-       
+
         return mutant;
     }
+    
+    /**
+     * Releases a mutation over an AST  by node index
+     */
+     MutateBy(context: OperatorContext): Individual{
+        var mutant = context.First.Clone(); 
+        var localNodeIndex = context.NodeIndex;
+        var counter = 0;
+        
+        mutant.AST = traverse(mutant.AST).map(function (node) {
+            if(counter == localNodeIndex){
+               this.remove();
+               this.stop();
+            }
+            //console.log(counter);
+            counter++;
+        });
+        
+       return mutant;
+     }
     
     /**
      * Try to mutate an individual
@@ -179,9 +197,9 @@ export default class ASTExplorer {
 
         mutant.AST = traverse(mutant.AST).map(function (node) {
             if(counter == indexes[randonNodeToPrune]){
-                this.remove(true);
+                this.remove();
+                this.stop();
             }
-
             counter++;
         });
 

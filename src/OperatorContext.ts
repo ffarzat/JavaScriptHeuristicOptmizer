@@ -36,4 +36,9 @@ export default class OperatorContext {
      * Do CrossOver until...
      */
     CrossOverTrials: number;
+    
+    /**
+     * For mutation by node index
+     */
+    NodeIndex: number;
 }

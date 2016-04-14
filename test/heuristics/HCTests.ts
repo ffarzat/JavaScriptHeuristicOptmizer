@@ -52,12 +52,6 @@ describe('HC Tests', function() {
         var totalNodes = astExplorer.CountNodes(individualOverTests);
         hc.bestFit = individualOverTests.testResults.median;
         hc.bestIndividual = individualOverTests;
-
-        //====================>
-        var mutant = individualOverTests.Clone();
-        hc.MutateBy(mutant, "#IfStatement", 0);
-        //fse.writeFileSync(path.join(process.cwd(), "mutant.js"), mutant.ToCode(), "UTF8");
-        expect(mutant.AST).not.be.equal(individualOverTests.AST);
         //====================>
          var results = hc.RunTrial(0, individualOverTests);
          

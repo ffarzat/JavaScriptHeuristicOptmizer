@@ -115,10 +115,16 @@ abstract  class IHeuristic
      /**
      * Releases a mutation over an AST  by nodetype and index
      */
-     MutateBy(clone: Individual, nodesIndexList: NodeIndex [] ): Individual{
-        //typeIndex.Type, typeIndex.Indexes[typeIndex.ActualIndex]
-        //typeIndex.ActualIndex++;
-        return clone.Clone();
+     MutateBy(clone: Individual, indexes: NodeIndex): Individual{
+        var type = indexes.Type;
+        var actualNodeIndex = indexes[indexes.ActualIndex];
+        indexes.ActualIndex++;
+        
+        var ctx: OperatorContext = new OperatorContext();
+        ctx.First = clone;
+        ctx.NodeIndex = actualNodeIndex;
+        
+        return this._astExplorer.MutateBy(ctx); 
     }
     
     /**
