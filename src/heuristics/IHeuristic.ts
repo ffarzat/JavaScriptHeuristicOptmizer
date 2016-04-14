@@ -10,9 +10,7 @@ import ASTExplorer from '../ASTExplorer';
 import OperatorContext from '../OperatorContext';
 
 
-import Node from './Node';
-
-var nodes = require('nodes');
+import NodeIndex from './NodeIndex';
 
 
 /**
@@ -100,18 +98,25 @@ abstract  class IHeuristic
         this.bestIndividual = newBest;  
     }
     
+    /**
+     * Index By Node Type a individual code
+     */
+    IndexBy(nodeType: string, individual: Individual): NodeIndex{
+        var index = this._astExplorer.IndexNodesBy(nodeType, individual);
+        var node = {"Type": nodeType, "ActualIndex": 0, "Indexes": index};
+        return node;
+    }
+    
     
      /**
      * Releases a mutation over an AST  by nodetype and index
      */
      MutateBy(clone: Individual, nodeType: string, nodeindex: number){
-        var emptyNode = {"type": "EmptyStatement"};
-        var program = nodes.build(clone.AST);
-        var nodeToExclude = program.search(nodeType)[nodeindex];
-
-        nodeToExclude = undefined;
-
-        clone.AST = program;
+        //var emptyNode = {"type": "EmptyStatement"};
+        //var program = nodes.build(clone.AST);
+        //var nodeToExclude = program.search(nodeType)[nodeindex];
+        //nodeToExclude = undefined;
+        //clone.AST = program;
     }
 }
 

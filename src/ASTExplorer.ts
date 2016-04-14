@@ -52,7 +52,7 @@ export default class ASTExplorer {
        var originalCode = context.First.ToCode();
        
        for (var index = 0; index < context.CrossOverTrials; index++) { //todo: adds top limit to mutation tries in config.json or ctx
-           console.log(`Crossover trial ${index}`)
+           //console.log(`Crossover trial ${index}`)
            var news = this.TryCrossOver(context);
            
            newSon = news[0];
@@ -196,7 +196,7 @@ export default class ASTExplorer {
     }
     
     /**
-     * 
+     * Creates a index map for all valid node types
      */
     IndexNodes(individual: Individual): number [] {
         var nodes = traverse(individual.AST).nodes();
@@ -215,5 +215,27 @@ export default class ASTExplorer {
         
         return nodesIndex;
     }    
+    
+    /**
+     * Creates a index map for especific node types
+     */
+    IndexNodesBy(nodeType: string, individual: Individual): number [] {
+        
+        var nodes = traverse(individual.AST).nodes();
+        var nodesIndex: number [] = [];
+        var index: number = 0;
+        
+        traverse(individual.AST).forEach(function (node) {
+            //console.log('Indice: ' + index);
+            //console.log('Tipo ' + node.type);
+            if(node && node.type && node.type == nodeType){ 
+                nodesIndex.push(index);
+            }
+            
+            index++;
+        });
+        
+        return nodesIndex;
+    }   
     
 }

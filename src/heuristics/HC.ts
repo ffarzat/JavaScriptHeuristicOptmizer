@@ -3,9 +3,9 @@ import IHeuristic from './IHeuristic';
 import ITester from '../ITester';
 import TrialResults from '../Results/TrialResults';
 import Individual from '../Individual';
-import Node from './Node';
+import NodeIndex from './NodeIndex';
 
-var nodes = require('nodes');
+
 
 /**
  * Hill Climbing Search for Code Improvement
@@ -37,18 +37,17 @@ export default class HC extends IHeuristic {
     RunTrial(trialIndex: number, original: Individual): TrialResults{
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
         
-        var program = nodes.build(original.AST);
-        var nodesList: Node [] = [];
+        
+        var nodesIndexList: NodeIndex [] = [];
         
         if(this.restart)
             this._logger.Write(`HC will restart search after ${this.trialsToRestart} bad neighbors`);
         
         if(this.nodesType.length > 0){
             this.nodesType.forEach(element => {
-                var total = program.search(element).length;
-                var node = {"type": element, "count": total, "actualIndex": 0}
-                this._logger.Write(`        ${element}: ${total}`);
-                nodesList.push(node);
+                var nodeIndex = this.IndexBy(element, original);
+                nodesIndexList.push(nodeIndex);
+                this._logger.Write(`        ${element}: ${nodeIndex.Indexes.length}`);
             });    
         }
         
