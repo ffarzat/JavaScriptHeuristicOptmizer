@@ -6,6 +6,7 @@ import Individual from '../Individual';
 import NodeIndex from './NodeIndex';
 
 
+//[FunctionExpression, FunctionDeclaration and ArrowFunctionExpression]
 
 /**
  * Hill Climbing Search for Code Improvement
@@ -51,20 +52,41 @@ export default class HC extends IHeuristic {
             });    
         }
         
-        //var functions = program.search('#Function'); //all kind of Function Declarion [#FunctionExpression, #FunctionDeclaration and #ArrowFunctionExpression]
-        //this._logger.Write(functions.length);
+        var counterToRestart = 0;
         
-        var restartCount
-        
-        for (var index = 0; index < this.trials; index++) {
+        for (var index = 0; index < this.trials; index++) {//for trials
             
-            //get neighbor
-            
-            //Testing
-            
-            //update best?
+            for (var typeIndexCounter = 0; typeIndexCounter < nodesIndexList.length; typeIndexCounter++) { //for node type
+                var typeIndex = nodesIndexList[typeIndexCounter];
+                
+                //get next neighbor by typeIndex.ActualIndex
+                var neighbor: Individual = this.MutateBy(this.bestIndividual, typeIndex.Type, typeIndex.Indexes[typeIndex.ActualIndex]) //refactoring
+                typeIndex.ActualIndex++;
+                
+                //Testing
+                this.Test(neighbor);
+                
+                //update best?
+                this.UpdateBest(neighbor);
+                
+                //Restart?
+                if(this.restart)
+                {
+                    if(neighbor.AST != this.bestIndividual.AST){
+                        counterToRestart++;
+                    }
+                    else{
+                        counterToRestart = 0;
+                    }
+                        
+                    if(counterToRestart == this.trialsToRestart) //totally randon 
+                        typeIndexCounter = this.GenereateRandom(0, nodesIndexList.length);
+                }
+            }
         }
         
-        return;
+        return this.ProcessResult(index, original, this.bestIndividual);;
     }
+    
+    
 }

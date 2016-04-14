@@ -94,8 +94,12 @@ abstract  class IHeuristic
      * Update global best info
      */
     UpdateBest(newBest: Individual){
-        this.bestFit =  this._tester.RetrieveConfiguratedFitFor(newBest);
-        this.bestIndividual = newBest;  
+        
+        if(this._tester.RetrieveConfiguratedFitFor(newBest) < this.bestFit)
+        {
+            this.bestFit =  this._tester.RetrieveConfiguratedFitFor(newBest);
+            this.bestIndividual = newBest;    
+        }
     }
     
     /**
@@ -111,12 +115,21 @@ abstract  class IHeuristic
      /**
      * Releases a mutation over an AST  by nodetype and index
      */
-     MutateBy(clone: Individual, nodeType: string, nodeindex: number){
+     MutateBy(clone: Individual, nodeType: string, nodeindex: number): Individual{
         //var emptyNode = {"type": "EmptyStatement"};
         //var program = nodes.build(clone.AST);
         //var nodeToExclude = program.search(nodeType)[nodeindex];
         //nodeToExclude = undefined;
         //clone.AST = program;
+        
+        return clone.Clone();
+    }
+    
+    /**
+     * Generates random integer between two numbers low (inclusive) and high (inclusive) ([low, high])  
+     */
+    GenereateRandom(low, high): number {
+        return this._astExplorer.GenereateRandom(low, high);
     }
 }
 

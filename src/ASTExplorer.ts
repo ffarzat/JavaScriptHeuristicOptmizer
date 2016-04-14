@@ -191,7 +191,7 @@ export default class ASTExplorer {
     /**
      * Generates random integer between two numbers low (inclusive) and high (inclusive) ([low, high])  
      */
-    private GenereateRandom(low, high): number {
+    GenereateRandom(low, high): number {
         return Math.floor(Math.random() * (high - low + 1) + low);
     }
     

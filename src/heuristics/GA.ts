@@ -75,8 +75,7 @@ export default class GA extends IHeuristic {
 
             //Looking for a new best            
             population.forEach(element => {
-                if(this._tester.RetrieveConfiguratedFitFor(element) < this.bestFit)
-                    this.UpdateBest(element);
+                this.UpdateBest(element);
             });
             
             //Cut off
@@ -124,10 +123,7 @@ export default class GA extends IHeuristic {
                 
                 //this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(mutant)}`);
 
-                if(this._tester.RetrieveConfiguratedFitFor(mutant) <= this.bestFit)
-                {
-                    this.UpdateBest(mutant);
-                }
+                this.UpdateBest(mutant);
 
                 population.push(mutant);  
            }
@@ -162,12 +158,4 @@ export default class GA extends IHeuristic {
         
         return localPopulation;
     }
-    
-    /**
-     * Generates random integer between two numbers low (inclusive) and high (inclusive) ([low, high])  
-     */
-    private GenereateRandom(low, high): number {
-        return Math.floor(Math.random() * (high - low + 1) + low);
-    }
-    
 }

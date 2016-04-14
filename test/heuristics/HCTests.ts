@@ -50,8 +50,8 @@ describe('HC Tests', function() {
         hc.crossOverTrials = configuration.crossOverTrials;
         
         var totalNodes = astExplorer.CountNodes(individualOverTests);
-                
-        hc.UpdateBest(individualOverTests);
+        hc.bestFit = individualOverTests.testResults.median;
+        hc.bestIndividual = individualOverTests;
 
         //====================>
         var mutant = individualOverTests.Clone();

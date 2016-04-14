@@ -91,11 +91,11 @@ describe('ASTExplorer Tests', function () {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[5];
+        var lib = configuration.libraries[4];
         var libFile :string  = lib.mainFilePath;
         var originalIndividual: Individual = astExplorer.GenerateFromFile(libFile);
         var total:number = astExplorer.CountNodes(originalIndividual);
-        //fs.writeFileSync("original.js", originalIndividual.ToCode());
+        fs.writeFileSync("original.js", originalIndividual.ToCode());
         
         var context: OperatorContext = new OperatorContext();
         context.First = originalIndividual.Clone();
@@ -109,10 +109,10 @@ describe('ASTExplorer Tests', function () {
         
         var newOnes = astExplorer.CrossOver(context);
 
-        //fs.writeFileSync("CrossOver0.js", newOnes[0].ToCode());
+        fs.writeFileSync("CrossOver0.js", newOnes[0].ToCode());
         expect(newOnes[0].ToCode()).not.equal(originalIndividual.ToCode());
     
-        //fs.writeFileSync("CrossOver1.js", newOnes[1].ToCode());
+        fs.writeFileSync("CrossOver1.js", newOnes[1].ToCode());
         expect(newOnes[1].ToCode()).not.equal(originalIndividual.ToCode());            
     });
     
