@@ -47,30 +47,62 @@ export default class ASTExplorer {
      * Executes the single point CrossOver
      */
     CrossOver(context: OperatorContext): Individual[] {
+       var newSon: Individual;
+       var newDaughter: Individual;
+       var originalCode = context.First.ToCode();
+       
+       for (var index = 0; index < context.CrossOverTrials; index++) { //todo: adds top limit to mutation tries in config.json or ctx
+           console.log(`Crossover trial ${index}`)
+           var news = this.TryCrossOver(context);
+           
+           newSon = news[0];
+           newDaughter = news[1];
+           
+           if((newSon.ToCode() != "" && newSon.ToCode() != originalCode) && (newDaughter.ToCode() != "" && newDaughter.ToCode() != originalCode)){
+               break;    
+           }
+       }
+       
+       if(!newSon || !newDaughter){ //no way to cross! Dammit!
+           newSon = context.First.Clone();
+           newDaughter = context.Second.Clone();
+       } 
+       
+
+        return [newSon, newDaughter];
+    }
+    
+    /**
+     * Try to execute single point CrossOver operation
+     */
+    private TryCrossOver(context: OperatorContext): Individual[] {
         var indexesOne: number [] = this.IndexNodes(context.First);
         var indexesTwo: number [] = this.IndexNodes(context.Second);
         var randomIndexNodeOne: number = this.GenereateRandom(0, indexesOne.length);
         var randomIndexNodeTwo: number = this.GenereateRandom(0, indexesTwo.length);
 
         //Gets the nodes
-        var firstNode = this.GetNode(context.First, randomIndexNodeOne);
-        var secondNode = this.GetNode(context.Second, randomIndexNodeTwo);
+        var firstNode = this.GetNode(context.First, indexesOne[randomIndexNodeOne]);
+        var secondNode = this.GetNode(context.Second, indexesTwo[randomIndexNodeTwo]);
+        
+        //console.log('Node #1:' + JSON.stringify(firstNode));
+        //console.log('Node #2:' + JSON.stringify(secondNode));
 
         //Do Crossover
-        var newSon: Individual = this.ReplaceNode(context.Second, randomIndexNodeTwo, firstNode);
-        var newDaughter: Individual = this.ReplaceNode(context.First, randomIndexNodeOne, secondNode);
+        var newSon: Individual = this.ReplaceNode(context.Second, indexesTwo[randomIndexNodeTwo], firstNode);
+        var newDaughter: Individual = this.ReplaceNode(context.First, indexesOne[randomIndexNodeOne], secondNode);
         
         //If err in cross...
         try {
             newSon.ToCode();
         } catch (error) {
-            newSon = undefined;
+            newSon = context.First.Clone();
         }
         
         try {
             newDaughter.ToCode();
         } catch (error) {
-            newDaughter = undefined;
+            newDaughter = context.Second.Clone();
         }
 
 
@@ -78,6 +110,7 @@ export default class ASTExplorer {
 
         return result;
     }
+    
 
     /**
      * Replaces a node by index returning a brand new Individual
@@ -87,13 +120,18 @@ export default class ASTExplorer {
         var counter=0;
         traverse(newOne.AST).forEach( function (x) {
             if(counter == nodeIndex){
+                //console.log('Actual Node' + JSON.stringify(this.node));
+                //console.log('Replacement Node' + JSON.stringify(nodeReplacement));
                 this.update(nodeReplacement, true);
+                //console.log('New Node' + JSON.stringify(this.node));
+                //this.remove(true);
             }
             counter++;
         });
      
-        return 
         
+     
+        return  newOne;
     }
 
     /**
@@ -111,7 +149,7 @@ export default class ASTExplorer {
        var originalCode = context.First.ToCode();
        
        for (var index = 0; index < context.MutationTrials; index++) { //todo: adds top limit to mutation tries in config.json or ctx
-           console.log(`Mutation trial ${index}`)
+           //console.log(`Mutation trial ${index}`)
            mutant = this.TryMutate(context);
            var mutantCode = mutant.ToCode();
            

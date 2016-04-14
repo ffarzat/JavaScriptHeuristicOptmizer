@@ -31,4 +31,9 @@ export default class OperatorContext {
      * Do mutation until...
      */
     MutationTrials: number;
+    
+    /**
+     * Do CrossOver until...
+     */
+    CrossOverTrials: number;
 }

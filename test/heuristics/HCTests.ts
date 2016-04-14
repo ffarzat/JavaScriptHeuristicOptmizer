@@ -47,6 +47,7 @@ describe('HC Tests', function() {
         hc._tester = tester;
         
         hc.mutationTrials = configuration.mutationTrials;
+        hc.crossOverTrials = configuration.crossOverTrials;
         
         var totalNodes = astExplorer.CountNodes(individualOverTests);
                 

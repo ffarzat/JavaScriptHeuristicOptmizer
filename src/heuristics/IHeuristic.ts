@@ -31,6 +31,7 @@ abstract  class IHeuristic
     public bestFit: number;
     public bestIndividual: Individual;
     public mutationTrials: number;
+    public crossOverTrials: number;
     
     /**
      * Forces the Heuristic to validate config

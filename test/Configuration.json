@@ -4,6 +4,7 @@
     "fitType":"mean",
     "testUntil": 2,
     "mutationTrials": 100,
+    "crossOverTrials": 50,
     "logFilePath": "build/optmization.log",
     "logCategory":"optmization",
     "logFileClearing": false,
