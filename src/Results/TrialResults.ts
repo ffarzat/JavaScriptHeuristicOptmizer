@@ -15,4 +15,5 @@ export default class TrialResult {
     bestIndividualCharacters: number;
     
     best: Individual;
+    original: Individual;
 }

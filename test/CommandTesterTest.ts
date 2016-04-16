@@ -19,7 +19,7 @@ describe('CommandTester Tests', function () {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[6]; //uuid
+        var lib = configuration.libraries[1];
 
         //Creates the Inidividual for tests
         var astExplorer: ASTExplorer = new ASTExplorer();
@@ -37,7 +37,9 @@ describe('CommandTester Tests', function () {
 
         //Exec the test
         commandTester.Test(individualOverTests);
+        //logger.Write(individualOverTests.testResults.outputs.toString());
         
+        expect(individualOverTests.testResults.passedAllTests).to.be(true);
         expect(individualOverTests.testResults).not.to.be(undefined);
         expect(individualOverTests.testResults.duration).not.to.be(undefined);
         expect(individualOverTests.testResults.min).not.to.be(undefined);

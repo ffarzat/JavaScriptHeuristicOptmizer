@@ -1,7 +1,7 @@
 /// <reference path="../src/typings/tsd.d.ts" />
 var escodegen = require('escodegen');
-var deepcopy = require("deepcopy");
 
+import traverse = require('traverse');
 import TestResults from './TestResults';
 
  /**
@@ -41,10 +41,11 @@ export default class Individual {
         var code: string = "";
         
         try {
-            var generatedAST = escodegen.attachComments(this.AST, this.AST.comments, this.AST.tokens);
+            //var generatedAST = escodegen.attachComments(this.AST, this.AST.comments, this.AST.tokens);
+            var generatedAST = this.AST;
             code = escodegen.generate(generatedAST, this.Options);     
         } catch (error) {
-            console.error(error);
+            //console.error('Error regenerating code: ' + error);
         }
 
         return code; 
@@ -56,7 +57,7 @@ export default class Individual {
     Clone(): Individual
     {
         var newOne = new Individual();
-        newOne.AST = deepcopy(this.AST);
+        newOne.AST = traverse(this.AST).clone();
         
         return newOne;
     }

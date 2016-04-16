@@ -12,14 +12,29 @@ export default class RD extends IHeuristic {
     /**
      * Run the trial
      */
-    RunTrial(trialIndex: number, original: Individual): TrialResults{
+    RunTrial(trialIndex: number): TrialResults{
+        this._logger.Write(`Starting  Random Search`);
+        this._logger.Write(`Starting  Trial ${trialIndex} of ${this.Trials}`);
         
         for (var index = 0; index < this.Trials; index++) {
-            console.log("Runing RD!");
-            
+
         }
         
-        return;
+        
+        var fakeResult = new TrialResults();
+    
+        fakeResult.trial = 1;
+        fakeResult.bestIndividualAvgTime = 1.69;
+        fakeResult.bestIndividualCharacters = 15968;
+        fakeResult.bestIndividualLOC = 68000;
+        
+        fakeResult.originalIndividualAvgTime = 2.1;
+        fakeResult.originalIndividualCharacters = 16000
+        fakeResult.originalIndividualLOC = 70000;
+        fakeResult.best = new Individual();
+        
+        
+        return fakeResult;
     }
     
 }

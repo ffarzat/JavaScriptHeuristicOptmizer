@@ -6,57 +6,66 @@ import expect = require('expect.js');
 
 import Individual from '../../src/Individual';
 import IConfiguration from '../../src/IConfiguration';
-import GA from '../../src/heuristics/GA';
+import HC from '../../src/heuristics/HC';
 import ASTExplorer from '../../src/ASTExplorer';
 import LogFactory from '../../src/LogFactory';
 import TesterFactory from '../../src/TesterFactory';
+import fse = require('fs-extra');
 
-describe('GA Tests', function() {
+describe('HC Tests', function() {
     
     this.timeout(60*10*1000);//ten minutes
     
     it('Should creates an instance', function() {
-        var ga: GA = new GA();
-        expect(ga).not.be.a('undefined');
+        var hc: HC = new HC();
+        expect(hc).not.be.a('undefined');
     });
     
-    it('Should Creates a new Population Based on config', function () {
+    it('Should Iterate Based on config', function () {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var lib = configuration.libraries[1]; //uuid
-        var ga: GA = new GA();
+        var hc: HC = new HC();
         
         var astExplorer: ASTExplorer = new ASTExplorer();
         var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
+        //fse.writeFileSync(path.join(process.cwd(), "original.js"), individualOverTests.ToCode(), "UTF8" ); //saving file for comparsion purpose
         
-        ga.Setup(configuration.trialsConfiguration[0].especific);
+        hc.Setup(configuration.trialsConfiguration[0].especific);
+        
+        expect(hc.trials).to.be.equal(2);
+        expect(hc.neighborApproach).to.be.equal("FirstAscent");
+        expect(hc.restart).to.be.equal(true);
+        expect(hc.nodesType.length).to.be.equal(2);
+        expect(hc.nodesType[0]).to.be.equal("CallExpression");
+        expect(hc.nodesType[1]).to.be.equal("IfStatement");
+
         
         var logger = new LogFactory().CreateByName(configuration.logWritter);
         logger.Initialize(configuration);
-        ga._logger = logger;
+        hc._logger = logger;
         
         var tester = new TesterFactory().CreateByName(configuration.tester);
         tester.Setup(configuration.testUntil, lib, configuration.fitType);
         tester.SetLogger(logger);        
         
         tester.Test(individualOverTests); //test orginal
-        tester.SetLogger(logger);
         
-        ga._tester = tester;
         
-        ga.mutationTrials = configuration.mutationTrials;
-        ga.crossOverTrials = configuration.crossOverTrials;
+        hc._tester = tester;
+        
+        hc.mutationTrials = configuration.mutationTrials;
+        hc.crossOverTrials = configuration.crossOverTrials;
         
         var totalNodes = astExplorer.CountNodes(individualOverTests);
-        ga.bestFit = individualOverTests.testResults.median;
-        ga.bestIndividual = individualOverTests;
+        hc.bestFit = individualOverTests.testResults.median;
+        hc.bestIndividual = individualOverTests;
         //====================>
-        ga.SetLibrary(lib);
-        var results = ga.RunTrial(0);
-        
+        hc.SetLibrary(lib);
+        var results = hc.RunTrial(0);
+         
         expect(results).not.be.an('undefined');
-        expect(results.trial).to.be.equal(0);
+        expect(results.trial).to.be.equal(0); 
     });
     
-    
-})
+});

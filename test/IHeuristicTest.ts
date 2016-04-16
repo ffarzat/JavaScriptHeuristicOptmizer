@@ -31,14 +31,15 @@ describe('IHeuristic Tests', () => {
     it('Should Validate Especific Configuration ', () => {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        //console.log(`Creating an instance of ${configuration.heuristics[2]}`);
         var hcInstance: HC  = new HeuristicFactory().CreateByName(configuration.heuristics[2]) as HC;
         var especific = configuration.trialsConfiguration[0].especific;
-        
         hcInstance.Setup(especific);
+        //console.log(JSON.stringify(hcInstance));
         
         expect(hcInstance).not.be.an('undefined');
         expect(hcInstance.neighborApproach).to.be("FirstAscent");
-        expect(hcInstance.restart).to.be(false);
+        expect(hcInstance.restart).to.be(true);
         expect(hcInstance.trialsToRestart).to.be(5);
     });
     

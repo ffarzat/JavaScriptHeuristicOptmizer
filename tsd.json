@@ -43,6 +43,9 @@
     },
     "mime/mime.d.ts": {
       "commit": "e8f8e7471b8ca92ca417f8c878f64ae4d1067972"
+    },
+    "traverse/traverse.d.ts": {
+      "commit": "641df27e73ca67fa7199a3deedae104198d41a17"
     }
   }
 }

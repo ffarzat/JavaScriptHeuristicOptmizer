@@ -71,6 +71,16 @@ interface IConfiguration {
     testUntil: number;
     
     /**
+     * Mutation until this number
+     */
+    mutationTrials: number;
+    
+    /**
+     * crossOverTrials until this number
+     */
+    crossOverTrials: number;
+    
+    /**
      * Fit type: can be mean or median 
      */
     fitType: string; 
@@ -86,7 +96,7 @@ interface IConfiguration {
     logCategory: string;
     
     /**
-     * Determines delete or not a Log file at the begining of process
+     * Determines delete or not a Log file (and others olds files) at the begining of process
      */
     logFileClearing: boolean;
     
@@ -98,7 +108,7 @@ interface IConfiguration {
      * Sample:
      *  #trials = 60
      *  #TrialConfiguration = 2 (global, function scope)
-     * #total executions = 120 per Heuristic (360 by now)
+     *  #total executions = 120 per Heuristic (360 by now)
      */
     trialsConfiguration: TrialConfiguration [];
     

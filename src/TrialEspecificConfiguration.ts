@@ -23,7 +23,21 @@ export default class TrialEspecificConfiguration {
      * How many avaliations before restart
      */
     trialsToRestart: number;
+
+    /**
+     * Budget for HC running
+     *  */    
+    trials: number;
     
+    /**
+     * List of Esprima nodes Type for select inside every Heuristic
+     * 
+     * By now can be:
+     * 
+     * [CallExpression, IfStatement]
+     * 
+     */
+    nodesType: string [];
     
     //================================================================================================ GA =>
 

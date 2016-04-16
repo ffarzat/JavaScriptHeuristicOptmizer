@@ -8,6 +8,10 @@ import Individual from '../Individual';
 
 import ASTExplorer from '../ASTExplorer';
 import OperatorContext from '../OperatorContext';
+import Library from '../Library';
+
+
+import NodeIndex from './NodeIndex';
 
 
 /**
@@ -19,10 +23,15 @@ abstract  class IHeuristic
     _logger: ILogger;
     _tester: ITester;
     _astExplorer: ASTExplorer;
-    _totalNodeCount: number;
     
+    public Name: string;
     public Trials:number;
+    public bestFit: number;
+    public bestIndividual: Individual;
+    public mutationTrials: number;
+    public crossOverTrials: number;
     
+    public Original: Individual;
     
     /**
      * Forces the Heuristic to validate config
@@ -30,13 +39,12 @@ abstract  class IHeuristic
     Setup(config: TrialEspecificConfiguration): void{
         this._config = config;
         this._astExplorer = new ASTExplorer();
-        this._totalNodeCount = 0;
     }
     
     /**
      * Especific Run for each Heuristic
      */
-    abstract RunTrial(trialIndex: number, original: Individual): TrialResults;
+    abstract RunTrial(trialIndex: number): TrialResults;
     
     /**
      *  Releases a Mutation over context 
@@ -49,7 +57,6 @@ abstract  class IHeuristic
      * Releases a CrossOver over context
      */
     CrossOver(context: OperatorContext): Individual []{
-       context.TotalNodesCount = this._totalNodeCount;
        return this._astExplorer.CrossOver(context); 
     }
     
@@ -77,11 +84,77 @@ abstract  class IHeuristic
         results.bestIndividualCharacters = bestCode.length;
         results.bestIndividualLOC = bestCode.split(/\r\n|\r|\n/).length;
         
+        results.original = original;
         results.originalIndividualAvgTime = this._tester.RetrieveConfiguratedFitFor(original);
         results.originalIndividualCharacters = originalCode.length;
         results.originalIndividualLOC =   originalCode.split(/\r\n|\r|\n/).length;
         
         return results;
+    }
+    
+        
+    /**
+     * Update global best info
+     */
+    UpdateBest(newBest: Individual){
+        
+        if(this._tester.RetrieveConfiguratedFitFor(newBest) < this.bestFit)
+        {
+            this.bestFit =  this._tester.RetrieveConfiguratedFitFor(newBest);
+            this.bestIndividual = newBest;    
+        }
+    }
+    
+    /**
+     * Index By Node Type a individual code
+     */
+    IndexBy(nodeType: string, individual: Individual): NodeIndex{
+        var index = this._astExplorer.IndexNodesBy(nodeType, individual);
+        var node = {"Type": nodeType, "ActualIndex": 0, "Indexes": index};
+        return node;
+    }
+    
+    
+     /**
+     * Releases a mutation over an AST  by nodetype and index
+     */
+     MutateBy(clone: Individual, indexes: NodeIndex): Individual{
+        var type = indexes.Type;
+        var actualNodeIndex = indexes[indexes.ActualIndex];
+        indexes.ActualIndex++;
+        
+        var ctx: OperatorContext = new OperatorContext();
+        ctx.First = clone;
+        ctx.NodeIndex = actualNodeIndex;
+        
+        return this._astExplorer.MutateBy(ctx); 
+    }
+    
+    /**
+     * Generates random integer between two numbers low (inclusive) and high (inclusive) ([low, high])  
+     */
+    GenereateRandom(low, high): number {
+        return this._astExplorer.GenereateRandom(low, high);
+    }
+    
+    /**
+     * Defines library over optmization
+     */
+    SetLibrary(library: Library)
+    {
+        this.Original = this.CreateOriginalFromLibraryConfiguration(library);
+        this.Test(this.Original);    
+        //Force Best
+        this.bestFit =  this._tester.RetrieveConfiguratedFitFor(this.Original);
+        this.bestIndividual = this.Original;
+    }
+    
+    
+    /**
+     * Create the orginal individual from library settings
+     */
+    CreateOriginalFromLibraryConfiguration(library: Library): Individual{
+        return this._astExplorer.GenerateFromFile(library.mainFilePath);
     }
 }
 

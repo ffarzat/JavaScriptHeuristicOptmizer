@@ -2,12 +2,12 @@ import IOutWriter from '../IOutWriter';
 import IConfiguration from '../IConfiguration';
 import TestResults from '../TestResults';
 import Individual from '../Individual';
+import Library from '../Library';
 import TrialResults from './TrialResults';
+import IHeuristic from '../heuristics/IHeuristic';
 
 import fs = require('fs');
 import path = require('path');
-
-var csvWriter = require('csv-write-stream')
 
 
 /**
@@ -15,70 +15,108 @@ var csvWriter = require('csv-write-stream')
  */
 export default class CsvResultsOutWriter implements IOutWriter {
     
-    writer: any;
+    csvcontent: string;
     
     directory: string;
     file: string;
     
-    options = {
-        separator: '|',
-        newline: '\n',
-        headers: ["trial", "originalIndividualAvgTime", "originalIndividualLOC", "originalIndividualCharacters", "bestIndividualAvgTime", "bestIndividualLOC", "bestIndividualCharacters"],
-        sendHeaders: true
-    }
+    configuration: IConfiguration;
+    
+    library: Library;
+    heuristic: IHeuristic;
+    
+    newLine: string = '\n';
     
     /**
      * Initializes the storage and instances
      *  */    
-    Initialize(configuration: IConfiguration){
-        this.DoClean(configuration);
+    Initialize(configuration: IConfiguration, library: Library, heuristic: IHeuristic){
+        this.heuristic = heuristic;
+        this.library = library;
+        this.configuration = configuration;
         
-        this.directory = configuration.resultsDirectory;
-        this.file = path.join(configuration.resultsDirectory, configuration.trialResultsFile);
+        this.directory = path.join(configuration.resultsDirectory, this.library.name, this.heuristic.Name);
+        this.file = path.join(this.directory, configuration.trialResultsFile);
         
-        //console.log('           csv:', this.file);
-                        
-        this.writer = csvWriter(this.options);
-        this.writer.pipe(fs.createWriteStream(this.file));
+        this.MkDirs();
+        this.MkFiles();
     }
     
     /**
-     * Clean or not old files
+     * Creates initial files
      */
-    private DoClean(configuration: IConfiguration){
-        
-        if(fs.existsSync(configuration.resultsDirectory) && configuration.logFileClearing)
+    private MkFiles(){
+        if(!fs.existsSync(this.file))
         {
-            fs.unlinkSync(configuration.resultsDirectory);
+            this.csvcontent = "sep=," + this.newLine;
+            this.csvcontent += "trial,originalIndividualAvgTime,originalIndividualLOC,originalIndividualCharacters,bestIndividualAvgTime,bestIndividualLOC,bestIndividualCharacters" + this.newLine;
+            fs.writeFileSync(this.file, this.csvcontent);
+        }
+    }
+    
+    /**
+     * Creates directories for run
+     */
+    private MkDirs(){
+        //Results root folder
+        if(!fs.existsSync(this.configuration.resultsDirectory))
+        {
+            fs.mkdirSync(this.configuration.resultsDirectory);    
         }
         
-        fs.mkdir(configuration.resultsDirectory);
+        var libFolder = path.join(this.configuration.resultsDirectory, this.library.name);
+        if(!fs.existsSync(libFolder))
+        {
+            fs.mkdirSync(libFolder);    
+        }
+        
+        var heuristicFolder = path.join(this.configuration.resultsDirectory, this.library.name, this.heuristic.Name);
+        if(!fs.existsSync(heuristicFolder))
+        {
+            fs.mkdirSync(heuristicFolder);    
+        }
+        
     }
     
     /**
      * Adds to storage a trial final result
      * 
-     * Keeps Best code over directory with #TrialNumber.Js
+     * Keeps Best code over directory with #TrialNumber.js
      * 
      */
     WriteTrialResults(result: TrialResults){
+
+        fs.appendFileSync(this.file, result.trial + "," + 
+                    result.originalIndividualAvgTime + "," + 
+                    result.originalIndividualLOC + "," +
+                    result.originalIndividualCharacters + "," + 
+                    result.bestIndividualAvgTime + "," + 
+                    result.bestIndividualLOC + "," + 
+                    result.bestIndividualCharacters + 
+                    this.newLine
+        );
+        this.WriteCodeToFile(result);
+    }
+    
+    /**
+     * Writes the new code Over old Main File of the lib over tests
+     */
+    private WriteCodeToFile(result: TrialResults) {
+        var bestCodeFile = path.join(this.directory, result.trial + ".js");
+        fs.writeFileSync(bestCodeFile, result.best.ToCode());
         
-        this.writer.write({
-            "trial": result.trial, 
-            "originalIndividualAvgTime": result.originalIndividualAvgTime, 
-            "originalIndividualLOC" : result.originalIndividualLOC, 
-            "originalIndividualCharacters" : result.originalIndividualCharacters,
-            "bestIndividualAvgTime": result.bestIndividualAvgTime,
-            "bestIndividualLOC": result.bestIndividualLOC,
-            "bestIndividualCharacters": result.bestIndividualCharacters
-        });       
+        var originalCodeFile = path.join(this.directory, "original.js");
+        if(!fs.existsSync(originalCodeFile))
+        {
+            fs.writeFileSync(originalCodeFile, result.best.ToCode());    
+        }
     }
     
     /**
      * Ends the stream
      */
     Finish(){
-        this.writer.end();
+
     }
    
 }

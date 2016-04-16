@@ -7,8 +7,9 @@
     "postinstall": "tsd install",
     "build": "tsc",
     "test": "mocha --recursive build/test",
-    "pretest": "npm run clean && npm run build",
-    "clean": "rmdir build /s /q"
+    "pretest": "npm run clean && npm run wait && npm run build",
+    "clean": "rmdir build /s /q",
+    "wait": "ping 127.0.0.1 -n 1 > nul"
   },
   "author": {
     "name": "Fabio Farzat",
@@ -16,9 +17,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "ast-types": "0.8.16",
-    "csv-write-stream": "1.0.0",
-    "deepcopy": "0.6.1",
     "escodegen": "1.8.0",
     "esprima": "2.7.2",
     "exectimer": "2.0.0",
@@ -27,6 +25,7 @@
     "node-uuid": "1.4.7",
     "randomizer": "0.0.1",
     "shelljs": "0.6.0",
+    "traverse": "0.6.6",
     "typescript": "1.8.9"
   },
   "devDependencies": {

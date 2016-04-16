@@ -7,6 +7,7 @@ import IOutWriter from './IOutWriter';
 import LogFactory from './LogFactory';
 import TesterFactory from './TesterFactory';
 import IOutWriterFactory from './IOutWriterFactory';
+import Library from './Library';
 import TrialResults from './Results/TrialResults';
 
 /**
@@ -36,8 +37,6 @@ export default class Optmizer {
         this.nodesType = this.configuration.trialsConfiguration[this.trialIndex].nodesType;
         
         this.InitializeLogger();
-        this.InitializeTester();
-        this.InitializeOutWritter();
         this.IntializeHeuristics();
     }
     
@@ -79,18 +78,19 @@ export default class Optmizer {
     /**
      * Initializes configurated Tester class
      */
-    private InitializeTester(){
+    private InitializeTester(LibrarieOverTest: Library){
         this.tester = new TesterFactory().CreateByName(this.configuration.tester);
+        this.tester.Setup(this.configuration.testUntil, LibrarieOverTest, this.configuration.fitType);
+        this.tester.SetLogger(this.logger);
     }
-    
     
     /**
      * Initializes configurated Results Writter
      * 
      */
-    private InitializeOutWritter(){
+    private InitializeOutWritter(library: Library, heuristic: IHeuristic){
         this.outter = new IOutWriterFactory().CreateByName(this.configuration.outWriter);
-        this.outter.Initialize(this.configuration);
+        this.outter.Initialize(this.configuration, library, heuristic); 
     }
     
     /**
@@ -101,6 +101,7 @@ export default class Optmizer {
      
         this.configuration.heuristics.forEach(element => {
             var heuristic = factory.CreateByName(element);
+            heuristic.Name = element;
             heuristic.Setup(this.configuration.trialsConfiguration[this.trialIndex].especific);
             heuristic.Trials = this.configuration.trials;
             heuristic._logger = this.logger;
@@ -117,19 +118,27 @@ export default class Optmizer {
     }
     
     /**
-     * Initializes intire Improvement Process
+     * Initializes intire Improvement Process for a single trial previously configured
      */
     DoOptmization(){
-        //Testar o original antes de começar aqui e configurar as heuristicas novamente
-        //Contar os nos do Orignal e setar na _totalNodeCount da Heurisitca
         
-        //Para cada Heuristica
-            //Executar um trial
-            //Voltar resultados
+        this.configuration.libraries.forEach(actualLibrary => {
+            this.heuristics.forEach(actualHeuristic => {
+                
+                    this.logger.Write(`Executing trial ${this.trialIndex} for ${actualLibrary.name} with ${actualHeuristic.Name}`);
 
-            //this.heuristics[0]._tester = this.tester; Precisa configurar o Testador
-        
-        //this.Notify(new TrialResults());
+                    this.InitializeOutWritter(actualLibrary, actualHeuristic);
+                    
+                    this.InitializeTester(actualLibrary);
+                    
+                    actualHeuristic._tester = this.tester;
+                    actualHeuristic.SetLibrary(actualLibrary);
+                    var resultaForTrial = actualHeuristic.RunTrial(this.trialIndex);
+                    
+                    this.outter.WriteTrialResults(resultaForTrial);
+                    this.outter.Finish();
+                    this.Notify(resultaForTrial);
+            });    
+        });           
     }
-    
 }

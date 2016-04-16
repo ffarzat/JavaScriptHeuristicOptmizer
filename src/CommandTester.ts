@@ -51,7 +51,8 @@ export default class CommandTester implements ITester {
         this.fitType = fitType;
         this.oldLibFilePath = path.join(this.libDirectoryPath, 'old.js');
         
-        fse.copySync(this.libMainFilePath, this.oldLibFilePath, {"clobber": true});
+        if(!fse.existsSync(this.oldLibFilePath))
+            fse.copySync(this.libMainFilePath, this.oldLibFilePath, {"clobber": true});
         
     }
 
@@ -66,12 +67,15 @@ export default class CommandTester implements ITester {
      * Do the test for an individual
      */
     Test(individual: Individual)  {
-        //output new code over main file js
-        this.WriteCodeToFile(individual);
+        
         var outputsFromCmd: string[] = [];
         var passedAllTests = true;
         var testUuid = uuid.v4();
+        
         try {
+            //output new code over main file js
+            this.WriteCodeToFile(individual);
+        
             process.chdir(this.libDirectoryPath);
             
             var Tick = exectimer.Tick;
@@ -109,7 +113,7 @@ export default class CommandTester implements ITester {
         {
             var results:TestResults = new TestResults();
             results.rounds = this.testUntil;
-            results.min = unitTestsTimer.min();
+            results.min = unitTestsTimer.min() ;
             results.max = unitTestsTimer.max();
             results.mean = unitTestsTimer.mean();
             results.median = unitTestsTimer.median();
@@ -158,7 +162,7 @@ export default class CommandTester implements ITester {
      * Just for Debug
      */
     private ShowConsoleResults(timer:any){
-        //this.logger.Write('Results:');
+        this.logger.Write('Results:');
         this.logger.Write('total duration:' + timer.parse(timer.duration())); // total duration of all ticks
         this.logger.Write('min:' + timer.parse(timer.min()));      // minimal tick duration
         this.logger.Write('max:' + timer.parse(timer.max()));      // maximal tick duration

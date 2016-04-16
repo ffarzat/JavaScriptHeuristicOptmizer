@@ -11,16 +11,20 @@ import Individual from '../../src/Individual';
 import IOutWriterFactory from '../../src/IOutWriterFactory';
 import TrialResults from '../../src/Results/TrialResults';
 
+import IHeuristic from '../../src/heuristics/IHeuristic';
+import HeuristicFactory from '../../src/heuristics/HeuristicFactory';
+import HC from '../../src/heuristics/HC';
+
 describe('CsvOutWritterTest Tests', () => {
     
     it('Should Setup write Results in Csv format', () => {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-
         var concrete = new IOutWriterFactory().CreateByName(configuration.outWriter);
-        
+        var hcInstance: HC  = new HeuristicFactory().CreateByName(configuration.heuristics[2]) as HC;
+        hcInstance.Name = "HC";
         configuration.logFileClearing = false; //just here for testing purpose
-        concrete.Initialize(configuration);
+        concrete.Initialize(configuration, configuration.libraries[0], hcInstance);
         var fakeResult = new TrialResults();
         
         fakeResult.trial = 1;
@@ -34,6 +38,18 @@ describe('CsvOutWritterTest Tests', () => {
         fakeResult.best = new Individual();
         
         concrete.WriteTrialResults(fakeResult);
+        
+        fakeResult.trial = 2;
+        fakeResult.bestIndividualAvgTime = 2.69;
+        fakeResult.bestIndividualCharacters = 25968;
+        fakeResult.bestIndividualLOC = 28000;
+        
+        fakeResult.originalIndividualAvgTime = 2.1;
+        fakeResult.originalIndividualCharacters = 26000
+        fakeResult.originalIndividualLOC = 20000;
+        fakeResult.best = new Individual();
+        
+        
         
         expect(concrete).not.be.an('undefined');       
     });
