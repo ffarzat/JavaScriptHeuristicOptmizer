@@ -8,6 +8,7 @@ import Individual from '../Individual';
 
 import ASTExplorer from '../ASTExplorer';
 import OperatorContext from '../OperatorContext';
+import Library from '../Library';
 
 
 import NodeIndex from './NodeIndex';
@@ -23,13 +24,14 @@ abstract  class IHeuristic
     _tester: ITester;
     _astExplorer: ASTExplorer;
     
-    
-    
+    public Name: string;
     public Trials:number;
     public bestFit: number;
     public bestIndividual: Individual;
     public mutationTrials: number;
     public crossOverTrials: number;
+    
+    public Original: Individual;
     
     /**
      * Forces the Heuristic to validate config
@@ -42,7 +44,7 @@ abstract  class IHeuristic
     /**
      * Especific Run for each Heuristic
      */
-    abstract RunTrial(trialIndex: number, original: Individual): TrialResults;
+    abstract RunTrial(trialIndex: number): TrialResults;
     
     /**
      *  Releases a Mutation over context 
@@ -82,6 +84,7 @@ abstract  class IHeuristic
         results.bestIndividualCharacters = bestCode.length;
         results.bestIndividualLOC = bestCode.split(/\r\n|\r|\n/).length;
         
+        results.original = original;
         results.originalIndividualAvgTime = this._tester.RetrieveConfiguratedFitFor(original);
         results.originalIndividualCharacters = originalCode.length;
         results.originalIndividualLOC =   originalCode.split(/\r\n|\r|\n/).length;
@@ -132,6 +135,26 @@ abstract  class IHeuristic
      */
     GenereateRandom(low, high): number {
         return this._astExplorer.GenereateRandom(low, high);
+    }
+    
+    /**
+     * Defines library over optmization
+     */
+    SetLibrary(library: Library)
+    {
+        this.Original = this.CreateOriginalFromLibraryConfiguration(library);
+        this.Test(this.Original);    
+        //Force Best
+        this.bestFit =  this._tester.RetrieveConfiguratedFitFor(this.Original);
+        this.bestIndividual = this.Original;
+    }
+    
+    
+    /**
+     * Create the orginal individual from library settings
+     */
+    CreateOriginalFromLibraryConfiguration(library: Library): Individual{
+        return this._astExplorer.GenerateFromFile(library.mainFilePath);
     }
 }
 

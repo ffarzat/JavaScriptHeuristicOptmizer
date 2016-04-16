@@ -48,14 +48,30 @@ export default class ConcreteLogger implements ILogger {
        
        Log4js.configure({
            appenders: [
-               { type: 'console', level: Log4js.levels.ALL  },
-               { type: 'file', filename: this._file , category: this._category}
+               { 
+                   type: 'console', 
+                   level: Log4js.levels.ALL,
+                   layout: 
+                   {
+                        "type": "pattern",
+                        "pattern": "%r|%m"
+                   }  
+               },
+               { 
+                   type: 'file', 
+                   level: Log4js.levels.ALL, 
+                   filename: this._file , 
+                   category: this._category,
+                   layout: 
+                   {
+                        "type": "pattern",
+                        "pattern": "%r|%m"
+                   }
+                }
             ]
         });
         
        this._logger = Log4js.getLogger(this._category);
-       //this._logger.setLevel(Log4js.levels.DEBUG);
-        
     }
     
     /**

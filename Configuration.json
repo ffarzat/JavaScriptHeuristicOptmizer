@@ -2,9 +2,9 @@
     "file": "Configuration.json",
     "trials":60,
     "fitType":"mean",
-    "testUntil": 1,
+    "testUntil": 0,
     "mutationTrials": 100,
-    "crossOverTrials": 5,
+    "crossOverTrials": 50,
     "logFilePath": "build/optmization.log",
     "logCategory":"optmization",
     "logFileClearing": false,
@@ -15,8 +15,14 @@
     "outWriter": "CsvResultsOutWriter",
     "heuristics": ["GA", "RD", "HC"],
     "libraries" : [
+        {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
+        {"name":"Jade",         "path":"Libraries/Jade/",       "mainFilePath":"Libraries/Jade/lib/index.js"  },
+        {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },
+        {"name":"minimist",     "path":"Libraries/minimist/",       "mainFilePath":"Libraries/minimist/index.js"  },
+        {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/moment.js" },
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
-        {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }
+        {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
+        {"name":"xml2js",       "path":"Libraries/xml2js/",         "mainFilePath":"Libraries/xml2js/lib/xml2js.js" }
     ],
     "trialsConfiguration":[
         {
@@ -42,7 +48,7 @@
                 "neighborApproach":"FirstAscent",
                 "restart":false, 
                 "trialsToRestart":5,
-                "trials": 1,
+                "trials": 5,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 2, 
                 "generations": 1,

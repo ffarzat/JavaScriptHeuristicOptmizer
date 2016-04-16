@@ -38,10 +38,10 @@ export default class GA extends IHeuristic {
     /**
      * Run a single trial
      */
-    RunTrial(trialIndex: number, original: Individual): TrialResults{
+    RunTrial(trialIndex: number): TrialResults{
         this._logger.Write(`Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
         
-        var population: Individual [] = this.CreatesFirstGeneration(original);
+        var population: Individual [] = this.CreatesFirstGeneration(this.Original);
 
         for (var generationIndex = 1; generationIndex < this.generations; generationIndex++) {
             this._logger.Write(`Starting generation ${generationIndex}`);
@@ -82,7 +82,7 @@ export default class GA extends IHeuristic {
             this.DoPopuplationCut(population);
         }
 
-        return this.ProcessResult(trialIndex, original, this.bestIndividual);
+        return this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
     }
     
     /**

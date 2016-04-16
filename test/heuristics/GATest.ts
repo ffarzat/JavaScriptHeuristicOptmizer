@@ -23,7 +23,7 @@ describe('GA Tests', function() {
     it('Should Creates a new Population Based on config', function () {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[6]; //uuid
+        var lib = configuration.libraries[1]; //uuid
         var ga: GA = new GA();
         
         var astExplorer: ASTExplorer = new ASTExplorer();
@@ -51,8 +51,8 @@ describe('GA Tests', function() {
         ga.bestFit = individualOverTests.testResults.median;
         ga.bestIndividual = individualOverTests;
         //====================>
-        
-        var results = ga.RunTrial(0, individualOverTests);
+        ga.SetLibrary(lib);
+        var results = ga.RunTrial(0);
         
         expect(results).not.be.an('undefined');
         expect(results.trial).to.be.equal(0);

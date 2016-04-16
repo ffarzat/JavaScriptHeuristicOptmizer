@@ -24,7 +24,7 @@ describe('HC Tests', function() {
     it('Should Iterate Based on config', function () {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[6]; //minimist
+        var lib = configuration.libraries[1]; //uuid
         var hc: HC = new HC();
         
         var astExplorer: ASTExplorer = new ASTExplorer();
@@ -32,6 +32,14 @@ describe('HC Tests', function() {
         //fse.writeFileSync(path.join(process.cwd(), "original.js"), individualOverTests.ToCode(), "UTF8" ); //saving file for comparsion purpose
         
         hc.Setup(configuration.trialsConfiguration[0].especific);
+        
+        expect(hc.trials).to.be.equal(2);
+        expect(hc.neighborApproach).to.be.equal("FirstAscent");
+        expect(hc.restart).to.be.equal(true);
+        expect(hc.nodesType.length).to.be.equal(2);
+        expect(hc.nodesType[0]).to.be.equal("CallExpression");
+        expect(hc.nodesType[1]).to.be.equal("IfStatement");
+
         
         var logger = new LogFactory().CreateByName(configuration.logWritter);
         logger.Initialize(configuration);
@@ -53,10 +61,11 @@ describe('HC Tests', function() {
         hc.bestFit = individualOverTests.testResults.median;
         hc.bestIndividual = individualOverTests;
         //====================>
-         var results = hc.RunTrial(0, individualOverTests);
+        hc.SetLibrary(lib);
+        var results = hc.RunTrial(0);
          
-         expect(results).not.be.an('undefined');
-         expect(results.trial).to.be.equal(2); //see Configuration.json
+        expect(results).not.be.an('undefined');
+        expect(results.trial).to.be.equal(0); 
     });
     
 });

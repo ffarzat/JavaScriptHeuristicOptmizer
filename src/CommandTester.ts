@@ -113,7 +113,7 @@ export default class CommandTester implements ITester {
         {
             var results:TestResults = new TestResults();
             results.rounds = this.testUntil;
-            results.min = unitTestsTimer.min();
+            results.min = unitTestsTimer.min() ;
             results.max = unitTestsTimer.max();
             results.mean = unitTestsTimer.mean();
             results.median = unitTestsTimer.median();
@@ -162,7 +162,7 @@ export default class CommandTester implements ITester {
      * Just for Debug
      */
     private ShowConsoleResults(timer:any){
-        //this.logger.Write('Results:');
+        this.logger.Write('Results:');
         this.logger.Write('total duration:' + timer.parse(timer.duration())); // total duration of all ticks
         this.logger.Write('min:' + timer.parse(timer.min()));      // minimal tick duration
         this.logger.Write('max:' + timer.parse(timer.max()));      // maximal tick duration

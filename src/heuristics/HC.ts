@@ -35,14 +35,14 @@ export default class HC extends IHeuristic {
     /**
      * Run the trial
      */
-    RunTrial(trialIndex: number, original: Individual): TrialResults{
+    RunTrial(trialIndex: number): TrialResults{
         this._logger.Write(`Starting  Trial ${trialIndex}`);
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
                
         if(this.restart)
             this._logger.Write(`HC will restart search after ${this.trialsToRestart} bad neighbors`);
         
-        var nodesIndexList: NodeIndex [] = this.DoIndexes(original);
+        var nodesIndexList: NodeIndex [] = this.DoIndexes(this.Original);
         
         var counterToRestart = 0;
         var typeIndexCounter = 0;
@@ -82,7 +82,7 @@ export default class HC extends IHeuristic {
             }
         }
         
-        return this.ProcessResult(index, original, this.bestIndividual);;
+        return this.ProcessResult(trialIndex, this.Original, this.bestIndividual);;
     }
     
     /**
@@ -95,7 +95,7 @@ export default class HC extends IHeuristic {
             this.nodesType.forEach(element => {
                 var nodeIndex = this.IndexBy(element, original);
                 nodesIndexList.push(nodeIndex);
-                this._logger.Write(`        ${element}: ${nodeIndex.Indexes.length}`);
+                this._logger.Write(`${element}: ${nodeIndex.Indexes.length}`);
             });    
         }
         else{
