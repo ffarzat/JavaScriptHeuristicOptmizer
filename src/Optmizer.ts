@@ -28,18 +28,20 @@ export default class Optmizer {
     nodesType: string [] = [];
     heuristics: IHeuristic [] = [];
     
+    heuristicTrial: number;
+    
     public trialIndex: number;
             
     /**
      * Initializes intire Setup chain
      */
-    Setup(config: IConfiguration, trialIndex: number) {
-        this.DoValidation(config)
-        this.configuration = config;
+    Setup(Config: IConfiguration, TrialIndex: number, HeuristicTrial: number) {
+        this.DoValidation(Config)
+        this.configuration = Config;
         
-        this.trialIndex = trialIndex;
-        this.nodesSelectionApproach = this.configuration.trialsConfiguration[trialIndex].nodesSelectionApproach;
-        this.nodesType = this.configuration.trialsConfiguration[this.trialIndex].nodesType;
+        this.trialIndex = TrialIndex;
+        this.nodesSelectionApproach = this.configuration.trialsConfiguration[HeuristicTrial].nodesSelectionApproach;
+        this.nodesType = this.configuration.trialsConfiguration[HeuristicTrial].nodesType;
         
         this.InitializeLogger();
         this.IntializeHeuristics();
@@ -157,7 +159,9 @@ export default class Optmizer {
         this.configuration.libraries.forEach(actualLibrary => {
             this.heuristics.forEach(actualHeuristic => {
                 
-                    this.logger.Write(`Executing trial ${this.trialIndex} for ${actualLibrary.name} with ${actualHeuristic.Name}`);
+                    this.logger.Write(`Executing trial ${this.trialIndex} for ${actualLibrary.name} with ${actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);
+                    this.logger.Write(`Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
+                    this.logger.Write(`Using nodesType: ${this.nodesType}`);
 
                     this.InitializeOutWritter(actualLibrary, actualHeuristic);
                     
