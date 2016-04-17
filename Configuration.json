@@ -1,8 +1,8 @@
 {
     "file": "Configuration.json",
-    "trials":60,
+    "trials":5,
     "fitType":"mean",
-    "testUntil": 0,
+    "testUntil": 20,
     "mutationTrials": 100,
     "crossOverTrials": 50,
     "logFilePath": "build/optmization.log",
@@ -13,7 +13,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["GA", "RD", "HC"],
+    "heuristics": ["RD", "HC", "GA"],
     "libraries" : [
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
         {"name":"Jade",         "path":"Libraries/Jade/",       "mainFilePath":"Libraries/Jade/lib/index.js"  },
@@ -30,28 +30,11 @@
             "especific": {
                 "neighborApproach":"FirstAscent", 
                 "restart":true, 
-                "trialsToRestart":5,
-                "trials": 2,
+                "trialsToRestart":10,
+                "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
-                "individuals": 2, 
-                "generations": 1,
-                "crossoverProbability": 75,
-                "mutationProbability": 25,
-                "elitism": true,
-                "elitismPercentual": 30
-            }
-        },
-        {
-            "nodesSelectionApproach":"NodeType", 
-            "nodesType": ["Function"], 
-            "especific": {
-                "neighborApproach":"FirstAscent",
-                "restart":false, 
-                "trialsToRestart":5,
-                "trials": 5,
-                "nodesType": ["CallExpression", "IfStatement"], 
-                "individuals": 2, 
-                "generations": 1,
+                "individuals": 100, 
+                "generations": 50,
                 "crossoverProbability": 75,
                 "mutationProbability": 25,
                 "elitism": true,

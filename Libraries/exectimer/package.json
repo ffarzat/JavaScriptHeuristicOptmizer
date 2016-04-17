@@ -1,0 +1,41 @@
+{
+  "name": "exectimer",
+  "version": "2.0.0",
+  "description": "Very simple module to calculate block execution time.",
+  "keywords": [
+    "time",
+    "timer",
+    "profiler",
+    "execution",
+    "performance",
+    "analysis",
+    "benchmark"
+  ],
+  "homepage": "https://github.com/alexandrusavin/exectimer",
+  "bugs": "https://github.com/alexandrusavin/exectimer/issues",
+  "author": {
+    "name": "Alexandru Savin",
+    "email": "alexandrusavin@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/alexandrusavin/exectimer.git"
+  },
+  "main": "./index",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/**/*.js",
+    "jshint": "jshint --config .jshintrc --exclude node_modules *.js"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "devDependencies": {
+    "async": "^1.5.0",
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4",
+    "should": "^7.1.1"
+  },
+  "dependencies": {
+    "co": "^4.6.0"
+  }
+}
