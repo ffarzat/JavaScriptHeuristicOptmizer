@@ -25,7 +25,7 @@
                 "neighborApproach":"FirstAscent", 
                 "restart":true, 
                 "trialsToRestart":1,
-                "trials": 2,
+                "trials": 3,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 2, 
                 "generations": 1,
