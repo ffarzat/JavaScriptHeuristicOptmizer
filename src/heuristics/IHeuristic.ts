@@ -26,6 +26,7 @@ abstract  class IHeuristic extends events.EventEmitter
     _logger: ILogger;
     _tester: ITester;
     _astExplorer: ASTExplorer;
+    _lib: Library;
     
     public Name: string;
     public Trials:number;
@@ -82,6 +83,8 @@ abstract  class IHeuristic extends events.EventEmitter
         var originalCode = original.ToCode();
         
         results.trial = trialIndex;
+        results.library = this._lib;
+        results.heuristic = this;
         
         results.best = bestIndividual;
         results.bestIndividualAvgTime = this._tester.RetrieveConfiguratedFitFor(bestIndividual);
@@ -146,6 +149,8 @@ abstract  class IHeuristic extends events.EventEmitter
      */
     SetLibrary(library: Library)
     {
+        this._lib = library;
+        
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
         this.Test(this.Original);    
         //Force Best

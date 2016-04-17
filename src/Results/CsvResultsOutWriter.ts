@@ -95,6 +95,9 @@ export default class CsvResultsOutWriter implements IOutWriter {
                     result.bestIndividualCharacters + 
                     this.newLine
         );
+        
+        result.file = this.file;
+        
         this.WriteCodeToFile(result);
     }
     

@@ -72,6 +72,7 @@ export default class HC extends IHeuristic {
                 //totally randon    
                 if(counterToRestart == this.trialsToRestart) { 
                     typeIndexCounter = this.GenereateRandom(0, nodesIndexList.length);
+                    this._logger.Write(`HC Restarting`);
                     this.emit('Restart');
                 }
             }
