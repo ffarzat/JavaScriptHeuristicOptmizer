@@ -13,11 +13,14 @@ import Library from '../Library';
 
 import NodeIndex from './NodeIndex';
 
+import events = require('events');
+
+
 
 /**
  * Generic interface for Heuristics 
  */
-abstract  class IHeuristic
+abstract  class IHeuristic extends events.EventEmitter
 {
     _config: TrialEspecificConfiguration;
     _logger: ILogger;
@@ -39,6 +42,7 @@ abstract  class IHeuristic
     Setup(config: TrialEspecificConfiguration): void{
         this._config = config;
         this._astExplorer = new ASTExplorer();
+        events.EventEmitter.call(this);
     }
     
     /**
