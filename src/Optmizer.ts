@@ -10,6 +10,11 @@ import IOutWriterFactory from './IOutWriterFactory';
 import Library from './Library';
 import TrialResults from './Results/TrialResults';
 
+import fs = require('fs');
+
+var mailer = require("nodemailer");
+
+
 /**
  * Optmizer
  */
@@ -113,8 +118,35 @@ export default class Optmizer {
      * Notifies about results of improvement
      */
     private Notify(result: TrialResults){
-
-  
+        
+        var smtpTransport = mailer.createTransport("SMTP",{
+            service: "Gmail",
+            auth: {
+                user: "typescript01@gmail.com",
+                pass: "Doutorado2016#1"
+            }
+        });
+        
+        var mail = {
+            from: "Optmizer <typescript01@gmail.com>",
+            to: "fabiofarzat@gmail.com",
+            subject: `[Execution Results] ${result.library.name}/${result.heuristic.Name}/${result.trial}`,
+            text: `File attached and saved in: ${result.file}`,
+            attachments: [{'filename': result.file, 'content': fs.readFileSync(result.file)}]
+        }
+        
+        
+        smtpTransport.sendMail(mail, (error, response)=>{
+            if(error){
+                this.logger.Write(error);
+            }else{
+                this.logger.Write("Message sent: " + response.message);
+            }
+            
+            smtpTransport.close();
+        });
+        
+        
     }
     
     /**
