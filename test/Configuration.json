@@ -24,7 +24,7 @@
             "especific": {
                 "neighborApproach":"FirstAscent", 
                 "restart":true, 
-                "trialsToRestart":5,
+                "trialsToRestart":1,
                 "trials": 2,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 2, 

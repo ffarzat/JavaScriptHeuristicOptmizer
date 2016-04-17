@@ -60,12 +60,19 @@ describe('HC Tests', function() {
         var totalNodes = astExplorer.CountNodes(individualOverTests);
         hc.bestFit = individualOverTests.testResults.median;
         hc.bestIndividual = individualOverTests;
+        
+        var itHasRestarted = false;
+        hc.on('Restart', ()=>{
+             itHasRestarted = true;   
+        });
+        
         //====================>
         hc.SetLibrary(lib);
         var results = hc.RunTrial(0);
          
         expect(results).not.be.an('undefined');
-        expect(results.trial).to.be.equal(0); 
+        expect(results.trial).to.be.equal(0);
+        expect(itHasRestarted).to.be.equal(true); 
     });
     
 });

@@ -68,9 +68,12 @@ export default class HC extends IHeuristic {
                 else{
                     counterToRestart = 0;
                 }
-                    
-                if(counterToRestart == this.trialsToRestart) //totally randon 
+
+                //totally randon    
+                if(counterToRestart == this.trialsToRestart) { 
                     typeIndexCounter = this.GenereateRandom(0, nodesIndexList.length);
+                    this.emit('Restart');
+                }
             }
             
             //Next NodeIndex?
