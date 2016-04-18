@@ -13,7 +13,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC", "GA", "RD"],
+    "heuristics": ["GA", "HC", "RD"],
     "libraries" : [
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },

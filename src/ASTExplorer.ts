@@ -63,7 +63,7 @@ export default class ASTExplorer {
            }
        }
        
-       if(!newSon || !newDaughter){ //no way to cross! Dammit!
+       if(newSon == undefined || newDaughter == undefined){ //no way to cross! Dammit!
            newSon = context.First.Clone();
            newDaughter = context.Second.Clone();
        } 
@@ -157,7 +157,7 @@ export default class ASTExplorer {
            }
        }
        
-       if(!mutant){ //no way to mutate! Dammit!
+       if(mutant == undefined){ //no way to mutate! Dammit!
            mutant = context.First.Clone();
        } 
 
