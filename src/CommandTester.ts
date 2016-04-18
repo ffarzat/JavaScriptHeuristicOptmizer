@@ -80,7 +80,7 @@ export default class CommandTester implements ITester {
             
             var Tick = exectimer.Tick;
             
-            this.logger.Write(`Doing ${this.testUntil} evaluations`);
+            //this.logger.Write(`Doing ${this.testUntil} evaluations`);
             
             for (var index = 0; index < this.testUntil; index++) {
             
@@ -99,7 +99,7 @@ export default class CommandTester implements ITester {
                 }        
             }    
         } catch (error) {
-            console.log(error);
+            this.logger.Write(error);
             passedAllTests = false;
         }
         finally{
@@ -139,7 +139,7 @@ export default class CommandTester implements ITester {
             individual.testResults = results;
         }
         
-        this.logger.Write(`All Tests: ${passedAllTests}`);
+        //this.logger.Write(`All Tests: ${passedAllTests}`);
         this.ShowConsoleResults(unitTestsTimer);
     }
 
@@ -162,12 +162,12 @@ export default class CommandTester implements ITester {
      * Just for Debug
      */
     private ShowConsoleResults(timer:any){
-        this.logger.Write('Results:');
-        this.logger.Write('total duration:' + timer.parse(timer.duration())); // total duration of all ticks
-        this.logger.Write('min:' + timer.parse(timer.min()));      // minimal tick duration
-        this.logger.Write('max:' + timer.parse(timer.max()));      // maximal tick duration
-        this.logger.Write('mean:' + timer.parse(timer.mean()));     // mean tick duration
-        this.logger.Write('median:' + timer.parse(timer.median()));   // median tick duration
+        //this.logger.Write('Results:');
+        //this.logger.Write('total duration:' + timer.parse(timer.duration())); // total duration of all ticks
+        //this.logger.Write('min:' + timer.parse(timer.min()));      // minimal tick duration
+        //this.logger.Write('max:' + timer.parse(timer.max()));      // maximal tick duration
+        //this.logger.Write('mean:' + timer.parse(timer.mean()));     // mean tick duration
+        //this.logger.Write('median:' + timer.parse(timer.median()));   // median tick duration
     }
 
     /**

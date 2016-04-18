@@ -38,6 +38,7 @@ export default class HC extends IHeuristic {
     RunTrial(trialIndex: number): TrialResults{
         this._logger.Write(`Starting  Trial ${trialIndex}`);
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
+        this._logger.Write(`Using nodesType: ${this.nodesType}`);
                
         if(this.restart)
             this._logger.Write(`HC will restart search after ${this.trialsToRestart} bad neighbors`);
