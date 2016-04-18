@@ -107,8 +107,11 @@ abstract  class IHeuristic extends events.EventEmitter
         
         if(this._tester.RetrieveConfiguratedFitFor(newBest) < this.bestFit)
         {
+            this._logger.Write('===========================================================================================');
             this.bestFit =  this._tester.RetrieveConfiguratedFitFor(newBest);
             this.bestIndividual = newBest;    
+            this._logger.Write(`New Best Fit ${this.bestFit}`);
+            this._logger.Write('===========================================================================================');
         }
     }
     

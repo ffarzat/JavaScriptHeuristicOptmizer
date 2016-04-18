@@ -40,8 +40,10 @@ export default class Optmizer {
         this.configuration = Config;
         
         this.trialIndex = TrialIndex;
-        this.nodesSelectionApproach = this.configuration.trialsConfiguration[HeuristicTrial].nodesSelectionApproach;
-        this.nodesType = this.configuration.trialsConfiguration[HeuristicTrial].nodesType;
+        this.heuristicTrial = HeuristicTrial;
+        
+        this.nodesSelectionApproach = this.configuration.trialsConfiguration[this.heuristicTrial].nodesSelectionApproach;
+        this.nodesType = this.configuration.trialsConfiguration[this.heuristicTrial].nodesType;
         
         this.InitializeLogger();
         this.IntializeHeuristics();
@@ -161,7 +163,6 @@ export default class Optmizer {
                 
                     this.logger.Write(`Executing trial ${this.trialIndex} for ${actualLibrary.name} with ${actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);
                     this.logger.Write(`Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
-                    this.logger.Write(`Using nodesType: ${this.nodesType}`);
 
                     this.InitializeOutWritter(actualLibrary, actualHeuristic);
                     
