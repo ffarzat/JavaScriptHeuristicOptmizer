@@ -33,7 +33,7 @@ describe('HC Tests', function() {
         
         hc.Setup(configuration.trialsConfiguration[0].especific);
         
-        expect(hc.trials).to.be.equal(2);
+        expect(hc.trials).to.be.equal(3);
         expect(hc.neighborApproach).to.be.equal("FirstAscent");
         expect(hc.restart).to.be.equal(true);
         expect(hc.nodesType.length).to.be.equal(2);

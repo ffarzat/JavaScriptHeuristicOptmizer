@@ -25,6 +25,7 @@ describe('GA Tests', function() {
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var lib = configuration.libraries[1]; //uuid
         var ga: GA = new GA();
+        ga.Name = 'GA';
         
         var astExplorer: ASTExplorer = new ASTExplorer();
         var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);

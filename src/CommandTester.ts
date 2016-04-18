@@ -80,7 +80,7 @@ export default class CommandTester implements ITester {
             
             var Tick = exectimer.Tick;
             
-            //this.logger.Write(`Doing ${this.testUntil} evaluations`);
+            this.logger.Write(`Doing ${this.testUntil} evaluations`);
             
             for (var index = 0; index < this.testUntil; index++) {
             
@@ -113,11 +113,11 @@ export default class CommandTester implements ITester {
         {
             var results:TestResults = new TestResults();
             results.rounds = this.testUntil;
-            results.min = unitTestsTimer.min() ;
-            results.max = unitTestsTimer.max();
-            results.mean = unitTestsTimer.mean();
-            results.median = unitTestsTimer.median();
-            results.duration = unitTestsTimer.duration();
+            results.min = this.ToNanosecondsToSeconds(unitTestsTimer.min());
+            results.max = this.ToNanosecondsToSeconds(unitTestsTimer.max());
+            results.mean = this.ToNanosecondsToSeconds(unitTestsTimer.mean());
+            results.median = this.ToNanosecondsToSeconds(unitTestsTimer.median());
+            results.duration = this.ToNanosecondsToSeconds(unitTestsTimer.duration());
             results.outputs = outputsFromCmd;
             results.passedAllTests = passedAllTests
 
@@ -139,8 +139,8 @@ export default class CommandTester implements ITester {
             individual.testResults = results;
         }
         
-        //this.logger.Write(`All Tests: ${passedAllTests}`);
-        this.ShowConsoleResults(unitTestsTimer);
+        this.logger.Write(`All Tests: ${passedAllTests}`);
+        this.ShowConsoleResults(results);
     }
 
     /**
@@ -161,13 +161,13 @@ export default class CommandTester implements ITester {
     /**
      * Just for Debug
      */
-    private ShowConsoleResults(timer:any){
-        //this.logger.Write('Results:');
-        //this.logger.Write('total duration:' + timer.parse(timer.duration())); // total duration of all ticks
-        //this.logger.Write('min:' + timer.parse(timer.min()));      // minimal tick duration
-        //this.logger.Write('max:' + timer.parse(timer.max()));      // maximal tick duration
-        //this.logger.Write('mean:' + timer.parse(timer.mean()));     // mean tick duration
-        //this.logger.Write('median:' + timer.parse(timer.median()));   // median tick duration
+    private ShowConsoleResults(result:TestResults){
+        this.logger.Write('Results:');
+        this.logger.Write('total duration:' + result.duration); // total duration of all ticks
+        this.logger.Write('min:'            + result.min);      // minimal tick duration
+        this.logger.Write('max:'            + result.max);      // maximal tick duration
+        this.logger.Write('mean:'           + result.mean);     // mean tick duration
+        this.logger.Write('median:'         + result.median);   // median tick duration
     }
 
     /**
@@ -183,6 +183,13 @@ export default class CommandTester implements ITester {
      *  */    
     SetLogger(logger: ILogger){
         this.logger = logger;
+    }
+    
+    /**
+     * Transform nano secs in secs
+     */
+    private ToNanosecondsToSeconds(nanovalue: number): number{
+        return parseFloat((nanovalue /1000000000.0).toFixed(1));
     }
 
 }
