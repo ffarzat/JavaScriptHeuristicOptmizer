@@ -191,7 +191,7 @@ export default class ASTExplorer {
         var mutant = context.First.Clone();
         var indexes: number [] = this.IndexNodes(mutant);
         var counter = 0;
-        var randonNodeToPrune: number = this.GenereateRandom(0, indexes.length);
+        var randonNodeToPrune: number = this.GenereateRandom(0, indexes.length -1);
 
         //console.log(`rd node to remove ${randonNodeToPrune} of ${indexes.length}`);
 

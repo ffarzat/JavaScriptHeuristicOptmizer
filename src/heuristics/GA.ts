@@ -137,7 +137,7 @@ export default class GA extends IHeuristic {
     {
         var context: OperatorContext = new OperatorContext();
         context.First = population[individualIndex];
-        context.Second = population[this.GenereateRandom(0, population.length)];
+        context.Second = population[this.GenereateRandom(0, population.length -1)];
         var newOnes = this.CrossOver(context);
         
         this.Test(newOnes[0]);
