@@ -96,6 +96,10 @@ abstract  class IHeuristic extends events.EventEmitter
         results.originalIndividualCharacters = originalCode.length;
         results.originalIndividualLOC =   originalCode.split(/\r\n|\r|\n/).length;
         
+        this._logger.Write(`Ending ${this.Name}`);
+        this._logger.Write('=================================');
+        
+        
         return results;
     }
     
@@ -107,11 +111,11 @@ abstract  class IHeuristic extends events.EventEmitter
         
         if(this._tester.RetrieveConfiguratedFitFor(newBest) < this.bestFit)
         {
-            this._logger.Write('===========================================================================================');
+            this._logger.Write('=================================');
             this.bestFit =  this._tester.RetrieveConfiguratedFitFor(newBest);
             this.bestIndividual = newBest;    
             this._logger.Write(`New Best Fit ${this.bestFit}`);
-            this._logger.Write('===========================================================================================');
+            this._logger.Write('=================================');
         }
     }
     
@@ -152,13 +156,17 @@ abstract  class IHeuristic extends events.EventEmitter
      */
     SetLibrary(library: Library)
     {
-        this._lib = library;
         
+        this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
         this.Test(this.Original);    
         //Force Best
         this.bestFit =  this._tester.RetrieveConfiguratedFitFor(this.Original);
         this.bestIndividual = this.Original;
+      
+        this._logger.Write('Testing Original Code for initial Best Fit');
+        this._logger.Write(`Original Fit ${this.bestFit}`);
+        this._logger.Write('=================================');
     }
     
     
