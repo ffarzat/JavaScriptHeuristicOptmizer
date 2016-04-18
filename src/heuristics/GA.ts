@@ -91,9 +91,9 @@ export default class GA extends IHeuristic {
     private DoPopuplationCut(population: Individual [])
     {
         if(this.elitism){
-           population.sort(function (a,b){ return this._tester.RetrieveConfiguratedFitFor(a) > this._tester.RetrieveConfiguratedFitFor(b)? 1: 0; });
-           var countElitism = (this.individuals * this.elitismPercentual) / 100;
            this._logger.Write(`Using Elitism. Keeping ${countElitism} best individuals`);
+            population.sort( (a,b)=> { return this._tester.RetrieveConfiguratedFitFor(a) > this._tester.RetrieveConfiguratedFitFor(b)? 1: 0; });
+           var countElitism = (this.individuals * this.elitismPercentual) / 100;
            population.splice(0, countElitism);
            this.Repopulate(population, countElitism);
         }
