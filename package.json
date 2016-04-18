@@ -9,7 +9,8 @@
     "test": "mocha --recursive build/test",
     "pretest": "npm run clean && npm run wait && npm run build",
     "clean": "rmdir build /s /q",
-    "wait": "ping 127.0.0.1 -n 1 > nul"
+    "wait": "ping 127.0.0.1 -n 2 > nul",
+    "start": "npm run clean && npm run wait && npm run build && node build/src/index.js"
   },
   "author": {
     "name": "Fabio Farzat",

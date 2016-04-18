@@ -20,12 +20,12 @@ describe('Optmizer Tests', function () {
         configuration.libraries.splice(0, 1); //removing underscore from this test
         
         var optmizer = new Optmizer();
-        optmizer.Setup(configuration, 0);
+        optmizer.Setup(configuration, 0, 0);
         expect(optmizer.trialIndex).to.be(0);
         optmizer.DoOptmization();
         expect(optmizer.trialIndex).to.be(0);
         
-        optmizer.Setup(configuration, 1);
+        optmizer.Setup(configuration, 1, 0);
         expect(optmizer.trialIndex).to.be(1);
         optmizer.DoOptmization();
         expect(optmizer.trialIndex).to.be(1);
