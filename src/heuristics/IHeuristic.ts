@@ -109,7 +109,7 @@ abstract  class IHeuristic extends events.EventEmitter
      */
     UpdateBest(newBest: Individual){
         
-        if(this._tester.RetrieveConfiguratedFitFor(newBest) < this.bestFit)
+        if(this._tester.RetrieveConfiguratedFitFor(newBest) < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode()))
         {
             this._logger.Write('=================================');
             this.bestFit =  this._tester.RetrieveConfiguratedFitFor(newBest);
