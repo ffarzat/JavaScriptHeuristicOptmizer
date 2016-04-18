@@ -164,7 +164,6 @@ abstract  class IHeuristic extends events.EventEmitter
         this.bestFit =  this._tester.RetrieveConfiguratedFitFor(this.Original);
         this.bestIndividual = this.Original;
       
-        this._logger.Write('Testing Original Code for initial Best Fit');
         this._logger.Write(`Original Fit ${this.bestFit}`);
         this._logger.Write('=================================');
     }
