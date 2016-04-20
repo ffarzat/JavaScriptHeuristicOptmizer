@@ -6,7 +6,6 @@ import OperatorContext from './OperatorContext';
 import path = require('path');
 import traverse = require('traverse');
 
-var estraverse = require("estraverse");
 var escodegen = require('escodegen');
 
 /**
