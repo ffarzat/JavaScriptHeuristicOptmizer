@@ -22,6 +22,7 @@
     "esprima": "2.7.2",
     "exectimer": "2.0.0",
     "fs-extra": "0.26.7",
+    "http": "0.0.0",
     "log4js": "0.6.33",
     "node-uuid": "1.4.7",
     "nodemailer": "0.7.1",

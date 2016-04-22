@@ -101,6 +101,16 @@ interface IConfiguration {
     logFileClearing: boolean;
     
     /**
+     * Server port 
+     */
+    port: number; 
+    
+    /**
+     * Servers url
+     */
+    url: string;
+    
+    /**
      * Each trial configurations
      * 
      * Works with a IConfiguration.trials. #trials * each(TrialConfiguration)

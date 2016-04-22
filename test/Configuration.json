@@ -14,6 +14,8 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": ["GA", "RD", "HC"],
+    "port": 5000,
+    "url": "ws://localhost",
     "libraries" : [
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }
