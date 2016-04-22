@@ -28,8 +28,8 @@ export default class Server {
         this.url = configuration.url;
         
         this.httpServer = http.createServer(function(request, response) {});
-        this.httpServer.listen(this.port, function() {
-            this.logger.Write('Server is listening on port' + this.port);
+        this.httpServer.listen(this.port, ()=> {
+            this.logger.Write('Server is listening on port:' + this.port);
         });
         
         
@@ -57,6 +57,12 @@ export default class Server {
             this.logger.Write('Connection accepted [' + id + ']');
             this.HandleConnections(client);
             
+            this.SendDataTest("From run.js"); //=============================================================== TEST!!!!
+            
+        });
+        
+        this.wsServer.on("message", ()=>{
+            
         });
         
     }
@@ -67,11 +73,20 @@ export default class Server {
     private HandleConnections(client: Client){
         
         //Handle on close
-        client.connection.on('close', function(reasonCode, description) {
-            delete this.clients[client.id]; //remove from list
+        client.connection. on('close', function(reasonCode, description) {
             this.logger.Write('Peer ' + client.connection.remoteAddress + ' disconnected.');
+            delete this.clients[client.id]; //remove from list
         });    
         
+        //Handle on close
+        client.connection. on('message', (message) =>{
+            this.logger.Write(`${message.utf8Data}`);
+        });
+        
+    }
+    
+    SendDataTest(msg: string){
+        this.clients[0].connection.send(msg);
     }
     
 }
