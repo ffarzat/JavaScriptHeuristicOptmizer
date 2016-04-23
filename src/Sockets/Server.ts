@@ -2,8 +2,7 @@ import IConfiguration from '../IConfiguration';
 import ILogger from '../ILogger';
 import Client from './Client';
 
-import WebSocketServer = require('websocket');
-var http = require('http');
+import WebSocketServer = require('ws');
 
 
 /**
@@ -11,11 +10,10 @@ var http = require('http');
  */
 export default class Server {
     
-    wsServer: WebSocketServer.server ; //new require('websocket').server
+    wsServer: WebSocketServer.Server ; //new require('websocket').server
     port: number;
     url: string;
     logger: ILogger;
-    httpServer: any; //http.createServer()
     
     clients: Client [] = [] ; //store available clients
     
@@ -27,26 +25,18 @@ export default class Server {
         this.port = configuration.port;
         this.url = configuration.url;
         
-        this.httpServer = http.createServer(function(request, response) {});
-        this.httpServer.listen(this.port, ()=> {
-            this.logger.Write('Server is listening on port:' + this.port);
-        });
-        
-        
-        this.wsServer = new WebSocketServer.server({httpServer: this.httpServer});
-        this.HandleServer();
-               
+        this.wsServer = new WebSocketServer.Server({port: this.port});
+        this.HandleServer();      
     }
     
     /**
      * Handle Server Events
      */
     private HandleServer(){
-        
+          
         //Handle on request
-        this.wsServer.on('request', (request: WebSocketServer.request) =>{
-            var connection = request.accept('echo-protocol', request.origin);
-            var id = this.clients.length;
+        this.wsServer.on('connection', (connection) => {
+            var id = connection.upgradeReq.url.replace("/ID=", "");
             
             var client = new Client();
             client.id = id;
@@ -57,7 +47,7 @@ export default class Server {
             this.logger.Write('Connection accepted [' + id + ']');
             this.HandleConnections(client);
             
-            this.SendDataTest("From run.js"); //=============================================================== TEST!!!!
+            this.SendDataTest("Do a Mutation for me?"); //=============================================================== TEST!!!!
             
         });
         
@@ -73,14 +63,14 @@ export default class Server {
     private HandleConnections(client: Client){
         
         //Handle on close
-        client.connection. on('close', function(reasonCode, description) {
-            this.logger.Write('Peer ' + client.connection.remoteAddress + ' disconnected.');
+        client.connection. on('close', (reasonCode, description)=> {
+            this.logger.Write('Peer ' + client.id + ' disconnected.');
             delete this.clients[client.id]; //remove from list
         });    
         
-        //Handle on close
-        client.connection. on('message', (message) =>{
-            this.logger.Write(`${message.utf8Data}`);
+        //Handle on messagem from cliente!
+        client.connection.on('message', (message) => {
+            this.logger.Write(`${message}`);
         });
         
     }

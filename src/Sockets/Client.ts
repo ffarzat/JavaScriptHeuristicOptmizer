@@ -2,14 +2,14 @@
 
 import IConfiguration from '../IConfiguration';
 import ILogger from '../ILogger';
-import WebSocketServer = require('websocket');
+import WebSocketServer = require('ws');
 
 /**
  * Client representaion on Server
  */
 export default class Client{
-    connection: WebSocketServer.connection;
-    id: number
+    connection: WebSocketServer;
+    id: string
     available: boolean;
     
 }
