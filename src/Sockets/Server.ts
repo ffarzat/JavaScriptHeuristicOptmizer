@@ -42,19 +42,15 @@ export default class Server {
             client.id = id;
             client.connection = connection;
             client.available = true;
-            this.clients.push(client);
+            this.clients[id] = client;
             
             this.logger.Write('Connection accepted [' + id + ']');
             this.HandleConnections(client);
             
-            this.SendDataTest("Do a Mutation for me?"); //=============================================================== TEST!!!!
+            client.connection.send('Do a mutation for me?'); //=============================================================== TEST!!!!
             
         });
-        
-        this.wsServer.on("message", ()=>{
-            
-        });
-        
+                
     }
     
     /**
@@ -65,7 +61,11 @@ export default class Server {
         //Handle on close
         client.connection. on('close', (reasonCode, description)=> {
             this.logger.Write('Peer ' + client.id + ' disconnected.');
-            delete this.clients[client.id]; //remove from list
+            
+            var index = this.clients.indexOf(client);
+            this.clients.splice(index, 1);  //remove from availables
+            
+            this.logger.Write(`Left ${this.clients.length} client(s)`); 
         });    
         
         //Handle on messagem from cliente!
@@ -73,10 +73,5 @@ export default class Server {
             this.logger.Write(`${message}`);
         });
         
-    }
-    
-    SendDataTest(msg: string){
-        this.clients[0].connection.send(msg);
-    }
-    
+    } 
 }
