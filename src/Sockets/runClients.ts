@@ -1,6 +1,7 @@
 import Client from './Client';
 import Server from './Server';
 
+import OperatorContext from '../OperatorContext';
 import IConfiguration from '../IConfiguration';
 import LogFactory from '../LogFactory';
 
@@ -17,8 +18,8 @@ console.log(serverUrl);
 var ws = new WebSocket(serverUrl, 'echo-protocol');
 
 ws.addEventListener("message", (e) => {
-    var msg = e.data;
-    console.log(msg);
+    var context: OperatorContext = JSON.parse(e.data);
+    console.log(`chegou o pedido ${configuration.mutationTrials}`);
     
-    ws.send("mutant just for you!");
+    ws.send(`Take your mutant man!`);
 });
