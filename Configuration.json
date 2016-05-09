@@ -2,7 +2,7 @@
     "file": "Configuration.json",
     "trials":5,
     "fitType":"mean",
-    "testUntil": 20,
+    "testUntil": 5,
     "mutationTrials": 100,
     "crossOverTrials": 50,
     "logFilePath": "build/optmization.log",
@@ -13,7 +13,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["GA", "HC", "RD"],
+    "heuristics": ["RD", "HC", "GA"],
     "port": 5000,
     "url": "ws://localhost",
     "libraries" : [

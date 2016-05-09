@@ -30,8 +30,15 @@ logger.Write(`Preparing libs environment`);
 if (cluster.isMaster) {
     localServer.logger = logger;
     localServer.Setup(configuration);
+    setInterval(function() { localServer.ProcessQueue(); }, 50);
     
-    cluster.fork(); //optmizer + 1
+    var optmizerWorker = cluster.fork(); //optmizer worker
+    
+    optmizerWorker.on('message', function(msg) {
+      //from optmizer to server
+      
+      
+    });
 
 } else {
     //Here is the Optmizer in another work
@@ -47,7 +54,6 @@ if (cluster.isMaster) {
     for (var trial = 0; trial < configuration.trials; trial++) {
         for (var heuristicTrial = 0; heuristicTrial < configuration.trialsConfiguration.length ; heuristicTrial++) {
             var optmizer = new Optmizer();
-            optmizer.server = localServer;
             optmizer.Setup(configuration, trial, heuristicTrial);
             optmizer.DoOptmization();    
         }
