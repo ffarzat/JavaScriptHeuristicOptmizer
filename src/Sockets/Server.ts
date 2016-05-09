@@ -7,7 +7,6 @@ import Message from './Message';
 import WebSocketServer = require('ws');
 var uuid = require('node-uuid');
 
-
 /**
  * Server to control the optmization process
  */
@@ -33,6 +32,7 @@ export default class Server {
 
         this.wsServer = new WebSocketServer.Server({ port: this.port });
         this.HandleServer();
+        this.logger.Write('Server listening');
     }
 
     /**
@@ -79,11 +79,13 @@ export default class Server {
 
         //Handle on messagem from cliente!
         client.connection.on('message', (message) => {
-            this.logger.Write(`${message}`);
+            var msg: Message = JSON.parse(message);
+            
+            this.logger.Write(`msg back: ${msg.id}`);
 
             if (this.clients.indexOf(client) == -1) {
                 this.clients.push(client); //be available again
-                //apagar a mensagem em waitingMessages e chamar o callback
+                this.Done(client.id, msg);
             }
 
         });
@@ -92,7 +94,7 @@ export default class Server {
     /**
      * Send a request for any available client to o a mutation over OperatorContext
      */
-    DoAMutation(context: OperatorContext, cb) {
+    DoAMutation(context: OperatorContext, cb: (ctx: OperatorContext) => void ) {
         var item = new Message();
         item.id = uuid.v4();
         item.ctx = context;
@@ -104,14 +106,22 @@ export default class Server {
      * Process messages
      */
     ProcessQueue() {
+        
+        if(this.clients.length == 0)
+            return;
+
+        if(this.messages.length == 0)
+            return;
+
+
+            this.logger.Write(`${this.messages.length} messages left.`)
 
         for (var clientIndex = 0; clientIndex < this.clients.length; clientIndex++) {
-            var availableClient = this.clients.pop(); //clientIndex
-
             if (this.messages.length > 0) {
+                var availableClient = this.clients.pop(); 
                 var msg = this.messages.pop();
                 msg.clientId = availableClient.id;
-                availableClient.connection.send(JSON.stringify(context));
+                availableClient.connection.send(JSON.stringify(msg));
                 this.waitingMessages.push(msg);
             }
             else {
@@ -119,4 +129,20 @@ export default class Server {
             }
         }
     }
+    
+    /**
+     * 
+     */
+    Done(clientId: string, message: Message){
+        for (var index = 0; index < this.waitingMessages.length; index++) {
+            var element = this.waitingMessages[index];
+            if(element.id == message.id)
+                break;
+        }
+                
+        var localmsg = this.waitingMessages[index];
+        this.waitingMessages.splice(index, 1); //cut off
+        localmsg.cb(message.ctx); //do the callback!
+    }
 }
+

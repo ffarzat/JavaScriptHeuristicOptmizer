@@ -35,7 +35,16 @@ var localServer = new Server();
 localServer.logger = logger;
 localServer.Setup(configuration);
 
-setInterval(function() { localServer.DoAMutation(context); }, 1000);
+setInterval(function() { localServer.DoAMutation(context, Done); }, 3000);
+setInterval(function() { localServer.ProcessQueue(); }, 1000);
+
+
+/**
+ * Callback 
+ */
+function Done(ctx: OperatorContext): void{
+    console.log('concluída');
+}
 
 
 

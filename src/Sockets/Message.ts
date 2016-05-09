@@ -2,7 +2,6 @@
 
 import OperatorContext from '../OperatorContext';
 
-
 /**
  * Item message for distributed processing
  */
