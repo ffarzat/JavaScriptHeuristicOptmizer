@@ -9,7 +9,7 @@ import TesterFactory from './TesterFactory';
 import IOutWriterFactory from './IOutWriterFactory';
 import Library from './Library';
 import TrialResults from './Results/TrialResults';
-
+import Server from './Sockets/Server';
 import fs = require('fs');
 
 var mailer = require("nodemailer");
@@ -31,6 +31,8 @@ export default class Optmizer {
     heuristicTrial: number;
     
     public trialIndex: number;
+    
+    public server: Server;
             
     /**
      * Initializes intire Setup chain
