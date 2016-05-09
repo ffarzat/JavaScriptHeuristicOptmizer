@@ -70,9 +70,7 @@ export default class Server {
 
             var index = this.clients.indexOf(client);
             this.clients.splice(index, 1);  //remove from availables
-
-            //TODO: tratar se precisa reprocessar alguma mensagem que estava com ele
-
+            this.ValidateRemove(client);
 
             this.logger.Write(`Left ${this.clients.length} client(s)`);
         });
@@ -92,9 +90,25 @@ export default class Server {
     }
 
     /**
+     * Mode messages from waitingMessages to messages
+    */
+    ValidateRemove(client: Client){
+         for (var index = 0; index < this.waitingMessages.length; index++) {
+            var element = this.waitingMessages[index];
+            if(element.clientId == client.id){
+                this.waitingMessages.slice(index, 1); //remove
+                this.messages.push(element);
+                this.logger.Write(`Saving back msg: ${element.id} from client ${client.id}`);
+            }
+        }
+    }
+
+
+
+    /**
      * Send a request for any available client to o a mutation over OperatorContext
-     */
-    DoAMutation(context: OperatorContext, cb: (ctx: OperatorContext) => void ) {
+    */
+    DoAMutation(context: OperatorContext, cb: (ctx: Message) => void ) {
         var item = new Message();
         item.id = uuid.v4();
         item.ctx = context;
@@ -142,7 +156,7 @@ export default class Server {
                 
         var localmsg = this.waitingMessages[index];
         this.waitingMessages.splice(index, 1); //cut off
-        localmsg.cb(message.ctx); //do the callback!
+        localmsg.cb(message); //do the callback!
     }
 }
 

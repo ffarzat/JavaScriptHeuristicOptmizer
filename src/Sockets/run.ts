@@ -1,5 +1,6 @@
 import Client from './Client';
 import Server from './Server';
+import Message from './Message';
 
 import IConfiguration from '../IConfiguration';
 import LogFactory from '../LogFactory';
@@ -29,6 +30,7 @@ var context: OperatorContext = new OperatorContext();
 context.First = generatedIndividual;
 context.NodeIndex = indexes[1];
 context.MutationTrials = configuration.mutationTrials;
+context.Operation = "Mutation"
 
 
 var localServer = new Server();
@@ -42,8 +44,8 @@ setInterval(function() { localServer.ProcessQueue(); }, 1000);
 /**
  * Callback 
  */
-function Done(ctx: OperatorContext): void{
-    console.log('concluída');
+function Done(msg: Message): void{
+    console.log(`msg concluída ${msg.id}`);
 }
 
 
