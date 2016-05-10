@@ -29,12 +29,13 @@ if (cluster.isMaster) {
 
 
 
-async function getResponse(msg: string): Promise<string> {
+async function getResponse(msg: string): Promise<any> {
 
-    var promise = new Promise<string>(function (resolve, reject) {
         // Send message to master process.
         process.send({ msgFromWorker: 'This is from worker ' + process.pid + '.' })
 
+    var promise = new Promise<string>(function (resolve, reject) {
+        
         // Receive messages from the master process.
         process.on('message', function (msg) {
             console.log('Worker ' + process.pid + ' received message from master.', msg);

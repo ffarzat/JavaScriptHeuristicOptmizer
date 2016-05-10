@@ -38,7 +38,7 @@ export default class GA extends IHeuristic {
     /**
      * Run a single trial
      */
-    RunTrial(trialIndex: number): TrialResults{
+    public async RunTrial(trialIndex: number): Promise<TrialResults>{
         this._logger.Write(`Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
         
         var population: Individual [] = this.CreatesFirstGeneration(this.Original);
@@ -67,7 +67,7 @@ export default class GA extends IHeuristic {
                     var context: OperatorContext = new OperatorContext();
                     context.First = population[individualIndex];
                     
-                    var mutant = this.Mutate(context);
+                    var mutant = await this.Mutate(context);
                     this.Test(mutant);
                     population.push(mutant);
                 }
@@ -79,7 +79,7 @@ export default class GA extends IHeuristic {
             });
             
             //Cut off
-            this.DoPopuplationCut(population);
+            await this.DoPopuplationCut(population);
         }
 
         return this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
@@ -88,14 +88,14 @@ export default class GA extends IHeuristic {
     /**
      * Releases Elitism over population
      */
-    private DoPopuplationCut(population: Individual [])
+    private async DoPopuplationCut(population: Individual [])
     {
         if(this.elitism){
            var countElitism = (this.individuals * this.elitismPercentual) / 100;
            this._logger.Write(`Using Elitism. Keeping ${countElitism} best individuals`);
            population.sort( (a,b)=> { return this._tester.RetrieveConfiguratedFitFor(a) > this._tester.RetrieveConfiguratedFitFor(b)? 1: 0; });
            population.splice(0, countElitism);
-           this.Repopulate(population, countElitism);
+           await this.Repopulate(population, countElitism);
         }
         else{
            population.splice(0, this.individuals); 
@@ -105,7 +105,7 @@ export default class GA extends IHeuristic {
     /**
      * Repopulates using Mutation
      */
-    private Repopulate(population: Individual [], untill: number)
+    private async Repopulate(population: Individual [], untill: number)
     {
            this._logger.Write(`Initializing a new population [+ ${untill} new individuals]`);
             
@@ -117,7 +117,7 @@ export default class GA extends IHeuristic {
                 
                 context.First = clone;
             
-                var mutant = this.Mutate(context)
+                var mutant = await this.Mutate(context)
 
                 this.Test(mutant);
                 

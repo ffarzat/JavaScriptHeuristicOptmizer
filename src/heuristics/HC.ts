@@ -35,7 +35,7 @@ export default class HC extends IHeuristic {
     /**
      * Run the trial
      */
-    RunTrial(trialIndex: number): TrialResults{
+    public async RunTrial(trialIndex: number): Promise<TrialResults>{
         this._logger.Write(`Starting  Trial ${trialIndex}`);
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`Using nodesType: ${this.nodesType}`);

@@ -6,6 +6,7 @@ import Optmizer from './Optmizer';
 import LogFactory from './LogFactory';
 
 import Server from './Sockets/Server';
+import Message from './Sockets/Message';
 
 import cluster = require('cluster');
 import fs = require('fs');
@@ -34,9 +35,11 @@ if (cluster.isMaster) {
     
     var optmizerWorker = cluster.fork(); //optmizer worker
     
-    optmizerWorker.on('message', function(msg) {
-      //from optmizer to server
-      
+    optmizerWorker.on('message', function(msg:Message) {
+      logger.Write(`optmizer asking for Operation`);
+      execServerOperation(msg).then( (newMsg) => {
+          optmizerWorker.send(newMsg);
+      });
       
     });
 
@@ -50,14 +53,20 @@ if (cluster.isMaster) {
     DisplayConfig();
     
     //=========================================================================================== For all trials
+    ExecuteTrials();
     
-    for (var trial = 0; trial < configuration.trials; trial++) {
+    
+}
+
+async function ExecuteTrials(){
+   for (var trial = 0; trial < configuration.trials; trial++) {
         for (var heuristicTrial = 0; heuristicTrial < configuration.trialsConfiguration.length ; heuristicTrial++) {
             var optmizer = new Optmizer();
             optmizer.Setup(configuration, trial, heuristicTrial);
-            optmizer.DoOptmization();    
+            await optmizer.DoOptmization();
+            logger.Write('====================================> Loop do otimizador pelo lado de fora - concluído')
         }
-    }
+    } 
 }
 
 
@@ -107,3 +116,14 @@ function DisplayConfig(){
     logger.Write(`Total runs [${configuration.trials} * ${configuration.trialsConfiguration.length} * ${configuration.libraries.length} * ${configuration.heuristics.length} ]:  ${totalTrials}`);
     logger.Write('=================================');
 } 
+
+function execServerOperation(message:Message): Promise<Message> {
+    
+    var promise: Promise<Message> = new Promise<Message>( function(resolve, reject){
+        localServer.DoAMutation(message.ctx, (newMsg)  => {
+            resolve(newMsg);
+        });    
+    });
+    
+    return promise;
+}

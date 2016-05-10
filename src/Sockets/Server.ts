@@ -79,8 +79,6 @@ export default class Server {
         client.connection.on('message', (message) => {
             var msg: Message = JSON.parse(message);
             
-            this.logger.Write(`msg back: ${msg.id}`);
-
             if (this.clients.indexOf(client) == -1) {
                 this.clients.push(client); //be available again
                 this.Done(client.id, msg);
@@ -128,7 +126,7 @@ export default class Server {
             return;
 
 
-            this.logger.Write(`${this.messages.length} messages left.`)
+        this.logger.Write(`${this.messages.length} messages left.`)
 
         for (var clientIndex = 0; clientIndex < this.clients.length; clientIndex++) {
             if (this.messages.length > 0) {
@@ -145,15 +143,17 @@ export default class Server {
     }
     
     /**
-     * 
+     * Relases the callback magic
      */
     Done(clientId: string, message: Message){
+        
+        //Finds message index
         for (var index = 0; index < this.waitingMessages.length; index++) {
             var element = this.waitingMessages[index];
             if(element.id == message.id)
                 break;
         }
-                
+
         var localmsg = this.waitingMessages[index];
         this.waitingMessages.splice(index, 1); //cut off
         localmsg.cb(message); //do the callback!

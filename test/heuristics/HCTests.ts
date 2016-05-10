@@ -68,11 +68,11 @@ describe('HC Tests', function() {
         
         //====================>
         hc.SetLibrary(lib);
-        var results = hc.RunTrial(0);
-         
-        expect(results).not.be.an('undefined');
-        expect(results.trial).to.be.equal(0);
-        expect(itHasRestarted).to.be.equal(true); 
+        hc.RunTrial(0).then( (results)=> {
+            expect(results).not.be.an('undefined');
+            expect(results.trial).to.be.equal(0);
+            expect(itHasRestarted).to.be.equal(true);
+        });
     });
     
 });

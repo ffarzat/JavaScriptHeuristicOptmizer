@@ -17,7 +17,7 @@ export default class Client{
     connection: WebSocketServer;
     id: string
     available: boolean;
-    
+    logger: ILogger;
     _astExplorer: ASTExplorer = new ASTExplorer();
     
     /**
@@ -37,10 +37,12 @@ export default class Client{
      *  Releases a Mutation over context 
      */
     Mutate(context: OperatorContext): OperatorContext{
+        this.logger.Write(`Processing a mutant...`);
         this.Reload(context);
         var newIndividual = this._astExplorer.Mutate(context);
         var ctx = new OperatorContext();
         ctx.First = newIndividual;
+        this.logger.Write(`Done!`);
         return  ctx;
     }
     

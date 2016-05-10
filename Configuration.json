@@ -13,7 +13,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD", "HC", "GA"],
+    "heuristics": ["RD", "GA", "HC"],
     "port": 5000,
     "url": "ws://localhost",
     "libraries" : [

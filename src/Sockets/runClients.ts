@@ -17,6 +17,9 @@ var uuid = require('node-uuid');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 
+var logger = new LogFactory().CreateByName(configuration.logWritter);
+logger.Initialize(configuration);
+
 var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + uuid.v4();;
 console.log(serverUrl);
 
@@ -27,13 +30,12 @@ ws.addEventListener("message", (e) => {
 
 
     var localClient = new Client();
-    console.log(`msg: ${msg.id}`);
+    localClient.logger = logger;
 
     if (msg.ctx.Operation == "Mutation") {
-        console.log('Doing a mutation...')
         var newCtx = localClient.Mutate(msg.ctx);
         msg.ctx = newCtx;
-        console.log('Done!')
+        
     }
 
     if (msg.ctx.Operation == "CrossOver") {

@@ -53,10 +53,10 @@ describe('GA Tests', function() {
         ga.bestIndividual = individualOverTests;
         //====================>
         ga.SetLibrary(lib);
-        var results = ga.RunTrial(0);
-        
-        expect(results).not.be.an('undefined');
-        expect(results.trial).to.be.equal(0);
+        ga.RunTrial(0).then( (results) => {
+            expect(results).not.be.an('undefined');
+            expect(results.trial).to.be.equal(0);
+        });
     });
     
     
