@@ -123,7 +123,11 @@ export default class Optmizer {
      */
     private Notify(result: TrialResults) {
 
-        this.logger.Write(`Send Email to notify observers`)
+        var filepath = path.join(process.cwd(), result.file);
+        this.logger.Write(`Async send Email to notify observers`);
+        //this.logger.Write(`File: ${filepath}`);
+        
+        var founded: boolean = result.bestIndividualAvgTime < result.originalIndividualAvgTime;
 
         var smtpTransport = mailer.createTransport("SMTP", {
             service: "Gmail",
@@ -136,9 +140,9 @@ export default class Optmizer {
         var mail = {
             from: "Optmizer <typescript01@gmail.com>",
             to: "fabiofarzat@gmail.com",
-            subject: `[Execution Results] ${result.library.name}/${result.heuristic.Name}/${result.trial}`,
-            text: `Results file [attached and] saved in: ${result.file}`,
-            attachments: [{ 'filename': result.file, 'content': fs.readFileSync( path.join(process.cwd(), result.file))}]
+            subject: `[Execution Results] ${result.library.name}:${result.heuristic.Name}:${result.trial}`,
+            html: `<p>Found new best: <b>${founded}</b>.</p><p>Results file [attached and] saved in: <i>${filepath}</i></p>`,
+            attachments: [{ filename: 'results.csv', content: fs.createReadStream(result.file), contentType: 'text/csv'}]
         }
 
 
@@ -180,6 +184,9 @@ export default class Optmizer {
                 this.outter.WriteTrialResults(resultaForTrial);
                 this.outter.Finish();
                 this.Notify(resultaForTrial);
+                
+                this.logger.Write(`Ending ${actualHeuristic.Name}`);
+                this.logger.Write('=================================');
             }
         }
     }

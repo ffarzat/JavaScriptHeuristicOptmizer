@@ -31,12 +31,12 @@ export default class Client{
      *  Releases a Mutation over context 
      */
     Mutate(context: OperatorContext): OperatorContext{
-        this.logger.Write(`Processing a mutant...`);
+        this.logger.Write(`[Client:${this.id}]Processing a mutant...`);
         this.Reload(context);
         var newIndividual = this._astExplorer.Mutate(context);
         var ctx = new OperatorContext();
         ctx.First = newIndividual;
-        this.logger.Write(`Done!`);
+        this.logger.Write(`[Client:${this.id}]Mutant done.`);
         return ctx;
     }
     

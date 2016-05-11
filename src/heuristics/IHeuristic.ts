@@ -112,10 +112,6 @@ abstract class IHeuristic extends events.EventEmitter {
         results.originalIndividualCharacters = originalCode.length;
         results.originalIndividualLOC = originalCode.split(/\r\n|\r|\n/).length;
 
-        this._logger.Write(`Ending ${this.Name}`);
-        this._logger.Write('=================================');
-
-
         return results;
     }
 
