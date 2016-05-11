@@ -31,7 +31,7 @@ export default class Client{
      *  Releases a Mutation over context 
      */
     Mutate(context: OperatorContext): OperatorContext{
-        this.logger.Write(`[Client:${this.id}]Processing a mutant...`);
+        this.logger.Write(`[Client:${this.id}]Processing new Mutant`);
         this.Reload(context);
         var newIndividual = this._astExplorer.Mutate(context);
         var ctx = new OperatorContext();
@@ -41,16 +41,15 @@ export default class Client{
     }
     
     /**
-     * Releases a CrossOver over context
-     */
-    CrossOver(context: OperatorContext): OperatorContext {
+    * Releases a mutation over an AST  by nodetype and index
+    */
+    MutateBy(context: OperatorContext): OperatorContext {
+        this.logger.Write(`[Client:${this.id}]Processing new Mutant [Index]`);
         this.Reload(context);
-        var news = this._astExplorer.CrossOver(context);
+        var newIndividual = this._astExplorer.MutateBy(context);
         var ctx = new OperatorContext();
-        ctx.First = news[0];
-        ctx.Second = news[1];
-        return  ctx;
+        ctx.First = newIndividual;
+        this.logger.Write(`[Client:${this.id}]Mutant done.`);
+        return ctx;
     }
-    
-    
 }

@@ -60,16 +60,11 @@ abstract class IHeuristic extends events.EventEmitter {
         var msg: Message = new Message();
         context.Operation = "Mutation";
         msg.ctx = context;
-        this._logger.Write(`===================================================>1.Mutant Request!`);
-
         var mutant: Individual;
 
         await this.getResponse(msg, (msg) => {
             mutant = msg.ctx.First;
-            this._logger.Write('===================================================>2.Mutant received');
         });
-        
-        this._logger.Write('===================================================>3.Mutant Response done!');
         
         return mutant; 
     }
@@ -143,7 +138,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
     * Releases a mutation over an AST  by nodetype and index
     */
-    MutateBy(clone: Individual, indexes: NodeIndex): Individual {
+    async MutateBy(clone: Individual, indexes: NodeIndex): Promise<Individual> {
         var type = indexes.Type;
         var actualNodeIndex = indexes[indexes.ActualIndex];
         indexes.ActualIndex++;
@@ -151,8 +146,21 @@ abstract class IHeuristic extends events.EventEmitter {
         var ctx: OperatorContext = new OperatorContext();
         ctx.First = clone;
         ctx.NodeIndex = actualNodeIndex;
-
-        return this._astExplorer.MutateBy(ctx);
+        ctx.Operation = "MutationByIndex";
+        
+        var msg: Message = new Message();
+        msg.ctx = ctx;
+        
+        var mutant: Individual;
+        this._logger.Write(`===================================================>1.Mutant Request!`);
+        await this.getResponse(msg, (msg) => {
+            mutant = msg.ctx.First;
+            this._logger.Write('===================================================>2.Mutant received');
+        });
+        
+        this._logger.Write('===================================================>3.Mutant Response done!');
+        
+        return mutant; 
     }
 
     /**

@@ -20,7 +20,9 @@ var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
-var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + uuid.v4();;
+var clientId = uuid.v4();
+
+var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
 console.log(serverUrl);
 
 var ws = new WebSocket(serverUrl, 'echo-protocol');
@@ -30,19 +32,19 @@ ws.addEventListener("message", (e) => {
 
 
     var localClient = new Client();
+    localClient.id = clientId;
     localClient.logger = logger;
 
     if (msg.ctx.Operation == "Mutation") {
         var newCtx = localClient.Mutate(msg.ctx);
         msg.ctx = newCtx;
-        
     }
 
-    if (msg.ctx.Operation == "CrossOver") {
-        console.log('Doing a CrossOver...')
-        var newCtx = localClient.CrossOver(msg.ctx);
+    if (msg.ctx.Operation == "MutationByIndex") {
+        var newCtx = localClient.MutateBy(msg.ctx);
         msg.ctx = newCtx;
     }
+    
 
     var msgProcessada = JSON.stringify(msg);
     ws.send(msgProcessada);

@@ -52,7 +52,7 @@ export default class HC extends IHeuristic {
         for (var index = 0; index < this.trials; index++) {//for trials
 
             //get next neighbor by typeIndex.ActualIndex
-            var neighbor: Individual = this.MutateBy(this.bestIndividual, indexes);
+            var neighbor: Individual = await this.MutateBy(this.bestIndividual, indexes);
             
             //Testing
             this.Test(neighbor);
