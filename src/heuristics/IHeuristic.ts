@@ -189,13 +189,7 @@ abstract class IHeuristic extends events.EventEmitter {
      * Over websockets objects loose instance methods
      */
     Reload(context:OperatorContext){
-        if(context.First){
-            var oldFirstAst = context.First.AST;
-            context.First = new Individual();
-            context.First.AST = oldFirstAst;
-        }
-        
-        return context;
+        return this._astExplorer.Reload(context);
     }
     
     /**
@@ -214,16 +208,6 @@ abstract class IHeuristic extends events.EventEmitter {
         });
     
         return p;
-        
-        /*
-        return new Promise<Message>( (resolve, reject) => {
-            
-            process.on('message', (newMsg: Message) => {
-                this._logger.Write(`    Promise Resolved`);
-                resolve(newMsg);
-            });
-        });
-        */
     }
     
 }

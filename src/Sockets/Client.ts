@@ -24,13 +24,7 @@ export default class Client{
      * Over websockets objects loose instance methods
      */
     Reload(context:OperatorContext){
-        if(context.First){
-            var oldFirstAst = context.First.AST;
-            context.First = new Individual();
-            context.First.AST = oldFirstAst;
-        }
-        
-        return context;
+        return this._astExplorer.Reload(context);
     }
     
     /**
