@@ -41,7 +41,7 @@ export default class GA extends IHeuristic {
     public async RunTrial(trialIndex: number): Promise<TrialResults>{
         this._logger.Write(`Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
         
-        var population: Individual [] = this.CreatesFirstGeneration(this.Original);
+        var population: Individual [] = await this.CreatesFirstGeneration(this.Original);
 
         for (var generationIndex = 1; generationIndex < this.generations; generationIndex++) {
             this._logger.Write(`Starting generation ${generationIndex}`);
@@ -82,7 +82,11 @@ export default class GA extends IHeuristic {
             await this.DoPopuplationCut(population);
         }
 
-        return this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+        var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+
+        return new Promise<TrialResults>((resolve, reject) => {
+            resolve(results);
+        });
     }
     
     /**
@@ -150,12 +154,12 @@ export default class GA extends IHeuristic {
     /**
      * Returns a list of Mutated new individuals
      */
-    CreatesFirstGeneration(original: Individual): Individual []{
+    async CreatesFirstGeneration(original: Individual): Promise<Individual []>{
         var localPopulation: Individual [] = [];
         localPopulation.push(original);
         
-       this.Repopulate(localPopulation, this.individuals -1);
+        await this.Repopulate(localPopulation, this.individuals -1);
         
-        return localPopulation;
+        return new Promise<Individual []> ((resolve) => { resolve(localPopulation)});
     }
 }

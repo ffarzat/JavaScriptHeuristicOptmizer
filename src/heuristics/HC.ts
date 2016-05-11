@@ -87,7 +87,11 @@ export default class HC extends IHeuristic {
             }
         }
         
-        return this.ProcessResult(trialIndex, this.Original, this.bestIndividual);;
+        var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+
+        return new Promise<TrialResults>((resolve, reject) => {
+            resolve(results);
+        });
     }
     
     /**
