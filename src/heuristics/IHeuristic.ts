@@ -168,7 +168,6 @@ abstract class IHeuristic extends events.EventEmitter {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
-        this._logger.Write('================Hum...');
         this.Test(this.Original);
         //Force Best
         this.bestFit = this._tester.RetrieveConfiguratedFitFor(this.Original);
