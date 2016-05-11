@@ -9,14 +9,11 @@ import Individual from '../Individual';
 import ASTExplorer from '../ASTExplorer';
 import OperatorContext from '../OperatorContext';
 import Library from '../Library';
-
-
 import Message from '../Sockets/Message';
-
-
 import NodeIndex from './NodeIndex';
 
 import events = require('events');
+var uuid = require('node-uuid');
 
 
 
@@ -38,6 +35,8 @@ abstract class IHeuristic extends events.EventEmitter {
     public crossOverTrials: number;
 
     public Original: Individual;
+    
+    waitingMessages: Message[];   //store waiting messages
        
     /**
      * Forces the Heuristic to validate config
@@ -46,6 +45,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this._config = config;
         this._astExplorer = new ASTExplorer();
         events.EventEmitter.call(this);
+        this.waitingMessages = [];
     }
 
     /**
@@ -60,11 +60,16 @@ abstract class IHeuristic extends events.EventEmitter {
         var msg: Message = new Message();
         context.Operation = "Mutation";
         msg.ctx = context;
-        this._logger.Write(`===================================================> Asking for Mutation!`);
+        this._logger.Write(`===================================================>1.Mutant Request!`);
 
-        var mutant  = (await this.getResponse(msg)).ctx.First;
+        var mutant: Individual;
+
+        await this.getResponse(msg, (msg) => {
+            mutant = msg.ctx.First;
+            this._logger.Write('===================================================>2.Mutant received');
+        });
         
-        this._logger.Write('===================================================> Mutant back!');
+        this._logger.Write('===================================================>3.Mutant Response done!');
         
         return mutant; 
     }
@@ -195,20 +200,52 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * To resolve a single comunication with server trougth cluster comunication
      */
-    async getResponse(msg: Message): Promise<Message> {
-        
+    async getResponse(msg: Message, cb: (ctx: Message) => void): Promise<void> {
         
         var p = new Promise<Message>( (resolve, reject) =>{
-            process.once ('message', (newMsg: Message) => {
-                newMsg.ctx = this.Reload(newMsg.ctx);
-                resolve(newMsg);
+            process.once('message', (newMsg: Message) => {
+                 var localMsg = this.Done(newMsg);
+                 newMsg.ctx = this.Reload(newMsg.ctx);
+                 localMsg.cb(newMsg); 
+                 resolve(newMsg);
             });
                 
-            process.send(msg);        
+            this.PushMessage(msg.ctx, cb);
         });
     
-        return p;
+        (await Promise.resolve(p));
     }
+    
+    
+    /**
+     * Send a request to server
+     */
+    PushMessage(context: OperatorContext, cb: (ctx: Message) => void ) {
+        var item = new Message();
+        item.id = uuid.v4();
+        item.ctx = context;
+        item.cb = cb;
+        this.waitingMessages.push(item);
+        process.send(item);
+    }
+    
+    /**
+     * Relases the callback magic
+     */
+    Done(message: Message): Message{
+        //Finds message index
+        for (var index = 0; index < this.waitingMessages.length; index++) {
+            var element = this.waitingMessages[index];
+            //this._logger.Write(`External: ${message.id} == ${element.id}`);
+            if(element.id == message.id)
+                break;
+        }
+
+        var localmsg = this.waitingMessages[index];
+        this.waitingMessages.splice(index, 1); //cut off
+        return localmsg;
+    }
+    
     
 }
 

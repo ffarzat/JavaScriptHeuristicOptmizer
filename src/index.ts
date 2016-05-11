@@ -36,10 +36,10 @@ if (cluster.isMaster) {
     var optmizerWorker = cluster.fork(); //optmizer worker
     
     optmizerWorker.on('message', function(msg:Message) {
-      logger.Write(`Optmizer asking for Operation`);
+      //logger.Write(`Optmizer asking for Operation`);
       
-      localServer.DoAMutation(msg.ctx, (newMsg)  => {
-            logger.Write(`Send back newMsg to Optmizer`);
+      localServer.DoAnOperation(msg, (newMsg)  => {
+            //logger.Write(`Send back newMsg to Optmizer`);
             optmizerWorker.send(newMsg);
       });
       

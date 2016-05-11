@@ -32,12 +32,15 @@ context.NodeIndex = indexes[1];
 context.MutationTrials = configuration.mutationTrials;
 context.Operation = "Mutation"
 
+var item = new Message();
+item.ctx = context;
+
 
 var localServer = new Server();
 localServer.logger = logger;
 localServer.Setup(configuration);
 
-setInterval(function() { localServer.DoAMutation(context, Done); }, 3000);
+setInterval(function() { localServer.DoAnOperation(item, Done); }, 3000);
 setInterval(function() { localServer.ProcessQueue(); }, 1000);
 
 

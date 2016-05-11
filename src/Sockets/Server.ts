@@ -5,7 +5,6 @@ import Client from './Client';
 import Message from './Message';
 
 import WebSocketServer = require('ws');
-var uuid = require('node-uuid');
 
 /**
  * Server to control the optmization process
@@ -32,7 +31,7 @@ export default class Server {
 
         this.wsServer = new WebSocketServer.Server({ port: this.port });
         this.HandleServer();
-        this.logger.Write('Server listening');
+        this.logger.Write(`Server listening ${this.url}:${this.port}`);
     }
 
     /**
@@ -96,7 +95,7 @@ export default class Server {
             if(element.clientId == client.id){
                 this.waitingMessages.slice(index, 1); //remove
                 this.messages.push(element);
-                this.logger.Write(`Saving back msg: ${element.id} from client ${client.id}`);
+                this.logger.Write(`Saving back msg: ${element.id} from client ${client.id} [disconnected]`);
             }
         }
     }
@@ -106,13 +105,13 @@ export default class Server {
     /**
      * Send a request for any available client to o a mutation over OperatorContext
     */
-    DoAMutation(context: OperatorContext, cb: (ctx: Message) => void ) {
+    DoAnOperation(msg:Message, cb: (ctx: Message) => void ) {
         var item = new Message();
-        item.id = uuid.v4();
-        item.ctx = context;
+        item.id = msg.id;
+        item.ctx = msg.ctx;
         item.cb = cb;
         this.messages.push(item);
-        this.logger.Write(`Saving msg...`);
+        //this.logger.Write(`Saving msg...`);
     }
 
     /**
@@ -126,7 +125,7 @@ export default class Server {
         if(this.messages.length == 0)
             return;
 
-        this.logger.Write(`Left ${this.messages.length} operations to process.`);
+        //this.logger.Write(`Left ${this.messages.length} operations to process.`);
 
         for (var clientIndex = 0; clientIndex < this.clients.length; clientIndex++) {
             if (this.messages.length > 0) {
@@ -157,7 +156,7 @@ export default class Server {
 
         var localmsg = this.waitingMessages[index];
         this.waitingMessages.splice(index, 1); //cut off
-        this.logger.Write("Callback to optmizer!");
+        //this.logger.Write("Callback to optmizer!");
         localmsg.cb(message); //do the callback!
         //this.logger.Write(localmsg.cb);
     }
