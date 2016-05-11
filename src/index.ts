@@ -31,14 +31,16 @@ logger.Write(`Preparing libs environment`);
 if (cluster.isMaster) {
     localServer.logger = logger;
     localServer.Setup(configuration);
-    setInterval(function() { localServer.ProcessQueue(); }, 50);
+    setInterval(function() { localServer.ProcessQueue(); }, 500);
     
     var optmizerWorker = cluster.fork(); //optmizer worker
     
     optmizerWorker.on('message', function(msg:Message) {
-      logger.Write(`optmizer asking for Operation`);
-      execServerOperation(msg).then( (newMsg) => {
-          optmizerWorker.send(newMsg);
+      logger.Write(`Optmizer asking for Operation`);
+      
+      localServer.DoAMutation(msg.ctx, (newMsg)  => {
+            logger.Write(`Send back newMsg to Optmizer`);
+            optmizerWorker.send(newMsg);
       });
       
     });
@@ -116,14 +118,3 @@ function DisplayConfig(){
     logger.Write(`Total runs [${configuration.trials} * ${configuration.trialsConfiguration.length} * ${configuration.libraries.length} * ${configuration.heuristics.length} ]:  ${totalTrials}`);
     logger.Write('=================================');
 } 
-
-function execServerOperation(message:Message): Promise<Message> {
-    
-    var promise: Promise<Message> = new Promise<Message>( function(resolve, reject){
-        localServer.DoAMutation(message.ctx, (newMsg)  => {
-            resolve(newMsg);
-        });    
-    });
-    
-    return promise;
-}

@@ -43,7 +43,7 @@ export default class Client{
         var ctx = new OperatorContext();
         ctx.First = newIndividual;
         this.logger.Write(`Done!`);
-        return  ctx;
+        return ctx;
     }
     
     /**

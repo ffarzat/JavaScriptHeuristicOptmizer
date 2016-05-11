@@ -62,8 +62,7 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ctx = context;
         this._logger.Write(`===================================================> Asking for Mutation!`);
 
-        //async way          
-        var mutant  = await getMutant(msg);
+        var mutant  = (await this.getResponse(msg)).ctx.First;
         
         this._logger.Write('===================================================> Mutant back!');
         
@@ -121,7 +120,7 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     UpdateBest(newBest: Individual) {
 
-        if (this._tester.RetrieveConfiguratedFitFor(newBest) < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
+        if (newBest.testResults.passedAllTests && this._tester.RetrieveConfiguratedFitFor(newBest) < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
             this._logger.Write('=================================');
             this.bestFit = this._tester.RetrieveConfiguratedFitFor(newBest);
             this.bestIndividual = newBest;
@@ -169,10 +168,11 @@ abstract class IHeuristic extends events.EventEmitter {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
+        this._logger.Write('================Hum...');
         this.Test(this.Original);
         //Force Best
         this.bestFit = this._tester.RetrieveConfiguratedFitFor(this.Original);
-        this.bestIndividual = this.Original;
+        this.bestIndividual = this.Original.Clone();
 
         this._logger.Write(`Original Fit ${this.bestFit}`);
         this._logger.Write('=================================');
@@ -185,33 +185,51 @@ abstract class IHeuristic extends events.EventEmitter {
     CreateOriginalFromLibraryConfiguration(library: Library): Individual {
         return this._astExplorer.GenerateFromFile(library.mainFilePath);
     }
-}
-
-/**
- * Async Get Mutant from Server
- */
-async function getMutant(msg:Message): Promise<Individual>{
     
-    this._logger.Write(`    Send message to master process`); 
-    process.send(msg);
+    /**
+     * Over websockets objects loose instance methods
+     */
+    Reload(context:OperatorContext){
+        if(context.First){
+            var oldFirstAst = context.First.AST;
+            context.First = new Individual();
+            context.First.AST = oldFirstAst;
+        }
+        
+        return context;
+    }
     
-    var message = await Promise.resolve(getResponse()); 
-    return message.ctx.First;
-}
-
-
-/**
- * To resolve a single comunication with server trougth cluster comunication
- */
-async function getResponse(): Promise<Message> {
-    return new Promise<Message>( (resolve, reject) => {
-        this._logger.Write(`    Receive messages from the master process`);
-        process.on('message', (newMsg: Message) => {
-            this._logger.Write(`    Promise Resolved`);
-            resolve(newMsg);
+    /**
+     * To resolve a single comunication with server trougth cluster comunication
+     */
+    async getResponse(msg: Message): Promise<Message> {
+        
+        
+        var p = new Promise<Message>( (resolve, reject) =>{
+            process.on('message', (newMsg: Message) => {
+                newMsg.ctx = this.Reload(newMsg.ctx);
+                resolve(newMsg);
+            });
+                
+            process.send(msg);        
         });
-    });
+    
+        return p;
+        
+        /*
+        return new Promise<Message>( (resolve, reject) => {
+            
+            process.on('message', (newMsg: Message) => {
+                this._logger.Write(`    Promise Resolved`);
+                resolve(newMsg);
+            });
+        });
+        */
+    }
+    
 }
+
+
 
 
 

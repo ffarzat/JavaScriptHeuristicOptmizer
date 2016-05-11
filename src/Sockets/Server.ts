@@ -112,6 +112,7 @@ export default class Server {
         item.ctx = context;
         item.cb = cb;
         this.messages.push(item);
+        this.logger.Write(`Saving msg...`);
     }
 
     /**
@@ -125,13 +126,13 @@ export default class Server {
         if(this.messages.length == 0)
             return;
 
-
-        this.logger.Write(`${this.messages.length} messages left.`)
+        this.logger.Write(`Left ${this.messages.length} operations to process.`);
 
         for (var clientIndex = 0; clientIndex < this.clients.length; clientIndex++) {
             if (this.messages.length > 0) {
                 var availableClient = this.clients.pop(); 
                 var msg = this.messages.pop();
+                
                 msg.clientId = availableClient.id;
                 availableClient.connection.send(JSON.stringify(msg));
                 this.waitingMessages.push(msg);
@@ -156,7 +157,9 @@ export default class Server {
 
         var localmsg = this.waitingMessages[index];
         this.waitingMessages.splice(index, 1); //cut off
+        this.logger.Write("Callback to optmizer!");
         localmsg.cb(message); //do the callback!
+        //this.logger.Write(localmsg.cb);
     }
 }
 

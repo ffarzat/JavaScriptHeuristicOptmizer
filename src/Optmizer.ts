@@ -167,7 +167,7 @@ export default class Optmizer {
                 this.logger.Write(`Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
 
                 this.InitializeOutWritter(actualLibrary, actualHeuristic);
-
+                
                 this.InitializeTester(actualLibrary);
 
                 actualHeuristic._tester = this.tester;
