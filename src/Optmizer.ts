@@ -12,6 +12,8 @@ import TrialResults from './Results/TrialResults';
 import Server from './Sockets/Server';
 import fs = require('fs');
 
+import path = require('path');
+
 var mailer = require("nodemailer");
 
 
@@ -135,8 +137,8 @@ export default class Optmizer {
             from: "Optmizer <typescript01@gmail.com>",
             to: "fabiofarzat@gmail.com",
             subject: `[Execution Results] ${result.library.name}/${result.heuristic.Name}/${result.trial}`,
-            text: `File attached and saved in: ${result.file}`,
-            attachments: [{ 'filename': result.file, 'content': fs.readFileSync(result.file) }]
+            text: `Results file [attached and] saved in: ${result.file}`,
+            attachments: [{ 'filename': result.file, 'content': fs.readFileSync( path.join(process.cwd(), result.file))}]
         }
 
 
@@ -178,10 +180,7 @@ export default class Optmizer {
                 this.outter.WriteTrialResults(resultaForTrial);
                 this.outter.Finish();
                 this.Notify(resultaForTrial);
-
             }
-
-
         }
     }
 }
