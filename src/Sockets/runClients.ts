@@ -34,6 +34,7 @@ ws.addEventListener("message", (e) => {
     var localClient = new Client();
     localClient.id = clientId;
     localClient.logger = logger;
+    localClient.Setup(configuration);
 
     if (msg.ctx.Operation == "Mutation") {
         var newCtx = localClient.Mutate(msg.ctx);
@@ -47,6 +48,11 @@ ws.addEventListener("message", (e) => {
     
     if (msg.ctx.Operation == "CrossOver") {
         var newCtx = localClient.CrossOver(msg.ctx);
+        msg.ctx = newCtx;
+    }
+    
+    if (msg.ctx.Operation == "Test") {
+        var newCtx = localClient.Test(msg.ctx);
         msg.ctx = newCtx;
     }
     

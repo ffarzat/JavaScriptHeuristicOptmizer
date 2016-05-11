@@ -90,9 +90,19 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Global Test execution
      */
-    Test(individual: Individual) {
-        this._tester.Test(individual);
-        //TODO: Delegate for any available client or processor available
+    public async Test(individual: Individual) {
+        var msg: Message = new Message();
+        var context = new OperatorContext();
+        context.Operation = "Test";
+        context.First = individual;
+        context.Second = this.bestIndividual; //is usual to be the original
+        context.LibrarieOverTest = this._lib;
+        
+        msg.ctx = context;
+
+        await this.getResponse(msg, (msg) => {
+            individual = msg.ctx.First;
+        });
     }
 
     /**

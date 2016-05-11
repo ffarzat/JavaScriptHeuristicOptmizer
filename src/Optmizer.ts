@@ -85,15 +85,6 @@ export default class Optmizer {
     }
 
     /**
-     * Initializes configurated Tester class
-     */
-    private InitializeTester(LibrarieOverTest: Library) {
-        this.tester = new TesterFactory().CreateByName(this.configuration.tester);
-        this.tester.Setup(this.configuration.testUntil, LibrarieOverTest, this.configuration.fitType);
-        this.tester.SetLogger(this.logger);
-    }
-
-    /**
      * Initializes configurated Results Writter
      * 
      */
@@ -174,9 +165,6 @@ export default class Optmizer {
 
                 this.InitializeOutWritter(actualLibrary, actualHeuristic);
                 
-                this.InitializeTester(actualLibrary);
-
-                actualHeuristic._tester = this.tester;
                 actualHeuristic.SetLibrary(actualLibrary);
 
                 var resultaForTrial = await actualHeuristic.RunTrial(this.trialIndex);

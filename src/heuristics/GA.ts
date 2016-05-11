@@ -68,7 +68,7 @@ export default class GA extends IHeuristic {
                     context.First = population[individualIndex];
                     
                     var mutant = await this.Mutate(context);
-                    this.Test(mutant);
+                    await this.Test(mutant);
                     population.push(mutant);
                 }
             }
@@ -123,7 +123,7 @@ export default class GA extends IHeuristic {
             
                 var mutant = await this.Mutate(context)
 
-                this.Test(mutant);
+                await this.Test(mutant);
                 
                 //this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(mutant)}`);
 
@@ -144,10 +144,10 @@ export default class GA extends IHeuristic {
         context.Second = population[this.GenereateRandom(0, population.length -1)];
         var newOnes = await this.CrossOver(context);
         
-        this.Test(newOnes[0]);
+        await this.Test(newOnes[0]);
         population.push(newOnes[0]);
         
-        this.Test(newOnes[1]);
+        await this.Test(newOnes[1]);
         population.push(newOnes[1]);
     }
     
