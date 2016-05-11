@@ -88,7 +88,7 @@ abstract class IHeuristic extends events.EventEmitter {
      * Calculate results for a trial
      */
     ProcessResult(trialIndex: number, original: Individual, bestIndividual: Individual): TrialResults {
-
+        
         var results: TrialResults = new TrialResults();
         var bestCode = bestIndividual.ToCode();
         var originalCode = original.ToCode();
@@ -171,7 +171,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this.Test(this.Original);
         //Force Best
         this.bestFit = this._tester.RetrieveConfiguratedFitFor(this.Original);
-        this.bestIndividual = this.Original.Clone();
+        this.bestIndividual = this.Original;
 
         this._logger.Write(`Original Fit ${this.bestFit}`);
         this._logger.Write('=================================');
