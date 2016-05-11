@@ -96,7 +96,7 @@ export default class GA extends IHeuristic {
     {
         if(this.elitism){
            var countElitism = (this.individuals * this.elitismPercentual) / 100;
-           this._logger.Write(`Using Elitism. Keeping ${countElitism} best individuals`);
+           this._logger.Write(`Using Elitism. Cuting off ${countElitism} individuals`);
            population.sort( (a,b)=> { return this._tester.RetrieveConfiguratedFitFor(a) > this._tester.RetrieveConfiguratedFitFor(b)? 1: 0; });
            population.splice(0, countElitism);
            await this.Repopulate(population, countElitism);
