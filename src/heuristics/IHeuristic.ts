@@ -205,7 +205,7 @@ abstract class IHeuristic extends events.EventEmitter {
         
         
         var p = new Promise<Message>( (resolve, reject) =>{
-            process.on('message', (newMsg: Message) => {
+            process.once ('message', (newMsg: Message) => {
                 newMsg.ctx = this.Reload(newMsg.ctx);
                 resolve(newMsg);
             });
