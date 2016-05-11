@@ -45,7 +45,11 @@ ws.addEventListener("message", (e) => {
         msg.ctx = newCtx;
     }
     
-
+    if (msg.ctx.Operation == "CrossOver") {
+        var newCtx = localClient.CrossOver(msg.ctx);
+        msg.ctx = newCtx;
+    }
+    
     var msgProcessada = JSON.stringify(msg);
     ws.send(msgProcessada);
 });

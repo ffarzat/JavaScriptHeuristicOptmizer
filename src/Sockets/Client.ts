@@ -52,4 +52,18 @@ export default class Client{
         this.logger.Write(`[Client:${this.id}]Mutant done.`);
         return ctx;
     }
+        
+    /**
+     *  Releases a Crossover operation 
+     */
+    CrossOver(context: OperatorContext): OperatorContext{
+        this.logger.Write(`[Client:${this.id}]Processing new CrossOver`);
+        this.Reload(context);
+        var news = this._astExplorer.CrossOver(context);
+        var ctx = new OperatorContext();
+        ctx.First = news[0];
+        ctx.Second = news[1];
+        this.logger.Write(`[Client:${this.id}]CrossOver done.`);
+        return ctx;
+    }
 }

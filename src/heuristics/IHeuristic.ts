@@ -72,8 +72,19 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Releases a CrossOver over context
      */
-    CrossOver(context: OperatorContext): Individual[] {
-        return this._astExplorer.CrossOver(context);
+    public async CrossOver(context: OperatorContext): Promise<Individual[]> {
+        var msg: Message = new Message();
+        context.Operation = "CrossOver";
+        msg.ctx = context;
+        
+        var newOnes: Individual[] = [];
+
+        await this.getResponse(msg, (msg) => {
+            newOnes.push(msg.ctx.First);
+            newOnes.push(msg.ctx.Second);
+        });
+        
+        return newOnes; 
     }
 
     /**
@@ -150,15 +161,11 @@ abstract class IHeuristic extends events.EventEmitter {
         
         var msg: Message = new Message();
         msg.ctx = ctx;
-        
+
         var mutant: Individual;
-        this._logger.Write(`===================================================>1.Mutant Request!`);
         await this.getResponse(msg, (msg) => {
             mutant = msg.ctx.First;
-            this._logger.Write('===================================================>2.Mutant received');
         });
-        
-        this._logger.Write('===================================================>3.Mutant Response done!');
         
         return mutant; 
     }

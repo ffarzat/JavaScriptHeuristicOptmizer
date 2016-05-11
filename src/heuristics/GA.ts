@@ -54,7 +54,7 @@ export default class GA extends IHeuristic {
                 if(this.crossoverProbability >= crossoverChance)
                 {
                     this._logger.Write(`Doing a crossover with individual ${individualIndex}`);
-                    this.DoCrossOver(population, individualIndex);
+                    await this.DoCrossOver(population, individualIndex);
                 }
                 
                 
@@ -137,12 +137,12 @@ export default class GA extends IHeuristic {
     /**
      * Execute crossover
      */
-    private DoCrossOver(population: Individual [], individualIndex: number)
+    public async DoCrossOver(population: Individual [], individualIndex: number)
     {
         var context: OperatorContext = new OperatorContext();
         context.First = population[individualIndex];
         context.Second = population[this.GenereateRandom(0, population.length -1)];
-        var newOnes = this.CrossOver(context);
+        var newOnes = await this.CrossOver(context);
         
         this.Test(newOnes[0]);
         population.push(newOnes[0]);
