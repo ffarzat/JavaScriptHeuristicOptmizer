@@ -38,20 +38,24 @@ export default class ASTExplorer {
     /**
      * Over websockets objects loose instance methods
      */
-    Reload(context:OperatorContext){
+    Reload(context:OperatorContext): OperatorContext{
+        var newCtx: OperatorContext = context; //all properties
+        
         if(context.First){
-            var oldFirstAst = context.First.AST;
-            context.First = new Individual();
-            context.First.AST = oldFirstAst;
+            var oldFirst = context.First;
+            newCtx.First = new Individual();
+            newCtx.First.AST = oldFirst.AST;
+            newCtx.First.testResults = oldFirst.testResults;
         }
         
         if(context.Second){
-            var oldSecondtAst = context.Second.AST;
-            context.Second = new Individual();
-            context.Second.AST = oldSecondtAst;
+            var oldSecond = context.Second;
+            newCtx.Second = new Individual();
+            newCtx.Second.AST = oldSecond.AST;
+            newCtx.Second.testResults = oldSecond.testResults;
         }
         
-        return context;
+        return newCtx;
     }
 
     /**

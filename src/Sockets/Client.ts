@@ -77,8 +77,8 @@ export default class Client{
      * Global distributed Test execution
      */
     Test(context: OperatorContext): OperatorContext {
-        this.logger.Write(`[Client:${this.id}]Executing Test for ${context.LibrarieOverTest}`);
-        this.Reload(context);
+        this.logger.Write(`[Client:${this.id}]Executing Tests for ${context.LibrarieOverTest.name}`);
+        context = this.Reload(context);
         this.InitializeTester(context);
         
         this._tester.Test(context.First); //First is subject

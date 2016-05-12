@@ -90,7 +90,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Global Test execution
      */
-    public async Test(individual: Individual) {
+    public async Test(individual: Individual): Promise<Individual> {
         var msg: Message = new Message();
         var context = new OperatorContext();
         context.Operation = "Test";
@@ -99,10 +99,11 @@ abstract class IHeuristic extends events.EventEmitter {
         context.LibrarieOverTest = this._lib;
         
         msg.ctx = context;
-
-        await this.getResponse(msg, (msg) => {
-            individual = msg.ctx.First;
-        });
+        await this.getResponse(msg, (newMsg) => {
+            individual = newMsg.ctx.First;
+        });     
+        
+        return individual;  
     }
 
     /**
@@ -119,12 +120,12 @@ abstract class IHeuristic extends events.EventEmitter {
         results.heuristic = this;
 
         results.best = bestIndividual;
-        results.bestIndividualAvgTime = this._tester.RetrieveConfiguratedFitFor(bestIndividual);
+        results.bestIndividualAvgTime = bestIndividual.testResults.fit;
         results.bestIndividualCharacters = bestCode.length;
         results.bestIndividualLOC = bestCode.split(/\r\n|\r|\n/).length;
 
         results.original = original;
-        results.originalIndividualAvgTime = this._tester.RetrieveConfiguratedFitFor(original);
+        results.originalIndividualAvgTime = original.testResults.fit;
         results.originalIndividualCharacters = originalCode.length;
         results.originalIndividualLOC = originalCode.split(/\r\n|\r|\n/).length;
 
@@ -137,9 +138,9 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     UpdateBest(newBest: Individual) {
 
-        if (newBest.testResults.passedAllTests && this._tester.RetrieveConfiguratedFitFor(newBest) < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
+        if (newBest.testResults.passedAllTests && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
             this._logger.Write('=================================');
-            this.bestFit = this._tester.RetrieveConfiguratedFitFor(newBest);
+            this.bestFit = newBest.testResults.fit;
             this.bestIndividual = newBest;
             this._logger.Write(`New Best Fit ${this.bestFit}`);
             this._logger.Write('=================================');
@@ -190,13 +191,15 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Defines library over optmization
      */
-    SetLibrary(library: Library) {
+    async SetLibrary(library: Library) {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
-        this.Test(this.Original);
+        this.Original = await this.Test(this.Original);
+        //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
+        
         //Force Best
-        this.bestFit = this._tester.RetrieveConfiguratedFitFor(this.Original);
+        this.bestFit = this.Original.testResults.fit;
         this.bestIndividual = this.Original;
 
         this._logger.Write(`Original Fit ${this.bestFit}`);
@@ -214,7 +217,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Over websockets objects loose instance methods
      */
-    Reload(context:OperatorContext){
+    Reload(context:OperatorContext): OperatorContext{
         return this._astExplorer.Reload(context);
     }
     
@@ -223,6 +226,7 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     async getResponse(msg: Message, cb: (ctx: Message) => void): Promise<void> {
         
+        //2. Receive response from server
         var p = new Promise<Message>( (resolve, reject) =>{
             process.once('message', (newMsg: Message) => {
                  var localMsg = this.Done(newMsg);
@@ -231,7 +235,7 @@ abstract class IHeuristic extends events.EventEmitter {
                  resolve(newMsg);
             });
                 
-            this.PushMessage(msg.ctx, cb);
+            this.PushMessage(msg.ctx, cb); //1.Send to server a message
         });
     
         (await Promise.resolve(p));
@@ -263,6 +267,9 @@ abstract class IHeuristic extends events.EventEmitter {
         }
 
         var localmsg = this.waitingMessages[index];
+        if(!localmsg)
+            throw 'Incoming message not located inside Heuristic Queue' + message.id;
+        
         this.waitingMessages.splice(index, 1); //cut off
         return localmsg;
     }

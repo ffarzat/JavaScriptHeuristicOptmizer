@@ -119,6 +119,7 @@ export default class CommandTester implements ITester {
             results.median = this.ToNanosecondsToSeconds(unitTestsTimer.median());
             results.duration = this.ToNanosecondsToSeconds(unitTestsTimer.duration());
             results.outputs = outputsFromCmd;
+            results.fit = this.RetrieveConfiguratedFitFor(individual);
             results.passedAllTests = passedAllTests
 
             individual.testResults = results;
@@ -134,6 +135,7 @@ export default class CommandTester implements ITester {
             results.median = 0;
             results.duration = 0;
             results.outputs = outputsFromCmd;
+            results.fit = 0;
             results.passedAllTests = passedAllTests
 
             individual.testResults = results;
@@ -168,6 +170,7 @@ export default class CommandTester implements ITester {
         this.logger.Write('max:'            + result.max);      // maximal tick duration
         this.logger.Write('mean:'           + result.mean);     // mean tick duration
         this.logger.Write('median:'         + result.median);   // median tick duration
+        this.logger.Write('FIT:'            + result.fit);      // configurated calculated FIT 
     }
 
     /**

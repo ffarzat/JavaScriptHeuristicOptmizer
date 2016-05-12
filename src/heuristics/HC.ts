@@ -55,7 +55,7 @@ export default class HC extends IHeuristic {
             var neighbor: Individual = await this.MutateBy(this.bestIndividual, indexes);
             
             //Testing
-            await this.Test(neighbor);
+            neighbor = await this.Test(neighbor);
             
             //update best?
             this.UpdateBest(neighbor);
