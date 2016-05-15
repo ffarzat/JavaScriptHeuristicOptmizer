@@ -117,7 +117,7 @@ export default class Optmizer {
         var filepath = path.join(process.cwd(), result.file);
         this.logger.Write(`Async send Email to notify observers`);
         //this.logger.Write(`File: ${filepath}`);
-        
+
         var founded: boolean = result.bestIndividualAvgTime < result.originalIndividualAvgTime;
 
         var smtpTransport = mailer.createTransport("SMTP", {
@@ -133,7 +133,7 @@ export default class Optmizer {
             to: "fabiofarzat@gmail.com",
             subject: `[Execution Results] ${result.library.name}:${result.heuristic.Name}:${result.trial}`,
             html: `<p>Found new best: <b>${founded}</b>.</p><p>Results file [attached and] saved in: <i>${filepath}</i></p>`,
-            attachments: [{ filename: 'results.csv', content: fs.createReadStream(result.file), contentType: 'text/csv'}]
+            attachments: [{ filename: 'results.csv', content: fs.createReadStream(result.file), contentType: 'text/csv' }]
         }
 
 
@@ -159,20 +159,30 @@ export default class Optmizer {
             var actualLibrary = this.configuration.libraries[libIndex];
 
             for (var heuristicIndex = 0; heuristicIndex < this.heuristics.length; heuristicIndex++) {
-                var actualHeuristic = this.heuristics[heuristicIndex];
-                this.logger.Write(`Executing global trial ${this.trialIndex} for ${actualLibrary.name} with ${actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);
-                this.logger.Write(`Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
+                try {
+                    var actualHeuristic = this.heuristics[heuristicIndex];
+                    this.logger.Write(`Executing global trial ${this.trialIndex} for ${actualLibrary.name} with ${actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);
+                    this.logger.Write(`Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
 
-                this.InitializeOutWritter(actualLibrary, actualHeuristic);
-                await actualHeuristic.SetLibrary(actualLibrary);
-                var resultaForTrial = await actualHeuristic.RunTrial(this.trialIndex);
+                    this.InitializeOutWritter(actualLibrary, actualHeuristic);
 
-                this.outter.WriteTrialResults(resultaForTrial);
-                this.outter.Finish();
-                this.Notify(resultaForTrial);
-                
-                this.logger.Write(`Ending ${actualHeuristic.Name}`);
-                this.logger.Write('=================================');
+                    await actualHeuristic.SetLibrary(actualLibrary);
+
+                    var resultaForTrial = await actualHeuristic.RunTrial(this.trialIndex);
+
+                    this.outter.WriteTrialResults(resultaForTrial);
+                    this.outter.Finish();
+                    this.Notify(resultaForTrial);
+
+                }
+                catch (err) {
+                    this.logger.Write(`Fatal Error: ${err}`);
+                }
+                finally {
+                    this.logger.Write(`Ending ${actualHeuristic.Name}`);
+                    this.logger.Write('=================================');
+                }
+
             }
         }
     }

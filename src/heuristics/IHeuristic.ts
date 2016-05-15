@@ -198,6 +198,11 @@ abstract class IHeuristic extends events.EventEmitter {
         this.Original = await this.Test(this.Original);
         //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
         
+        if(!this.Original.testResults.passedAllTests)
+            throw `Failed to execute tests for ${library.name}`;
+            
+        
+        
         //Force Best
         this.bestFit = this.Original.testResults.fit;
         this.bestIndividual = this.Original;

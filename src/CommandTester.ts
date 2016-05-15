@@ -86,7 +86,7 @@ export default class CommandTester implements ITester {
             
                 var testExecutionTimeTick = new Tick(testUuid);
                 testExecutionTimeTick.start();
-                var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('npm test', {silent:true}) as Shell.ExecOutputReturnValue);
+                var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('npm test', {silent:false}) as Shell.ExecOutputReturnValue);
                 testExecutionTimeTick.stop();    
                 
                 //TODO: Log the returnedOutput.output for debug
