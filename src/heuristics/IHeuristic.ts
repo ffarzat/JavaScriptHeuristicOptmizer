@@ -256,7 +256,7 @@ abstract class IHeuristic extends events.EventEmitter {
         item.ctx = context;
         item.cb = cb;
         this.waitingMessages.push(item);
-        process.send(item);
+        process.send(JSON.stringify(item));
     }
     
     /**

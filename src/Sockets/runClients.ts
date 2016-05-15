@@ -28,6 +28,9 @@ console.log(serverUrl);
 var ws = new WebSocket(serverUrl, 'echo-protocol');
 
 ws.addEventListener("message", (e) => {
+    
+    logger.Write(e.data);
+    
     var msg: Message = JSON.parse(e.data);
 
 
