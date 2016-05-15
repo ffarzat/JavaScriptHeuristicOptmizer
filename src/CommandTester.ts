@@ -119,10 +119,9 @@ export default class CommandTester implements ITester {
             results.median = this.ToNanosecondsToSeconds(unitTestsTimer.median());
             results.duration = this.ToNanosecondsToSeconds(unitTestsTimer.duration());
             results.outputs = outputsFromCmd;
-            results.fit = this.RetrieveConfiguratedFitFor(individual);
             results.passedAllTests = passedAllTests
-
             individual.testResults = results;
+            results.fit = this.RetrieveConfiguratedFitFor(individual);
         }
         else
         {
