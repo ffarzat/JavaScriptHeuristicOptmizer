@@ -120,6 +120,7 @@ export default class CommandTester implements ITester {
             results.duration = this.ToNanosecondsToSeconds(unitTestsTimer.duration());
             results.outputs = outputsFromCmd;
             results.passedAllTests = passedAllTests
+            
             individual.testResults = results;
             results.fit = this.RetrieveConfiguratedFitFor(individual);
         }
@@ -136,7 +137,6 @@ export default class CommandTester implements ITester {
             results.outputs = outputsFromCmd;
             results.fit = 0;
             results.passedAllTests = passedAllTests
-
             individual.testResults = results;
         }
         
