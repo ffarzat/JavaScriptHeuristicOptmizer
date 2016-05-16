@@ -2,7 +2,7 @@
   "name": "javascript-heuristic-optmizer",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "build/src/index.js",
   "scripts": {
     "postinstall": "tsd install",
     "build": "tsc",
@@ -18,17 +18,20 @@
   },
   "license": "ISC",
   "dependencies": {
-    "escodegen": "1.8.0",
+    "escodegen": "https://github.com/ffarzat/escodegen.git#960138e334432951d761659c5fe9ccdaa136dbf1",
     "esprima": "2.7.2",
     "exectimer": "2.0.0",
     "fs-extra": "0.26.7",
+    "http": "0.0.0",
     "log4js": "0.6.33",
     "node-uuid": "1.4.7",
     "nodemailer": "0.7.1",
     "randomizer": "0.0.1",
     "shelljs": "0.6.0",
     "traverse": "0.6.6",
-    "typescript": "1.8.9"
+    "typescript": "1.8.10",
+    "websocket": "1.0.22",
+    "ws": "1.1.0"
   },
   "devDependencies": {
     "mocha": "2.4.5",

@@ -18,7 +18,7 @@
       "commit": "dc6d1ebfaa554e85b91846574728930972ca9868"
     },
     "node/node.d.ts": {
-      "commit": "e8f8e7471b8ca92ca417f8c878f64ae4d1067972"
+      "commit": "544a35a10866b32afda9c7f029c0764558563f4f"
     },
     "npm/npm.d.ts": {
       "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
@@ -46,6 +46,12 @@
     },
     "traverse/traverse.d.ts": {
       "commit": "641df27e73ca67fa7199a3deedae104198d41a17"
+    },
+    "websocket/websocket.d.ts": {
+      "commit": "544a35a10866b32afda9c7f029c0764558563f4f"
+    },
+    "ws/ws.d.ts": {
+      "commit": "544a35a10866b32afda9c7f029c0764558563f4f"
     }
   }
 }

@@ -38,10 +38,10 @@ export default class GA extends IHeuristic {
     /**
      * Run a single trial
      */
-    RunTrial(trialIndex: number): TrialResults{
+    public async RunTrial(trialIndex: number): Promise<TrialResults>{
         this._logger.Write(`Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
         
-        var population: Individual [] = this.CreatesFirstGeneration(this.Original);
+        var population: Individual [] = await this.CreatesFirstGeneration(this.Original);
 
         for (var generationIndex = 1; generationIndex < this.generations; generationIndex++) {
             this._logger.Write(`Starting generation ${generationIndex}`);
@@ -54,7 +54,7 @@ export default class GA extends IHeuristic {
                 if(this.crossoverProbability >= crossoverChance)
                 {
                     this._logger.Write(`Doing a crossover with individual ${individualIndex}`);
-                    this.DoCrossOver(population, individualIndex);
+                    await this.DoCrossOver(population, individualIndex);
                 }
                 
                 
@@ -67,8 +67,8 @@ export default class GA extends IHeuristic {
                     var context: OperatorContext = new OperatorContext();
                     context.First = population[individualIndex];
                     
-                    var mutant = this.Mutate(context);
-                    this.Test(mutant);
+                    var mutant = await this.Mutate(context);
+                    mutant = await this.Test(mutant);
                     population.push(mutant);
                 }
             }
@@ -79,23 +79,27 @@ export default class GA extends IHeuristic {
             });
             
             //Cut off
-            this.DoPopuplationCut(population);
+            await this.DoPopuplationCut(population);
         }
 
-        return this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+        var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+
+        return new Promise<TrialResults>((resolve, reject) => {
+            resolve(results);
+        });
     }
     
     /**
      * Releases Elitism over population
      */
-    private DoPopuplationCut(population: Individual [])
+    private async DoPopuplationCut(population: Individual [])
     {
         if(this.elitism){
            var countElitism = (this.individuals * this.elitismPercentual) / 100;
-           this._logger.Write(`Using Elitism. Keeping ${countElitism} best individuals`);
-           population.sort( (a,b)=> { return this._tester.RetrieveConfiguratedFitFor(a) > this._tester.RetrieveConfiguratedFitFor(b)? 1: 0; });
+           this._logger.Write(`Using Elitism. Cuting off ${countElitism} individuals`);
+           population.sort( (a,b)=> { return a.testResults.fit > b.testResults.fit ? 1: 0; });
            population.splice(0, countElitism);
-           this.Repopulate(population, countElitism);
+           await this.Repopulate(population, countElitism);
         }
         else{
            population.splice(0, this.individuals); 
@@ -105,7 +109,7 @@ export default class GA extends IHeuristic {
     /**
      * Repopulates using Mutation
      */
-    private Repopulate(population: Individual [], untill: number)
+    private async Repopulate(population: Individual [], untill: number)
     {
            this._logger.Write(`Initializing a new population [+ ${untill} new individuals]`);
             
@@ -117,9 +121,9 @@ export default class GA extends IHeuristic {
                 
                 context.First = clone;
             
-                var mutant = this.Mutate(context)
-
-                this.Test(mutant);
+                var mutant = await this.Mutate(context)
+                
+                mutant = await this.Test(mutant);
                 
                 //this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(mutant)}`);
 
@@ -133,29 +137,29 @@ export default class GA extends IHeuristic {
     /**
      * Execute crossover
      */
-    private DoCrossOver(population: Individual [], individualIndex: number)
+    public async DoCrossOver(population: Individual [], individualIndex: number)
     {
         var context: OperatorContext = new OperatorContext();
         context.First = population[individualIndex];
         context.Second = population[this.GenereateRandom(0, population.length -1)];
-        var newOnes = this.CrossOver(context);
+        var newOnes = await this.CrossOver(context);
         
-        this.Test(newOnes[0]);
+        newOnes[0] = await this.Test(newOnes[0]);
         population.push(newOnes[0]);
         
-        this.Test(newOnes[1]);
+        newOnes[1] = await this.Test(newOnes[1]);
         population.push(newOnes[1]);
     }
     
     /**
      * Returns a list of Mutated new individuals
      */
-    CreatesFirstGeneration(original: Individual): Individual []{
+    async CreatesFirstGeneration(original: Individual): Promise<Individual []>{
         var localPopulation: Individual [] = [];
         localPopulation.push(original);
         
-       this.Repopulate(localPopulation, this.individuals -1);
+        await this.Repopulate(localPopulation, this.individuals -1);
         
-        return localPopulation;
+        return new Promise<Individual []> ((resolve) => { resolve(localPopulation)});
     }
 }

@@ -7,6 +7,12 @@
 export default class TestResults {
     
     /**
+     * Fit value 
+     * Can be median or mean. Depends on configuration
+     */
+    fit: number;
+    
+    /**
      * Minimum observed from rounds executed 
      */
     min: number;

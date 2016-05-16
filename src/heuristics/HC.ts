@@ -35,7 +35,7 @@ export default class HC extends IHeuristic {
     /**
      * Run the trial
      */
-    RunTrial(trialIndex: number): TrialResults{
+    public async RunTrial(trialIndex: number): Promise<TrialResults>{
         this._logger.Write(`Starting  Trial ${trialIndex}`);
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`Using nodesType: ${this.nodesType}`);
@@ -52,10 +52,10 @@ export default class HC extends IHeuristic {
         for (var index = 0; index < this.trials; index++) {//for trials
 
             //get next neighbor by typeIndex.ActualIndex
-            var neighbor: Individual = this.MutateBy(this.bestIndividual, indexes);
+            var neighbor: Individual = await this.MutateBy(this.bestIndividual, indexes);
             
             //Testing
-            this.Test(neighbor);
+            neighbor = await this.Test(neighbor);
             
             //update best?
             this.UpdateBest(neighbor);
@@ -87,7 +87,11 @@ export default class HC extends IHeuristic {
             }
         }
         
-        return this.ProcessResult(trialIndex, this.Original, this.bestIndividual);;
+        var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+
+        return new Promise<TrialResults>((resolve, reject) => {
+            resolve(results);
+        });
     }
     
     /**

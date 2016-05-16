@@ -10,36 +10,41 @@ import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
  * Random Search for Code Improvement
  */
 export default class RD extends IHeuristic {
-    
+
     trials: number
-    
+
     /**
      * Especific Setup
      */
-    Setup(config: TrialEspecificConfiguration): void{
+    Setup(config: TrialEspecificConfiguration): void {
         super.Setup(config);
 
         this.trials = config.trials;
     }
-    
+
     /**
      * Run the trial
      */
-    RunTrial(trialIndex: number): TrialResults{
+    public async RunTrial(trialIndex: number): Promise<TrialResults> {
+
         this._logger.Write(`Starting  Random Search`);
         this._logger.Write(`Starting  Trial ${trialIndex} of ${this.Trials}`);
-        
+
         for (var index = 0; index < this.trials; index++) {
+
             var ctx: OperatorContext = new OperatorContext();
             ctx.MutationTrials = this.mutationTrials;
             ctx.First = this.bestIndividual;
-            
-            var mutant = this.Mutate(ctx);
-            this.Test(mutant);
+
+            var mutant = await this.Mutate(ctx);
+            mutant = await this.Test(mutant);
             this.UpdateBest(mutant);
         }
         
-        return this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+        var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+
+        return new Promise<TrialResults>((resolve, reject) => {
+            resolve(results);
+        });
     }
-    
 }

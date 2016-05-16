@@ -34,6 +34,29 @@ export default class ASTExplorer {
 
         return newIndividual;
     }
+    
+    /**
+     * Over websockets objects loose instance methods
+     */
+    Reload(context:OperatorContext): OperatorContext{
+        var newCtx: OperatorContext = context; //all properties
+        
+        if(context.First){
+            var oldFirst = context.First;
+            newCtx.First = new Individual();
+            newCtx.First.AST = oldFirst.AST;
+            newCtx.First.testResults = oldFirst.testResults;
+        }
+        
+        if(context.Second){
+            var oldSecond = context.Second;
+            newCtx.Second = new Individual();
+            newCtx.Second.AST = oldSecond.AST;
+            newCtx.Second.testResults = oldSecond.testResults;
+        }
+        
+        return newCtx;
+    }
 
     /**
      * Count the total number of nodes inside an AST

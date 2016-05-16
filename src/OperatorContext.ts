@@ -8,6 +8,11 @@ import Individual from './Individual';
 export default class OperatorContext {
     
     /**
+     * Options ['Mutation', 'CrossOver', 'Testing']
+     */
+    Operation: string 
+    
+    /**
      * Lib over tests/optmization
      */
     LibrarieOverTest: Library;

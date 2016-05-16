@@ -5,10 +5,15 @@ import IConfiguration from './IConfiguration';
 import Optmizer from './Optmizer';
 import LogFactory from './LogFactory';
 
+import Server from './Sockets/Server';
+import Message from './Sockets/Message';
 
+import cluster = require('cluster');
 import fs = require('fs');
 import path = require('path');
 import Shell = require('shelljs');
+
+var localServer = new Server();
 
 //=========================================================================================== Reads config
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
@@ -22,24 +27,52 @@ logger.Initialize(configuration);
 logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
 logger.Write(`Preparing libs environment`);
 
-//=========================================================================================== Just prepare all libs
+//=========================================================================================== Server!
+if (cluster.isMaster) {
+    localServer.logger = logger;
+    localServer.Setup(configuration);
+    setInterval(function() { localServer.ProcessQueue(); }, 500);
+    
+    var optmizerWorker = cluster.fork(); //optmizer worker
+    
+    optmizerWorker.on('message', function(msg:Message) {
+      //logger.Write(`Optmizer asking for Operation`);
+      
+      localServer.DoAnOperation(msg, (newMsg)  => {
+            //logger.Write(`Send back newMsg to Optmizer`);
+            optmizerWorker.send(newMsg);
+      });
+      
+    });
 
-ParseConfigAndLibs();
+} else {
+    //Here is the Optmizer in another work
+    //=========================================================================================== Just prepare all libs
+    ParseConfigAndLibs();
 
-//=========================================================================================== Just for know
-DisplayConfig();
-//=========================================================================================== For all trials
-for (var trial = 0; trial < configuration.trials; trial++) {
-    for (var heuristicTrial = 0; heuristicTrial < configuration.trialsConfiguration.length ; heuristicTrial++) {
-        var optmizer = new Optmizer();
-        optmizer.Setup(configuration, trial, heuristicTrial);
-        optmizer.DoOptmization();    
-    }
+    //=========================================================================================== Just for know
+
+    DisplayConfig();
+    
+    //=========================================================================================== For all trials
+    ExecuteTrials();
+    
+    
+}
+
+async function ExecuteTrials(){
+   for (var trial = 0; trial < configuration.trials; trial++) {
+        for (var heuristicTrial = 0; heuristicTrial < configuration.trialsConfiguration.length ; heuristicTrial++) {
+            var optmizer = new Optmizer();
+            optmizer.Setup(configuration, trial, heuristicTrial);
+            await optmizer.DoOptmization();
+            logger.Write('====================================> Loop do otimizador pelo lado de fora - concluído')
+        }
+    } 
 }
 
 
-
-
+//=========================================================================================== Functions
 function ParseConfigAndLibs(){
     for (var libIndex = 0; libIndex < configuration.libraries.length; libIndex++) {
         var element = configuration.libraries[libIndex];
