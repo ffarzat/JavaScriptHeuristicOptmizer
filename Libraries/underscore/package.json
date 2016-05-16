@@ -18,5 +18,9 @@
     "karma-qunit": "^0.1.9",
     "qunit-extras": "^1.4.5",
     "qunitjs": "^1.20.0"
+  },
+  "dependencies": {
+    "karma-phantomjs-launcher": "^1.0.0",
+    "phantomjs-prebuilt": "^2.1.7"
   }
 }
