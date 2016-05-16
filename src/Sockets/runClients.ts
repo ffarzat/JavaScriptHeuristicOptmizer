@@ -28,9 +28,7 @@ console.log(serverUrl);
 var ws = new WebSocket(serverUrl, 'echo-protocol');
 
 ws.addEventListener("message", (e) => {
-    
-    logger.Write(e.data);
-    
+
     var msg: Message = JSON.parse(e.data);
 
 
@@ -38,6 +36,7 @@ ws.addEventListener("message", (e) => {
     localClient.id = clientId;
     localClient.logger = logger;
     localClient.Setup(configuration);
+    msg.ctx = localClient.Reload(msg.ctx);
 
     if (msg.ctx.Operation == "Mutation") {
         var newCtx = localClient.Mutate(msg.ctx);

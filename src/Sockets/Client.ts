@@ -29,7 +29,7 @@ export default class Client{
     /**
      * Over websockets objects loose instance methods
      */
-    Reload(context:OperatorContext){
+    Reload(context:OperatorContext): OperatorContext{
         return this._astExplorer.Reload(context);
     }
     

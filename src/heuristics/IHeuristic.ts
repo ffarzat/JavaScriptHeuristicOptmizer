@@ -97,7 +97,7 @@ abstract class IHeuristic extends events.EventEmitter {
         context.First = individual;
         context.Second = this.bestIndividual; //is usual to be the original
         context.LibrarieOverTest = this._lib;
-        
+
         msg.ctx = context;
         await this.getResponse(msg, (newMsg) => {
             individual = newMsg.ctx.First;
@@ -256,7 +256,7 @@ abstract class IHeuristic extends events.EventEmitter {
         item.ctx = context;
         item.cb = cb;
         this.waitingMessages.push(item);
-        process.send(JSON.stringify(item));
+        process.send(item);
     }
     
     /**
