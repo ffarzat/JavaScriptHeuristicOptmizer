@@ -17,7 +17,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       //'node_modules/qunit-extras/qunit-extras.js',
-      'Melhor.js',
+      'global.js',
       'core-test.js'
     ],
 
@@ -26,18 +26,10 @@ module.exports = function(config) {
     exclude: [
     ],
 
-
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-      'Melhor.js' : ['coverage']
-    },
-
-
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'coverage'],
+    reporters: ['progress'],
 
 
     // web server port
@@ -59,7 +51,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode
