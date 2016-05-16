@@ -24,9 +24,6 @@ var testOldDirectory: string = process.cwd();
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
-logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
-logger.Write(`Preparing libs environment`);
-
 //=========================================================================================== Server!
 if (cluster.isMaster) {
     localServer.logger = logger;
@@ -46,6 +43,9 @@ if (cluster.isMaster) {
     });
 
 } else {
+    logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
+    logger.Write(`Preparing libs environment`);
+    
     //Here is the Optmizer in another work
     //=========================================================================================== Just prepare all libs
     ParseConfigAndLibs();
