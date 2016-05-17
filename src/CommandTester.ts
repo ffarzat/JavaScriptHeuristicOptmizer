@@ -83,7 +83,7 @@ export default class CommandTester implements ITester {
             this.logger.Write(`Doing ${this.testUntil} evaluations`);
             
             for (var index = 0; index < this.testUntil; index++) {
-            
+                 this.logger.Write(`eval ${index}`);
                 var testExecutionTimeTick = new Tick(testUuid);
                 testExecutionTimeTick.start();
                 var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('npm test', {silent:true}) as Shell.ExecOutputReturnValue);

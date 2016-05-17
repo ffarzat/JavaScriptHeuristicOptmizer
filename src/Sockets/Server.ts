@@ -127,7 +127,7 @@ export default class Server {
         if(this.messages.length == 0)
             return;
 
-        //this.logger.Write(`Left ${this.messages.length} operations to process.`);
+        this.logger.Write(`Left ${this.messages.length} operations to process.`);
 
         for (var clientIndex = 0; clientIndex < this.clients.length; clientIndex++) {
             if (this.messages.length > 0) {
