@@ -30,7 +30,7 @@ export default class ASTExplorer {
         
         var generatedAST = escodegen.attachComments(generatedAST, generatedAST.comments, generatedAST.tokens);
         
-        newIndividual.AST = generatedAST;
+        newIndividual.AST = JSON.stringify(generatedAST);
 
         return newIndividual;
     }

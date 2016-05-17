@@ -12,7 +12,7 @@ export default class Individual {
     /**
      * Keeps all tree for this individual
      */
-    AST: any;
+    AST: string;
 
     /**
      * Options to generate new code
@@ -57,7 +57,7 @@ export default class Individual {
     Clone(): Individual
     {
         var newOne = new Individual();
-        newOne.AST = traverse(this.AST).clone();
+        newOne.AST = this.AST;//traverse(JSON.parse(this.AST)).clone();
         
         return newOne;
     }
