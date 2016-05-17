@@ -22,7 +22,7 @@ export default class Client{
     _astExplorer: ASTExplorer = new ASTExplorer();
     _config: IConfiguration;
     
-     Setup(config: IConfiguration): void {
+    Setup(config: IConfiguration): void {
         this._config = config;
     }
     
@@ -38,7 +38,7 @@ export default class Client{
      */
     Mutate(context: OperatorContext): OperatorContext{
         this.logger.Write(`[Client:${this.id}]Processing new Mutant`);
-        this.Reload(context);
+        
         var newIndividual = this._astExplorer.Mutate(context);
         var ctx = new OperatorContext();
         ctx.First = newIndividual;
@@ -64,7 +64,7 @@ export default class Client{
      */
     CrossOver(context: OperatorContext): OperatorContext{
         this.logger.Write(`[Client:${this.id}]Processing new CrossOver`);
-        this.Reload(context);
+        
         var news = this._astExplorer.CrossOver(context);
         var ctx = new OperatorContext();
         ctx.First = news[0];
@@ -78,7 +78,7 @@ export default class Client{
      */
     Test(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Executing Tests for ${context.LibrarieOverTest.name}`);
-        context = this.Reload(context);
+
         this.InitializeTester(context);
         
         this._tester.Test(context.First); //First is subject

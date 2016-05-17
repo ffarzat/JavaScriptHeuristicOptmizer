@@ -3,6 +3,7 @@ var escodegen = require('escodegen');
 
 import traverse = require('traverse');
 import TestResults from './TestResults';
+import fs = require('fs');
 
  /**
  * Individual - Represents an Individual Code over Improvement process
@@ -12,7 +13,7 @@ export default class Individual {
     /**
      * Keeps all tree for this individual
      */
-    AST: string;
+    private _ast: string;
 
     /**
      * Options to generate new code
@@ -27,7 +28,20 @@ export default class Individual {
              quotes: 'auto'
          }
      };
-        
+    
+    /**
+     * Get parsed AST object
+     *  */   
+    get AST():any {
+        return JSON.parse(this._ast);
+    }
+    /**
+     * Store string representation of the AST object
+     */
+    set AST(value:any) {
+        this._ast = JSON.stringify(value);
+    }
+       
      /**
       * Keeps the results from Tests 
       */   
