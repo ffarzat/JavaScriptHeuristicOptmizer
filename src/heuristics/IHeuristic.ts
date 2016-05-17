@@ -60,13 +60,15 @@ abstract class IHeuristic extends events.EventEmitter {
         var msg: Message = new Message();
         context.Operation = "Mutation";
         msg.ctx = context;
-        var mutant: Individual;
+       
 
-        await this.getResponse(msg, (msg) => {
-            mutant = msg.ctx.First;
+        var p = new Promise<Individual> ( (resolve) => {
+            this.getResponse(msg, (newMsg) => {
+                resolve(newMsg.ctx.First);
+            });   
         });
-        
-        return mutant; 
+
+        return p; 
     }
 
     /**
@@ -233,7 +235,7 @@ abstract class IHeuristic extends events.EventEmitter {
         
         //2. Receive response from server
         var p = new Promise<Message>( (resolve, reject) =>{
-            process.once('message', (newMsg: Message) => {
+            process.on('message', (newMsg: Message) => {
                  var localMsg = this.Done(newMsg);
                  newMsg.ctx = this.Reload(newMsg.ctx);
                  localMsg.cb(newMsg); 
@@ -264,6 +266,7 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     Done(message: Message): Message{
         //Finds message index
+        var indexFounded = 0;
         for (var index = 0; index < this.waitingMessages.length; index++) {
             var element = this.waitingMessages[index];
             //this._logger.Write(`External: ${element.id} == ${message.id}`);
@@ -272,14 +275,14 @@ abstract class IHeuristic extends events.EventEmitter {
             //this._logger.Write(`message.id: ${typeof message.id}`);
             if(element.id === message.id){
                 //this._logger.Write(`do break... : ${element.id === message.id}`);
+                indexFounded = index;
                 break;
-            }
-                
+            }    
         }
 
-        var localmsg = this.waitingMessages[index];
+        var localmsg = this.waitingMessages[indexFounded];
         if(!localmsg)
-            throw 'Incoming message not located inside Heuristic Queue' + message.id;
+            throw 'Incoming message not located inside Heuristic Queue ' + message.id;
         
         this.waitingMessages.splice(index, 1); //cut off
         return localmsg;

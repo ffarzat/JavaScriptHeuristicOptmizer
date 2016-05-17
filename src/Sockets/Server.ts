@@ -50,6 +50,7 @@ export default class Server {
             this.clients.push(client);
 
             this.logger.Write('Connection accepted [' + id + ']');
+            this.logger.Write(`${this.clients.length} client(s)`);
             this.HandleConnections(client);
 
             //client.connection.send('Do a mutation for me?'); //=============================================================== TEST!!!!
@@ -79,8 +80,9 @@ export default class Server {
             var msg: Message = JSON.parse(message);
             
             if (this.clients.indexOf(client) == -1) {
-                this.clients.push(client); //be available again
                 this.Done(client.id, msg);
+                this.clients.push(client); //be available again
+                //this.logger.Write(`Left ${this.clients.length} client(s)`);
             }
 
         });
@@ -93,7 +95,7 @@ export default class Server {
          for (var index = 0; index < this.waitingMessages.length; index++) {
             var element = this.waitingMessages[index];
             if(element.clientId == client.id){
-                this.waitingMessages.slice(index, 1); //remove
+                this.waitingMessages.splice(index, 1); //remove
                 this.messages.push(element);
                 this.logger.Write(`Saving back msg: ${element.id} from client ${client.id} [disconnected]`);
             }

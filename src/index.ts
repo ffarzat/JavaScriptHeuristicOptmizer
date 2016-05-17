@@ -23,12 +23,12 @@ var testOldDirectory: string = process.cwd();
 //=========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
-
+process.setMaxListeners(0);
 //=========================================================================================== Server!
 if (cluster.isMaster) {
     localServer.logger = logger;
     localServer.Setup(configuration);
-    setInterval(function() { localServer.ProcessQueue(); }, 500);
+    setInterval(function() { localServer.ProcessQueue(); }, 50);
     
     var optmizerWorker = cluster.fork(); //optmizer worker
     

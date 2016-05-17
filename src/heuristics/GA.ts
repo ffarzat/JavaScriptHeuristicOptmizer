@@ -112,7 +112,8 @@ export default class GA extends IHeuristic {
     private async Repopulate(population: Individual [], untill: number)
     {
            this._logger.Write(`Initializing a new population [+ ${untill} new individuals]`);
-            
+           var promises = []; 
+           
            for (var localIndex = 0; localIndex < untill; localIndex++) {
                
                 var context: OperatorContext = new OperatorContext();
@@ -120,17 +121,41 @@ export default class GA extends IHeuristic {
                 var clone: Individual = this.bestIndividual.Clone();
                 
                 context.First = clone;
-            
-                var mutant = await this.Mutate(context)
                 
-                mutant = await this.Test(mutant);
+                promises.push(this.Mutate(context));
+                
+                //mutant = await this.Test(mutant);
                 
                 //this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(mutant)}`);
 
-                this.UpdateBest(mutant);
+                //this.UpdateBest(mutant);
 
-                population.push(mutant);  
+                //population.push(mutant);  
            }
+           this._logger.Write(`Waiting all mutants... `);
+           var mutants = await Promise.all(promises);
+           this._logger.Write(`Done!`);
+           
+           throw "TEST ALL MUTANTS";
+           
+           
+           /*
+           var testPromises = [];
+           for (var mutantIndex = 0; mutantIndex < mutants.length; mutantIndex++) {
+               var element = mutants[mutantIndex];
+               testPromises.push(this.Test(element));
+           }
+            
+           this._logger.Write(`Waiting all tests... `);
+           var mutantsTested = await Promise.all(testPromises);
+           this._logger.Write(`Done!`);
+           
+           mutantsTested.forEach(element => {
+               this.UpdateBest(element);
+               population.push(element);  
+           });
+           */
+           
     }
     
     
