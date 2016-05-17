@@ -1,5 +1,6 @@
 /// <reference path="./typings/tsd.d.ts" />
-//node build/src/teste.js
+//node --expose-gc build/src/teste.js
+
 
 import IConfiguration from '../src/IConfiguration';
 import Individual from '../src/Individual';
@@ -23,41 +24,11 @@ var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFileP
 
 var population: Individual[] = [];
 
-for (var index = 0; index < 10000; index++) {
-    var newOne = individualOverTests.Clone();
-    //CreateFakeResults(newOne);
-    population.push(newOne);
+for (var index = 0; index < 200; index++) {
+    population.push(individualOverTests.Clone());
     logger.Write(index.toString());
-}
-
-//logger.Write(individualOverTests.AST);
-
-
-/**
- * Create a fake test result
- */
-function CreateFakeResults(newIndividual: Individual):void {
-    
-    var outputFake: string[] = [];
-    
-    for (var index = 0; index < 4; index++) {
-        outputFake.push(newIndividual.AST); //lot of string
-    }
-    
-    
-    var results: TestResults = new TestResults();
-    results.rounds = 5;
-
-    results.min = 0;
-    results.max = 0;
-    results.mean = 0;
-    results.median = 0;
-    results.duration = 0;
-    results.outputs = outputFake;
-    results.fit = 0;
-    results.passedAllTests = false;
-    
-    newIndividual.testResults = results;
+    //global.gc();
+    //logger.Write(`Manual GC ${process.memoryUsage().heapTotal}`);
 }
 
 
