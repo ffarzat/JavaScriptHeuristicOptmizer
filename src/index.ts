@@ -29,6 +29,7 @@ if (cluster.isMaster) {
     localServer.logger = logger;
     localServer.Setup(configuration);
     setInterval(function() { localServer.ProcessQueue(); }, 50);
+    setInterval(function() { localServer.Status(); }, 60000);
     
     var optmizerWorker = cluster.fork(); //optmizer worker
     

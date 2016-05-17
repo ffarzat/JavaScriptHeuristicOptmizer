@@ -19,6 +19,8 @@ export default class Server {
     clients: Client[] = []; //store available clients
     messages: Message[] = []; //store all received messages 
 
+    clientProcessing: Client[] = []; //store client processing something
+
     waitingMessages: Message[] = []; //store waiting messages
 
     /**
@@ -78,23 +80,21 @@ export default class Server {
         //Handle on messagem from cliente!
         client.connection.on('message', (message) => {
             var msg: Message = JSON.parse(message);
-            
-            if (this.clients.indexOf(client) == -1) {
-                this.Done(client.id, msg);
-                this.clients.push(client); //be available again
-                //this.logger.Write(`Left ${this.clients.length} client(s)`);
-            }
 
+            this.logger.Write(`client[${client.id}]Done inside server`);
+
+            this.Done(client, msg);
+            //this.logger.Write(`Left ${this.clients.length} client(s)`);
         });
     }
 
     /**
      * Mode messages from waitingMessages to messages
     */
-    ValidateRemove(client: Client){
-         for (var index = 0; index < this.waitingMessages.length; index++) {
+    ValidateRemove(client: Client) {
+        for (var index = 0; index < this.waitingMessages.length; index++) {
             var element = this.waitingMessages[index];
-            if(element.clientId == client.id){
+            if (element.clientId == client.id) {
                 this.waitingMessages.splice(index, 1); //remove
                 this.messages.push(element);
                 this.logger.Write(`Saving back msg: ${element.id} from client ${client.id} [disconnected]`);
@@ -102,12 +102,22 @@ export default class Server {
         }
     }
 
+    /**
+     * Print the server status
+     */
+    Status(): void {
+        this.logger.Write(`=============`);
+        this.logger.Write(`${this.messages.length} message(s) waiting free client(s)`);
+        this.logger.Write(`${this.waitingMessages.length} message(s) in process`);
+        this.logger.Write(`${this.clients.length} client(s) available(s)`);
+        this.logger.Write(`=============`);
+    }
 
 
     /**
      * Send a request for any available client to o a mutation over OperatorContext
     */
-    DoAnOperation(msg:Message, cb: (ctx: Message) => void ) {
+    DoAnOperation(msg: Message, cb: (ctx: Message) => void) {
         var item = new Message();
         item.id = msg.id;
         item.ctx = msg.ctx;
@@ -120,47 +130,60 @@ export default class Server {
      * Process messages
      */
     ProcessQueue() {
-        
-        if(this.clients.length == 0)
+
+        if (this.clients.length == 0)
             return;
 
-        if(this.messages.length == 0)
+        if (this.messages.length == 0)
             return;
 
         this.logger.Write(`Left ${this.messages.length} operations to process.`);
 
         for (var clientIndex = 0; clientIndex < this.clients.length; clientIndex++) {
             if (this.messages.length > 0) {
-                var availableClient = this.clients.pop(); 
-                var msg = this.messages.pop();
                 
+                var availableClient = this.clients.pop();
+                this.clientProcessing.push(availableClient);
+                
+                var msg = this.messages.pop();
                 msg.clientId = availableClient.id;
                 availableClient.connection.send(JSON.stringify(msg));
                 this.waitingMessages.push(msg);
+                
             }
             else {
                 break;
             }
         }
     }
-    
+
     /**
      * Relases the callback magic
      */
-    Done(clientId: string, message: Message){
+    Done(client: Client, message: Message) {
+
+        for (var clientIndex = 0; clientIndex < this.clientProcessing.length; clientIndex++) {
+            var clientelement = this.clientProcessing[clientIndex];
+            if (client.id === clientelement.id)
+                break;
+        }
         
+        this.clientProcessing.splice(clientIndex, 1); //cut off
+        this.clients.push(client); //be available again
+        this.logger.Write(`client[${client.id}] available`);
+
         //Finds message index
         for (var index = 0; index < this.waitingMessages.length; index++) {
-            var element = this.waitingMessages[index];
-            if(element.id == message.id)
+            var msgelement = this.waitingMessages[index];
+            if (msgelement.id == message.id)
                 break;
         }
 
         var localmsg = this.waitingMessages[index];
         this.waitingMessages.splice(index, 1); //cut off
-        //this.logger.Write("Callback to optmizer!");
+        this.logger.Write("[Server] Before Message Callback ");
         localmsg.cb(message); //do the callback!
-        //this.logger.Write(localmsg.cb);
+        this.logger.Write("[Server] After Message Callback ");
     }
 }
 
