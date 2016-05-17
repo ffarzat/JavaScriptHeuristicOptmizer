@@ -266,9 +266,15 @@ abstract class IHeuristic extends events.EventEmitter {
         //Finds message index
         for (var index = 0; index < this.waitingMessages.length; index++) {
             var element = this.waitingMessages[index];
-            //this._logger.Write(`External: ${message.id} == ${element.id}`);
-            if(element.id == message.id)
+            //this._logger.Write(`External: ${element.id} == ${message.id}`);
+            //this._logger.Write(`break?: ${element.id === message.id}`);
+            //this._logger.Write(`element.id: ${typeof element.id}`);
+            //this._logger.Write(`message.id: ${typeof message.id}`);
+            if(element.id === message.id){
+                //this._logger.Write(`do break... : ${element.id === message.id}`);
                 break;
+            }
+                
         }
 
         var localmsg = this.waitingMessages[index];
