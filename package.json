@@ -10,7 +10,7 @@
     "pretest": "npm run clean && npm run wait && npm run build",
     "clean": "rmdir build /s /q",
     "wait": "ping 127.0.0.1 -n 2 > nul",
-    "start": "npm run clean && npm run wait && npm run build && --max_old_space_size=8192 --optimize_for_size --max_executable_size=4096 --stack_size=4096 build/src/index.js"
+    "start": "npm run clean && npm run wait && npm run build && node --expose-gc --max-old-space-size=2047 build/src/index.js"
   },
   "author": {
     "name": "Fabio Farzat",

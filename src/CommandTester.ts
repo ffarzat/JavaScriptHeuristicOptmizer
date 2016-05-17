@@ -90,7 +90,7 @@ export default class CommandTester implements ITester {
                 testExecutionTimeTick.stop();    
                 
                 //TODO: Log the returnedOutput.output for debug
-                outputsFromCmd.push(returnedOutput.output);
+                //outputsFromCmd.push(returnedOutput.output); out of memory
                 
                 if (returnedOutput.code > 0)
                 {

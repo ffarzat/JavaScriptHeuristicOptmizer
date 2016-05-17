@@ -22,11 +22,14 @@ var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFileP
 
 var population: Individual[] = [];
 
-for (var index = 0; index < 10000; index++) {
+for (var index = 0; index < 200; index++) {
     population.push(individualOverTests.Clone());
+    logger.Write(index.toString());
+    //global.gc();
+    //logger.Write(`Manual GC ${process.memoryUsage().heapTotal}`);
 }
 
-//logger.Write(individualOverTests.AST);
+
 
 
 
