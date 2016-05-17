@@ -1,47 +1,35 @@
 /// <reference path="./typings/tsd.d.ts" />
+//node --expose-gc build/src/teste.js
 
-import cluster = require('cluster');
+import IConfiguration from '../src/IConfiguration';
+import Individual from '../src/Individual';
+import ASTExplorer from '../src/ASTExplorer';
+import LogFactory from '../src/LogFactory';
 
-if (cluster.isMaster) {
-    console.log('Master ' + process.pid + ' has started.');
+import fs = require('fs');
+import path = require('path');
 
-    var worker = cluster.fork();
+var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
+var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+var lib = configuration.libraries[1]; 
 
-    // Receive messages from this worker and handle them in the master process.
-    worker.on('message', function (msg) {
-        console.log('Master ' + process.pid + ' received message from worker ' + worker.process.pid + '.', msg);
-    });
+var logger = new LogFactory().CreateByName(configuration.logWritter);
+logger.Initialize(configuration);
 
-    // Send a message from the master process to the worker.
-    worker.send({ msgFromMaster: 'This is from master ' + process.pid + ' to worker ' + worker.process.pid + '.' });
+var astExplorer: ASTExplorer = new ASTExplorer();
 
-    // Be notified when worker processes die.
-    cluster.on('death', function (worker) {
-        console.log('Worker ' + worker.process.pid + ' died.');
-    });
+var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
 
-} else {
-    console.log('Worker ' + process.pid + ' has started.');
+var population: Individual[] = [];
 
-    getResponse('==>>').then(messageReceived => console.log(messageReceived));
-    
+for (var index = 0; index < 10000; index++) {
+    population.push(individualOverTests.Clone());
 }
 
+//logger.Write(individualOverTests.AST);
 
 
-async function getResponse(msg: string): Promise<any> {
 
-        // Send message to master process.
-        process.send({ msgFromWorker: 'This is from worker ' + process.pid + '.' })
 
-    var promise = new Promise<string>(function (resolve, reject) {
-        
-        // Receive messages from the master process.
-        process.on('message', function (msg) {
-            console.log('Worker ' + process.pid + ' received message from master.', msg);
-            resolve(msg + 'from promise');
-        });
-    });
 
-    return promise;
-}    
+

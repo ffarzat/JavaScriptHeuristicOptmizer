@@ -44,14 +44,14 @@ export default class ASTExplorer {
         if(context.First){
             var oldFirst = context.First;
             newCtx.First = new Individual();
-            newCtx.First.AST = oldFirst.AST;
+            newCtx.First.AST = JSON.parse(oldFirst['_ast']); //private
             newCtx.First.testResults = oldFirst.testResults;
         }
         
         if(context.Second){
             var oldSecond = context.Second;
             newCtx.Second = new Individual();
-            newCtx.Second.AST = oldSecond.AST;
+            newCtx.Second.AST = JSON.parse(oldSecond['_ast']); //private
             newCtx.Second.testResults = oldSecond.testResults;
         }
         
