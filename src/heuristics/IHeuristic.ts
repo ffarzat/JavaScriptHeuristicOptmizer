@@ -13,6 +13,7 @@ import Message from '../Sockets/Message';
 import NodeIndex from './NodeIndex';
 
 import events = require('events');
+import fs = require('fs');
 var uuid = require('node-uuid');
 
 
@@ -35,9 +36,9 @@ abstract class IHeuristic extends events.EventEmitter {
     public crossOverTrials: number;
 
     public Original: Individual;
-    
+
     waitingMessages: Message[];   //store waiting messages
-       
+
     /**
      * Forces the Heuristic to validate config
      */
@@ -46,6 +47,14 @@ abstract class IHeuristic extends events.EventEmitter {
         this._astExplorer = new ASTExplorer();
         events.EventEmitter.call(this);
         this.waitingMessages = [];
+
+        process.on('message', (newMsg: Message) => {
+            var localMsg = this.Done(newMsg);
+            if (localMsg) {
+                newMsg.ctx = this.Reload(newMsg.ctx);
+                localMsg.cb(newMsg);
+            }
+        });
     }
 
     /**
@@ -57,18 +66,16 @@ abstract class IHeuristic extends events.EventEmitter {
      *  Releases a Mutation over context 
      */
     public async Mutate(context: OperatorContext): Promise<Individual> {
-        var msg: Message = new Message();
-        context.Operation = "Mutation";
-        msg.ctx = context;
-       
 
-        var p = new Promise<Individual> ( (resolve) => {
+        return new Promise<Individual>(async (resolve) => {
+            var msg: Message = new Message();
+            context.Operation = "Mutation";
+            msg.ctx = context;
+
             this.getResponse(msg, (newMsg) => {
                 resolve(newMsg.ctx.First);
-            });   
+            });
         });
-
-        return p; 
     }
 
     /**
@@ -78,15 +85,15 @@ abstract class IHeuristic extends events.EventEmitter {
         var msg: Message = new Message();
         context.Operation = "CrossOver";
         msg.ctx = context;
-        
+
         var newOnes: Individual[] = [];
 
         await this.getResponse(msg, (msg) => {
             newOnes.push(msg.ctx.First);
             newOnes.push(msg.ctx.Second);
         });
-        
-        return newOnes; 
+
+        return newOnes;
     }
 
     /**
@@ -101,18 +108,23 @@ abstract class IHeuristic extends events.EventEmitter {
         context.LibrarieOverTest = this._lib;
 
         msg.ctx = context;
-        await this.getResponse(msg, (newMsg) => {
-            individual = newMsg.ctx.First;
-        });     
-        
-        return individual;  
+
+        var p = new Promise<Individual>(resolve => {
+            this.getResponse(msg, (newMsg) => {
+                resolve(newMsg.ctx.First);
+            });
+        });
+
+        return p;
     }
 
     /**
      * Calculate results for a trial
      */
     ProcessResult(trialIndex: number, original: Individual, bestIndividual: Individual): TrialResults {
-        
+
+        this.WriteCodeToFile(this.Original, this._lib); //back original Code to lib
+
         var results: TrialResults = new TrialResults();
         var bestCode = bestIndividual.ToCode();
         var originalCode = original.ToCode();
@@ -171,7 +183,7 @@ abstract class IHeuristic extends events.EventEmitter {
         ctx.First = clone;
         ctx.NodeIndex = actualNodeIndex;
         ctx.Operation = "MutationByIndex";
-        
+
         var msg: Message = new Message();
         msg.ctx = ctx;
 
@@ -179,8 +191,8 @@ abstract class IHeuristic extends events.EventEmitter {
         await this.getResponse(msg, (msg) => {
             mutant = msg.ctx.First;
         });
-        
-        return mutant; 
+
+        return mutant;
     }
 
     /**
@@ -191,20 +203,26 @@ abstract class IHeuristic extends events.EventEmitter {
     }
 
     /**
+     * Util for Winmerge comparsions
+     */
+    private WriteCodeToFile(individual: Individual, lib: Library) {
+        fs.writeFileSync(lib.mainFilePath, individual.ToCode());
+    }
+
+    /**
      * Defines library over optmization
      */
     async SetLibrary(library: Library) {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
+                
         this.Original = await this.Test(this.Original);
         //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
-        
-        if(!this.Original.testResults.passedAllTests)
+
+        if (!this.Original.testResults.passedAllTests)
             throw `Failed to execute tests for ${library.name}`;
-            
-        
-        
+
         //Force Best
         this.bestFit = this.Original.testResults.fit;
         this.bestIndividual = this.Original;
@@ -220,75 +238,61 @@ abstract class IHeuristic extends events.EventEmitter {
     CreateOriginalFromLibraryConfiguration(library: Library): Individual {
         return this._astExplorer.GenerateFromFile(library.mainFilePath);
     }
-    
+
     /**
      * Over websockets objects loose instance methods
      */
-    Reload(context:OperatorContext): OperatorContext{
+    Reload(context: OperatorContext): OperatorContext {
         return this._astExplorer.Reload(context);
     }
-    
+
     /**
      * To resolve a single comunication with server trougth cluster comunication
      */
-    async getResponse(msg: Message, cb: (ctx: Message) => void): Promise<void> {
-        
-        //2. Receive response from server
-        var p = new Promise<Message>( (resolve, reject) =>{
-            process.on('message', (newMsg: Message) => {
-                 var localMsg = this.Done(newMsg);
-                 newMsg.ctx = this.Reload(newMsg.ctx);
-                 localMsg.cb(newMsg); 
-                 resolve(newMsg);
-            });
-                
-            this.PushMessage(msg.ctx, cb); //1.Send to server a message
-        });
-    
-        (await Promise.resolve(p));
-    }
-    
-    
-    /**
-     * Send a request to server
-     */
-    PushMessage(context: OperatorContext, cb: (ctx: Message) => void ) {
+    async getResponse(msg: Message, cb: (msgBack: Message) => void) {
         var item = new Message();
         item.id = uuid.v4();
-        item.ctx = context;
+        item.ctx = msg.ctx;
         item.cb = cb;
         this.waitingMessages.push(item);
         process.send(item);
     }
-    
+
     /**
      * Relases the callback magic
      */
-    Done(message: Message): Message{
+    Done(message: Message): Message {
         //Finds message index
-        var indexFounded = 0;
+        var indexFounded = -1;
         for (var index = 0; index < this.waitingMessages.length; index++) {
             var element = this.waitingMessages[index];
             //this._logger.Write(`External: ${element.id} == ${message.id}`);
             //this._logger.Write(`break?: ${element.id === message.id}`);
             //this._logger.Write(`element.id: ${typeof element.id}`);
             //this._logger.Write(`message.id: ${typeof message.id}`);
-            if(element.id === message.id){
+            if (element.id === message.id) {
                 //this._logger.Write(`do break... : ${element.id === message.id}`);
                 indexFounded = index;
                 break;
-            }    
+            }
         }
 
+
+        //this._logger.Write(`Index fouded ${indexFounded}`);
+        //this._logger.Write(`Messages waiting ${this.waitingMessages.length}`);
+
         var localmsg = this.waitingMessages[indexFounded];
-        if(!localmsg)
-            throw 'Incoming message not located inside Heuristic Queue ' + message.id;
-        
-        this.waitingMessages.splice(index, 1); //cut off
-        return localmsg;
+        if (!localmsg) {
+            //this._logger.Write('Incoming message not located inside Heuristic Queue ' + message.id); //error log?
+        }
+        else {
+            this.waitingMessages.splice(index, 1); //cut off    
+        }
+
+        return localmsg; //maybe a message or undefined
     }
-    
-    
+
+
 }
 
 

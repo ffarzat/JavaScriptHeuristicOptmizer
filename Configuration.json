@@ -17,8 +17,8 @@
     "port": 5000,
     "url": "ws://localhost",
     "libraries" : [
-        {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
+        {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
         {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/moment.js" },
         {"name":"Jade",         "path":"Libraries/Jade/",           "mainFilePath":"Libraries/Jade/lib/index.js"  },
@@ -35,7 +35,7 @@
                 "trialsToRestart":5,
                 "trials": 10,
                 "nodesType": ["CallExpression", "IfStatement"], 
-                "individuals": 10, 
+                "individuals": 100, 
                 "generations": 5,
                 "crossoverProbability": 75,
                 "mutationProbability": 25,

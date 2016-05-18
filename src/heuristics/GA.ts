@@ -108,16 +108,13 @@ export default class GA extends IHeuristic {
      */
     private async Repopulate(population: Individual[], untill: number) {
         this._logger.Write(`Initializing a new population [+ ${untill} new individuals]`);
+        
         var promises = [];
 
         for (var localIndex = 0; localIndex < untill; localIndex++) {
 
             var context: OperatorContext = new OperatorContext();
-
-            var clone: Individual = this.bestIndividual.Clone();
-
-            context.First = clone;
-
+            context.First = this.bestIndividual.Clone();
             promises.push(this.Mutate(context));
 
             //mutant = await this.Test(mutant);
@@ -130,9 +127,10 @@ export default class GA extends IHeuristic {
         }
 
         try {
-            this._logger.Write(`Waiting all mutants... `);
-            var mutants = await Promise.all(promises);
-            this._logger.Write(`Done!`);
+            var mutants: Individual[] = await Promise.all(promises);
+            //this._logger.Write(`mutants: ${mutants.length}`);
+            //this._logger.Write(`mutants 0 : ${mutants[0].ToCode()}`);
+            //this._logger.Write(`Done!`);
         }
         catch(err)
         {
