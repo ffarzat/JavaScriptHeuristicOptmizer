@@ -21,7 +21,7 @@ export default class Client{
     _tester: ITester;
     _astExplorer: ASTExplorer = new ASTExplorer();
     _config: IConfiguration;
-    
+
     Setup(config: IConfiguration): void {
         this._config = config;
     }
@@ -96,6 +96,9 @@ export default class Client{
      */
     private InitializeTester(context: OperatorContext) {
         this._tester = null; //ensure GC can pass
+        
+        //change lib path!
+        context.LibrarieOverTest.path
         
         this._tester = new TesterFactory().CreateByName(this._config.tester);
         this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType)

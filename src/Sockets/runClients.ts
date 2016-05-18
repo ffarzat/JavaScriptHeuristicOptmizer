@@ -17,68 +17,119 @@ import path = require('path');
 import Shell = require('shelljs');
 
 var uuid = require('node-uuid');
+var tmp = require('temporary');
+var fse = require('fs-extra');
 //=========================================================================================== Cluster
 var numCPUs = 2;
 if (cluster.isMaster) {
     for (var i = 0; i < numCPUs; i++) {
+        console.log(`Fork: ${i}`);
         cluster.fork();
     }
 } else {
     //=========================================================================================== Slave
 
     //=========================================================== Read Configuration values
-
     var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
     var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
     var testOldDirectory: string = process.cwd();
+    var clientWorkDir: string = new tmp.Dir().path;
     process.setMaxListeners(0);
+
     //=========================================================== Logger
     var logger = new LogFactory().CreateByName(configuration.logWritter);
     logger.Initialize(configuration);
 
     //=========================================================== Libs initialization
 
+    ParseConfigAndLibs(clientWorkDir);
 
     //=========================================================== Client initialization
     var clientId = uuid.v4();
     var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
-    logger.Write(serverUrl);
+    logger.Write(`[Client:${clientId}] conecting at ${serverUrl}`);
 
-    var ws = new WebSocket(serverUrl, 'echo-protocol');
+    var localClient = new Client();
+    localClient.id = clientId;
+    localClient.logger = logger;
 
-    ws.addEventListener("message", (e) => {
+    localClient.Setup(configuration);
+    try {
+        var ws = new WebSocket(serverUrl, 'echo-protocol');
 
-        var msg: Message = JSON.parse(e.data);
+        ws.addEventListener("message", (e) => {
+            var msg: Message = JSON.parse(e.data);
 
-        var localClient = new Client();
-        localClient.id = clientId;
-        localClient.logger = logger;
-        localClient.Setup(configuration);
-        msg.ctx = localClient.Reload(msg.ctx);
+            msg.ctx = localClient.Reload(msg.ctx);
 
-        if (msg.ctx.Operation == "Mutation") {
-            var newCtx = localClient.Mutate(msg.ctx);
-            msg.ctx = newCtx;
-        }
+            if (msg.ctx.Operation == "Mutation") {
+                var newCtx = localClient.Mutate(msg.ctx);
+                msg.ctx = newCtx;
+            }
 
-        if (msg.ctx.Operation == "MutationByIndex") {
-            var newCtx = localClient.MutateBy(msg.ctx);
-            msg.ctx = newCtx;
-        }
+            if (msg.ctx.Operation == "MutationByIndex") {
+                var newCtx = localClient.MutateBy(msg.ctx);
+                msg.ctx = newCtx;
+            }
 
-        if (msg.ctx.Operation == "CrossOver") {
-            var newCtx = localClient.CrossOver(msg.ctx);
-            msg.ctx = newCtx;
-        }
+            if (msg.ctx.Operation == "CrossOver") {
+                var newCtx = localClient.CrossOver(msg.ctx);
+                msg.ctx = newCtx;
+            }
 
-        if (msg.ctx.Operation == "Test") {
-            var newCtx = localClient.Test(msg.ctx);
-            msg.ctx = newCtx;
-        }
+            if (msg.ctx.Operation == "Test") {
+                var newCtx = localClient.Test(msg.ctx);
+                msg.ctx = newCtx;
+            }
 
-        var msgProcessada = JSON.stringify(msg);
-        ws.send(msgProcessada);
-    });
+            var msgProcessada = JSON.stringify(msg);
+            ws.send(msgProcessada);
+        });
+    }
+    catch (err) {
+        logger.Write(`--> ${err}`);
+        process.abort();
+    }
 }
 
+//=========================================================================================== Functions
+function ParseConfigAndLibs(workDir: string) {
+    for (var libIndex = 0; libIndex < configuration.libraries.length; libIndex++) {
+        var element = configuration.libraries[libIndex];
+        var libDirectoryPath = path.join(process.cwd(), element.path);
+        var libNodeModules = path.join(libDirectoryPath, "node_modules");
+        var tempLibPath = path.join(workDir, element.name);
+        try {
+            if (!fs.existsSync(libNodeModules)) {
+                process.chdir(libDirectoryPath);
+                var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec(`npm install`, { silent: true }) as Shell.ExecOutputReturnValue);
 
+                if (returnedOutput.code > 0) {
+                    logger.Write(`Library ${element.name} has error to execute npm install. It will be out of improvement process.`);
+                    configuration.libraries.splice(libIndex, 1);
+                }
+                else {
+                    logger.Write(`Library ${element.name} instaled successfully`);
+                }
+            }
+
+            if (!fs.existsSync(tempLibPath)) {
+                logger.Write(`Copying ${element.name} to ${tempLibPath}`);
+                fs.mkdirSync(tempLibPath);
+                fse.copySync(libDirectoryPath, tempLibPath, { "clobber": true, "filter": function(){return true;} });
+                //in order to test
+                
+                element.mainFilePath = path.join(tempLibPath, JSON.parse(fs.readFileSync(path.join(tempLibPath, "package.json")).toString()).main); //new main file path
+                element.path = tempLibPath;
+                logger.Write(`  Updating element.mainFilePath : ${element.mainFilePath}`);
+                logger.Write(`  Updating  element.path ${element.path}`);
+            }
+
+        } catch (error) {
+            logger.Write(`-->${error}`);
+        }
+        finally {
+            process.chdir(testOldDirectory);
+        }
+    }
+}

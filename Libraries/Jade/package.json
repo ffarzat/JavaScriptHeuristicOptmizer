@@ -18,7 +18,7 @@
     "type": "git",
     "url": "git://github.com/pugjs/pug"
   },
-  "main": "lib",
+  "main": "lib/index.js",
   "dependencies": {
     "pug-code-gen": "0.0.7",
     "pug-filters": "1.1.1",

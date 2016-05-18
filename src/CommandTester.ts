@@ -80,7 +80,7 @@ export default class CommandTester implements ITester {
             
             var Tick = exectimer.Tick;
             
-            this.logger.Write(`Doing ${this.testUntil} evaluations`);
+            this.logger.Write(`Doing ${this.testUntil} evaluations for ${this.libDirectoryPath}`);
             
             for (var index = 0; index < this.testUntil; index++) {
                  this.logger.Write(`eval ${index}`);
