@@ -14,7 +14,7 @@ export default class Individual {
     /**
      * Keeps all tree for this individual
      */
-    private _astFile: any = new tmp.File();
+    private _astFile: string = new tmp.File().path;
 
     /**
      * Options to generate new code
@@ -34,13 +34,14 @@ export default class Individual {
      * Get parsed AST object
      *  */   
     get AST():any {
-        return JSON.parse(this._astFile.readFileSync());
+        console.log('File: ' + this._astFile);
+        return fs.readFileSync(this._astFile).toJSON();
     }
     /**
      * Store string representation of the AST object
      */
     set AST(value:any) {
-        this._astFile.writeFileSync(JSON.stringify(value));
+        fs.writeFileSync(this._astFile, JSON.stringify(value), { flag : 'w' });
     }
        
      /**
