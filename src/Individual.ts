@@ -4,6 +4,7 @@ var escodegen = require('escodegen');
 import traverse = require('traverse');
 import TestResults from './TestResults';
 import fs = require('fs');
+var tmp = require('temporary');
 
  /**
  * Individual - Represents an Individual Code over Improvement process
@@ -13,7 +14,7 @@ export default class Individual {
     /**
      * Keeps all tree for this individual
      */
-    private _ast: string;
+    private _astFile: string = new tmp.File().path;
 
     /**
      * Options to generate new code
@@ -33,13 +34,13 @@ export default class Individual {
      * Get parsed AST object
      *  */   
     get AST():any {
-        return JSON.parse(this._ast);
+        return JSON.parse(fs.readFileSync(this._astFile).toString());
     }
     /**
      * Store string representation of the AST object
      */
     set AST(value:any) {
-        this._ast = JSON.stringify(value);
+        fs.writeFileSync(this._astFile, JSON.stringify(value), { flag : 'w' });
     }
        
      /**
@@ -70,7 +71,7 @@ export default class Individual {
      */
     Clone(): Individual
     {
-        var newOne = new Individual();
+        var newOne = new Individual(); //new file
         newOne.AST = this.AST;//traverse(JSON.parse(this.AST)).clone();
         
         return newOne;
