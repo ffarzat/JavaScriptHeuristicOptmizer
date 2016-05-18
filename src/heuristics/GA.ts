@@ -114,21 +114,11 @@ export default class GA extends IHeuristic {
            this._logger.Write(`Initializing a new population [+ ${untill} new individuals]`);
             
            for (var localIndex = 0; localIndex < untill; localIndex++) {
-               
                 var context: OperatorContext = new OperatorContext();
-            
-                var clone: Individual = this.bestIndividual.Clone();
-                
-                context.First = clone;
-            
-                var mutant = await this.Mutate(context)
-                
-                mutant = await this.Test(mutant);
-                
+                context.First = this.bestIndividual.Clone();
+                var mutant = await this.Test(await this.Mutate(context));
                 //this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(mutant)}`);
-
                 this.UpdateBest(mutant);
-
                 population.push(mutant);  
            }
     }

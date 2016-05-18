@@ -34,8 +34,7 @@ export default class Individual {
      * Get parsed AST object
      *  */   
     get AST():any {
-        console.log('File: ' + this._astFile);
-        return fs.readFileSync(this._astFile).toJSON();
+        return JSON.parse(fs.readFileSync(this._astFile).toString());
     }
     /**
      * Store string representation of the AST object
@@ -72,7 +71,7 @@ export default class Individual {
      */
     Clone(): Individual
     {
-        var newOne = new Individual();
+        var newOne = new Individual(); //new file
         newOne.AST = this.AST;//traverse(JSON.parse(this.AST)).clone();
         
         return newOne;

@@ -44,14 +44,14 @@ export default class ASTExplorer {
         if(context.First){
             var oldFirst = context.First;
             newCtx.First = new Individual();
-            newCtx.First.AST = fs.readFileSync(oldFirst['_astFile']).toJSON();
+            newCtx.First.AST = JSON.parse(fs.readFileSync(oldFirst['_astFile']).toString());
             newCtx.First.testResults = oldFirst.testResults;
         }
         
         if(context.Second){
             var oldSecond = context.Second;
             newCtx.Second = new Individual();
-            newCtx.Second.AST = JSON.parse(oldSecond['_astFile']); //private
+            newCtx.Second.AST = JSON.parse(fs.readFileSync(oldSecond['_astFile']).toString());
             newCtx.Second.testResults = oldSecond.testResults;
         }
         
