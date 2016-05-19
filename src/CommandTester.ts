@@ -46,7 +46,7 @@ export default class CommandTester implements ITester {
 
         //Setup tests with Lib context
         this.libMainFilePath = LibrarieOverTest.mainFilePath;
-        this.libDirectoryPath = path.join(process.cwd(), LibrarieOverTest.path);
+        this.libDirectoryPath = LibrarieOverTest.path;
         this.testOldDirectory = process.cwd();
         this.fitType = fitType;
         this.oldLibFilePath = path.join(this.libDirectoryPath, 'old.js');

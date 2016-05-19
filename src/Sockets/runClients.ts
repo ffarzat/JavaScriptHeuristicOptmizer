@@ -19,6 +19,12 @@ import Shell = require('shelljs');
 var uuid = require('node-uuid');
 var tmp = require('temporary');
 var fse = require('fs-extra');
+
+//=========================================================================================== Read Configuration values
+var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
+var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+var testOldDirectory: string = process.cwd();
+
 //=========================================================================================== Cluster
 var numCPUs = 2;
 if (cluster.isMaster) {
@@ -28,11 +34,6 @@ if (cluster.isMaster) {
     }
 } else {
     //=========================================================================================== Slave
-
-    //=========================================================== Read Configuration values
-    var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
-    var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-    var testOldDirectory: string = process.cwd();
     var clientWorkDir: string = new tmp.Dir().path;
     process.setMaxListeners(0);
 
@@ -116,9 +117,9 @@ function ParseConfigAndLibs(workDir: string) {
             if (!fs.existsSync(tempLibPath)) {
                 logger.Write(`Copying ${element.name} to ${tempLibPath}`);
                 fs.mkdirSync(tempLibPath);
-                fse.copySync(libDirectoryPath, tempLibPath, { "clobber": true, "filter": function(){return true;} });
+                fse.copySync(libDirectoryPath, tempLibPath, { "clobber": true, "filter": function () { return true; } });
                 //in order to test
-                
+
                 element.mainFilePath = path.join(tempLibPath, JSON.parse(fs.readFileSync(path.join(tempLibPath, "package.json")).toString()).main); //new main file path
                 element.path = tempLibPath;
                 logger.Write(`  Updating element.mainFilePath : ${element.mainFilePath}`);
