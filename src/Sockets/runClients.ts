@@ -122,8 +122,8 @@ function ParseConfigAndLibs(workDir: string) {
 
                 element.mainFilePath = path.join(tempLibPath, JSON.parse(fs.readFileSync(path.join(tempLibPath, "package.json")).toString()).main); //new main file path
                 element.path = tempLibPath;
-                logger.Write(`  Updating element.mainFilePath : ${element.mainFilePath}`);
-                logger.Write(`  Updating  element.path ${element.path}`);
+                //logger.Write(`  Updating element.mainFilePath : ${element.mainFilePath}`);
+                //logger.Write(`  Updating  element.path ${element.path}`);
             }
 
         } catch (error) {

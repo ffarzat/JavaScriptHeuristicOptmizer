@@ -125,23 +125,11 @@ export default class GA extends IHeuristic {
 
             //population.push(mutant);  
         }
-
-        try {
-            var mutants: Individual[] = await Promise.all(promises);
-            //this._logger.Write(`mutants: ${mutants.length}`);
-            //this._logger.Write(`mutants 0 : ${mutants[0].ToCode()}`);
-            //this._logger.Write(`Done!`);
-        }
-        catch(err)
-        {
-            this._logger.Write(err);
-        }
-           
-           
-           throw "TEST ALL MUTANTS";
-
-
-        /*
+        var mutants: Individual[] = await Promise.all(promises);
+        //this._logger.Write(`mutants: ${mutants.length}`);
+        //this._logger.Write(`mutants 0 : ${mutants[0].ToCode()}`);
+        //this._logger.Write(`Done!`);
+        
         var testPromises = [];
         for (var mutantIndex = 0; mutantIndex < mutants.length; mutantIndex++) {
             var element = mutants[mutantIndex];
@@ -156,7 +144,7 @@ export default class GA extends IHeuristic {
             this.UpdateBest(element);
             population.push(element);  
         });
-        */
+        
 
     }
 
