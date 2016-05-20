@@ -165,7 +165,7 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     UpdateBest(newBest: Individual) {
 
-        if (newBest.testResults.passedAllTests && newBest.testResults && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
+        if (newBest.testResults && newBest.testResults.passedAllTests && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
             this._logger.Write('=================================');
             this.bestFit = newBest.testResults.fit;
             this.bestIndividual = newBest;
@@ -188,27 +188,26 @@ abstract class IHeuristic extends events.EventEmitter {
     * Releases a mutation over an AST  by nodetype and index
     */
     async MutateBy(clone: Individual, indexes: NodeIndex): Promise<Individual> {
-        var type = indexes.Type;
-        var actualNodeIndex = indexes[indexes.ActualIndex];
-        indexes.ActualIndex++;
+        return new Promise<Individual>(async (resolve) => {
+            var type = indexes.Type;
+            var actualNodeIndex = indexes[indexes.ActualIndex];
+            indexes.ActualIndex++;
 
-        var ctx: OperatorContext = new OperatorContext();
-        ctx.First = clone;
-        ctx.NodeIndex = actualNodeIndex;
-        ctx.LibrarieOverTest = this._lib;
-        ctx.Original = this.bestIndividual;
-        ctx.Operation = "MutationByIndex";
-        ctx.MutationTrials = this._globalConfig.mutationTrials;
+            var ctx: OperatorContext = new OperatorContext();
+            ctx.First = clone;
+            ctx.NodeIndex = actualNodeIndex;
+            ctx.LibrarieOverTest = this._lib;
+            ctx.Original = this.bestIndividual;
+            ctx.Operation = "MutationByIndex";
+            ctx.MutationTrials = this._globalConfig.mutationTrials;
 
-        var msg: Message = new Message();
-        msg.ctx = ctx;
+            var msg: Message = new Message();
+            msg.ctx = ctx;
 
-        var mutant: Individual;
-        await this.getResponse(msg, (msg) => {
-            mutant = msg.ctx.First;
+            this.getResponse(msg, (newMsg) => {
+                resolve(newMsg.ctx.First);
+            });
         });
-
-        return mutant;
     }
 
     /**

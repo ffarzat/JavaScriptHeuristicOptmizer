@@ -1,3 +1,5 @@
+/// <reference path="../typings/tsd.d.ts" />
+
 import IConfiguration from '../IConfiguration';
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
 import IHeuristic from './IHeuristic';
@@ -15,8 +17,6 @@ import NodeIndex from './NodeIndex';
 export default class HC extends IHeuristic {
 
     neighborApproach: string;
-    restart: boolean;
-    trialsToRestart: number;
     trials: number
     nodesType: string[];
 
@@ -28,8 +28,6 @@ export default class HC extends IHeuristic {
         super.Setup(config, globalConfig);
 
         this.neighborApproach = config.neighborApproach;
-        this.restart = config.restart;
-        this.trialsToRestart = config.trialsToRestart;
         this.trials = config.trials;
         this.nodesType = config.nodesType;
     }
@@ -42,51 +40,38 @@ export default class HC extends IHeuristic {
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`Using nodesType: ${this.nodesType}`);
 
-        if (this.restart)
-            this._logger.Write(`HC will restart search after ${this.trialsToRestart} bad neighbors`);
-
         var nodesIndexList: NodeIndex[] = this.DoIndexes(this.Original);
 
-        var counterToRestart = 0;
         var typeIndexCounter = 0;
         var indexes: NodeIndex = nodesIndexList[typeIndexCounter];
+        var neighborPromises = [];
+        var totalTrials = this.trials;
+        var howMany = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
+        this._logger.Write(`HC will run ${howMany} client calls`);
 
-        for (var index = 0; index < this.trials; index++) {//for trials
+        for (var index = 0; index < howMany; index++) {//for trials
+            for (var insideIndex = 0; insideIndex < this._config.neighborsToProcess; insideIndex++) {
+                //this._logger.Write(`Mutant: [${index}, ${insideIndex}]`);
+                
+                //get next neighbor by typeIndex.ActualIndex
+                neighborPromises.push(this.MutateBy(this.bestIndividual, indexes));
 
-            //get next neighbor by typeIndex.ActualIndex
-            var neighbor: Individual = await this.MutateBy(this.bestIndividual, indexes);
+                //Next NodeIndex?
+                if (indexes.ActualIndex == indexes.Indexes.length - 1) {
+                    typeIndexCounter++;
 
-            //Testing
-            neighbor = await this.Test(neighbor);
-
-            //update best?
-            this.UpdateBest(neighbor);
-
-            //Restart?
-            if (this.restart) {
-                if (neighbor.AST != this.bestIndividual.AST) {
-                    counterToRestart++;
+                    if (typeIndexCounter <= nodesIndexList.length - 1)
+                        indexes = nodesIndexList[typeIndexCounter];
                 }
-                else {
-                    counterToRestart = 0;
-                }
-
-                //totally randon    
-                if (counterToRestart == this.trialsToRestart) {
-                    typeIndexCounter = this.GenereateRandom(0, nodesIndexList.length);
-                    this._logger.Write(`HC Restarting`);
-                    this.emit('Restart');
-                }
-            }
-
-            //Next NodeIndex?
-            if (indexes.ActualIndex == indexes.Indexes.length - 1) {
-                typeIndexCounter++;
-
-                if (typeIndexCounter <= nodesIndexList.length - 1)
-                    indexes = nodesIndexList[typeIndexCounter];
             }
         }
+
+        var neighbors = await Promise.all(neighborPromises);
+        this._logger.Write(`neighbors: ${neighbors.length}`);
+
+        neighbors.forEach(element => {
+            this.UpdateBest(element);
+        });
 
         var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
 

@@ -42,8 +42,7 @@
             "nodesType": ["Function"], 
             "especific": {
                 "neighborApproach":"FirstAscent",
-                "restart":false, 
-                "trialsToRestart":5,
+                "neighborsToProcess": 5,
                 "trials": 1,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 2, 

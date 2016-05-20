@@ -31,15 +31,14 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "restart":true, 
-                "trialsToRestart":5,
+                "neighborsToProcess": 5,
                 "trials": 10,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 10, 
                 "generations": 5,
                 "crossoverProbability": 75,
                 "mutationProbability": 25,
-                "elitism": true,
+                "elitism": false,
                 "elitismPercentual": 30
             }
         }  

@@ -100,6 +100,7 @@ export default class Client {
             this.logger.Write(`[Client:${this.id}]  Tests done.`);
         } else {
             news[0] = context.Original;
+            this.logger.Write(`[Client:${this.id}]          (TestResults: ${(news[0].testResults)})`);
             this.logger.Write(`[Client:${this.id}]  First Fail`);
         }
 
@@ -110,6 +111,7 @@ export default class Client {
             this.logger.Write(`[Client:${this.id}]  Tests done.`);
         } else {
             news[1] = context.Original;
+            this.logger.Write(`[Client:${this.id}]          (TestResults: ${(news[1].testResults)})`);
             this.logger.Write(`[Client:${this.id}]  Second Fail`);
         }
 

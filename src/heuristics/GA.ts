@@ -102,6 +102,16 @@ export default class GA extends IHeuristic {
      * Releases Elitism over population
      */
     private async DoPopuplationCut(population: Individual[]) {
+        //Bug: some individuals has no TestResult (undefined value)
+        
+        for (var index = 0; index < population.length; index++) {
+            var element = population[index];
+            if(element.testResults == undefined){
+                population.splice(index, 1); //cut off
+                this._logger.Write(`${index} has no TestResults`);
+            }
+        }
+        
         if (this.elitism) {
             var countElitism = (this.individuals * this.elitismPercentual) / 100;
             this._logger.Write(`Using Elitism. Cuting off ${countElitism} individuals`);
@@ -111,6 +121,9 @@ export default class GA extends IHeuristic {
         }
         else {
             population.splice(0, this.individuals);
+            if(population.length < this.individuals){
+                await this.Repopulate(population, (this.individuals - population.length));
+            }
         }
     }
 
