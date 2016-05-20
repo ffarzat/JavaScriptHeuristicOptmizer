@@ -198,6 +198,7 @@ abstract class IHeuristic extends events.EventEmitter {
         ctx.LibrarieOverTest = this._lib;
         ctx.Original = this.bestIndividual;
         ctx.Operation = "MutationByIndex";
+        ctx.mutationTrials = this._globalConfig.mutationTrials;
 
         var msg: Message = new Message();
         msg.ctx = ctx;
