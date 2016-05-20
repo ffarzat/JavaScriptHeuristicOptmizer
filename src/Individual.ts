@@ -71,8 +71,9 @@ export default class Individual {
      */
     Clone(): Individual
     {
-        var newOne = new Individual(); //new file
-        newOne.AST = this.AST;//traverse(JSON.parse(this.AST)).clone();
+        var newOne = new Individual();
+        newOne.AST = this.AST;
+        newOne.testResults = this.testResults;
         
         return newOne;
     }

@@ -55,6 +55,13 @@ export default class ASTExplorer {
             newCtx.Second.testResults = oldSecond.testResults;
         }
         
+        if(context.Original){
+            var oldOriginal = context.Original;
+            newCtx.Original = new Individual();
+            newCtx.Original.AST = JSON.parse(fs.readFileSync(oldOriginal['_astFile']).toString());
+            newCtx.Original.testResults = oldOriginal.testResults;
+        }
+        
         return newCtx;
     }
 
@@ -169,7 +176,7 @@ export default class ASTExplorer {
        var mutant: Individual;
        var originalCode = context.First.ToCode();
        
-       for (var index = 0; index < context.MutationTrials; index++) { //todo: adds top limit to mutation tries in config.json or ctx
+       for (var index = 0; index < context.MutationTrials; index++) {
            //console.log(`Mutation trial ${index}`)
            mutant = this.TryMutate(context);
            var mutantCode = mutant.ToCode();

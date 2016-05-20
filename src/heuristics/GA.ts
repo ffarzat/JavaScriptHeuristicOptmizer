@@ -1,3 +1,4 @@
+import IConfiguration from '../IConfiguration';
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
 import IHeuristic from './IHeuristic';
 
@@ -23,9 +24,9 @@ export default class GA extends IHeuristic {
     /**
     * Especific Setup
     */
-    Setup(config: TrialEspecificConfiguration): void {
+    Setup(config: TrialEspecificConfiguration, globalConfig: IConfiguration): void {
 
-        super.Setup(config);
+        super.Setup(config, globalConfig);
 
         this.generations = config.generations;
         this.individuals = config.individuals;
@@ -45,19 +46,19 @@ export default class GA extends IHeuristic {
 
         for (var generationIndex = 1; generationIndex < this.generations; generationIndex++) {
             this._logger.Write(`Starting generation ${generationIndex}`);
-
+            var crossoverPromises = [];
+            var mutantPromises = [];
+            
             for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
-
-                //Crossover
+                //Crossover Promises
                 var crossoverChance = this.GenereateRandom(0, 100);
 
                 if (this.crossoverProbability >= crossoverChance) {
                     this._logger.Write(`Doing a crossover with individual ${individualIndex}`);
-                    await this.DoCrossOver(population, individualIndex);
+                    crossoverPromises.push(this.DoCrossOver(population, individualIndex));
                 }
 
-
-                //Mutation
+                //Mutation Promises
                 var mutationChance = this.GenereateRandom(0, 100);
 
                 if (this.mutationProbability >= mutationChance) {
@@ -65,11 +66,21 @@ export default class GA extends IHeuristic {
                     var context: OperatorContext = new OperatorContext();
                     context.First = population[individualIndex];
 
-                    var mutant = await this.Mutate(context);
-                    mutant = await this.Test(mutant);
-                    population.push(mutant);
+                    mutantPromises.push(this.Mutate(context));
                 }
             }
+
+            var newIndividuals: Individual[] = await Promise.all(crossoverPromises);
+            this._logger.Write(`newIndividuals: ${newIndividuals.length}`);
+            newIndividuals.forEach(element => {
+                population.push(element);
+            });
+
+            var mutants: Individual[] = await Promise.all(mutantPromises);
+            this._logger.Write(`mutants: ${mutants.length}`);
+            mutants.forEach(element => {
+                population.push(element);
+            });
 
             //Looking for a new best            
             population.forEach(element => {
@@ -108,7 +119,7 @@ export default class GA extends IHeuristic {
      */
     private async Repopulate(population: Individual[], untill: number) {
         this._logger.Write(`Initializing a new population [+ ${untill} new individuals]`);
-        
+
         var promises = [];
 
         for (var localIndex = 0; localIndex < untill; localIndex++) {
@@ -116,53 +127,28 @@ export default class GA extends IHeuristic {
             var context: OperatorContext = new OperatorContext();
             context.First = this.bestIndividual.Clone();
             promises.push(this.Mutate(context));
-
-            //mutant = await this.Test(mutant);
-
-            //this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(mutant)}`);
-
-            //this.UpdateBest(mutant);
-
-            //population.push(mutant);  
         }
+
         var mutants: Individual[] = await Promise.all(promises);
-        //this._logger.Write(`mutants: ${mutants.length}`);
+        this._logger.Write(`Repopulate: ${mutants.length} done`);
         //this._logger.Write(`mutants 0 : ${mutants[0].ToCode()}`);
         //this._logger.Write(`Done!`);
-        
-        var testPromises = [];
-        for (var mutantIndex = 0; mutantIndex < mutants.length; mutantIndex++) {
-            var element = mutants[mutantIndex];
-            testPromises.push(this.Test(element));
-        }
-         
-        this._logger.Write(`Waiting all tests... `);
-        var mutantsTested = await Promise.all(testPromises);
-        this._logger.Write(`Done!`);
-        
-        mutantsTested.forEach(element => {
-            this.UpdateBest(element);
-            population.push(element);  
-        });
-        
 
+        mutants.forEach(element => {
+            this.UpdateBest(element);
+            population.push(element);
+        });
     }
 
 
     /**
      * Execute crossover
      */
-    public async DoCrossOver(population: Individual[], individualIndex: number) {
+    public async DoCrossOver(population: Individual[], individualIndex: number): Promise<Individual[]> {
         var context: OperatorContext = new OperatorContext();
         context.First = population[individualIndex];
         context.Second = population[this.GenereateRandom(0, population.length - 1)];
-        var newOnes = await this.CrossOver(context);
-
-        newOnes[0] = await this.Test(newOnes[0]);
-        population.push(newOnes[0]);
-
-        newOnes[1] = await this.Test(newOnes[1]);
-        population.push(newOnes[1]);
+        return this.CrossOver(context);
     }
 
     /**

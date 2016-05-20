@@ -1,3 +1,4 @@
+import IConfiguration from '../IConfiguration';
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
 import TrialResults from '../Results/TrialResults';
 import ITester from '../ITester';
@@ -23,6 +24,7 @@ var uuid = require('node-uuid');
  */
 abstract class IHeuristic extends events.EventEmitter {
     _config: TrialEspecificConfiguration;
+    _globalConfig: IConfiguration
     _logger: ILogger;
     _tester: ITester;
     _astExplorer: ASTExplorer;
@@ -42,8 +44,9 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Forces the Heuristic to validate config
      */
-    Setup(config: TrialEspecificConfiguration): void {
+    Setup(config: TrialEspecificConfiguration, globalConfig: IConfiguration): void {
         this._config = config;
+        this._globalConfig = globalConfig;
         this._astExplorer = new ASTExplorer();
         events.EventEmitter.call(this);
         this.waitingMessages = [];
@@ -70,6 +73,10 @@ abstract class IHeuristic extends events.EventEmitter {
         return new Promise<Individual>(async (resolve) => {
             var msg: Message = new Message();
             context.Operation = "Mutation";
+            context.MutationTrials = this._globalConfig.mutationTrials;
+            context.LibrarieOverTest = this._lib;
+            context.Original = this.bestIndividual;
+
             msg.ctx = context;
 
             this.getResponse(msg, (newMsg) => {
@@ -82,18 +89,24 @@ abstract class IHeuristic extends events.EventEmitter {
      * Releases a CrossOver over context
      */
     public async CrossOver(context: OperatorContext): Promise<Individual[]> {
-        var msg: Message = new Message();
-        context.Operation = "CrossOver";
-        msg.ctx = context;
+        return new Promise<Individual[]>(async (resolve) => {
+            var msg: Message = new Message();
+            context.Operation = "CrossOver";
+            context.CrossOverTrials = this._globalConfig.crossOverTrials;
+            context.LibrarieOverTest = this._lib;
+            context.Original = this.bestIndividual;
 
-        var newOnes: Individual[] = [];
+            msg.ctx = context;
 
-        await this.getResponse(msg, (msg) => {
-            newOnes.push(msg.ctx.First);
-            newOnes.push(msg.ctx.Second);
+            var newOnes: Individual[] = [];
+
+            this.getResponse(msg, (msg) => {
+                newOnes.push(msg.ctx.First);
+                newOnes.push(msg.ctx.Second);
+                resolve(newOnes);
+            });
+
         });
-
-        return newOnes;
     }
 
     /**
@@ -104,7 +117,7 @@ abstract class IHeuristic extends events.EventEmitter {
         var context = new OperatorContext();
         context.Operation = "Test";
         context.First = individual;
-        context.Second = this.bestIndividual; //is usual to be the original
+        context.Original = this.bestIndividual; //is usual to be the original
         context.LibrarieOverTest = this._lib;
 
         msg.ctx = context;
@@ -182,6 +195,8 @@ abstract class IHeuristic extends events.EventEmitter {
         var ctx: OperatorContext = new OperatorContext();
         ctx.First = clone;
         ctx.NodeIndex = actualNodeIndex;
+        ctx.LibrarieOverTest = this._lib;
+        ctx.Original = this.bestIndividual;
         ctx.Operation = "MutationByIndex";
 
         var msg: Message = new Message();
@@ -216,7 +231,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
-                
+        this.bestIndividual = this.Original;
         this.Original = await this.Test(this.Original);
         //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
 

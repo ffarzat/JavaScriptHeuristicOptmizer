@@ -10,6 +10,8 @@ import ITester from '../ITester';
 import TesterFactory from '../TesterFactory';
 import Individual from '../Individual';
 
+import fs = require('fs');
+
 /**
  * Client representaion on Server
  */
@@ -38,8 +40,21 @@ export default class Client {
      */
     Mutate(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Processing new Mutant`);
-
         var newIndividual = this._astExplorer.Mutate(context);
+        
+        //fs.writeFileSync("original.js", context.Original.ToCode());
+        //fs.writeFileSync("mutantFromClient.js", newIndividual.ToCode());
+        
+        if ((newIndividual.ToCode() != context.Original.ToCode())) {
+            this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+            this.InitializeTester(context);
+            this._tester.Test(newIndividual);
+            this.logger.Write(`[Client:${this.id}]  Tests done.`);
+        } else {
+            newIndividual = context.Original;
+            this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
+        }
+
         var ctx = new OperatorContext();
         ctx.First = newIndividual;
         this.logger.Write(`[Client:${this.id}]Mutant done.`);
@@ -53,6 +68,17 @@ export default class Client {
         this.logger.Write(`[Client:${this.id}]Processing new Mutant [Index]`);
         this.Reload(context);
         var newIndividual = this._astExplorer.MutateBy(context);
+
+        if ((newIndividual.ToCode() != context.Original.ToCode())) {
+            this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+            this.InitializeTester(context);
+            this._tester.Test(newIndividual);
+            this.logger.Write(`[Client:${this.id}]  Tests done.`);
+        } else {
+            newIndividual = context.Original;
+            this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
+        }
+
         var ctx = new OperatorContext();
         ctx.First = newIndividual;
         this.logger.Write(`[Client:${this.id}]Mutant done.`);
@@ -64,8 +90,29 @@ export default class Client {
      */
     CrossOver(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Processing new CrossOver`);
-
         var news = this._astExplorer.CrossOver(context);
+
+
+        if ((news[0].ToCode() != context.Original.ToCode())) {
+            this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+            this.InitializeTester(context);
+            this._tester.Test(news[0]);
+            this.logger.Write(`[Client:${this.id}]  Tests done.`);
+        } else {
+            news[0] = context.Original;
+            this.logger.Write(`[Client:${this.id}]  First Fail`);
+        }
+
+        if (!(news[1].ToCode() === context.Original.ToCode())) {
+            this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+            this.InitializeTester(context);
+            this._tester.Test(news[1]);
+            this.logger.Write(`[Client:${this.id}]  Tests done.`);
+        } else {
+            news[1] = context.Original;
+            this.logger.Write(`[Client:${this.id}]  Second Fail`);
+        }
+
         var ctx = new OperatorContext();
         ctx.First = news[0];
         ctx.Second = news[1];
@@ -79,13 +126,13 @@ export default class Client {
     Test(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Executing Tests for ${context.LibrarieOverTest.name}`);
 
-        try{
+        try {
             this.InitializeTester(context);
             this._tester.Test(context.First); //First is subject
             //this._tester.Test(context.Second); //Second is the original!!!!    
         }
-        catch(err){
-            this.logger.Write(`[Client:${this.id}]${err}`);    
+        catch (err) {
+            this.logger.Write(`[Client:${this.id}]${err}`);
         }
 
         var ctx = new OperatorContext();
@@ -102,14 +149,13 @@ export default class Client {
 
         //change lib path!
         this._config.libraries.forEach(element => {
-            if (element.name === context.LibrarieOverTest.name)
-            {
+            if (element.name === context.LibrarieOverTest.name) {
                 context.LibrarieOverTest = element;
                 //this.logger.Write(`[Client:${this.id}]${context.LibrarieOverTest.name}`)
                 //this.logger.Write(`[Client:${this.id}]${context.LibrarieOverTest.mainFilePath}`)
                 //this.logger.Write(`[Client:${this.id}]${context.LibrarieOverTest.path}`)
             }
-                
+
         });
 
         this._tester = new TesterFactory().CreateByName(this._config.tester);

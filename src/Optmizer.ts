@@ -102,7 +102,7 @@ export default class Optmizer {
         this.configuration.heuristics.forEach(element => {
             var heuristic = factory.CreateByName(element);
             heuristic.Name = element;
-            heuristic.Setup(this.configuration.trialsConfiguration[this.trialIndex].especific);
+            heuristic.Setup(this.configuration.trialsConfiguration[this.trialIndex].especific, this.configuration);
             heuristic.Trials = this.configuration.trials;
             heuristic._logger = this.logger;
             this.heuristics.push(heuristic);
