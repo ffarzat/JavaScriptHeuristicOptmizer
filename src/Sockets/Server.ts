@@ -106,12 +106,12 @@ export default class Server {
      * Print the server status
      */
     Status(): void {
-        this.logger.Write(`=============`);
-        this.logger.Write(`${this.messages.length} message(s) waiting free client(s)`);
-        this.logger.Write(`${this.waitingMessages.length} message(s) in process`);
-        this.logger.Write(`${this.clients.length} client(s) waiting task(s)`);
-        this.logger.Write(`${this.clientProcessing.length} client(s) working now`);
-        this.logger.Write(`=============`);
+        console.log(`=============`);
+        console.log(`${this.messages.length} message(s) waiting free client(s)`);
+        console.log(`${this.waitingMessages.length} message(s) in process`);
+        console.log(`${this.clients.length} client(s) waiting task(s)`);
+        console.log(`${this.clientProcessing.length} client(s) working now`);
+        console.log(`=============`);
     }
 
 
