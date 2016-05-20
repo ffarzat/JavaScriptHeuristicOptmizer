@@ -37,7 +37,6 @@ export default class RD extends IHeuristic {
             ctx.First = this.bestIndividual;
 
             var mutant = await this.Mutate(ctx);
-            mutant = await this.Test(mutant);
             this.UpdateBest(mutant);
         }
         

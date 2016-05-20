@@ -165,7 +165,7 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     UpdateBest(newBest: Individual) {
 
-        if (newBest.testResults.passedAllTests && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
+        if (newBest.testResults.passedAllTests && newBest.testResults && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
             this._logger.Write('=================================');
             this.bestFit = newBest.testResults.fit;
             this.bestIndividual = newBest;
@@ -198,7 +198,7 @@ abstract class IHeuristic extends events.EventEmitter {
         ctx.LibrarieOverTest = this._lib;
         ctx.Original = this.bestIndividual;
         ctx.Operation = "MutationByIndex";
-        ctx.mutationTrials = this._globalConfig.mutationTrials;
+        ctx.MutationTrials = this._globalConfig.mutationTrials;
 
         var msg: Message = new Message();
         msg.ctx = ctx;

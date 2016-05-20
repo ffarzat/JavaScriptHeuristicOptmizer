@@ -35,7 +35,7 @@
                 "trialsToRestart":5,
                 "trials": 10,
                 "nodesType": ["CallExpression", "IfStatement"], 
-                "individuals": 100, 
+                "individuals": 10, 
                 "generations": 5,
                 "crossoverProbability": 75,
                 "mutationProbability": 25,
