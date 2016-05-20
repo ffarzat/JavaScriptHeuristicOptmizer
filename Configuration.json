@@ -38,7 +38,7 @@
                 "generations": 5,
                 "crossoverProbability": 75,
                 "mutationProbability": 25,
-                "elitism": false,
+                "elitism": true,
                 "elitismPercentual": 30
             }
         }  

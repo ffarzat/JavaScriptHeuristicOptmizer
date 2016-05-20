@@ -100,9 +100,9 @@ abstract class IHeuristic extends events.EventEmitter {
 
             var newOnes: Individual[] = [];
 
-            this.getResponse(msg, (msg) => {
-                newOnes.push(msg.ctx.First);
-                newOnes.push(msg.ctx.Second);
+            this.getResponse(msg, (newMsg) => {
+                newOnes.push(newMsg.ctx.First);
+                newOnes.push(newMsg.ctx.Second);
                 resolve(newOnes);
             });
 

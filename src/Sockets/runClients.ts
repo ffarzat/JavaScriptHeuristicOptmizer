@@ -25,21 +25,31 @@ var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
 
+//========================================================================================== Logger
+var logger = new LogFactory().CreateByName(configuration.logWritter);
+logger.Initialize(configuration);
+
 //=========================================================================================== Cluster
 var numCPUs = 2;
 if (cluster.isMaster) {
-    for (var i = 0; i < numCPUs; i++) {
-        console.log(`Fork: ${i}`);
-        cluster.fork();
+    var i = 0
+    for (i = 0; i < numCPUs; i++) {
+        logger.Write(`Fork: ${i}`);
+        var slave = cluster.fork();
     }
+
+    slave.on('disconnect', function (worker) {
+        i++;
+        logger.Write(`[runClient]Start new client from disconnect event`);
+        logger.Write(`Fork: ${i}`);
+        cluster.fork();
+    });
+
+
 } else {
     //=========================================================================================== Slave
     var clientWorkDir: string = new tmp.Dir().path;
     process.setMaxListeners(0);
-
-    //=========================================================== Logger
-    var logger = new LogFactory().CreateByName(configuration.logWritter);
-    logger.Initialize(configuration);
 
     //=========================================================== Libs initialization
 
