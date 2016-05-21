@@ -111,7 +111,7 @@ export default class CsvResultsOutWriter implements IOutWriter {
         var originalCodeFile = path.join(this.directory, "original.js");
         if(!fs.existsSync(originalCodeFile))
         {
-            fs.writeFileSync(originalCodeFile, result.best.ToCode());    
+            fs.writeFileSync(originalCodeFile, result.original.ToCode());    
         }
     }
     
