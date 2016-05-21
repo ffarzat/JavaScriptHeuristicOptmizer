@@ -68,10 +68,21 @@ export default class HC extends IHeuristic {
             var neighbors = await Promise.all(neighborPromises);
             this._logger.Write(`neighbors: ${neighbors.length}`);
 
+            var foundNewBest = false;
+
             neighbors.forEach(element => {
-                this.UpdateBest(element);
-                //BUG: se melhorar precisa atualizar os indices de novo, codigo é diferente do anterior
+                foundNewBest = this.UpdateBest(element);
+                if (foundNewBest && this.neighborApproach === 'FirstAscent') {
+                    //Jump to first best founded
+                    nodesIndexList = this.DoIndexes(this.bestIndividual);
+                    return;
+                }
             });
+
+            if (foundNewBest && this.neighborApproach === 'LastAscent') {
+                //Jump to best of all
+                nodesIndexList = this.DoIndexes(this.bestIndividual);
+            }
         }
 
 

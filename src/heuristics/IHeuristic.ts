@@ -163,15 +163,17 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Update global best info
      */
-    UpdateBest(newBest: Individual) {
-
+    UpdateBest(newBest: Individual): boolean {
+        var found: boolean = false;
         if (newBest.testResults && newBest.testResults.passedAllTests && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
             this._logger.Write('=================================');
             this.bestFit = newBest.testResults.fit;
             this.bestIndividual = newBest;
             this._logger.Write(`New Best Fit ${this.bestFit}`);
             this._logger.Write('=================================');
+            found = true;
         }
+        return found;
     }
 
     /**
