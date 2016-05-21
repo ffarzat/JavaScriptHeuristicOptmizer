@@ -201,12 +201,12 @@ export default class ASTExplorer {
         var localNodeIndex = context.NodeIndex;
         var counter = 0;
 
-        console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
+        //console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
         
         mutant.AST = traverse(mutant.AST).map(function (node) {
             if(counter == localNodeIndex){
                this.remove(true); //stopHere=true
-               console.log(`[ASTExplorer.MutateBy]Node:${node.type}`);
+               //console.log(`[ASTExplorer.MutateBy]Node:${node.type}`);
                this.stop();
             }
             counter++;
