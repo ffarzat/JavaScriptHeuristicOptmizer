@@ -40,7 +40,7 @@ export default class HC extends IHeuristic {
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`Using nodesType: ${this.nodesType}`);
 
-        var nodesIndexList: NodeIndex[] = this.DoIndexes(this.Original);
+        var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
 
         var typeIndexCounter = 0;
         var indexes: NodeIndex = nodesIndexList[typeIndexCounter];
@@ -52,7 +52,7 @@ export default class HC extends IHeuristic {
         for (var index = 0; index < howMany; index++) {//for trials
             for (var insideIndex = 0; insideIndex < this._config.neighborsToProcess; insideIndex++) {
                 //this._logger.Write(`Mutant: [${index}, ${insideIndex}]`);
-                
+
                 //get next neighbor by typeIndex.ActualIndex
                 neighborPromises.push(this.MutateBy(this.bestIndividual, indexes));
 
@@ -64,14 +64,17 @@ export default class HC extends IHeuristic {
                         indexes = nodesIndexList[typeIndexCounter];
                 }
             }
+
+            var neighbors = await Promise.all(neighborPromises);
+            this._logger.Write(`neighbors: ${neighbors.length}`);
+
+            neighbors.forEach(element => {
+                this.UpdateBest(element);
+                //BUG: se melhorar precisa atualizar os indices de novo, codigo é diferente do anterior
+            });
         }
 
-        var neighbors = await Promise.all(neighborPromises);
-        this._logger.Write(`neighbors: ${neighbors.length}`);
 
-        neighbors.forEach(element => {
-            this.UpdateBest(element);
-        });
 
         var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
 

@@ -86,7 +86,7 @@ export default class GA extends IHeuristic {
             //Looking for a new best            
             population.forEach(element => {
                 
-                this._logger.Write(`         [IHeuristic.GA.UpdateBest]Element has Testresults: ${element.testResults}`);
+                //this._logger.Write(`         [IHeuristic.GA.UpdateBest]Element has Testresults: ${element.testResults}`);
                 this.UpdateBest(element);
             });
 

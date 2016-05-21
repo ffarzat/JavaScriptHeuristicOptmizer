@@ -200,13 +200,15 @@ export default class ASTExplorer {
         var mutant = context.First.Clone(); 
         var localNodeIndex = context.NodeIndex;
         var counter = 0;
+
+        console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
         
         mutant.AST = traverse(mutant.AST).map(function (node) {
             if(counter == localNodeIndex){
-               this.remove();
+               this.remove(true); //stopHere=true
+               console.log(`[ASTExplorer.MutateBy]Node:${node.type}`);
                this.stop();
             }
-            //console.log(counter);
             counter++;
         });
         
@@ -273,10 +275,10 @@ export default class ASTExplorer {
         var index: number = 0;
         
         traverse(individual.AST).forEach(function (node) {
-            //console.log('Indice: ' + index);
-            //console.log('Tipo ' + node.type);
             if(node && node.type && node.type == nodeType){ 
                 nodesIndex.push(index);
+                //console.log(`[ASTExplorer.IndexNodesBy]Tipo:${node.type}`);
+                //console.log(`[ASTExplorer.IndexNodesBy]Indice:${index}`);
             }
             
             index++;

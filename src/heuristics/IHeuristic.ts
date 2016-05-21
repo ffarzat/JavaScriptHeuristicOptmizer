@@ -102,8 +102,8 @@ abstract class IHeuristic extends events.EventEmitter {
             msg.ctx = context;
 
             this.getResponse(msg, (newMsg) => {
-                this._logger.Write(`         [IHeuristic]First fit ${newMsg.ctx.First.testResults.fit}`);
-                this._logger.Write(`         [IHeuristic]Second fit ${newMsg.ctx.Second.testResults.fit}`);
+                //this._logger.Write(`         [IHeuristic]First fit ${newMsg.ctx.First.testResults.fit}`);
+                //this._logger.Write(`         [IHeuristic]Second fit ${newMsg.ctx.Second.testResults.fit}`);
                 resolve([newMsg.ctx.First, newMsg.ctx.Second]);
             });
         });
@@ -190,8 +190,10 @@ abstract class IHeuristic extends events.EventEmitter {
     async MutateBy(clone: Individual, indexes: NodeIndex): Promise<Individual> {
         return new Promise<Individual>(async (resolve) => {
             var type = indexes.Type;
-            var actualNodeIndex = indexes[indexes.ActualIndex];
+            var actualNodeIndex = indexes.Indexes[indexes.ActualIndex];
             indexes.ActualIndex++;
+
+            this._logger.Write(`Mutant: [${type}, ${indexes.ActualIndex}]`);
 
             var ctx: OperatorContext = new OperatorContext();
             ctx.First = clone;
