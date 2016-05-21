@@ -125,7 +125,7 @@ function CreateTimeout(msg: Message, timeoutMS, reject) {
         msg.ctx.First = msg.ctx.Original.Clone();
         msg.ctx.Second = msg.ctx.Original.Clone();
         reject(msg.ctx);
-    }, timeoutMS * 1000);
+    }, timeoutMS); //* 1000
 }
 
 function ParseConfigAndLibs(workDir: string) {

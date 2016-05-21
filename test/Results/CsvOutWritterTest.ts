@@ -36,6 +36,7 @@ describe('CsvOutWritterTest Tests', () => {
         fakeResult.bestIndividualAvgTime = 1.69;
         fakeResult.bestIndividualCharacters = 15968;
         fakeResult.bestIndividualLOC = 68000;
+        fakeResult.best = generatedAST.Clone();
         
         fakeResult.originalIndividualAvgTime = 2.1;
         fakeResult.originalIndividualCharacters = 16000
@@ -48,11 +49,14 @@ describe('CsvOutWritterTest Tests', () => {
         fakeResult.bestIndividualAvgTime = 2.69;
         fakeResult.bestIndividualCharacters = 25968;
         fakeResult.bestIndividualLOC = 28000;
+        fakeResult.best = generatedAST.Clone();
         
         fakeResult.originalIndividualAvgTime = 2.1;
         fakeResult.originalIndividualCharacters = 26000
         fakeResult.originalIndividualLOC = 20000;
         fakeResult.best = generatedAST.Clone();
+                
+        concrete.WriteTrialResults(fakeResult);
                 
         expect(concrete).not.be.an('undefined');       
     });

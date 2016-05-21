@@ -16,33 +16,29 @@ import path = require('path');
 import expect = require('expect.js');
 
 var uuid = require('node-uuid');
+var snappy = require('snappy');
 
 describe('Client Tests', function () {
 
     this.timeout(60 * 10 * 1000); //10 minutes
 
-    it('Should Test Time-limit a function', async function () {
-
-        var p = new Promise<OperatorContext>(function (resolve, reject) {
-            console.log('Begin');
-            
-            setTimeout(function() {
-                console.log('timeout');
-                reject(new Error('time out!'));
-            }, 50);
-            
-            
-            setTimeout(function() {
-                console.log('timeout');
-                var ctx = new OperatorContext();
-                ctx.Operation == 'foo';
-                resolve(ctx);
-            }, 13);
-        });
+    it('Should Compress lodash AST', async function () {
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var lib = configuration.libraries[1]; 
+        var libFile: string = lib.mainFilePath;
+        var astExplorer: ASTExplorer = new ASTExplorer();
         
-        var newctx = await Promise.resolve(p);
-        expect(newctx.Operation).to.be('Foo');
-        console.log('ending');
+        var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
+        
+        var compressed = snappy.compressSync(JSON.stringify(generatedIndividual.AST));
+        var compressedBack = snappy.uncompressSync(compressed, { asBuffer: false });
+        
+        expect(JSON.stringify(generatedIndividual.AST).length).to.be.greaterThan(compressed.length);
+        expect(JSON.stringify(generatedIndividual.AST)).to.be.equal(compressedBack);
+        //fs.writeFileSync('ASTOriginal.txt', JSON.stringify(generatedIndividual.AST));
+        //fs.writeFileSync('ASTCompacta.txt', compressed);
+        
     });
 
     it('Should Test uuid lib', function () {

@@ -13,7 +13,7 @@ import path = require('path');
 
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-var lib = configuration.libraries[1];
+var lib = configuration.libraries[0];
 
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -23,7 +23,7 @@ var astExplorer: ASTExplorer = new ASTExplorer();
 var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
 
 var population: Individual[] = [];
-
+logger.Write(`Lib: ${lib.name}`);
 for (var index = 0; index < 200; index++) {
     population.push(individualOverTests.Clone());
     logger.Write(index.toString());
