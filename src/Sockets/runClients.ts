@@ -34,7 +34,7 @@ var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
 //=========================================================================================== Cluster
-var numCPUs = 2;
+var numCPUs = 4;
 if (cluster.isMaster) {
     var i = 0
     for (i = 0; i < numCPUs; i++) {
