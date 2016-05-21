@@ -23,19 +23,22 @@ import Shell = require('shelljs');
 var uuid = require('node-uuid');
 var tmp = require('temporary');
 var fse = require('fs-extra');
+const timeLimit = require('time-limit-promise');
 
 //=========================================================================================== Read Configuration values
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-
+var numCPUs = 4;
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
 //=========================================================================================== Cluster
-var numCPUs = 4;
 if (cluster.isMaster) {
+    logger.Write(`[runClients] Creating ${numCPUs} Clients`)
+    logger.Write(`[runClients] Operation Timeout: ${(configuration.clientTimeout)} secs`)
+
     var i = 0
     for (i = 0; i < numCPUs; i++) {
         logger.Write(`Fork: ${i}`);
@@ -74,24 +77,35 @@ if (cluster.isMaster) {
 
         ws.addEventListener("message", (e) => {
             var msg: Message = JSON.parse(e.data);
-
             msg.ctx = localClient.Reload(msg.ctx);
+            var promiseOperation: Promise<OperatorContext>;
 
             if (msg.ctx.Operation == "Mutation") {
-                msg.ctx = localClient.Mutate(msg.ctx);
+                promiseOperation = new Promise<OperatorContext>((resolve, reject) => {
+                    CreateTimeout(msg, configuration.clientTimeout, reject);
+                    resolve(localClient.Mutate(msg.ctx));
+                });
             }
 
             if (msg.ctx.Operation == "MutationByIndex") {
-                msg.ctx = localClient.MutateBy(msg.ctx);;
+                promiseOperation = new Promise<OperatorContext>((resolve, reject) => {
+                    CreateTimeout(msg, configuration.clientTimeout, reject);
+                    resolve(localClient.MutateBy(msg.ctx));
+                });
             }
 
             if (msg.ctx.Operation == "CrossOver") {
-                msg.ctx = localClient.CrossOver(msg.ctx);
+                promiseOperation = new Promise<OperatorContext>((resolve, reject) => {
+                    CreateTimeout(msg, configuration.clientTimeout, reject);
+                    resolve(localClient.CrossOver(msg.ctx));
+                });
             }
 
             if (msg.ctx.Operation == "Test") {
-                var newCtx = localClient.Test(msg.ctx);
-                msg.ctx = newCtx;
+                promiseOperation = new Promise<OperatorContext>((resolve, reject) => {
+                    CreateTimeout(msg, configuration.clientTimeout, reject);
+                    resolve(localClient.Test(msg.ctx));
+                });
             }
 
             var msgProcessada = JSON.stringify(msg);
@@ -105,6 +119,15 @@ if (cluster.isMaster) {
 }
 
 //=========================================================================================== Functions
+function CreateTimeout(msg: Message, timeoutMS, reject) {
+    setTimeout(function () {
+        logger.Write(`[runClient] Timeout error`);
+        msg.ctx.First = msg.ctx.Original.Clone();
+        msg.ctx.Second = msg.ctx.Original.Clone();
+        reject(msg.ctx);
+    }, timeoutMS * 1000);
+}
+
 function ParseConfigAndLibs(workDir: string) {
     for (var libIndex = 0; libIndex < configuration.libraries.length; libIndex++) {
         var element = configuration.libraries[libIndex];

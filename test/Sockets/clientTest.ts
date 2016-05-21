@@ -21,6 +21,30 @@ describe('Client Tests', function () {
 
     this.timeout(60 * 10 * 1000); //10 minutes
 
+    it('Should Test Time-limit a function', async function () {
+
+        var p = new Promise<OperatorContext>(function (resolve, reject) {
+            console.log('Begin');
+            
+            setTimeout(function() {
+                console.log('timeout');
+                reject(new Error('time out!'));
+            }, 50);
+            
+            
+            setTimeout(function() {
+                console.log('timeout');
+                var ctx = new OperatorContext();
+                ctx.Operation == 'foo';
+                resolve(ctx);
+            }, 13);
+        });
+        
+        var newctx = await Promise.resolve(p);
+        expect(newctx.Operation).to.be('Foo');
+        console.log('ending');
+    });
+
     it('Should Test uuid lib', function () {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');

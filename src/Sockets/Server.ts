@@ -151,7 +151,6 @@ export default class Server {
                 //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
                 availableClient.connection.send(JSON.stringify(msg));
                 this.waitingMessages.push(msg);
-
             }
             else {
                 break;
@@ -159,14 +158,6 @@ export default class Server {
         }
     }
     
-    /**
-     * Suspend Client work with a timeout constraint
-     */
-    VerifyClientsTimeout(){
-        
-    }
-    
-
     /**
      * Relases the callback magic
      */
