@@ -1,5 +1,9 @@
 /**
  * Starts the client of Improvment Process based on configFile [Configuration.Json]
+ * 
+ * 
+ * node --expose-gc --max-old-space-size=2047 build/src/Sockets/runClients.js
+ * 
  */
 import IConfiguration from '../IConfiguration';
 import Optmizer from '../Optmizer';
@@ -74,18 +78,15 @@ if (cluster.isMaster) {
             msg.ctx = localClient.Reload(msg.ctx);
 
             if (msg.ctx.Operation == "Mutation") {
-                var newCtx = localClient.Mutate(msg.ctx);
-                msg.ctx = newCtx;
+                msg.ctx = localClient.Mutate(msg.ctx);
             }
 
             if (msg.ctx.Operation == "MutationByIndex") {
-                var newCtx = localClient.MutateBy(msg.ctx);
-                msg.ctx = newCtx;
+                msg.ctx = localClient.MutateBy(msg.ctx);;
             }
 
             if (msg.ctx.Operation == "CrossOver") {
-                var newCtx = localClient.CrossOver(msg.ctx);
-                msg.ctx = newCtx;
+                msg.ctx = localClient.CrossOver(msg.ctx);
             }
 
             if (msg.ctx.Operation == "Test") {

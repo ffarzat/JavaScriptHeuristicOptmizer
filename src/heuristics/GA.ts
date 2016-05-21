@@ -55,7 +55,7 @@ export default class GA extends IHeuristic {
 
                 if (this.crossoverProbability >= crossoverChance) {
                     this._logger.Write(`Doing a crossover with individual ${individualIndex}`);
-                    crossoverPromises.push(this.DoCrossOver(population, individualIndex));
+                    crossoverPromises.push(this.CrossOver(population[individualIndex], population[this.GenereateRandom(0, population.length - 1)]));
                 }
 
                 //Mutation Promises
@@ -70,10 +70,11 @@ export default class GA extends IHeuristic {
                 }
             }
 
-            var newIndividuals: Individual[] = await Promise.all(crossoverPromises);
+            var newIndividuals: Individual[][] = await Promise.all(crossoverPromises);
             this._logger.Write(`newIndividuals: ${newIndividuals.length}`);
             newIndividuals.forEach(element => {
-                population.push(element);
+                population.push(element[0]);
+                population.push(element[1]);
             });
 
             var mutants: Individual[] = await Promise.all(mutantPromises);
@@ -85,7 +86,7 @@ export default class GA extends IHeuristic {
             //Looking for a new best            
             population.forEach(element => {
                 
-                this._logger.Write(`         [IHeuristic]Element has Testresults: ${element.testResults}`);
+                this._logger.Write(`         [IHeuristic.GA.UpdateBest]Element has Testresults: ${element.testResults}`);
                 this.UpdateBest(element);
             });
 
@@ -153,17 +154,6 @@ export default class GA extends IHeuristic {
             this.UpdateBest(element);
             population.push(element);
         });
-    }
-
-
-    /**
-     * Execute crossover
-     */
-    public async DoCrossOver(population: Individual[], individualIndex: number): Promise<Individual[]> {
-        var context: OperatorContext = new OperatorContext();
-        context.First = population[individualIndex];
-        context.Second = population[this.GenereateRandom(0, population.length - 1)];
-        return this.CrossOver(context);
     }
 
     /**

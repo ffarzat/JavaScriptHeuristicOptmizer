@@ -186,12 +186,12 @@ export default class Server {
                 break;
             }
         }
-        this.logger.Write(`         [Server]Checking Testresults`);
-        this.logger.Write(`         [Server]First ${message.ctx.First.testResults}`);
-        if(message.ctx.Second)
-            this.logger.Write(`         [Server]Second ${message.ctx.Second.testResults}`);
-        if(message.ctx.Original)
-        this.logger.Write(`         [Server]Original ${message.ctx.Original.testResults}`);
+        //this.logger.Write(`         [Server]Checking Testresults`);
+        //this.logger.Write(`         [Server]First ${message.ctx.First.testResults}`);
+        //if(message.ctx.Second)
+            //this.logger.Write(`         [Server]Second ${message.ctx.Second.testResults}`);
+        //if(message.ctx.Original)
+        //this.logger.Write(`         [Server]Original ${message.ctx.Original.testResults}`);
 
            
 
