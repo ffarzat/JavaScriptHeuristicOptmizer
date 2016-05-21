@@ -16,6 +16,7 @@
     "heuristics": ["HC", "GA", "RD"],
     "port": 5000,
     "url": "ws://localhost",
+    "clientTimeout":120,
     "libraries" : [
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
         {"name":"minimist",     "path":"Libraries/minimist/",       "mainFilePath":"Libraries/minimist/index.js"  },

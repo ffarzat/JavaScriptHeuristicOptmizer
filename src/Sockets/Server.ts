@@ -158,6 +158,14 @@ export default class Server {
             }
         }
     }
+    
+    /**
+     * Suspend Client work with a timeout constraint
+     */
+    VerifyClientsTimeout(){
+        
+    }
+    
 
     /**
      * Relases the callback magic
