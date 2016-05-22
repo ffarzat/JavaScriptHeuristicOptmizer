@@ -29,7 +29,7 @@ const timeLimit = require('time-limit-promise');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = 4;
+var numCPUs = 1;
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -81,31 +81,19 @@ if (cluster.isMaster) {
             var promiseOperation: Promise<OperatorContext>;
 
             if (msg.ctx.Operation == "Mutation") {
-                promiseOperation = new Promise<OperatorContext>((resolve, reject) => {
-                    CreateTimeout(msg, configuration.clientTimeout, reject);
-                    resolve(localClient.Mutate(msg.ctx));
-                });
+                msg.ctx = localClient.Mutate(msg.ctx);
             }
 
             if (msg.ctx.Operation == "MutationByIndex") {
-                promiseOperation = new Promise<OperatorContext>((resolve, reject) => {
-                    CreateTimeout(msg, configuration.clientTimeout, reject);
-                    resolve(localClient.MutateBy(msg.ctx));
-                });
+                msg.ctx = localClient.MutateBy(msg.ctx);
             }
 
             if (msg.ctx.Operation == "CrossOver") {
-                promiseOperation = new Promise<OperatorContext>((resolve, reject) => {
-                    CreateTimeout(msg, configuration.clientTimeout, reject);
-                    resolve(localClient.CrossOver(msg.ctx));
-                });
+                msg.ctx = localClient.CrossOver(msg.ctx);
             }
 
             if (msg.ctx.Operation == "Test") {
-                promiseOperation = new Promise<OperatorContext>((resolve, reject) => {
-                    CreateTimeout(msg, configuration.clientTimeout, reject);
-                    resolve(localClient.Test(msg.ctx));
-                });
+                    msg.ctx = localClient.Test(msg.ctx);
             }
 
             var msgProcessada = JSON.stringify(msg);

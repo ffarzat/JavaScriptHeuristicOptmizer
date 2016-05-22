@@ -34,8 +34,12 @@ describe('Client Tests', function () {
         var compressed = snappy.compressSync(JSON.stringify(generatedIndividual.AST));
         var compressedBack = snappy.uncompressSync(compressed, { asBuffer: false });
         
+        var objectData = new Buffer((JSON.parse(JSON.stringify(compressed)).data));
+        var compressedBackFromData = snappy.uncompressSync(objectData, { asBuffer: false });
+        
         expect(JSON.stringify(generatedIndividual.AST).length).to.be.greaterThan(compressed.length);
         expect(JSON.stringify(generatedIndividual.AST)).to.be.equal(compressedBack);
+        expect(JSON.stringify(generatedIndividual.AST)).to.be.equal(compressedBackFromData);
         //fs.writeFileSync('ASTOriginal.txt', JSON.stringify(generatedIndividual.AST));
         //fs.writeFileSync('ASTCompacta.txt', compressed);
         
