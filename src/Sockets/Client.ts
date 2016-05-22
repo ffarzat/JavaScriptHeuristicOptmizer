@@ -66,7 +66,6 @@ export default class Client {
     */
     MutateBy(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Processing new Mutant [Index]`);
-        this.Reload(context);
         var newIndividual = this._astExplorer.MutateBy(context);
 
         if ((newIndividual.ToCode() != context.Original.ToCode())) {

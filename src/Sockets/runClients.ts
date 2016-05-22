@@ -76,7 +76,6 @@ if (cluster.isMaster) {
         ws.addEventListener("message", (e) => {
             var msg: Message = JSON.parse(e.data);
             msg.ctx = localClient.Reload(msg.ctx);
-            var promiseOperation: Promise<OperatorContext>;
 
             if (msg.ctx.Operation == "Mutation") {
                 msg.ctx = localClient.Mutate(msg.ctx);
@@ -99,7 +98,7 @@ if (cluster.isMaster) {
         });
     }
     catch (err) {
-        logger.Write(`--> ${err}`);
+        logger.Write(`[runClient]${err}`);
         process.abort();
     }
 }
