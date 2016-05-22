@@ -23,13 +23,11 @@ import Shell = require('shelljs');
 var uuid = require('node-uuid');
 var tmp = require('temporary');
 var fse = require('fs-extra');
-const timeLimit = require('time-limit-promise');
-
 //=========================================================================================== Read Configuration values
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = 1;
+var numCPUs = require('os').cpus().length -2;
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
