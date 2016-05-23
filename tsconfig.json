@@ -14,7 +14,8 @@
        "noLib": false,
        "preserveConstEnums": true,
        "suppressImplicitAnyIndexErrors": true,
-       "outDir": "build"
+       "outDir": "build",
+       "allowUnusedLabels": true
    },
    "exclude": [
        "node_modules",

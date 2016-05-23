@@ -49,7 +49,9 @@ export default class HC extends IHeuristic {
         var howMany = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
         this._logger.Write(`HC will run ${howMany} client calls`);
 
-        for (var index = 0; index < howMany; index++) {//for trials
+
+        trials: for (var index = 0; index < howMany; index++) {//for trials
+
             for (var insideIndex = 0; insideIndex < this._config.neighborsToProcess; insideIndex++) {
                 //this._logger.Write(`Mutant: [${index}, ${insideIndex}]`);
 
@@ -60,12 +62,16 @@ export default class HC extends IHeuristic {
                 if (indexes.ActualIndex == indexes.Indexes.length - 1) {
                     typeIndexCounter++;
 
-                    if (typeIndexCounter <= nodesIndexList.length - 1)
+                    if (typeIndexCounter <= nodesIndexList.length - 1) {
                         indexes = nodesIndexList[typeIndexCounter];
+                    } else {
+                        this._logger.Write(`All neighbors were visited`);
+                        break trials;
+                    }
                 }
             }
 
-            var neighbors = [] 
+            var neighbors = []
             neighbors = await Promise.all(neighborPromises);
             this._logger.Write(`neighbors: ${neighbors.length}`);
 
