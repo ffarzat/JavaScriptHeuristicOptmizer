@@ -65,7 +65,8 @@ export default class HC extends IHeuristic {
                 }
             }
 
-            var neighbors = await Promise.all(neighborPromises);
+            var neighbors = [] 
+            neighbors = await Promise.all(neighborPromises);
             this._logger.Write(`neighbors: ${neighbors.length}`);
 
             var foundNewBest = false;
