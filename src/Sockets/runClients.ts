@@ -116,22 +116,17 @@ function ExecuteOperations(clientLocal: Client) {
         if (msg.ctx.Operation == "Test") {
             operationPromise = new Promise<OperatorContext>((resolve) => {
                 promisedId = setTimeout(() => {
-                    logger.Write(`[runClient]Testing`);
                     resolve(clientLocal.Test(msg.ctx));
                 }, 13);
             });
         }
 
         try {
-            logger.Write(`[runClient]Racing`);
-            var result = await Promise.race([delay, operationPromise]);
+
+            msg.ctx = await Promise.race([delay, operationPromise]);
             clearTimeout(timeoutId);
-
-            logger.Write(`[runClient]nadaaaaaaaa`);
-            //msg.ctx = await Promise.race([delay, operationPromise]);
-            logger.Write(`[runClient]Result ${result}`);
-
-            logger.Write(`[runClient]Racing done`);
+            var msgProcessada = JSON.stringify(msg);
+            ws.send(msgProcessada); //send back the result
         }
         catch (err) {
             clearTimeout(promisedId);
@@ -140,17 +135,7 @@ function ExecuteOperations(clientLocal: Client) {
             clientLocal.TempDirectory.rmdirSync();
             ws.close();
         }
-        finally{
-            var msgProcessada = JSON.stringify(msg);
-            ws.send(msgProcessada); //send back the result
-        }
     });
-
-
-
-
-
-
 }
 
 function ParseConfigAndLibs(workDir: string) {

@@ -166,22 +166,21 @@ export default class Optmizer {
 
                     this.InitializeOutWritter(actualLibrary, actualHeuristic);
 
+                    
+                    //TODO: trocar ponteiro da heuristica
                     actualHeuristic.SetLibrary(actualLibrary, (original) => {
                         actualHeuristic.RunTrial(this.trialIndex, (resultaForTrial) => {
                             this.outter.WriteTrialResults(resultaForTrial);
                             this.outter.Finish();
                             this.Notify(resultaForTrial);
+                            this.logger.Write(`Ending ${actualHeuristic.Name}`);
+                            this.logger.Write('=================================');
                         });
                     });
                 }
                 catch (err) {
                     this.logger.Write(`Fatal Error: ${err}`);
                 }
-                finally {
-                    this.logger.Write(`Ending ${actualHeuristic.Name}`);
-                    this.logger.Write('=================================');
-                }
-
             }
         }
     }
