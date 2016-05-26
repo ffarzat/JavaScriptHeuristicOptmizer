@@ -45,7 +45,7 @@ describe('Client Tests', function () {
         
     });
 
-    it('Should Test uuid lib', function () {
+    it('Should Test uuid lib', async function () {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
@@ -72,9 +72,9 @@ describe('Client Tests', function () {
         var localClient = new Client();
         localClient.id = clientId;
         localClient.logger = logger;
-        localClient.Setup(configuration);
+        localClient.Setup(configuration, undefined);
 
-        var newCtx = localClient.Test(msg.ctx);
+        var newCtx = await localClient.Test(msg.ctx);
 
         expect(newCtx.First.testResults.passedAllTests).to.be(true);
         expect(newCtx.First.testResults).not.to.be(undefined);

@@ -63,7 +63,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Especific Run for each Heuristic
      */
-    abstract async RunTrial(trialIndex: number): Promise<TrialResults>;
+    abstract RunTrial(trialIndex: number, cb: (results: TrialResults) => void);
 
     /**
      *  Releases a Mutation over context 
@@ -112,7 +112,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Global Test execution
      */
-    public async Test(individual: Individual): Promise<Individual> {
+    public Test(individual: Individual, cb: (original: Individual) => void) {
         var msg: Message = new Message();
         var context = new OperatorContext();
         context.Operation = "Test";
@@ -122,13 +122,9 @@ abstract class IHeuristic extends events.EventEmitter {
 
         msg.ctx = context;
 
-        var p = new Promise<Individual>(resolve => {
-            this.getResponse(msg, (newMsg) => {
-                resolve(newMsg.ctx.First);
-            });
+        this.getResponse(msg, (newMsg) => {
+            cb(newMsg.ctx.First);
         });
-
-        return p;
     }
 
     /**
@@ -229,25 +225,32 @@ abstract class IHeuristic extends events.EventEmitter {
     }
 
     /**
-     * Defines library over optmization
+     * Defines library and test original code
      */
-    async SetLibrary(library: Library) {
+    SetLibrary(library: Library, cb: (original: Individual) => void) {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
         this.bestIndividual = this.Original;
-        this.Original = await this.Test(this.Original);
-        //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
 
-        if (!this.Original.testResults.passedAllTests)
-            throw `Failed to execute tests for ${library.name}`;
+        this.Test(this.Original, (testedOriginal) => {
+            this.Original = testedOriginal;
 
-        //Force Best
-        this.bestFit = this.Original.testResults.fit;
-        this.bestIndividual = this.Original;
+            //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
 
-        this._logger.Write(`Original Fit ${this.bestFit}`);
-        this._logger.Write('=================================');
+            if (!this.Original.testResults.passedAllTests)
+                throw `Failed to execute tests for ${library.name}`;
+
+            //Force Best
+            this.bestFit = this.Original.testResults.fit;
+            this.bestIndividual = this.Original;
+
+            this._logger.Write(`Original Fit ${this.bestFit}`);
+            this._logger.Write('=================================');
+
+            cb(this.Original);
+        });
+
     }
 
 
@@ -268,7 +271,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * To resolve a single comunication with server trougth cluster comunication
      */
-    async getResponse(msg: Message, cb: (msgBack: Message) => void) {
+    getResponse(msg: Message, cb: (msgBack: Message) => void) {
         var item = new Message();
         item.id = uuid.v4();
         item.ctx = msg.ctx;
@@ -310,12 +313,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         return localmsg; //maybe a message or undefined
     }
-
-
 }
-
-
-
 
 
 export default IHeuristic;

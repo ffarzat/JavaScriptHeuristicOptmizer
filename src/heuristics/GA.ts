@@ -39,11 +39,11 @@ export default class GA extends IHeuristic {
     /**
      * Run a single trial
      */
-    public async RunTrial(trialIndex: number): Promise<TrialResults> {
+    RunTrial(trialIndex: number, cb: (results: TrialResults) => void){
         this._logger.Write(`Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
 
-        var population: Individual[] = await this.CreatesFirstGeneration(this.Original);
-
+        /*
+        var population: Individual[] = this.CreatesFirstGeneration(this.Original);
         for (var generationIndex = 1; generationIndex < this.generations; generationIndex++) {
             this._logger.Write(`Starting generation ${generationIndex}`);
             var crossoverPromises = [];
@@ -93,12 +93,9 @@ export default class GA extends IHeuristic {
             //Cut off
             await this.DoPopuplationCut(population);
         }
-
-        var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
-
-        return new Promise<TrialResults>((resolve, reject) => {
-            resolve(results);
-        });
+        */
+        //var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+        //cb(results);
     }
 
     /**

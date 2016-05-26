@@ -153,7 +153,7 @@ export default class Optmizer {
     /**
      * Initializes intire Improvement Process for a single trial previously configured
      */
-    public async DoOptmization() {
+    public DoOptmization() {
 
         for (var libIndex = 0; libIndex < this.configuration.libraries.length; libIndex++) {
             var actualLibrary = this.configuration.libraries[libIndex];
@@ -166,14 +166,13 @@ export default class Optmizer {
 
                     this.InitializeOutWritter(actualLibrary, actualHeuristic);
 
-                    await actualHeuristic.SetLibrary(actualLibrary);
-
-                    var resultaForTrial = await actualHeuristic.RunTrial(this.trialIndex);
-
-                    this.outter.WriteTrialResults(resultaForTrial);
-                    this.outter.Finish();
-                    this.Notify(resultaForTrial);
-
+                    actualHeuristic.SetLibrary(actualLibrary, (original) => {
+                        actualHeuristic.RunTrial(this.trialIndex, (resultaForTrial) => {
+                            this.outter.WriteTrialResults(resultaForTrial);
+                            this.outter.Finish();
+                            this.Notify(resultaForTrial);
+                        });
+                    });
                 }
                 catch (err) {
                     this.logger.Write(`Fatal Error: ${err}`);

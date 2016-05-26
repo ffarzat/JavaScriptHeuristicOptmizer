@@ -22,14 +22,16 @@ export default class RD extends IHeuristic {
         this.trials = config.trials;
     }
 
+
     /**
      * Run the trial
      */
-    public async RunTrial(trialIndex: number): Promise<TrialResults> {
+    RunTrial(trialIndex: number, cb: (results: TrialResults) => void){
 
         this._logger.Write(`Starting  Random Search`);
         this._logger.Write(`Starting  Trial ${trialIndex} of ${this.Trials}`);
 
+        /*
         for (var index = 0; index < this.trials; index++) {
 
             var ctx: OperatorContext = new OperatorContext();
@@ -39,11 +41,8 @@ export default class RD extends IHeuristic {
             var mutant = await this.Mutate(ctx);
             this.UpdateBest(mutant);
         }
-        
+        */
         var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
-
-        return new Promise<TrialResults>((resolve, reject) => {
-            resolve(results);
-        });
+        cb(results);
     }
 }

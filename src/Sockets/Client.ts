@@ -23,9 +23,12 @@ export default class Client {
     _tester: ITester;
     _astExplorer: ASTExplorer = new ASTExplorer();
     _config: IConfiguration;
+    
+    TempDirectory:any;
 
-    Setup(config: IConfiguration): void {
+    Setup(config: IConfiguration, directory: any): void {
         this._config = config;
+        this.TempDirectory = directory;
     }
 
     /**
@@ -122,7 +125,7 @@ export default class Client {
     /**
      * Global distributed Test execution
      */
-    Test(context: OperatorContext): OperatorContext {
+    async Test(context: OperatorContext): Promise<OperatorContext> {
         this.logger.Write(`[Client:${this.id}]Executing Tests for ${context.LibrarieOverTest.name}`);
 
         try {

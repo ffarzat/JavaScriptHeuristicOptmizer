@@ -27,7 +27,7 @@ var fse = require('fs-extra');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = require('os').cpus().length; //-2;
+var numCPUs = 1//require('os').cpus().length; //-2;
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -41,24 +41,25 @@ if (cluster.isMaster) {
     for (i = 0; i < numCPUs; i++) {
         logger.Write(`Fork: ${i}`);
         var slave = cluster.fork();
+
+        /*
+        slave.on('death', (worker: cluster.Worker) => {
+            i++;
+            logger.Write(`[runClient]Start new client from [cluster.Worker.death] event`);
+            logger.Write(`Fork: ${i}`);
+            cluster.fork();
+        });
+        */
     }
-
-    slave.on('disconnect', function (worker) {
-        i++;
-        logger.Write(`[runClient]Start new client from disconnect event`);
-        logger.Write(`Fork: ${i}`);
-        cluster.fork();
-    });
-
-
 } else {
     //=========================================================================================== Slave
-    var clientWorkDir: string = new tmp.Dir().path;
+    process.stdin.resume();
+    var clientWorkDir = new tmp.Dir();
     process.setMaxListeners(0);
 
     //=========================================================== Libs initialization
 
-    ParseConfigAndLibs(clientWorkDir);
+    ParseConfigAndLibs(clientWorkDir.path);
 
     //=========================================================== Client initialization
     var clientId = uuid.v4();
@@ -69,48 +70,87 @@ if (cluster.isMaster) {
     localClient.id = clientId;
     localClient.logger = logger;
 
-    localClient.Setup(configuration);
-    try {
-        var ws = new WebSocket(serverUrl, 'echo-protocol');
+    localClient.Setup(configuration, clientWorkDir);
 
-        ws.addEventListener("message", (e) => {
-            var msg: Message = JSON.parse(e.data);
-            msg.ctx = localClient.Reload(msg.ctx);
-
-            if (msg.ctx.Operation == "Mutation") {
-                msg.ctx = localClient.Mutate(msg.ctx);
-            }
-
-            if (msg.ctx.Operation == "MutationByIndex") {
-                msg.ctx = localClient.MutateBy(msg.ctx);
-            }
-
-            if (msg.ctx.Operation == "CrossOver") {
-                msg.ctx = localClient.CrossOver(msg.ctx);
-            }
-
-            if (msg.ctx.Operation == "Test") {
-                    msg.ctx = localClient.Test(msg.ctx);
-            }
-
-            var msgProcessada = JSON.stringify(msg);
-            ws.send(msgProcessada);
-        });
-    }
-    catch (err) {
-        logger.Write(`[runClient]${err}`);
-        process.abort();
-    }
+    ExecuteOperations(localClient);
 }
-
+//=========================================================================================== //======>
 //=========================================================================================== Functions
-function CreateTimeout(msg: Message, timeoutMS, reject) {
-    setTimeout(function () {
-        logger.Write(`[runClient] Timeout error`);
-        msg.ctx.First = msg.ctx.Original.Clone();
-        msg.ctx.Second = msg.ctx.Original.Clone();
-        reject(msg.ctx);
-    }, timeoutMS); //* 1000
+function ExecuteOperations(clientLocal: Client) {
+    let timeoutId;
+    let promisedId;
+
+    const delay = new Promise<OperatorContext>((resolve, reject) => {
+        timeoutId = setTimeout(() => {
+            reject(new Error('timeout'));
+        }, configuration.clientTimeout * 1000);
+    });
+
+    let operationPromise: Promise<OperatorContext>;
+
+    var ws = new WebSocket(serverUrl, 'echo-protocol'); //conect
+
+    ws.addEventListener("message", async (e) => {
+
+        var msg: Message = JSON.parse(e.data);
+        msg.ctx = clientLocal.Reload(msg.ctx);
+
+        if (msg.ctx.Operation == "Mutation") {
+            operationPromise = new Promise<OperatorContext>((resolve) => {
+                msg.ctx = clientLocal.Mutate(msg.ctx);
+            });
+        }
+
+        if (msg.ctx.Operation == "MutationByIndex") {
+            operationPromise = new Promise<OperatorContext>((resolve) => {
+                msg.ctx = clientLocal.MutateBy(msg.ctx);
+            });
+        }
+
+        if (msg.ctx.Operation == "CrossOver") {
+            operationPromise = new Promise<OperatorContext>((resolve) => {
+                msg.ctx = clientLocal.CrossOver(msg.ctx);
+            });
+        }
+
+        if (msg.ctx.Operation == "Test") {
+            operationPromise = new Promise<OperatorContext>((resolve) => {
+                promisedId = setTimeout(() => {
+                    logger.Write(`[runClient]Testing`);
+                    resolve(clientLocal.Test(msg.ctx));
+                }, 13);
+            });
+        }
+
+        try {
+            logger.Write(`[runClient]Racing`);
+            var result = await Promise.race([delay, operationPromise]);
+            clearTimeout(timeoutId);
+
+            logger.Write(`[runClient]nadaaaaaaaa`);
+            //msg.ctx = await Promise.race([delay, operationPromise]);
+            logger.Write(`[runClient]Result ${result}`);
+
+            logger.Write(`[runClient]Racing done`);
+        }
+        catch (err) {
+            clearTimeout(promisedId);
+            logger.Write(`[runClient]Client error: ${err}`);
+            logger.Write(`[runClient]Client ${localClient.id} disconneting...`);
+            clientLocal.TempDirectory.rmdirSync();
+            ws.close();
+        }
+        finally{
+            var msgProcessada = JSON.stringify(msg);
+            ws.send(msgProcessada); //send back the result
+        }
+    });
+
+
+
+
+
+
 }
 
 function ParseConfigAndLibs(workDir: string) {
