@@ -23,8 +23,8 @@ export default class Client {
     _tester: ITester;
     _astExplorer: ASTExplorer = new ASTExplorer();
     _config: IConfiguration;
-    
-    TempDirectory:any;
+
+    TempDirectory: any;
 
     Setup(config: IConfiguration, directory: any): void {
         this._config = config;
@@ -43,23 +43,27 @@ export default class Client {
      */
     Mutate(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Processing new Mutant`);
-        var newIndividual = this._astExplorer.Mutate(context);
-        
-        //fs.writeFileSync("original.js", context.Original.ToCode());
-        //fs.writeFileSync("mutantFromClient.js", newIndividual.ToCode());
-        
-        if ((newIndividual.ToCode() != context.Original.ToCode())) {
-            this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
-            this.InitializeTester(context);
-            this._tester.Test(newIndividual);
-            this.logger.Write(`[Client:${this.id}]  Tests done.`);
-        } else {
+
+        try {
+            var newIndividual = this._astExplorer.Mutate(context);
+
+            if ((newIndividual.ToCode() != context.Original.ToCode())) {
+                this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+                this.InitializeTester(context);
+                this._tester.Test(newIndividual);
+                this.logger.Write(`[Client:${this.id}]  Tests done.`);
+            } else {
+                newIndividual = context.Original;
+                this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
+            }
+
+            var ctx = new OperatorContext();
+            ctx.First = newIndividual;
+        } catch (err) {
+            this.logger.Write(`[Client:${this.id}]Error: ${err}`);
             newIndividual = context.Original;
-            this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
         }
 
-        var ctx = new OperatorContext();
-        ctx.First = newIndividual;
         this.logger.Write(`[Client:${this.id}]Mutant done.`);
         return ctx;
     }
@@ -69,20 +73,30 @@ export default class Client {
     */
     MutateBy(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Processing new Mutant [Index]`);
-        var newIndividual = this._astExplorer.MutateBy(context);
 
-        if ((newIndividual.ToCode() != context.Original.ToCode())) {
-            this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
-            this.InitializeTester(context);
-            this._tester.Test(newIndividual);
-            this.logger.Write(`[Client:${this.id}]  Tests done.`);
-        } else {
+        try {
+
+            var newIndividual = this._astExplorer.MutateBy(context);
+
+            if ((newIndividual.ToCode() != context.Original.ToCode())) {
+                this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+                this.InitializeTester(context);
+                this._tester.Test(newIndividual);
+                this.logger.Write(`[Client:${this.id}]  Tests done.`);
+            } else {
+                newIndividual = context.Original;
+                this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
+            }
+
+            var ctx = new OperatorContext();
+            ctx.First = newIndividual;
+
+        }
+        catch (err) {
+            this.logger.Write(`[Client:${this.id}]Error: ${err}`);
             newIndividual = context.Original;
-            this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
         }
 
-        var ctx = new OperatorContext();
-        ctx.First = newIndividual;
         this.logger.Write(`[Client:${this.id}]Mutant done.`);
         return ctx;
     }
@@ -92,32 +106,43 @@ export default class Client {
      */
     CrossOver(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Processing new CrossOver`);
-        var news = this._astExplorer.CrossOver(context);
+
+        try {
+            var news = this._astExplorer.CrossOver(context);
 
 
-        if ((news[0].ToCode() != context.Original.ToCode())) {
-            this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
-            this.InitializeTester(context);
-            this._tester.Test(news[0]);
-            this.logger.Write(`[Client:${this.id}]  Tests done.`);
-        } else {
-            news[0] = context.Original;
-            this.logger.Write(`[Client:${this.id}]  First Fail`);
+            if ((news[0].ToCode() != context.Original.ToCode())) {
+                this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+                this.InitializeTester(context);
+                this._tester.Test(news[0]);
+                this.logger.Write(`[Client:${this.id}]  Tests done.`);
+            } else {
+                news[0] = context.Original;
+                this.logger.Write(`[Client:${this.id}]  First Fail`);
+            }
+
+            if (!(news[1].ToCode() === context.Original.ToCode())) {
+                this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+                this.InitializeTester(context);
+                this._tester.Test(news[1]);
+                this.logger.Write(`[Client:${this.id}]  Tests done.`);
+            } else {
+                news[1] = context.Original;
+                this.logger.Write(`[Client:${this.id}]  Second Fail`);
+            }
+
+            var ctx = new OperatorContext();
+            ctx.First = news[0];
+            ctx.Second = news[1];
+        }
+        catch (err) {
+            this.logger.Write(`[Client:${this.id}]Error: ${err}`);
+
+            var ctx = new OperatorContext();
+            ctx.First = context.Original.Clone();
+            ctx.Second = context.Original.Clone();
         }
 
-        if (!(news[1].ToCode() === context.Original.ToCode())) {
-            this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
-            this.InitializeTester(context);
-            this._tester.Test(news[1]);
-            this.logger.Write(`[Client:${this.id}]  Tests done.`);
-        } else {
-            news[1] = context.Original;
-            this.logger.Write(`[Client:${this.id}]  Second Fail`);
-        }
-
-        var ctx = new OperatorContext();
-        ctx.First = news[0];
-        ctx.Second = news[1];
         this.logger.Write(`[Client:${this.id}]CrossOver done.`);
         return ctx;
     }
@@ -125,7 +150,7 @@ export default class Client {
     /**
      * Global distributed Test execution
      */
-    async Test(context: OperatorContext): Promise<OperatorContext> {
+    Test(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Executing Tests for ${context.LibrarieOverTest.name}`);
 
         try {

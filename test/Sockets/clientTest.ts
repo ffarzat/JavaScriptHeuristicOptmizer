@@ -74,7 +74,7 @@ describe('Client Tests', function () {
         localClient.logger = logger;
         localClient.Setup(configuration, undefined);
 
-        var newCtx = await localClient.Test(msg.ctx);
+        var newCtx = localClient.Test(msg.ctx);
 
         expect(newCtx.First.testResults.passedAllTests).to.be(true);
         expect(newCtx.First.testResults).not.to.be(undefined);

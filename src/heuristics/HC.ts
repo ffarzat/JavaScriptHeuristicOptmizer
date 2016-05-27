@@ -64,7 +64,7 @@ export default class HC extends IHeuristic {
      */
     private executeCalculatedTimes(time: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], typeIndexCounter: number, cb: () => void) {
 
-        this.DoMutationsPerTime(0, [], indexes, nodesIndexList, typeIndexCounter, (mutants) => {
+        this.DoMutationsPerTime(0, [], indexes, nodesIndexList, typeIndexCounter, (mutants, finish) => {
             this._logger.Write(`[HC]How Many: ${time}`);
             var foundNewBest = false;
             
@@ -87,7 +87,7 @@ export default class HC extends IHeuristic {
             });
 
 
-            if (time == this.howManyTimes) { //Done!
+            if (time == this.howManyTimes || finish) { //Done!
                 cb();
             } else {
                 this.executeCalculatedTimes(time, indexes, nodesIndexList, typeIndexCounter, cb);
@@ -99,11 +99,11 @@ export default class HC extends IHeuristic {
     /**
      * Do N mutants per time
      */
-    private DoMutationsPerTime(counter: number, neighbors: Individual[], indexes: NodeIndex, nodesIndexList: NodeIndex[], typeIndexCounter: number, cb: (mutants: Individual[]) => void) {
+    private DoMutationsPerTime(counter: number, neighbors: Individual[], indexes: NodeIndex, nodesIndexList: NodeIndex[], typeIndexCounter: number, cb: (mutants: Individual[], done: boolean) => void) {
 
         if (counter == this._config.neighborsToProcess) {
             if (neighbors.length == counter) {
-                cb(neighbors);
+                cb(neighbors, false);
             }
             else {
                 setTimeout(() => {
@@ -114,17 +114,19 @@ export default class HC extends IHeuristic {
 
             this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
                 neighbors.push(mutant);
+                
             });
 
             //Next NodeIndex?
             if (indexes.ActualIndex == indexes.Indexes.length - 1) {
                 typeIndexCounter++;
+                this._logger.Write(`[HC]Index Counter: ${typeIndexCounter}`);
 
                 if (typeIndexCounter <= nodesIndexList.length - 1) {
                     indexes = nodesIndexList[typeIndexCounter];
                 } else {
                     this._logger.Write(`All neighbors were visited`);
-                    cb(neighbors);
+                    cb(neighbors, true);
                 }
             }
 

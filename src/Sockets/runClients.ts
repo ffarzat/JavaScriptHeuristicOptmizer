@@ -42,14 +42,14 @@ if (cluster.isMaster) {
         logger.Write(`Fork: ${i}`);
         var slave = cluster.fork();
 
-        
+
         slave.on('death', (worker: cluster.Worker) => {
             i++;
             logger.Write(`[runClient]Start new client from [cluster.Worker.death] event`);
             logger.Write(`Fork: ${i}`);
             cluster.fork();
         });
-        
+
     }
 } else {
     //=========================================================================================== Slave
@@ -92,42 +92,42 @@ function ExecuteOperations(clientLocal: Client) {
 
     ws.addEventListener("message", async (e) => {
 
-        var msg: Message = JSON.parse(e.data);
-        msg.ctx = clientLocal.Reload(msg.ctx);
-
-        if (msg.ctx.Operation == "Mutation") {
-            operationPromise = new Promise<OperatorContext>((resolve) => {
-                promisedId = setTimeout(() => {
-                    resolve(clientLocal.Mutate(msg.ctx));
-                }, 13);
-            });
-        }
-
-        if (msg.ctx.Operation == "MutationByIndex") {
-            operationPromise = new Promise<OperatorContext>((resolve) => {
-                promisedId = setTimeout(() => {
-                    resolve(clientLocal.MutateBy(msg.ctx));
-                }, 13);
-            });
-        }
-
-        if (msg.ctx.Operation == "CrossOver") {
-            operationPromise = new Promise<OperatorContext>((resolve) => {
-                promisedId = setTimeout(() => {
-                    resolve(clientLocal.CrossOver(msg.ctx));
-                }, 13);
-            });
-        }
-
-        if (msg.ctx.Operation == "Test") {
-            operationPromise = new Promise<OperatorContext>((resolve) => {
-                promisedId = setTimeout(() => {
-                    resolve(clientLocal.Test(msg.ctx));
-                }, 13);
-            });
-        }
-
         try {
+
+            var msg: Message = JSON.parse(e.data);
+            msg.ctx = clientLocal.Reload(msg.ctx);
+
+            if (msg.ctx.Operation == "Mutation") {
+                operationPromise = new Promise<OperatorContext>((resolve) => {
+                    promisedId = setTimeout(() => {
+                        resolve(clientLocal.Mutate(msg.ctx));
+                    }, 13);
+                });
+            }
+
+            if (msg.ctx.Operation == "MutationByIndex") {
+                operationPromise = new Promise<OperatorContext>((resolve) => {
+                    promisedId = setTimeout(() => {
+                        resolve(clientLocal.MutateBy(msg.ctx));
+                    }, 13);
+                });
+            }
+
+            if (msg.ctx.Operation == "CrossOver") {
+                operationPromise = new Promise<OperatorContext>((resolve) => {
+                    promisedId = setTimeout(() => {
+                        resolve(clientLocal.CrossOver(msg.ctx));
+                    }, 13);
+                });
+            }
+
+            if (msg.ctx.Operation == "Test") {
+                operationPromise = new Promise<OperatorContext>((resolve) => {
+                    promisedId = setTimeout(() => {
+                        resolve(clientLocal.Test(msg.ctx));
+                    }, 13);
+                });
+            }
 
             msg.ctx = await Promise.race([delay, operationPromise]);
             clearTimeout(timeoutId);
@@ -139,8 +139,8 @@ function ExecuteOperations(clientLocal: Client) {
             clearTimeout(promisedId);
             logger.Write(`[runClient]Client error: ${err}`);
             logger.Write(`[runClient]Client ${localClient.id} disconneting...`);
-            clientLocal.TempDirectory.rmdirSync();
-            ws.close();
+            //clientLocal.TempDirectory.rmdirSync();
+            //ws.close();
         }
     });
 }
