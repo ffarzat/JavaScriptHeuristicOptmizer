@@ -20,6 +20,7 @@ export default class HC extends IHeuristic {
     neighborApproach: string;
     trials: number
     nodesType: string[];
+    howManyTimes: number;
 
     /**
      * Especific Setup
@@ -47,8 +48,8 @@ export default class HC extends IHeuristic {
             var typeIndexCounter = 0;
             var indexes: NodeIndex = nodesIndexList[typeIndexCounter];
             var totalTrials = this.trials;
-            var howMany = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
-            this._logger.Write(`HC will run ${howMany} client calls per time`);
+            this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
+            this._logger.Write(`HC will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
 
             this.executeCalculatedTimes(0, indexes, nodesIndexList, typeIndexCounter, () => {
                 var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
@@ -62,13 +63,13 @@ export default class HC extends IHeuristic {
      * How many time to execute DoMutationsPerTime
      */
     private executeCalculatedTimes(time: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], typeIndexCounter: number, cb: () => void) {
-        var howManyTimes = 0;
 
         this.DoMutationsPerTime(0, [], indexes, nodesIndexList, typeIndexCounter, (mutants) => {
-            howManyTimes++;
-            this._logger.Write(`[HC]How Many: ${howManyTimes}`);
+            this._logger.Write(`[HC]How Many: ${time}`);
             var foundNewBest = false;
-
+            
+            time++;
+            
             mutants.forEach(element => {
                 foundNewBest = this.UpdateBest(element);
 
@@ -86,11 +87,10 @@ export default class HC extends IHeuristic {
             });
 
 
-            if (howManyTimes == this.trials) { //Done!
+            if (time == this.howManyTimes) { //Done!
                 cb();
             } else {
-
-                this.executeCalculatedTimes(howManyTimes, indexes, nodesIndexList, typeIndexCounter, cb);
+                this.executeCalculatedTimes(time, indexes, nodesIndexList, typeIndexCounter, cb);
             }
 
         });

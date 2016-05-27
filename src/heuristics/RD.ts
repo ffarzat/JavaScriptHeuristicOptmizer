@@ -13,6 +13,7 @@ import Library from '../Library';
 export default class RD extends IHeuristic {
 
     trials: number
+    howManyTimes: number;
 
     /**
      * Especific Setup
@@ -34,8 +35,9 @@ export default class RD extends IHeuristic {
 
 
         var totalTrials = this.trials;
-        var howMany = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
-        this._logger.Write(`RD will run ${howMany} client calls per time`);
+        this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
+        
+        this._logger.Write(`RD will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
 
         this.SetLibrary(library, () => {
             this.executeCalculatedTimes(0, () => {
@@ -62,7 +64,7 @@ export default class RD extends IHeuristic {
             });
 
 
-            if (time == this.trials) { //Done!
+            if (time == this.howManyTimes) { //Done!
                 cb();
             } else {
 
