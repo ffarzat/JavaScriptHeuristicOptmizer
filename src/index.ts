@@ -67,7 +67,6 @@ async function ExecuteTrials(){
             var optmizer = new Optmizer();
             optmizer.Setup(configuration, trial, heuristicTrial);
             optmizer.DoOptmization();
-            logger.Write('====================================> Loop do otimizador pelo lado de fora - concluído')
         }
     } 
 }

@@ -36,68 +36,101 @@ export default class HC extends IHeuristic {
     /**
      * Run the trial
      */
-    RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void){
+    RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
         this._logger.Write(`Starting  Trial ${trialIndex}`);
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`Using nodesType: ${this.nodesType}`);
 
-        /*
-        var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
 
-        var typeIndexCounter = 0;
-        var indexes: NodeIndex = nodesIndexList[typeIndexCounter];
-        var neighborPromises = [];
-        var totalTrials = this.trials;
-        var howMany = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
-        this._logger.Write(`HC will run ${howMany} client calls`);
+        this.SetLibrary(library, () => {
+            var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
+            var typeIndexCounter = 0;
+            var indexes: NodeIndex = nodesIndexList[typeIndexCounter];
+            var totalTrials = this.trials;
+            var howMany = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
+            this._logger.Write(`HC will run ${howMany} client calls per time`);
 
+            this.executeCalculatedTimes(0, indexes, nodesIndexList, typeIndexCounter, () => {
+                var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+                cb(results);
+            });
 
-        trials: for (var index = 0; index < howMany; index++) {//for trials
+        });
+    }
 
-            for (var insideIndex = 0; insideIndex < this._config.neighborsToProcess; insideIndex++) {
-                //this._logger.Write(`Mutant: [${index}, ${insideIndex}]`);
+    /**
+     * How many time to execute DoMutationsPerTime
+     */
+    private executeCalculatedTimes(time: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], typeIndexCounter: number, cb: () => void) {
+        var howManyTimes = 0;
 
-                //get next neighbor by typeIndex.ActualIndex
-                neighborPromises.push(this.MutateBy(this.bestIndividual, indexes));
-
-                //Next NodeIndex?
-                if (indexes.ActualIndex == indexes.Indexes.length - 1) {
-                    typeIndexCounter++;
-
-                    if (typeIndexCounter <= nodesIndexList.length - 1) {
-                        indexes = nodesIndexList[typeIndexCounter];
-                    } else {
-                        this._logger.Write(`All neighbors were visited`);
-                        break trials;
-                    }
-                }
-            }
-
-            var neighbors = []
-            neighbors = await Promise.all(neighborPromises);
-            this._logger.Write(`neighbors: ${neighbors.length}`);
-
+        this.DoMutationsPerTime(0, [], indexes, nodesIndexList, typeIndexCounter, (mutants) => {
+            howManyTimes++;
+            this._logger.Write(`[HC]How Many: ${howManyTimes}`);
             var foundNewBest = false;
 
-            neighbors.forEach(element => {
+            mutants.forEach(element => {
                 foundNewBest = this.UpdateBest(element);
+
                 if (foundNewBest && this.neighborApproach === 'FirstAscent') {
                     //Jump to first best founded
                     nodesIndexList = this.DoIndexes(this.bestIndividual);
                     return;
                 }
+
+                if (foundNewBest && this.neighborApproach === 'LastAscent') {
+                    //Jump to best of all
+                    nodesIndexList = this.DoIndexes(this.bestIndividual);
+                }
+
             });
 
-            if (foundNewBest && this.neighborApproach === 'LastAscent') {
-                //Jump to best of all
-                nodesIndexList = this.DoIndexes(this.bestIndividual);
+
+            if (howManyTimes == this.trials) { //Done!
+                cb();
+            } else {
+
+                this.executeCalculatedTimes(howManyTimes, indexes, nodesIndexList, typeIndexCounter, cb);
             }
+
+        });
+    }
+
+    /**
+     * Do N mutants per time
+     */
+    private DoMutationsPerTime(counter: number, neighbors: Individual[], indexes: NodeIndex, nodesIndexList: NodeIndex[], typeIndexCounter: number, cb: (mutants: Individual[]) => void) {
+
+        if (counter == this._config.neighborsToProcess) {
+            if (neighbors.length == counter) {
+                cb(neighbors);
+            }
+            else {
+                setTimeout(() => {
+                    this.DoMutationsPerTime(counter, neighbors, indexes, nodesIndexList, typeIndexCounter, cb); //No increment    
+                }, 60 * 1000);
+            }
+        } else {
+
+            this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
+                neighbors.push(mutant);
+            });
+
+            //Next NodeIndex?
+            if (indexes.ActualIndex == indexes.Indexes.length - 1) {
+                typeIndexCounter++;
+
+                if (typeIndexCounter <= nodesIndexList.length - 1) {
+                    indexes = nodesIndexList[typeIndexCounter];
+                } else {
+                    this._logger.Write(`All neighbors were visited`);
+                    cb(neighbors);
+                }
+            }
+
+            counter++;
+            this.DoMutationsPerTime(counter, neighbors, indexes, nodesIndexList, typeIndexCounter, cb);
         }
-
-        */
-
-        var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
-        cb(results);
     }
 
     /**

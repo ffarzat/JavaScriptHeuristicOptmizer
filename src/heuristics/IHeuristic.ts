@@ -177,8 +177,8 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
     * Releases a mutation over an AST  by nodetype and index
     */
-    async MutateBy(clone: Individual, indexes: NodeIndex): Promise<Individual> {
-        return new Promise<Individual>(async (resolve) => {
+    MutateBy(clone: Individual, indexes: NodeIndex, cb: (mutant) => void) {
+        
             var type = indexes.Type;
             var actualNodeIndex = indexes.Indexes[indexes.ActualIndex];
             indexes.ActualIndex++;
@@ -197,9 +197,9 @@ abstract class IHeuristic extends events.EventEmitter {
             msg.ctx = ctx;
 
             this.getResponse(msg, (newMsg) => {
-                resolve(newMsg.ctx.First);
+                cb(newMsg.ctx.First);
             });
-        });
+        
     }
 
     /**
