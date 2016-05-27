@@ -84,8 +84,8 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Releases a CrossOver over context
      */
-    public async CrossOver(first: Individual, second: Individual): Promise<Individual[]> {
-        return new Promise<Individual[]>(async (resolve) => {
+    public CrossOver(first: Individual, second: Individual, cb: (newOnes: Individual[]) => void) {
+        
             var context = new OperatorContext();
             context.Operation = "CrossOver";
             context.CrossOverTrials = this._globalConfig.crossOverTrials;
@@ -93,16 +93,12 @@ abstract class IHeuristic extends events.EventEmitter {
             context.Original = this.bestIndividual;
             context.First = first;
             context.Second = second;
-
             var msg: Message = new Message();
             msg.ctx = context;
 
             this.getResponse(msg, (newMsg) => {
-                //this._logger.Write(`         [IHeuristic]First fit ${newMsg.ctx.First.testResults.fit}`);
-                //this._logger.Write(`         [IHeuristic]Second fit ${newMsg.ctx.Second.testResults.fit}`);
-                resolve([newMsg.ctx.First, newMsg.ctx.Second]);
-            });
-        });
+                cb([newMsg.ctx.First, newMsg.ctx.Second]);
+            });   
     }
 
     /**

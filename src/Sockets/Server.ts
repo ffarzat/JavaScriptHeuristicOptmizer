@@ -69,11 +69,16 @@ export default class Server {
         //Handle on close
         client.connection.on('close', (reasonCode, description) => {
             this.logger.Write(`Client[${client.id}]Disconnected. Bye!`);
+            var index = -1;
+            this.clients.forEach(element => {
+                index++;
+                if (element.id === client.id) {
+                    return;
+                }
+            });
 
-            var index = this.clients.indexOf(client);
             this.clients.splice(index, 1);  //remove from availables
             this.ValidateRemove(client);
-
             //this.logger.Write(`Left ${this.clients.length} client(s)`);
         });
 
@@ -157,7 +162,7 @@ export default class Server {
             }
         }
     }
-    
+
     /**
      * Relases the callback magic
      */
@@ -188,11 +193,11 @@ export default class Server {
         //this.logger.Write(`         [Server]Checking Testresults`);
         //this.logger.Write(`         [Server]First ${message.ctx.First.testResults}`);
         //if(message.ctx.Second)
-            //this.logger.Write(`         [Server]Second ${message.ctx.Second.testResults}`);
+        //this.logger.Write(`         [Server]Second ${message.ctx.Second.testResults}`);
         //if(message.ctx.Original)
         //this.logger.Write(`         [Server]Original ${message.ctx.Original.testResults}`);
 
-           
+
 
         //this.logger.Write(`message index:[${index}] (out of for)`);
         var localmsg = this.waitingMessages[index];

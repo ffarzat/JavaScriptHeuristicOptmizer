@@ -21,9 +21,6 @@ export default class GA extends IHeuristic {
     mutationProbability: number;
     elitism: boolean;
     elitismPercentual: number;
-    population: Individual[];
-
-
     /**
     * Especific Setup
     */
@@ -47,80 +44,92 @@ export default class GA extends IHeuristic {
 
         this.SetLibrary(library, () => {
             this.CreatesFirstGeneration(this.Original, (population) => {
-                this._logger.Write(`CreatesFirstGeneration concluded`);
+                this.executeStack(1, population, () => {
+                    cb(this.ProcessResult(trialIndex, this.Original, this.bestIndividual));
+                });
             });
-
-            //Operacoes
-
-            //Avaliacoes
-            //PopulationCut
-            //Results
         });
+    }
 
-        /*
-        var population: Individual[] = this.CreatesFirstGeneration(this.Original);
-        for (var generationIndex = 1; generationIndex < this.generations; generationIndex++) {
+    /**
+     * Repeat recursively crossover, mutant e cutoff
+     */
+    private executeStack(generationIndex: number, population: Individual[], cb: () => void) {
+
+        if (generationIndex == this._config.generations) {
+            cb(); //Done!
+        } else {
             this._logger.Write(`Starting generation ${generationIndex}`);
-            var crossoverPromises = [];
-            var mutantPromises = [];
-            
-            for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
-                //Crossover Promises
-                var crossoverChance = this.GenereateRandom(0, 100);
+            this.DoCrossoversAndMutations(population, () => {
+                this.DoPopuplationCut(population, () => {
+                    generationIndex++
+                    this.executeStack(generationIndex, population, cb);
+                });
+            });
+        }
+    }
 
-                if (this.crossoverProbability >= crossoverChance) {
-                    this._logger.Write(`Doing a crossover with individual ${individualIndex}`);
-                    crossoverPromises.push(this.CrossOver(population[individualIndex], population[this.GenereateRandom(0, population.length - 1)]));
-                }
 
-                //Mutation Promises
-                var mutationChance = this.GenereateRandom(0, 100);
+    /**
+     * Do crossover and mutation over a population
+     */
+    private DoCrossoversAndMutations(population: Individual[], cb: () => void) {
 
-                if (this.mutationProbability >= mutationChance) {
-                    this._logger.Write(`Doing a mutation with individual ${individualIndex}`);
-                    var context: OperatorContext = new OperatorContext();
-                    context.First = population[individualIndex];
+        let totalOperations = 0;
+        let totalCallback = 0;
 
-                    mutantPromises.push(this.Mutate(context));
-                }
+        for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
+
+            //Crossover
+            var crossoverChance = this.GenereateRandom(0, 100);
+
+            if (this.crossoverProbability >= crossoverChance) {
+                this._logger.Write(`Doing a crossover with individual ${individualIndex}`);
+                totalOperations++;
+
+                this.CrossOver(population[individualIndex], population[this.GenereateRandom(0, population.length - 1)], (elements) => {
+                    totalCallback++;
+
+                    population.push(elements[0]);
+                    population.push(elements[1]);
+
+                    this.UpdateBest(elements[0]);
+                    this.UpdateBest(elements[1]);
+
+                    if (totalOperations == totalCallback) {
+                        cb();
+                    }
+                });
             }
 
-            var newIndividuals: Individual[][] = await Promise.all(crossoverPromises);
-            this._logger.Write(`newIndividuals: ${newIndividuals.length}`);
-            newIndividuals.forEach(element => {
-                population.push(element[0]);
-                population.push(element[1]);
-            });
+            //Mutation
+            var mutationChance = this.GenereateRandom(0, 100);
 
-            var mutants: Individual[] = await Promise.all(mutantPromises);
-            this._logger.Write(`mutants: ${mutants.length}`);
-            mutants.forEach(element => {
-                population.push(element);
-            });
+            if (this.mutationProbability >= mutationChance) {
+                this._logger.Write(`Doing a mutation with individual ${individualIndex}`);
 
-            //Looking for a new best            
-            population.forEach(element => {
-                
-                //this._logger.Write(`         [IHeuristic.GA.UpdateBest]Element has Testresults: ${element.testResults}`);
-                this.UpdateBest(element);
-            });
+                totalOperations++;
 
-            //Cut off
-            await this.DoPopuplationCut(population);
+                var context: OperatorContext = new OperatorContext();
+                context.First = population[individualIndex];
+
+                this.Mutate(context, (mutant) => {
+                    totalCallback++;
+                    population.push(mutant);
+                    this.UpdateBest(mutant);
+
+                    if (totalOperations == totalCallback) {
+                        cb();
+                    }
+                });
+            }
         }
-        */
-        //var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
-        //cb(results);
     }
 
     /**
      * Releases Elitism over population
      */
-    private async DoPopuplationCut(population: Individual[]) {
-
-        /*
-        //Bug: some individuals has no TestResult (undefined value)
-
+    private DoPopuplationCut(population: Individual[], cb: () => void) {
         for (var index = 0; index < population.length; index++) {
             var element = population[index];
             if (element.testResults == undefined) {
@@ -134,16 +143,18 @@ export default class GA extends IHeuristic {
             this._logger.Write(`Using Elitism. Cuting off ${countElitism} individuals`);
             population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });
             population.splice(0, countElitism);
-            await this.Repopulate(population, countElitism);
+            this.Repopulate(population, countElitism, (elements) => {
+                cb();
+            });
         }
         else {
             population.splice(0, this.individuals);
             if (population.length < this.individuals) {
-                await this.Repopulate(population, (this.individuals - population.length));
+                this.Repopulate(population, (this.individuals - population.length), (elements) => {
+                    cb();
+                });
             }
         }
-        
-        */
     }
 
     /**

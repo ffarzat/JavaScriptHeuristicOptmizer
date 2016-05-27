@@ -42,14 +42,14 @@ if (cluster.isMaster) {
         logger.Write(`Fork: ${i}`);
         var slave = cluster.fork();
 
-        /*
+        
         slave.on('death', (worker: cluster.Worker) => {
             i++;
             logger.Write(`[runClient]Start new client from [cluster.Worker.death] event`);
             logger.Write(`Fork: ${i}`);
             cluster.fork();
         });
-        */
+        
     }
 } else {
     //=========================================================================================== Slave

@@ -151,37 +151,53 @@ export default class Optmizer {
     }
 
     /**
+     * Recursively run trial
+     */
+    private runLibOverHeuristic(libIndex: number, heuristicIndex: number, cb: () => void) {
+
+        if (heuristicIndex == this.heuristics.length) {
+            if (libIndex == this.configuration.libraries.length) {
+                cb();
+            }
+            else{
+                libIndex++;
+            }
+        }else {
+            try {
+                var actualLibrary = this.configuration.libraries[libIndex];
+                var actualHeuristic = this.heuristics[heuristicIndex];
+
+                this.logger.Write(`Executing global trial ${this.trialIndex} for ${actualLibrary.name} with ${actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);
+                this.logger.Write(`Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
+
+                this.InitializeOutWritter(actualLibrary, actualHeuristic);
+                //TODO: trocar ponteiro da heuristica
+
+                actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
+                    this.outter.WriteTrialResults(resultaForTrial);
+                    this.outter.Finish();
+                    this.Notify(resultaForTrial);
+                    this.logger.Write(`Ending ${actualHeuristic.Name}`);
+                    this.logger.Write('=================================');
+
+                    heuristicIndex++;
+                    this.runLibOverHeuristic(libIndex, heuristicIndex, cb);
+                });
+
+            }
+            catch (err) {
+                this.logger.Write(`Fatal Error: ${err}`);
+            }
+        }
+    }
+
+
+    /**
      * Initializes intire Improvement Process for a single trial previously configured
      */
     public DoOptmization() {
-
-        for (var libIndex = 0; libIndex < this.configuration.libraries.length; libIndex++) {
-            var actualLibrary = this.configuration.libraries[libIndex];
-
-            for (var heuristicIndex = 0; heuristicIndex < this.heuristics.length; heuristicIndex++) {
-                try {
-                    var actualHeuristic = this.heuristics[heuristicIndex];
-                    this.logger.Write(`Executing global trial ${this.trialIndex} for ${actualLibrary.name} with ${actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);
-                    this.logger.Write(`Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
-
-                    this.InitializeOutWritter(actualLibrary, actualHeuristic);
-
-
-                    //TODO: trocar ponteiro da heuristica
-
-                    actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
-                        this.outter.WriteTrialResults(resultaForTrial);
-                        this.outter.Finish();
-                        this.Notify(resultaForTrial);
-                        this.logger.Write(`Ending ${actualHeuristic.Name}`);
-                        this.logger.Write('=================================');
-                    });
-
-                }
-                catch (err) {
-                    this.logger.Write(`Fatal Error: ${err}`);
-                }
-            }
-        }
+        this.runLibOverHeuristic(0, 0, () => {
+            this.logger.Write(`Trial ${this.trialIndex} done.`);
+        })
     }
 }
