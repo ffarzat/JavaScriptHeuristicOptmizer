@@ -27,7 +27,7 @@ var fse = require('fs-extra');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = 1//require('os').cpus().length; //-2;
+var numCPUs = require('os').cpus().length; //-2;
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -97,19 +97,25 @@ function ExecuteOperations(clientLocal: Client) {
 
         if (msg.ctx.Operation == "Mutation") {
             operationPromise = new Promise<OperatorContext>((resolve) => {
-                msg.ctx = clientLocal.Mutate(msg.ctx);
+                promisedId = setTimeout(() => {
+                    resolve(clientLocal.Mutate(msg.ctx));
+                }, 13);
             });
         }
 
         if (msg.ctx.Operation == "MutationByIndex") {
             operationPromise = new Promise<OperatorContext>((resolve) => {
-                msg.ctx = clientLocal.MutateBy(msg.ctx);
+                promisedId = setTimeout(() => {
+                    resolve(clientLocal.MutateBy(msg.ctx));
+                }, 13);
             });
         }
 
         if (msg.ctx.Operation == "CrossOver") {
             operationPromise = new Promise<OperatorContext>((resolve) => {
-                msg.ctx = clientLocal.CrossOver(msg.ctx);
+                promisedId = setTimeout(() => {
+                    resolve(clientLocal.CrossOver(msg.ctx));
+                }, 13);
             });
         }
 
@@ -125,6 +131,7 @@ function ExecuteOperations(clientLocal: Client) {
 
             msg.ctx = await Promise.race([delay, operationPromise]);
             clearTimeout(timeoutId);
+
             var msgProcessada = JSON.stringify(msg);
             ws.send(msgProcessada); //send back the result
         }

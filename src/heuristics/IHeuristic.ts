@@ -63,25 +63,21 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Especific Run for each Heuristic
      */
-    abstract RunTrial(trialIndex: number, cb: (results: TrialResults) => void);
+    abstract RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void);
 
     /**
      *  Releases a Mutation over context 
      */
-    public async Mutate(context: OperatorContext): Promise<Individual> {
+    public Mutate(context: OperatorContext, cb: (mutant: Individual) => void) {
+        var msg: Message = new Message();
+        context.Operation = "Mutation";
+        context.MutationTrials = this._globalConfig.mutationTrials;
+        context.LibrarieOverTest = this._lib;
+        context.Original = this.bestIndividual;
+        msg.ctx = context;
 
-        return new Promise<Individual>(async (resolve) => {
-            var msg: Message = new Message();
-            context.Operation = "Mutation";
-            context.MutationTrials = this._globalConfig.mutationTrials;
-            context.LibrarieOverTest = this._lib;
-            context.Original = this.bestIndividual;
-
-            msg.ctx = context;
-
-            this.getResponse(msg, (newMsg) => {
-                resolve(newMsg.ctx.First);
-            });
+        this.getResponse(msg, (newMsg) => {
+            cb(newMsg.ctx.First);
         });
     }
 
@@ -227,7 +223,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Defines library and test original code
      */
-    SetLibrary(library: Library, cb: (original: Individual) => void) {
+    SetLibrary(library: Library, cb: () => void) {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
@@ -248,7 +244,7 @@ abstract class IHeuristic extends events.EventEmitter {
             this._logger.Write(`Original Fit ${this.bestFit}`);
             this._logger.Write('=================================');
 
-            cb(this.Original);
+            cb();
         });
 
     }

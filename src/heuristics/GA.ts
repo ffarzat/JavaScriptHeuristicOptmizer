@@ -7,6 +7,7 @@ import ITester from '../ITester';
 import TrialResults from '../Results/TrialResults';
 import OperatorContext from '../OperatorContext';
 import ILogger from '../ILogger';
+import Library from '../Library';
 
 /**
  * Genetic Algorithm for Code Improvement
@@ -20,6 +21,8 @@ export default class GA extends IHeuristic {
     mutationProbability: number;
     elitism: boolean;
     elitismPercentual: number;
+    population: Individual[];
+
 
     /**
     * Especific Setup
@@ -39,8 +42,20 @@ export default class GA extends IHeuristic {
     /**
      * Run a single trial
      */
-    RunTrial(trialIndex: number, cb: (results: TrialResults) => void){
+    RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
         this._logger.Write(`Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
+
+        this.SetLibrary(library, () => {
+            this.CreatesFirstGeneration(this.Original, (population) => {
+                this._logger.Write(`CreatesFirstGeneration concluded`);
+            });
+
+            //Operacoes
+
+            //Avaliacoes
+            //PopulationCut
+            //Results
+        });
 
         /*
         var population: Individual[] = this.CreatesFirstGeneration(this.Original);
@@ -102,16 +117,18 @@ export default class GA extends IHeuristic {
      * Releases Elitism over population
      */
     private async DoPopuplationCut(population: Individual[]) {
+
+        /*
         //Bug: some individuals has no TestResult (undefined value)
-        
+
         for (var index = 0; index < population.length; index++) {
             var element = population[index];
-            if(element.testResults == undefined){
+            if (element.testResults == undefined) {
                 population.splice(index, 1); //cut off
                 this._logger.Write(`${index} has no TestResults`);
             }
         }
-        
+
         if (this.elitism) {
             var countElitism = (this.individuals * this.elitismPercentual) / 100;
             this._logger.Write(`Using Elitism. Cuting off ${countElitism} individuals`);
@@ -121,47 +138,44 @@ export default class GA extends IHeuristic {
         }
         else {
             population.splice(0, this.individuals);
-            if(population.length < this.individuals){
+            if (population.length < this.individuals) {
                 await this.Repopulate(population, (this.individuals - population.length));
             }
         }
+        
+        */
     }
 
     /**
      * Repopulates using Mutation
      */
-    private async Repopulate(population: Individual[], untill: number) {
+    private Repopulate(population: Individual[], untill: number, cb: (individuals: Individual[]) => void) {
         this._logger.Write(`Initializing a new population [+ ${untill} new individuals]`);
-
-        var promises = [];
+        var total = 0;
 
         for (var localIndex = 0; localIndex < untill; localIndex++) {
-
             var context: OperatorContext = new OperatorContext();
             context.First = this.bestIndividual.Clone();
-            promises.push(this.Mutate(context));
+            this.Mutate(context, (mutant) => {
+                this.UpdateBest(mutant);
+                population.push(mutant);
+                total++;
+                if (total == untill) {
+                    this._logger.Write(`Repopulate: ${untill} done`);
+                    cb(population);
+                }
+            });
         }
-
-        var mutants: Individual[] = await Promise.all(promises);
-        this._logger.Write(`Repopulate: ${mutants.length} done`);
-        //this._logger.Write(`mutants 0 : ${mutants[0].ToCode()}`);
-        //this._logger.Write(`Done!`);
-
-        mutants.forEach(element => {
-            this.UpdateBest(element);
-            population.push(element);
-        });
     }
 
     /**
      * Returns a list of Mutated new individuals
      */
-    async CreatesFirstGeneration(original: Individual): Promise<Individual[]> {
+    CreatesFirstGeneration(original: Individual, cb: (individuals: Individual[]) => void) {
         var localPopulation: Individual[] = [];
-        localPopulation.push(original);
-
-        await this.Repopulate(localPopulation, this.individuals - 1);
-
-        return new Promise<Individual[]>((resolve) => { resolve(localPopulation) });
+        this.Repopulate(localPopulation, this.individuals - 1, (newIndividuals: Individual[]) => {
+            newIndividuals.unshift(original);
+            cb(newIndividuals);
+        });
     }
 }

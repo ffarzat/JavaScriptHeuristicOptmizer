@@ -7,6 +7,7 @@ import ITester from '../ITester';
 import TrialResults from '../Results/TrialResults';
 import Individual from '../Individual';
 import NodeIndex from './NodeIndex';
+import Library from '../Library';
 
 
 //[FunctionExpression, FunctionDeclaration and ArrowFunctionExpression]
@@ -35,7 +36,7 @@ export default class HC extends IHeuristic {
     /**
      * Run the trial
      */
-    RunTrial(trialIndex: number, cb: (results: TrialResults) => void){
+    RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void){
         this._logger.Write(`Starting  Trial ${trialIndex}`);
         this._logger.Write(`Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`Using nodesType: ${this.nodesType}`);

@@ -5,6 +5,7 @@ import TrialResults from '../Results/TrialResults';
 import Individual from '../Individual';
 import OperatorContext from '../OperatorContext';
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
+import Library from '../Library';
 
 /**
  * Random Search for Code Improvement
@@ -26,7 +27,7 @@ export default class RD extends IHeuristic {
     /**
      * Run the trial
      */
-    RunTrial(trialIndex: number, cb: (results: TrialResults) => void){
+    RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void){
 
         this._logger.Write(`Starting  Random Search`);
         this._logger.Write(`Starting  Trial ${trialIndex} of ${this.Trials}`);
