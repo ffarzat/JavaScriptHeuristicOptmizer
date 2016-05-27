@@ -43,7 +43,7 @@ if (cluster.isMaster) {
         var slave = cluster.fork();
 
 
-        slave.on('death', (worker: cluster.Worker) => {
+        slave.on('exit', (worker: cluster.Worker) => {
             i++;
             logger.Write(`[runClient]Start new client from [cluster.Worker.death] event`);
             logger.Write(`Fork: ${i}`);

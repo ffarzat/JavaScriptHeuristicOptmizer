@@ -71,15 +71,27 @@ export default class Server {
             this.logger.Write(`Client[${client.id}]Disconnected. Bye!`);
             var index = -1;
             this.clients.forEach(element => {
-                index++;
                 if (element.id === client.id) {
                     return;
                 }
+                index++;
             });
-
+            
+            //this.logger.Write(`Index: ${index}`);
             this.clients.splice(index, 1);  //remove from availables
             this.ValidateRemove(client);
             //this.logger.Write(`Left ${this.clients.length} client(s)`);
+            
+            
+            var waitingIndex = -1;
+            this.clientProcessing.forEach(element => {
+                if (element.id === client.id) {
+                    return;
+                }
+                waitingIndex++;
+            });
+            this.clientProcessing.splice(waitingIndex, 1);  //remove from availables
+            
         });
 
         //Handle on messagem from cliente!
