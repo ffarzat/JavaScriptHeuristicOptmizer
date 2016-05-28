@@ -41,9 +41,9 @@ export default class HC extends IHeuristic {
      * Run the trial
      */
     RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
-        this._logger.Write(`Starting  Trial ${trialIndex}`);
-        this._logger.Write(`Initializing HC ${this.neighborApproach}`);
-        this._logger.Write(`Using nodesType: ${this.nodesType}`);
+        this._logger.Write(`[HC] Starting  Trial ${trialIndex}`);
+        this._logger.Write(`[HC] Initializing HC ${this.neighborApproach}`);
+        this._logger.Write(`[HC] Using nodesType: ${this.nodesType}`);
 
 
         this.SetLibrary(library, () => {
@@ -52,8 +52,8 @@ export default class HC extends IHeuristic {
             var indexes: NodeIndex = nodesIndexList[typeIndexCounter];
             var totalTrials = this.trials;
             this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
-            this._logger.Write(`HC will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
-            this._logger.Write(`[HC]Initial index: ${indexes.Type}`);
+            this._logger.Write(`[HC] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
+            this._logger.Write(`[HC] Initial index: ${indexes.Type}`);
 
             this.executeCalculatedTimes(0, indexes, nodesIndexList, typeIndexCounter, () => {
                 var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
@@ -124,7 +124,7 @@ export default class HC extends IHeuristic {
                     //change node index
                     typeIndexCounter++;
                     indexes = nodesIndexList[typeIndexCounter];
-                    this._logger.Write(`[HC]Change index: ${indexes.Type}`);
+                    this._logger.Write(`[HC] Change index: ${indexes.Type}`);
                 }
             }
 
@@ -183,8 +183,8 @@ export default class HC extends IHeuristic {
             });
         }
         else {
-            this._logger.Write(`FATAL: There is no configuration for NodeType for HC Optmization`);
-            throw "There is no configuration for NodeType for HC Optmization";
+            this._logger.Write(`[HC] FATAL: There is no configuration for NodeType for HC Optmization`);
+            throw "[HC] There is no configuration for NodeType for HC Optmization";
         }
 
         return nodesIndexList;

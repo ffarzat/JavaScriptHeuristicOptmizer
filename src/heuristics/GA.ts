@@ -40,7 +40,7 @@ export default class GA extends IHeuristic {
      * Run a single trial
      */
     RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
-        this._logger.Write(`Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
+        this._logger.Write(`[GA] Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
 
         this.SetLibrary(library, () => {
             this.CreatesFirstGeneration(this.Original, (population) => {
@@ -59,7 +59,7 @@ export default class GA extends IHeuristic {
         if (generationIndex == (this._config.generations + 1)) {
             cb(); //Done!
         } else {
-            this._logger.Write(`Starting generation ${generationIndex}`);
+            this._logger.Write(`[GA] Starting generation ${generationIndex}`);
             this.DoCrossoversAndMutations(population, () => {
                 this.DoPopuplationCut(population, () => {
                     generationIndex++
@@ -84,7 +84,7 @@ export default class GA extends IHeuristic {
             var crossoverChance = this.GenereateRandom(0, 100);
 
             if (this.crossoverProbability >= crossoverChance) {
-                this._logger.Write(`Doing a crossover with individual ${individualIndex}`);
+                this._logger.Write(`[GA] Doing a crossover with individual ${individualIndex}`);
                 totalOperations++;
 
                 this.CrossOver(population[individualIndex], population[this.GenereateRandom(0, population.length - 1)], (elements) => {
@@ -106,7 +106,7 @@ export default class GA extends IHeuristic {
             var mutationChance = this.GenereateRandom(0, 100);
 
             if (this.mutationProbability >= mutationChance) {
-                this._logger.Write(`Doing a mutation with individual ${individualIndex}`);
+                this._logger.Write(`[GA] Doing a mutation with individual ${individualIndex}`);
 
                 totalOperations++;
 
@@ -134,13 +134,13 @@ export default class GA extends IHeuristic {
             var element = population[index];
             if (element.testResults == undefined) {
                 population.splice(index, 1); //cut off
-                this._logger.Write(`${index} has no TestResults`);
+                this._logger.Write(`[GA] ${index} has no TestResults`);
             }
         }
 
         if (this.elitism) {
             var countElitism = Math.floor((this.individuals * this.elitismPercentual) / 100);
-            this._logger.Write(`Using Elitism. Cuting off ${countElitism} individuals`);
+            this._logger.Write(`[GA] Using Elitism. Cuting off ${countElitism} individuals`);
             population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });
             population.splice(0, countElitism);
             this.Repopulate(population, countElitism, (elements) => {
@@ -161,7 +161,7 @@ export default class GA extends IHeuristic {
      * Repopulates using Mutation
      */
     private Repopulate(population: Individual[], untill: number, cb: (individuals: Individual[]) => void) {
-        this._logger.Write(`Initializing a new population [+ ${untill} new individuals]`);
+        this._logger.Write(`[GA] Initializing a new population [+ ${untill} new individuals]`);
         var total = 0;
 
         for (var localIndex = 0; localIndex < untill; localIndex++) {
@@ -172,7 +172,7 @@ export default class GA extends IHeuristic {
                 population.push(mutant);
                 total++;
                 if (total == untill) {
-                    this._logger.Write(`Repopulate: ${untill} done`);
+                    this._logger.Write(`[GA] Repopulate: ${untill} done`);
                     cb(population);
                 }
             });

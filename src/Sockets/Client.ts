@@ -106,13 +106,14 @@ export default class Client {
      */
     CrossOver(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Processing new CrossOver`);
-
+        var ctx = new OperatorContext();
+        
         try {
             var news = this._astExplorer.CrossOver(context);
 
 
             if ((news[0].ToCode() != context.Original.ToCode())) {
-                this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+                this.logger.Write(`[Client:${this.id}]  Testing First son`);
                 this.InitializeTester(context);
                 this._tester.Test(news[0]);
                 this.logger.Write(`[Client:${this.id}]  Tests done.`);
@@ -122,7 +123,7 @@ export default class Client {
             }
 
             if (!(news[1].ToCode() === context.Original.ToCode())) {
-                this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+                this.logger.Write(`[Client:${this.id}]  Testing Second son`);
                 this.InitializeTester(context);
                 this._tester.Test(news[1]);
                 this.logger.Write(`[Client:${this.id}]  Tests done.`);
@@ -131,14 +132,13 @@ export default class Client {
                 this.logger.Write(`[Client:${this.id}]  Second Fail`);
             }
 
-            var ctx = new OperatorContext();
+
             ctx.First = news[0];
             ctx.Second = news[1];
         }
         catch (err) {
             this.logger.Write(`[Client:${this.id}]Error: ${err}`);
 
-            var ctx = new OperatorContext();
             ctx.First = context.Original.Clone();
             ctx.Second = context.Original.Clone();
         }

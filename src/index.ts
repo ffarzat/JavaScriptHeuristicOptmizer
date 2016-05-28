@@ -28,25 +28,25 @@ process.setMaxListeners(0);
 if (cluster.isMaster) {
     localServer.logger = logger;
     localServer.Setup(configuration);
-    setInterval(function() { localServer.ProcessQueue(); }, 50);
-    setInterval(function() { localServer.Status(); }, 60000);
-    
+    setInterval(function () { localServer.ProcessQueue(); }, 50);
+    setInterval(function () { localServer.Status(); }, 60000);
+
     var optmizerWorker = cluster.fork(); //optmizer worker
-    
-    optmizerWorker.on('message', function(msg:Message) {
-      //logger.Write(`Optmizer asking for Operation`);
-      
-      localServer.DoAnOperation(msg, (newMsg)  => {
+
+    optmizerWorker.on('message', function (msg: Message) {
+        //logger.Write(`Optmizer asking for Operation`);
+
+        localServer.DoAnOperation(msg, (newMsg) => {
             //logger.Write(`Send back newMsg to Optmizer`);
             optmizerWorker.send(newMsg);
-      });
-      
+        });
+
     });
 
 } else {
     logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
     logger.Write(`Preparing libs environment`);
-    
+
     //Here is the Optmizer in another work
     //=========================================================================================== Just prepare all libs
     ParseConfigAndLibs();
@@ -54,57 +54,72 @@ if (cluster.isMaster) {
     //=========================================================================================== Just for know
 
     DisplayConfig();
-    
+
     //=========================================================================================== For all trials
     ExecuteTrials();
-    
-    
+
+
 }
-
-async function ExecuteTrials(){
-   for (var trial = 0; trial < configuration.trials; trial++) {
-        for (var heuristicTrial = 0; heuristicTrial < configuration.trialsConfiguration.length ; heuristicTrial++) {
-            var optmizer = new Optmizer();
-            optmizer.Setup(configuration, trial, heuristicTrial);
-            optmizer.DoOptmization();
-        }
-    } 
-}
-
-
 //=========================================================================================== Functions
-function ParseConfigAndLibs(){
+function ExecuteTrials() {
+    //for (var trial = 0; trial < configuration.trials; trial++) {
+    let globalTrial = 0;
+    logger.Write(`============================= Optmizer Global trial: ${globalTrial}`);
+    executeHeuristicTrial(globalTrial, configuration, 0, () => {
+        logger.Write(`============================= Optmizer Global trial: ${globalTrial} Done!`);
+    });
+    //}
+}
+
+function executeHeuristicTrial(trial: number, config: IConfiguration, heuristicTrial: number, cb: (newHeuristicTrial:number) => void) {
+
+    var optmizer = new Optmizer();
+    optmizer.Setup(configuration, trial, heuristicTrial);
+    optmizer.DoOptmization(() => {
+        
+        heuristicTrial++;
+        
+        if (heuristicTrial == (configuration.trialsConfiguration.length)) {
+            cb(heuristicTrial);
+            return;
+            
+        } else {
+            executeHeuristicTrial(trial, config, heuristicTrial, cb);
+        }
+    });
+}
+
+function ParseConfigAndLibs() {
     for (var libIndex = 0; libIndex < configuration.libraries.length; libIndex++) {
         var element = configuration.libraries[libIndex];
         try {
             var libDirectoryPath = path.join(process.cwd(), element.path);
             var libNodeModules = path.join(libDirectoryPath, "node_modules");
-            if(fs.existsSync(libNodeModules)){
+            if (fs.existsSync(libNodeModules)) {
                 continue;
             }
-            
-            process.chdir(libDirectoryPath);
-            var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec(`npm install`, {silent:true}) as Shell.ExecOutputReturnValue);
 
-            if(returnedOutput.code > 0){
+            process.chdir(libDirectoryPath);
+            var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec(`npm install`, { silent: true }) as Shell.ExecOutputReturnValue);
+
+            if (returnedOutput.code > 0) {
                 logger.Write(`Library ${element.name} has error to execute npm install. It will be out of improvement process.`);
                 configuration.libraries.splice(libIndex, 1);
             }
-            else
-            {
+            else {
                 logger.Write(`Library ${element.name} instaled successfully`);
             }
-            
+
         } catch (error) {
             logger.Write(`${error}`);
         }
-        finally{
-                process.chdir(testOldDirectory);
+        finally {
+            process.chdir(testOldDirectory);
         }
     }
 }
 
-function DisplayConfig(){
+function DisplayConfig() {
     var totalTrials = configuration.trials * configuration.trialsConfiguration.length * configuration.libraries.length * configuration.heuristics.length;
     logger.Write('=================================');
     logger.Write(`Fit type [mean|median]:  ${configuration.fitType}`);

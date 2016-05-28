@@ -1,8 +1,8 @@
 /// <reference path="../../src/typings/tsd.d.ts" />
 
-import Client from '../../src/sockets/Client';
-import Server from '../../src/sockets//Server';
-import Message from '../../src/sockets//Message';
+import Client from '../../src/Sockets/Client';
+import Server from '../../src/Sockets/Server';
+import Message from '../../src/Sockets/Message';
 
 import OperatorContext from '../../src/OperatorContext';
 import Individual from '../../src//Individual';
