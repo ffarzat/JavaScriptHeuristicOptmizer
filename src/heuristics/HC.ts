@@ -71,7 +71,7 @@ export default class HC extends IHeuristic {
         this.operationsCount = 0;
 
         this.DoMutationsPerTime(0, [], indexes, nodesIndexList, typeIndexCounter, (mutants, updatedIndexes, typeCounter, finish) => {
-            this._logger.Write(`[HC]How Many: ${time}`);
+            //this._logger.Write(`[HC]How Many: ${time}`);
             var foundNewBest = false;
 
             time++;
@@ -150,7 +150,7 @@ export default class HC extends IHeuristic {
         if (!this.intervalId) {
 
             this.intervalId = setInterval(() => {
-                this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}`);
+                //this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}`);
 
                 if (neighbors.length == this.operationsCount) {
                     clearInterval(this.intervalId);
