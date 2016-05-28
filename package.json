@@ -8,7 +8,7 @@
     "build": "tsc",
     "test": "mocha --recursive build/test",
     "pretest": "npm run clean && npm run build",
-    "clean": "grunt",
+    "clean": "grunt && tsd install",
     "start": "npm run clean && npm run build && node --expose-gc --max-old-space-size=2047 build/src/index.js"
   },
   "author": {
