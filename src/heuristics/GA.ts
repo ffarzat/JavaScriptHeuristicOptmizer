@@ -56,7 +56,7 @@ export default class GA extends IHeuristic {
      */
     private executeStack(generationIndex: number, population: Individual[], cb: () => void) {
 
-        if (generationIndex == this._config.generations) {
+        if (generationIndex == (this._config.generations + 1)) {
             cb(); //Done!
         } else {
             this._logger.Write(`Starting generation ${generationIndex}`);
@@ -139,7 +139,7 @@ export default class GA extends IHeuristic {
         }
 
         if (this.elitism) {
-            var countElitism = (this.individuals * this.elitismPercentual) / 100;
+            var countElitism = Math.floor((this.individuals * this.elitismPercentual) / 100);
             this._logger.Write(`Using Elitism. Cuting off ${countElitism} individuals`);
             population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });
             population.splice(0, countElitism);
