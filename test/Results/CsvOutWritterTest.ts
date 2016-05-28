@@ -17,6 +17,8 @@ import HC from '../../src/heuristics/HC';
 
 describe('CsvOutWritterTest Tests', () => {
     
+    this.timeout(60*10*1000); //10 minutes
+    
     it('Should Setup write Results in Csv format', () => {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
