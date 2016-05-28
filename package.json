@@ -7,10 +7,9 @@
     "postinstall": "tsd install",
     "build": "tsc",
     "test": "mocha --recursive build/test",
-    "pretest": "npm run clean && npm run wait && npm run build",
-    "clean": "rmdir build /s /q",
-    "wait": "ping 127.0.0.1 -n 2 > nul",
-    "start": "npm run clean && npm run wait && npm run build && node --expose-gc --max-old-space-size=2047 build/src/index.js"
+    "pretest": "npm run clean && npm run build",
+    "clean": "grunt",
+    "start": "npm run clean && npm run build && node --expose-gc --max-old-space-size=2047 build/src/index.js"
   },
   "author": {
     "name": "Fabio Farzat",
@@ -27,9 +26,9 @@
     "node-uuid": "1.4.7",
     "nodemailer": "0.7.1",
     "randomizer": "0.0.1",
-    "rmdir": "^1.2.0",
+    "rmdir": "1.2.0",
     "shelljs": "0.6.0",
-    "snappy": "^5.0.3",
+    "snappy": "5.0.3",
     "temporary": "0.0.8",
     "traverse": "0.6.6",
     "typescript": "1.8.10",
@@ -37,8 +36,10 @@
     "ws": "1.1.0"
   },
   "devDependencies": {
-    "mocha": "2.4.5",
     "expect.js": "0.3.1",
+    "grunt": "1.0.1",
+    "grunt-remove": "^0.1.0",
+    "mocha": "2.4.5",
     "tsd": "0.6.5"
   }
 }
