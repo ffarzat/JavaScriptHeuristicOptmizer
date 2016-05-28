@@ -14,7 +14,7 @@ export default class TrialEspecificConfiguration {
     neighborApproach: string;
     
     /**
-     * To async resolve
+     * How many neighbors resolve at once
      */
     neighborsToProcess: number;
     

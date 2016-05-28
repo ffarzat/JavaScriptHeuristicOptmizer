@@ -22,6 +22,9 @@ export default class HC extends IHeuristic {
     nodesType: string[];
     howManyTimes: number;
 
+    intervalId;
+    operationsCount: number;
+
     /**
      * Especific Setup
      */
@@ -50,6 +53,7 @@ export default class HC extends IHeuristic {
             var totalTrials = this.trials;
             this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
             this._logger.Write(`HC will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
+            this._logger.Write(`[HC]Initial index: ${indexes.Type}`);
 
             this.executeCalculatedTimes(0, indexes, nodesIndexList, typeIndexCounter, () => {
                 var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
@@ -63,6 +67,8 @@ export default class HC extends IHeuristic {
      * How many time to execute DoMutationsPerTime
      */
     private executeCalculatedTimes(time: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], typeIndexCounter: number, cb: () => void) {
+
+        this.operationsCount = 0;
 
         this.DoMutationsPerTime(0, [], indexes, nodesIndexList, typeIndexCounter, (mutants, updatedIndexes, typeCounter, finish) => {
             this._logger.Write(`[HC]How Many: ${time}`);
@@ -101,49 +107,65 @@ export default class HC extends IHeuristic {
      * Do N mutants per time
      */
     private DoMutationsPerTime(counter: number, neighbors: Individual[], indexes: NodeIndex, nodesIndexList: NodeIndex[], typeIndexCounter: number, cb: (mutants: Individual[], indexes: NodeIndex, typeIndexCounter: number, done: boolean) => void) {
+        let itsover: boolean = false;
 
-        if (counter == this._config.neighborsToProcess) {
-            if (neighbors.length == counter) {
-                cb(neighbors, indexes, typeIndexCounter, false);
-            }
-            else {
-                setTimeout(() => {
-                    this.DoMutationsPerTime(counter, neighbors, indexes, nodesIndexList, typeIndexCounter, cb); //No increment    
-                }, 60 * 1000);
-            }
-        } else {
+        //Rest some mutant to process?
+        if (counter < this._config.neighborsToProcess) {
 
-            if (indexes) {
+            // its over actual index? (IF, CALL, etc)
+            if (indexes.ActualIndex == indexes.Indexes.length - 1) {
+                //Try change to next index
+
+                // its over all index?
+                if (typeIndexCounter >= nodesIndexList.length - 1) {
+                    this._logger.Write(`[HC] All neighbors were visited`);
+                    itsover = true;
+                } else {
+                    //change node index
+                    typeIndexCounter++;
+                    indexes = nodesIndexList[typeIndexCounter];
+                    this._logger.Write(`[HC]Change index: ${indexes.Type}`);
+                }
+            }
+
+            //All neighbors were visited?
+            if (!itsover) {
                 this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
                     neighbors.push(mutant);
+                });
 
-                    if (typeIndexCounter == nodesIndexList.length - 1 && indexes.ActualIndex == indexes.Indexes.length - 1) {
+                counter++;
+                this.operationsCount = counter;
+                this.DoMutationsPerTime(counter++, neighbors, indexes, nodesIndexList, typeIndexCounter, cb);
+            }
+        }
+
+        //Process all neighbors?
+        if (neighbors.length == this.operationsCount) {
+            cb(neighbors, indexes, typeIndexCounter, false);
+            return;
+        }
+
+        //Waiting to be done!
+        if (!this.intervalId) {
+
+            this.intervalId = setInterval(() => {
+                this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}`);
+
+                if (neighbors.length == this.operationsCount) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = undefined;
+
+                    if (typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
                         cb(neighbors, indexes, typeIndexCounter, true);
                     }
-                });
-            }
-            else{
-                setTimeout(() => {
-                    this.DoMutationsPerTime(counter, neighbors, indexes, nodesIndexList, typeIndexCounter, cb); //No increment    
-                }, 60 * 1000);
-            }
-
-
-
-            //Next NodeIndex?
-            if (indexes.ActualIndex == indexes.Indexes.length - 1) {
-                if (typeIndexCounter <= nodesIndexList.length - 1) {
-                    typeIndexCounter++;
-                    this._logger.Write(`[HC]Index Counter: ${typeIndexCounter}`);
-                    indexes = nodesIndexList[typeIndexCounter];
+                    else {
+                        cb(neighbors, indexes, typeIndexCounter, false);
+                    }
                 }
-                else {
-                    this._logger.Write(`[HC] All neighbors were visited`);
-                }
-            }
-
-            counter++;
-            this.DoMutationsPerTime(counter, neighbors, indexes, nodesIndexList, typeIndexCounter, cb);
+            }, 10 * 1000); //each ten secs
         }
     }
 

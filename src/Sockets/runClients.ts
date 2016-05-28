@@ -23,6 +23,7 @@ import Shell = require('shelljs');
 var uuid = require('node-uuid');
 var tmp = require('temporary');
 var fse = require('fs-extra');
+var rmdir = require('rmdir');
 //=========================================================================================== Read Configuration values
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
@@ -42,8 +43,7 @@ if (cluster.isMaster) {
         logger.Write(`Fork: ${i}`);
         var slave = cluster.fork();
 
-
-        slave.on('exit', (worker: cluster.Worker) => {
+        slave.on('createnewone', (worker: cluster.Worker) => {
             i++;
             logger.Write(`[runClient]Start new client from [cluster.Worker.death] event`);
             logger.Write(`Fork: ${i}`);
@@ -89,6 +89,20 @@ function ExecuteOperations(clientLocal: Client) {
     let operationPromise: Promise<OperatorContext>;
 
     var ws = new WebSocket(serverUrl, 'echo-protocol'); //conect
+
+    ws.addEventListener("close", (data) => {
+        logger.Write(`[runClient]Client ${localClient.id} clean temp data...`);
+
+        rmdir(clientLocal.TempDirectory.path, function (err, dirs, files) {
+            //console.log(dirs);
+            //console.log(files);
+            //console.log('all files are removed');
+            logger.Write(`[runClient]Client ${localClient.id}   Temp data cleaned.`);
+            logger.Write(`[runClient]Client ${localClient.id} Done.`);
+            process.exit(0);
+        });
+        
+    });
 
     ws.addEventListener("message", async (e) => {
 
@@ -139,8 +153,11 @@ function ExecuteOperations(clientLocal: Client) {
             clearTimeout(promisedId);
             logger.Write(`[runClient]Client error: ${err}`);
             logger.Write(`[runClient]Client ${localClient.id} disconneting...`);
-            //clientLocal.TempDirectory.rmdirSync();
-            //ws.close();
+            
+            ws.close();
+            
+            process.emit('createnewone');
+            process.exit(-1);
         }
     });
 }

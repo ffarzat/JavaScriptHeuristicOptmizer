@@ -27,6 +27,7 @@
     "node-uuid": "1.4.7",
     "nodemailer": "0.7.1",
     "randomizer": "0.0.1",
+    "rmdir": "^1.2.0",
     "shelljs": "0.6.0",
     "snappy": "^5.0.3",
     "temporary": "0.0.8",
