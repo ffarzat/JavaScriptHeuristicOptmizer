@@ -57,7 +57,7 @@ export default class RD extends IHeuristic {
             
             time++;
             
-            this._logger.Write(`[RD]How Many: ${time}`);
+            //this._logger.Write(`[RD]How Many: ${time}`);
             
             mutants.forEach(element => {
                 this.UpdateBest(element);
@@ -85,6 +85,7 @@ export default class RD extends IHeuristic {
             }
             else {
                 setTimeout(()=> {
+                    this._logger.Write(`[RD] Neighbors: ${neighbors.length}`);
                     this.DoMutationsPerTime(counter, neighbors, cb); //No increment    
                 }, 60 * 1000); 
             }
