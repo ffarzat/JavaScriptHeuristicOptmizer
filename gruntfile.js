@@ -10,18 +10,17 @@ module.exports = function (grunt) {
             dirList: ['build']
         }
     });
-    
-    
-    grunt.registerTask('default', ['remove'], function (){
+
+
+    grunt.registerTask('default', ['remove'], function () {
         var rmdir = require('rmdir');
+        var path = require('path');
         var done = this.async();
-        grunt.log.writeln(`Removing: ${process.cwd() + "\\build\\"}`);
-        
-        rmdir(process.cwd() + "/build/", function (err, dirs, files) {
-            //console.log(dirs);
-            //console.log(files);
-            //console.log('all files are removed');
-            grunt.log.writeln(`done`);
+        var buildPath = path.join(process.cwd(), "build");
+
+        rmdir(buildPath, function (err, dirs, files) {
+            grunt.log.writeln(`Removing: ${dirs}`);
+            grunt.log.writeln(`Removing: ${files}`);
             done();
         });
     });
