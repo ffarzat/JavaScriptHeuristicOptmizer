@@ -56,33 +56,41 @@ if (cluster.isMaster) {
     DisplayConfig();
 
     //=========================================================================================== For all trials
-    ExecuteTrials();
+    ExecuteTrials(0);
 
 
 }
 //=========================================================================================== Functions
-function ExecuteTrials() {
-    //for (var trial = 0; trial < configuration.trials; trial++) {
-    let globalTrial = 0;
+function ExecuteTrials(globalTrial: number) {
     logger.Write(`============================= Optmizer Global trial: ${globalTrial}`);
+
     executeHeuristicTrial(globalTrial, configuration, 0, () => {
         logger.Write(`============================= Optmizer Global trial: ${globalTrial} Done!`);
+
+        globalTrial++;
+        if (globalTrial == configuration.trials) {
+            return;
+        }
+        else
+        {
+            ExecuteTrials(globalTrial);//next
+        }
     });
-    //}
+
 }
 
-function executeHeuristicTrial(trial: number, config: IConfiguration, heuristicTrial: number, cb: (newHeuristicTrial:number) => void) {
+function executeHeuristicTrial(trial: number, config: IConfiguration, heuristicTrial: number, cb: (newHeuristicTrial: number) => void) {
 
     var optmizer = new Optmizer();
     optmizer.Setup(configuration, trial, heuristicTrial);
     optmizer.DoOptmization(() => {
-        
+
         heuristicTrial++;
-        
+
         if (heuristicTrial == (configuration.trialsConfiguration.length)) {
             cb(heuristicTrial);
             return;
-            
+
         } else {
             executeHeuristicTrial(trial, config, heuristicTrial, cb);
         }
