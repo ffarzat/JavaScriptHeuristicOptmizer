@@ -66,7 +66,9 @@ export default class GA extends IHeuristic {
             this.DoCrossoversAndMutations(population, () => {
                 this.DoPopuplationCut(population, () => {
                     generationIndex++
-                    this.executeStack(generationIndex, population, cb);
+                    setTimeout(()=> {
+                        this.executeStack(generationIndex, population, cb);
+                    }, 0);
                 });
             });
         }
@@ -170,10 +172,13 @@ export default class GA extends IHeuristic {
         for (var localIndex = 0; localIndex < untill; localIndex++) {
             var context: OperatorContext = new OperatorContext();
             context.First = this.bestIndividual.Clone();
+            
             this.Mutate(context, (mutant) => {
+                this._logger.Write(`[GA] mutant: ${total}`);
                 this.UpdateBest(mutant);
                 population.push(mutant);
                 total++;
+                
                 if (total == untill) {
                     this._logger.Write(`[GA] Repopulate: ${untill} done`);
                     cb(population);
