@@ -108,6 +108,7 @@ export default class RD extends IHeuristic {
                 //this._logger.Write(`[RD] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
                 if (neighbors.length == this.operationsCounter) {
                     clearInterval(this.intervalId);
+                    this.intervalId = undefined;
                     cb(neighbors);
                 }
             }, 10 * 1000);
