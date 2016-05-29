@@ -15,7 +15,7 @@
     "outWriter": "CsvResultsOutWriter",
     "heuristics": ["RD", "HC", "GA"],
     "port": 5000,
-    "url": "ws://localhost",
+    "url": "ws://192.168.1.4",
     "clientTimeout":300,
     "libraries" : [
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }
