@@ -63,18 +63,19 @@ abstract class IHeuristic extends events.EventEmitter {
                 localMsg.cb(newMsg);
             }
         });
-
-        process.on('started', () => {
-            this.Tick = new exectimer.Tick(this.trialUuid);
-            this.Tick.start();
-        });
-
-        process.on('finished', () => {
-            this.Tick.stop();
-        });
-
-
     }
+
+    public Start() {
+        this._logger.Write(`[IHeuristic] Started Event [${this.trialUuid}]`);
+        this.Tick = new exectimer.Tick(this.trialUuid);
+        this.Tick.start();
+    }
+
+    public Stop() {
+        this._logger.Write('[IHeuristic] Finisehd Event');
+        this.Tick.stop();
+    }
+
 
     /**
      * Especific Run for each Heuristic
@@ -172,7 +173,7 @@ abstract class IHeuristic extends events.EventEmitter {
      * Transform nano secs in minutes
      */
     private ToNanosecondsToMinutes(nanovalue: number): number {
-        return parseFloat((nanovalue / 1000000000.0).toFixed(1)) / 60;
+        return parseFloat((parseFloat((nanovalue / 1000000000.0).toFixed(1)) / 60).toFixed(1));
     }
 
     /**

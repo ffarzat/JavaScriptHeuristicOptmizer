@@ -41,7 +41,7 @@ export default class HC extends IHeuristic {
      * Run the trial
      */
     RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
-        this.emit('started');
+        this.Start();
         this._logger.Write(`[HC] Starting  Trial ${trialIndex}`);
         this._logger.Write(`[HC] Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`[HC] Using nodesType: ${this.nodesType}`);
@@ -57,8 +57,8 @@ export default class HC extends IHeuristic {
             this._logger.Write(`[HC] Initial index: ${indexes.Type}`);
 
             this.executeCalculatedTimes(0, indexes, nodesIndexList, typeIndexCounter, () => {
+                this.Stop();
                 var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
-                this.emit('finished');
                 cb(results);
                 return;
             });
