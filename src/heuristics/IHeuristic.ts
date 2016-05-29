@@ -85,20 +85,20 @@ abstract class IHeuristic extends events.EventEmitter {
      * Releases a CrossOver over context
      */
     public CrossOver(first: Individual, second: Individual, cb: (newOnes: Individual[]) => void) {
-        
-            var context = new OperatorContext();
-            context.Operation = "CrossOver";
-            context.CrossOverTrials = this._globalConfig.crossOverTrials;
-            context.LibrarieOverTest = this._lib;
-            context.Original = this.bestIndividual;
-            context.First = first;
-            context.Second = second;
-            var msg: Message = new Message();
-            msg.ctx = context;
 
-            this.getResponse(msg, (newMsg) => {
-                cb([newMsg.ctx.First, newMsg.ctx.Second]);
-            });   
+        var context = new OperatorContext();
+        context.Operation = "CrossOver";
+        context.CrossOverTrials = this._globalConfig.crossOverTrials;
+        context.LibrarieOverTest = this._lib;
+        context.Original = this.bestIndividual;
+        context.First = first;
+        context.Second = second;
+        var msg: Message = new Message();
+        msg.ctx = context;
+
+        this.getResponse(msg, (newMsg) => {
+            cb([newMsg.ctx.First, newMsg.ctx.Second]);
+        });
     }
 
     /**
@@ -153,14 +153,20 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     UpdateBest(newBest: Individual): boolean {
         var found: boolean = false;
-        if (newBest.testResults && newBest.testResults.passedAllTests && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
-            this._logger.Write('=================================');
-            this.bestFit = newBest.testResults.fit;
-            this.bestIndividual = newBest;
-            this._logger.Write(`New Best Fit ${this.bestFit}`);
-            this._logger.Write('=================================');
-            found = true;
+        try {
+            if (newBest.testResults && newBest.testResults.passedAllTests && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
+                this._logger.Write('=================================');
+                this.bestFit = newBest.testResults.fit;
+                this.bestIndividual = newBest;
+                this._logger.Write(`New Best Fit ${this.bestFit}`);
+                this._logger.Write('=================================');
+                found = true;
+            }
         }
+        catch(err){
+            this._logger.Write(`[IHeuristic] ${err}`);
+        }
+
         return found;
     }
 
@@ -178,28 +184,28 @@ abstract class IHeuristic extends events.EventEmitter {
     * Releases a mutation over an AST  by nodetype and index
     */
     MutateBy(clone: Individual, indexes: NodeIndex, cb: (mutant) => void) {
-        
-            var type = indexes.Type;
-            var actualNodeIndex = indexes.Indexes[indexes.ActualIndex];
-            indexes.ActualIndex++;
 
-            this._logger.Write(`Mutant: [${type}, ${indexes.ActualIndex}]`);
+        var type = indexes.Type;
+        var actualNodeIndex = indexes.Indexes[indexes.ActualIndex];
+        indexes.ActualIndex++;
 
-            var ctx: OperatorContext = new OperatorContext();
-            ctx.First = clone;
-            ctx.NodeIndex = actualNodeIndex;
-            ctx.LibrarieOverTest = this._lib;
-            ctx.Original = this.bestIndividual;
-            ctx.Operation = "MutationByIndex";
-            ctx.MutationTrials = this._globalConfig.mutationTrials;
+        this._logger.Write(`Mutant: [${type}, ${indexes.ActualIndex}]`);
 
-            var msg: Message = new Message();
-            msg.ctx = ctx;
+        var ctx: OperatorContext = new OperatorContext();
+        ctx.First = clone;
+        ctx.NodeIndex = actualNodeIndex;
+        ctx.LibrarieOverTest = this._lib;
+        ctx.Original = this.bestIndividual;
+        ctx.Operation = "MutationByIndex";
+        ctx.MutationTrials = this._globalConfig.mutationTrials;
 
-            this.getResponse(msg, (newMsg) => {
-                cb(newMsg.ctx.First);
-            });
-        
+        var msg: Message = new Message();
+        msg.ctx = ctx;
+
+        this.getResponse(msg, (newMsg) => {
+            cb(newMsg.ctx.First);
+        });
+
     }
 
     /**

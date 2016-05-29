@@ -61,7 +61,9 @@ export default class RD extends IHeuristic {
 
             time++;
 
-            //this._logger.Write(`[RD]How Many: ${time}`);
+            this._logger.Write(`[RD]How Many: ${time}`);
+            //this._logger.Write(`[RD]mutants: ${mutants.length}`);
+            this._logger.Write(`[RD]Done? ${time == this.howManyTimes}`);
 
             mutants.forEach(element => {
                 this.UpdateBest(element);
@@ -84,11 +86,11 @@ export default class RD extends IHeuristic {
     private DoMutationsPerTime(counter: number, neighbors: Individual[], cb: (mutants: Individual[]) => void) {
 
         if (counter == this._config.neighborsToProcess) {
-            if (neighbors.length == counter + 1) {
-                cb(neighbors);
-            }
+            this._logger.Write(`[RD] Done requests. Just waiting`);
+            return;
         } else {
-
+            
+            this._logger.Write(`[RD] Asking  mutant ${counter}`);
             var context: OperatorContext = new OperatorContext();
             context.First = this.bestIndividual.Clone();
             this.operationsCounter++;
@@ -102,13 +104,16 @@ export default class RD extends IHeuristic {
             this.DoMutationsPerTime(counter, neighbors, cb);
         }
 
+        
 
-        if (!this.intervalId) {
+        this._logger.Write(`[RD] ${this.intervalId == undefined}`);
+        if (this.intervalId == undefined) {
             this.intervalId = setInterval(() => {
-                //this._logger.Write(`[RD] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
+                this._logger.Write(`[RD] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
                 if (neighbors.length == this.operationsCounter) {
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
+                    this._logger.Write(`[RD] Interval: doing callback`);
                     cb(neighbors);
                 }
             }, 10 * 1000);
