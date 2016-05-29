@@ -78,7 +78,9 @@ export default class RD extends IHeuristic {
                 cb();
             } else {
 
-                this.executeCalculatedTimes(time, cb);
+                setTimeout(()=>{
+                    this.executeCalculatedTimes(time, cb);
+                }, 10);
             }
 
         });
@@ -105,12 +107,15 @@ export default class RD extends IHeuristic {
             });
 
             counter++;
-            this.DoMutationsPerTime(counter, neighbors, cb);
+            
+            setTimeout(()=> {
+                this.DoMutationsPerTime(counter, neighbors, cb);
+            }, 10);
         }
 
         
 
-        this._logger.Write(`[RD] ${this.intervalId == undefined}`);
+        //this._logger.Write(`[RD] ${this.intervalId == undefined}`);
         if (this.intervalId == undefined) {
             this.intervalId = setInterval(() => {
                 this._logger.Write(`[RD] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
