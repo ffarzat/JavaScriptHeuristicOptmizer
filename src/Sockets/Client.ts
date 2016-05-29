@@ -62,6 +62,7 @@ export default class Client {
         } catch (err) {
             this.logger.Write(`[Client:${this.id}]Error: ${err}`);
             newIndividual = context.Original;
+            ctx.First = newIndividual;
         }
 
         this.logger.Write(`[Client:${this.id}]Mutant done.`);
@@ -95,6 +96,7 @@ export default class Client {
         catch (err) {
             this.logger.Write(`[Client:${this.id}]Error: ${err}`);
             newIndividual = context.Original;
+            ctx.First = newIndividual;
         }
 
         this.logger.Write(`[Client:${this.id}]Mutant done.`);
@@ -153,17 +155,19 @@ export default class Client {
     Test(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Executing Tests for ${context.LibrarieOverTest.name}`);
 
+        var ctx = new OperatorContext();
+
         try {
             this.InitializeTester(context);
             this._tester.Test(context.First); //First is subject
-            //this._tester.Test(context.Second); //Second is the original!!!!    
+            //this._tester.Test(context.Second); //Second is the original!!!!
+            ctx.First = context.First;    
         }
         catch (err) {
             this.logger.Write(`[Client:${this.id}]${err}`);
+            ctx.First = context.Original;
         }
-
-        var ctx = new OperatorContext();
-        ctx.First = context.First;
+        
         this.logger.Write(`[Client:${this.id}]Test done.`);
         return ctx;
     }
