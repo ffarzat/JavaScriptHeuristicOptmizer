@@ -40,12 +40,15 @@ export default class GA extends IHeuristic {
      * Run a single trial
      */
     RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
+        this.emit('started');
         this._logger.Write(`[GA] Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
 
         this.SetLibrary(library, () => {
             this.CreatesFirstGeneration(this.Original, (population) => {
                 this.executeStack(1, population, () => {
+                    this.emit('finished');
                     cb(this.ProcessResult(trialIndex, this.Original, this.bestIndividual));
+                    return;
                 });
             });
         });

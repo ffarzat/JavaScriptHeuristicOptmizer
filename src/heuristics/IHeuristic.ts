@@ -16,6 +16,7 @@ import NodeIndex from './NodeIndex';
 import events = require('events');
 import fs = require('fs');
 var uuid = require('node-uuid');
+var exectimer = require('exectimer');
 
 
 
@@ -41,6 +42,9 @@ abstract class IHeuristic extends events.EventEmitter {
 
     waitingMessages: Message[];   //store waiting messages
 
+    Tick: any;
+    trialUuid: any;
+
     /**
      * Forces the Heuristic to validate config
      */
@@ -50,6 +54,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this._astExplorer = new ASTExplorer();
         events.EventEmitter.call(this);
         this.waitingMessages = [];
+        this.trialUuid = uuid.v4();
 
         process.on('message', (newMsg: Message) => {
             var localMsg = this.Done(newMsg);
@@ -58,6 +63,17 @@ abstract class IHeuristic extends events.EventEmitter {
                 localMsg.cb(newMsg);
             }
         });
+
+        process.on('started', () => {
+            this.Tick = new exectimer.Tick(this.trialUuid);
+            this.Tick.start();
+        });
+
+        process.on('finished', () => {
+            this.Tick.stop();
+        });
+
+
     }
 
     /**
@@ -85,20 +101,20 @@ abstract class IHeuristic extends events.EventEmitter {
      * Releases a CrossOver over context
      */
     public CrossOver(first: Individual, second: Individual, cb: (newOnes: Individual[]) => void) {
-        
-            var context = new OperatorContext();
-            context.Operation = "CrossOver";
-            context.CrossOverTrials = this._globalConfig.crossOverTrials;
-            context.LibrarieOverTest = this._lib;
-            context.Original = this.bestIndividual;
-            context.First = first;
-            context.Second = second;
-            var msg: Message = new Message();
-            msg.ctx = context;
 
-            this.getResponse(msg, (newMsg) => {
-                cb([newMsg.ctx.First, newMsg.ctx.Second]);
-            });   
+        var context = new OperatorContext();
+        context.Operation = "CrossOver";
+        context.CrossOverTrials = this._globalConfig.crossOverTrials;
+        context.LibrarieOverTest = this._lib;
+        context.Original = this.bestIndividual;
+        context.First = first;
+        context.Second = second;
+        var msg: Message = new Message();
+        msg.ctx = context;
+
+        this.getResponse(msg, (newMsg) => {
+            cb([newMsg.ctx.First, newMsg.ctx.Second]);
+        });
     }
 
     /**
@@ -144,9 +160,20 @@ abstract class IHeuristic extends events.EventEmitter {
         results.originalIndividualCharacters = originalCode.length;
         results.originalIndividualLOC = originalCode.split(/\r\n|\r|\n/).length;
 
+        var trialTimer = exectimer.timers[this.trialUuid];
+        results.time = this.ToNanosecondsToMinutes(trialTimer.duration());
+
+
+
         return results;
     }
 
+    /**
+     * Transform nano secs in minutes
+     */
+    private ToNanosecondsToMinutes(nanovalue: number): number {
+        return parseFloat((nanovalue / 1000000000.0).toFixed(1)) / 60;
+    }
 
     /**
      * Update global best info
@@ -178,28 +205,28 @@ abstract class IHeuristic extends events.EventEmitter {
     * Releases a mutation over an AST  by nodetype and index
     */
     MutateBy(clone: Individual, indexes: NodeIndex, cb: (mutant) => void) {
-        
-            var type = indexes.Type;
-            var actualNodeIndex = indexes.Indexes[indexes.ActualIndex];
-            indexes.ActualIndex++;
 
-            this._logger.Write(`Mutant: [${type}, ${indexes.ActualIndex}]`);
+        var type = indexes.Type;
+        var actualNodeIndex = indexes.Indexes[indexes.ActualIndex];
+        indexes.ActualIndex++;
 
-            var ctx: OperatorContext = new OperatorContext();
-            ctx.First = clone;
-            ctx.NodeIndex = actualNodeIndex;
-            ctx.LibrarieOverTest = this._lib;
-            ctx.Original = this.bestIndividual;
-            ctx.Operation = "MutationByIndex";
-            ctx.MutationTrials = this._globalConfig.mutationTrials;
+        this._logger.Write(`Mutant: [${type}, ${indexes.ActualIndex}]`);
 
-            var msg: Message = new Message();
-            msg.ctx = ctx;
+        var ctx: OperatorContext = new OperatorContext();
+        ctx.First = clone;
+        ctx.NodeIndex = actualNodeIndex;
+        ctx.LibrarieOverTest = this._lib;
+        ctx.Original = this.bestIndividual;
+        ctx.Operation = "MutationByIndex";
+        ctx.MutationTrials = this._globalConfig.mutationTrials;
 
-            this.getResponse(msg, (newMsg) => {
-                cb(newMsg.ctx.First);
-            });
-        
+        var msg: Message = new Message();
+        msg.ctx = ctx;
+
+        this.getResponse(msg, (newMsg) => {
+            cb(newMsg.ctx.First);
+        });
+
     }
 
     /**
