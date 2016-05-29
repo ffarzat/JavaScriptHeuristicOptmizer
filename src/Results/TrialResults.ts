@@ -24,4 +24,5 @@ export default class TrialResult {
     
     best: Individual;
     original: Individual;
+    time: number; //time in minutes
 }

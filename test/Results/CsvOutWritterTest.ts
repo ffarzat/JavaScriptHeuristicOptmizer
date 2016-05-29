@@ -44,6 +44,7 @@ describe('CsvOutWritterTest Tests', function () {
         fakeResult.originalIndividualCharacters = 16000
         fakeResult.originalIndividualLOC = 70000;
         fakeResult.original = generatedAST.Clone();
+        fakeResult.time = 2.5;
         
         concrete.WriteTrialResults(fakeResult);
         
@@ -56,7 +57,8 @@ describe('CsvOutWritterTest Tests', function () {
         fakeResult.originalIndividualAvgTime = 2.1;
         fakeResult.originalIndividualCharacters = 26000
         fakeResult.originalIndividualLOC = 20000;
-        fakeResult.best = generatedAST.Clone();
+        fakeResult.original = generatedAST.Clone();
+        fakeResult.time = 1;
                 
         concrete.WriteTrialResults(fakeResult);
                 
