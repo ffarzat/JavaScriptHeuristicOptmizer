@@ -16,6 +16,7 @@ import NodeIndex from './NodeIndex';
 import events = require('events');
 import fs = require('fs');
 var uuid = require('node-uuid');
+var exectimer = require('exectimer');
 
 
 
@@ -41,6 +42,9 @@ abstract class IHeuristic extends events.EventEmitter {
 
     waitingMessages: Message[];   //store waiting messages
 
+    Tick: any;
+    trialUuid: any;
+
     /**
      * Forces the Heuristic to validate config
      */
@@ -50,6 +54,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this._astExplorer = new ASTExplorer();
         events.EventEmitter.call(this);
         this.waitingMessages = [];
+        this.trialUuid = uuid.v4();
 
         process.on('message', (newMsg: Message) => {
             var localMsg = this.Done(newMsg);
@@ -59,6 +64,18 @@ abstract class IHeuristic extends events.EventEmitter {
             }
         });
     }
+
+    public Start() {
+        this._logger.Write(`[IHeuristic] Started Event [${this.trialUuid}]`);
+        this.Tick = new exectimer.Tick(this.trialUuid);
+        this.Tick.start();
+    }
+
+    public Stop() {
+        this._logger.Write('[IHeuristic] Finisehd Event');
+        this.Tick.stop();
+    }
+
 
     /**
      * Especific Run for each Heuristic
@@ -144,9 +161,20 @@ abstract class IHeuristic extends events.EventEmitter {
         results.originalIndividualCharacters = originalCode.length;
         results.originalIndividualLOC = originalCode.split(/\r\n|\r|\n/).length;
 
+        var trialTimer = exectimer.timers[this.trialUuid];
+        results.time = this.ToNanosecondsToMinutes(trialTimer.duration());
+
+
+
         return results;
     }
 
+    /**
+     * Transform nano secs in minutes
+     */
+    private ToNanosecondsToMinutes(nanovalue: number): number {
+        return parseFloat((parseFloat((nanovalue / 1000000000.0).toFixed(1)) / 60).toFixed(1));
+    }
 
     /**
      * Update global best info
