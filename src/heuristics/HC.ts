@@ -24,6 +24,7 @@ export default class HC extends IHeuristic {
 
     intervalId;
     operationsCount: number;
+    typeIndexCounter: number;
 
     /**
      * Especific Setup
@@ -35,6 +36,7 @@ export default class HC extends IHeuristic {
         this.neighborApproach = config.neighborApproach;
         this.trials = config.trials;
         this.nodesType = config.nodesType;
+        this.typeIndexCounter = 0;
     }
 
     /**
@@ -49,14 +51,13 @@ export default class HC extends IHeuristic {
 
         this.SetLibrary(library, () => {
             var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
-            var typeIndexCounter = 0;
-            var indexes: NodeIndex = nodesIndexList[typeIndexCounter];
+            var indexes: NodeIndex = nodesIndexList[0];
             var totalTrials = this.trials;
             this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
             this._logger.Write(`[HC] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
             this._logger.Write(`[HC] Initial index: ${indexes.Type}`);
 
-            this.executeCalculatedTimes(0, indexes, nodesIndexList, typeIndexCounter, () => {
+            this.executeCalculatedTimes(0, indexes, nodesIndexList, () => {
                 this.Stop();
                 var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
                 cb(results);
@@ -69,11 +70,11 @@ export default class HC extends IHeuristic {
     /**
      * How many time to execute DoMutationsPerTime
      */
-    private executeCalculatedTimes(time: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], typeIndexCounter: number, cb: () => void) {
+    private executeCalculatedTimes(time: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], cb: () => void) {
 
         this.operationsCount = 0;
 
-        this.DoMutationsPerTime(0, [], indexes, nodesIndexList, typeIndexCounter, (mutants, updatedIndexes, typeCounter, finish) => {
+        this.DoMutationsPerTime(0, [], indexes, nodesIndexList, (mutants, updatedIndexes, finish) => {
             //this._logger.Write(`[HC]How Many: ${time}`);
             var foundNewBest = false;
 
@@ -101,8 +102,8 @@ export default class HC extends IHeuristic {
                 cb();
             } else {
                 setTimeout(()=> {
-                    this.executeCalculatedTimes(time, updatedIndexes, nodesIndexList, typeCounter, cb);
-                }, 10);
+                    this.executeCalculatedTimes(time, updatedIndexes, nodesIndexList, cb);
+                }, 0);
             }
 
         });
@@ -111,7 +112,7 @@ export default class HC extends IHeuristic {
     /**
      * Do N mutants per time
      */
-    private DoMutationsPerTime(counter: number, neighbors: Individual[], indexes: NodeIndex, nodesIndexList: NodeIndex[], typeIndexCounter: number, cb: (mutants: Individual[], indexes: NodeIndex, typeIndexCounter: number, done: boolean) => void) {
+    private DoMutationsPerTime(counter: number, neighbors: Individual[], indexes: NodeIndex, nodesIndexList: NodeIndex[], cb: (mutants: Individual[], indexes: NodeIndex, done: boolean) => void) {
         let itsover: boolean = false;
 
         //Rest some mutant to process?
@@ -122,14 +123,15 @@ export default class HC extends IHeuristic {
                 //Try change to next index
 
                 // its over all index?
-                if (typeIndexCounter >= nodesIndexList.length - 1) {
+                if (this.typeIndexCounter >= nodesIndexList.length - 1) {
                     this._logger.Write(`[HC] All neighbors were visited`);
                     itsover = true;
+                    return;
                 } else {
                     //change node index
-                    typeIndexCounter++;
-                    indexes = nodesIndexList[typeIndexCounter];
-                    this._logger.Write(`[HC] Change index: ${indexes.Type}`);
+                    this.typeIndexCounter++;
+                    indexes = nodesIndexList[this.typeIndexCounter];
+                    this._logger.Write(`[HC] Change index: ${indexes.Type}, ${this.typeIndexCounter}`);
                 }
             }
 
@@ -142,14 +144,14 @@ export default class HC extends IHeuristic {
                 counter++;
                 this.operationsCount = counter;
                 setTimeout(()=> {
-                    this.DoMutationsPerTime(counter++, neighbors, indexes, nodesIndexList, typeIndexCounter, cb);
-                }, 10);
+                    this.DoMutationsPerTime(counter++, neighbors, indexes, nodesIndexList, cb);
+                }, 0);
             }
         }
 
         //Process all neighbors?
         if (neighbors.length == this.operationsCount) {
-            cb(neighbors, indexes, typeIndexCounter, false);
+            cb(neighbors, indexes, false);
             return;
         }
 
@@ -157,19 +159,19 @@ export default class HC extends IHeuristic {
         if (!this.intervalId) {
 
             this.intervalId = setInterval(() => {
-                //this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}`);
+                this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
 
                 if (neighbors.length == this.operationsCount) {
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
 
-                    if (typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
+                    if (this.typeIndexCounter == (nodesIndexList.length -1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
                         clearInterval(this.intervalId);
                         this.intervalId = undefined;
-                        cb(neighbors, indexes, typeIndexCounter, true);
+                        cb(neighbors, indexes, true);
                     }
                     else {
-                        cb(neighbors, indexes, typeIndexCounter, false);
+                        cb(neighbors, indexes, false);
                     }
                 }
             }, 10 * 1000); //each ten secs
