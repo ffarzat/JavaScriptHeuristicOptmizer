@@ -44,15 +44,22 @@ export default class ASTExplorer {
         if(context.First){
             var oldFirst = context.First;
             newCtx.First = new Individual();
-            newCtx.First.AST = JSON.parse(fs.readFileSync(oldFirst['_astFile']).toString());
+            newCtx.First['_astFile'] = new Buffer(oldFirst['_astFile'].data); //JSON.parse(fs.readFileSync(oldFirst['_astFile']).toString());
             newCtx.First.testResults = oldFirst.testResults;
         }
         
         if(context.Second){
             var oldSecond = context.Second;
             newCtx.Second = new Individual();
-            newCtx.Second.AST = JSON.parse(fs.readFileSync(oldSecond['_astFile']).toString());
+            newCtx.Second['_astFile'] = new Buffer(oldSecond['_astFile'].data); //JSON.parse(fs.readFileSync(oldSecond['_astFile']).toString());
             newCtx.Second.testResults = oldSecond.testResults;
+        }
+        
+        if(context.Original){
+            var oldOriginal = context.Original;
+            newCtx.Original = new Individual();
+            newCtx.Original['_astFile'] = new Buffer(oldOriginal['_astFile'].data); //JSON.parse(fs.readFileSync(oldOriginal['_astFile']).toString());
+            newCtx.Original.testResults = oldOriginal.testResults;
         }
         
         return newCtx;
@@ -169,7 +176,7 @@ export default class ASTExplorer {
        var mutant: Individual;
        var originalCode = context.First.ToCode();
        
-       for (var index = 0; index < context.MutationTrials; index++) { //todo: adds top limit to mutation tries in config.json or ctx
+       for (var index = 0; index < context.MutationTrials; index++) {
            //console.log(`Mutation trial ${index}`)
            mutant = this.TryMutate(context);
            var mutantCode = mutant.ToCode();
@@ -193,13 +200,15 @@ export default class ASTExplorer {
         var mutant = context.First.Clone(); 
         var localNodeIndex = context.NodeIndex;
         var counter = 0;
+
+        //console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
         
         mutant.AST = traverse(mutant.AST).map(function (node) {
             if(counter == localNodeIndex){
-               this.remove();
+               this.remove(true); //stopHere=true
+               //console.log(`[ASTExplorer.MutateBy]Node:${node.type}`);
                this.stop();
             }
-            //console.log(counter);
             counter++;
         });
         
@@ -266,10 +275,10 @@ export default class ASTExplorer {
         var index: number = 0;
         
         traverse(individual.AST).forEach(function (node) {
-            //console.log('Indice: ' + index);
-            //console.log('Tipo ' + node.type);
             if(node && node.type && node.type == nodeType){ 
                 nodesIndex.push(index);
+                //console.log(`[ASTExplorer.IndexNodesBy]Tipo:${node.type}`);
+                //console.log(`[ASTExplorer.IndexNodesBy]Indice:${index}`);
             }
             
             index++;

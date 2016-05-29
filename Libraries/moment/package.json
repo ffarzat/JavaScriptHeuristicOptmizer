@@ -1,8 +1,8 @@
 {
-  "name": "lodash",
-  "version": "1.0.0",
+  "name": "Moment",
+  "version": "0.0.0",
   "description": "",
-  "main": "lodash.js",
+  "main": "global.js",
   "scripts": {
     "test": "karma start"
   },

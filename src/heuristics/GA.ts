@@ -1,3 +1,4 @@
+import IConfiguration from '../IConfiguration';
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
 import IHeuristic from './IHeuristic';
 
@@ -6,27 +7,27 @@ import ITester from '../ITester';
 import TrialResults from '../Results/TrialResults';
 import OperatorContext from '../OperatorContext';
 import ILogger from '../ILogger';
+import Library from '../Library';
 
 /**
  * Genetic Algorithm for Code Improvement
  */
 export default class GA extends IHeuristic {
-    
-    
+
+
     generations: number;
     individuals: number;
     crossoverProbability: number;
     mutationProbability: number;
     elitism: boolean;
     elitismPercentual: number;
-    
-     /**
-     * Especific Setup
-     */
-    Setup(config: TrialEspecificConfiguration): void{
-        
-        super.Setup(config);
-        
+    /**
+    * Especific Setup
+    */
+    Setup(config: TrialEspecificConfiguration, globalConfig: IConfiguration): void {
+
+        super.Setup(config, globalConfig);
+
         this.generations = config.generations;
         this.individuals = config.individuals;
         this.crossoverProbability = config.crossoverProbability;
@@ -34,122 +35,161 @@ export default class GA extends IHeuristic {
         this.elitism = config.elitism;
         this.elitismPercentual = config.elitismPercentual;
     }
-    
+
     /**
      * Run a single trial
      */
-    public async RunTrial(trialIndex: number): Promise<TrialResults>{
-        this._logger.Write(`Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
-        
-        var population: Individual [] = await this.CreatesFirstGeneration(this.Original);
+    RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
+        this.Start();
+        this._logger.Write(`[GA] Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
 
-        for (var generationIndex = 1; generationIndex < this.generations; generationIndex++) {
-            this._logger.Write(`Starting generation ${generationIndex}`);
-            
-            for (var individualIndex = 0; individualIndex < this.individuals -1; individualIndex++) {
-                
-                //Crossover
-                var crossoverChance = this.GenereateRandom(0, 100);
-                
-                if(this.crossoverProbability >= crossoverChance)
-                {
-                    this._logger.Write(`Doing a crossover with individual ${individualIndex}`);
-                    await this.DoCrossOver(population, individualIndex);
-                }
-                
-                
-                //Mutation
-                var mutationChance = this.GenereateRandom(0, 100);
-
-                if(this.mutationProbability >= mutationChance)
-                {
-                    this._logger.Write(`Doing a mutation with individual ${individualIndex}`);
-                    var context: OperatorContext = new OperatorContext();
-                    context.First = population[individualIndex];
-                    
-                    var mutant = await this.Mutate(context);
-                    mutant = await this.Test(mutant);
-                    population.push(mutant);
-                }
-            }
-
-            //Looking for a new best            
-            population.forEach(element => {
-                this.UpdateBest(element);
+        this.SetLibrary(library, () => {
+            this.CreatesFirstGeneration(this.Original, (population) => {
+                this.executeStack(1, population, () => {
+                    this.Stop();
+                    cb(this.ProcessResult(trialIndex, this.Original, this.bestIndividual));
+                    return;
+                });
             });
-            
-            //Cut off
-            await this.DoPopuplationCut(population);
-        }
-
-        var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
-
-        return new Promise<TrialResults>((resolve, reject) => {
-            resolve(results);
         });
     }
-    
+
+    /**
+     * Repeat recursively crossover, mutant e cutoff
+     */
+    private executeStack(generationIndex: number, population: Individual[], cb: () => void) {
+
+        if (generationIndex == (this._config.generations + 1)) {
+            cb(); //Done!
+        } else {
+            this._logger.Write(`[GA] Starting generation ${generationIndex}`);
+            this.DoCrossoversAndMutations(population, () => {
+                this.DoPopuplationCut(population, () => {
+                    generationIndex++
+                    this.executeStack(generationIndex, population, cb);
+                });
+            });
+        }
+    }
+
+
+    /**
+     * Do crossover and mutation over a population
+     */
+    private DoCrossoversAndMutations(population: Individual[], cb: () => void) {
+
+        let totalOperations = 0;
+        let totalCallback = 0;
+
+        for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
+
+            //Crossover
+            var crossoverChance = this.GenereateRandom(0, 100);
+
+            if (this.crossoverProbability >= crossoverChance) {
+                this._logger.Write(`[GA] Doing a crossover with individual ${individualIndex}`);
+                totalOperations++;
+
+                this.CrossOver(population[individualIndex], population[this.GenereateRandom(0, population.length - 1)], (elements) => {
+                    totalCallback++;
+
+                    population.push(elements[0]);
+                    population.push(elements[1]);
+
+                    this.UpdateBest(elements[0]);
+                    this.UpdateBest(elements[1]);
+
+                    if (totalOperations == totalCallback) {
+                        cb();
+                    }
+                });
+            }
+
+            //Mutation
+            var mutationChance = this.GenereateRandom(0, 100);
+
+            if (this.mutationProbability >= mutationChance) {
+                this._logger.Write(`[GA] Doing a mutation with individual ${individualIndex}`);
+
+                totalOperations++;
+
+                var context: OperatorContext = new OperatorContext();
+                context.First = population[individualIndex];
+
+                this.Mutate(context, (mutant) => {
+                    totalCallback++;
+                    population.push(mutant);
+                    this.UpdateBest(mutant);
+
+                    if (totalOperations == totalCallback) {
+                        cb();
+                    }
+                });
+            }
+        }
+    }
+
     /**
      * Releases Elitism over population
      */
-    private async DoPopuplationCut(population: Individual [])
-    {
-        if(this.elitism){
-           var countElitism = (this.individuals * this.elitismPercentual) / 100;
-           this._logger.Write(`Using Elitism. Cuting off ${countElitism} individuals`);
-           population.sort( (a,b)=> { return a.testResults.fit > b.testResults.fit ? 1: 0; });
-           population.splice(0, countElitism);
-           await this.Repopulate(population, countElitism);
+    private DoPopuplationCut(population: Individual[], cb: () => void) {
+        for (var index = 0; index < population.length; index++) {
+            var element = population[index];
+            if (element.testResults == undefined) {
+                population.splice(index, 1); //cut off
+                this._logger.Write(`[GA] ${index} has no TestResults`);
+            }
         }
-        else{
-           population.splice(0, this.individuals); 
+
+        if (this.elitism) {
+            var countElitism = Math.floor((this.individuals * this.elitismPercentual) / 100);
+            this._logger.Write(`[GA] Using Elitism. Cuting off ${countElitism} individuals`);
+            population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });
+            population.splice(0, countElitism);
+            this.Repopulate(population, countElitism, (elements) => {
+                cb();
+            });
+        }
+        else {
+            population.splice(0, this.individuals);
+            if (population.length < this.individuals) {
+                this.Repopulate(population, (this.individuals - population.length), (elements) => {
+                    cb();
+                });
+            }
         }
     }
-    
+
     /**
      * Repopulates using Mutation
      */
-    private async Repopulate(population: Individual [], untill: number)
-    {
-           this._logger.Write(`Initializing a new population [+ ${untill} new individuals]`);
-            
-           for (var localIndex = 0; localIndex < untill; localIndex++) {
-                var context: OperatorContext = new OperatorContext();
-                context.First = this.bestIndividual.Clone();
-                var mutant = await this.Test(await this.Mutate(context));
-                //this._logger.Write(`        FIT: ${this._tester.RetrieveConfiguratedFitFor(mutant)}`);
+    private Repopulate(population: Individual[], untill: number, cb: (individuals: Individual[]) => void) {
+        this._logger.Write(`[GA] Initializing a new population [+ ${untill} new individuals]`);
+        var total = 0;
+
+        for (var localIndex = 0; localIndex < untill; localIndex++) {
+            var context: OperatorContext = new OperatorContext();
+            context.First = this.bestIndividual.Clone();
+            this.Mutate(context, (mutant) => {
                 this.UpdateBest(mutant);
-                population.push(mutant);  
-           }
+                population.push(mutant);
+                total++;
+                if (total == untill) {
+                    this._logger.Write(`[GA] Repopulate: ${untill} done`);
+                    cb(population);
+                }
+            });
+        }
     }
-    
-    
-    /**
-     * Execute crossover
-     */
-    public async DoCrossOver(population: Individual [], individualIndex: number)
-    {
-        var context: OperatorContext = new OperatorContext();
-        context.First = population[individualIndex];
-        context.Second = population[this.GenereateRandom(0, population.length -1)];
-        var newOnes = await this.CrossOver(context);
-        
-        newOnes[0] = await this.Test(newOnes[0]);
-        population.push(newOnes[0]);
-        
-        newOnes[1] = await this.Test(newOnes[1]);
-        population.push(newOnes[1]);
-    }
-    
+
     /**
      * Returns a list of Mutated new individuals
      */
-    async CreatesFirstGeneration(original: Individual): Promise<Individual []>{
-        var localPopulation: Individual [] = [];
-        localPopulation.push(original);
-        
-        await this.Repopulate(localPopulation, this.individuals -1);
-        
-        return new Promise<Individual []> ((resolve) => { resolve(localPopulation)});
+    CreatesFirstGeneration(original: Individual, cb: (individuals: Individual[]) => void) {
+        var localPopulation: Individual[] = [];
+        this.Repopulate(localPopulation, this.individuals - 1, (newIndividuals: Individual[]) => {
+            newIndividuals.unshift(original);
+            cb(newIndividuals);
+        });
     }
 }

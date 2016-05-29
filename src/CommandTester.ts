@@ -46,7 +46,7 @@ export default class CommandTester implements ITester {
 
         //Setup tests with Lib context
         this.libMainFilePath = LibrarieOverTest.mainFilePath;
-        this.libDirectoryPath = path.join(process.cwd(), LibrarieOverTest.path);
+        this.libDirectoryPath = LibrarieOverTest.path;
         this.testOldDirectory = process.cwd();
         this.fitType = fitType;
         this.oldLibFilePath = path.join(this.libDirectoryPath, 'old.js');
@@ -80,10 +80,10 @@ export default class CommandTester implements ITester {
             
             var Tick = exectimer.Tick;
             
-            this.logger.Write(`Doing ${this.testUntil} evaluations`);
+            this.logger.Write(`Doing ${this.testUntil} evaluations for ${this.libDirectoryPath}`);
             
             for (var index = 0; index < this.testUntil; index++) {
-            
+                 this.logger.Write(`eval ${index}`);
                 var testExecutionTimeTick = new Tick(testUuid);
                 testExecutionTimeTick.start();
                 var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('npm test', {silent:true}) as Shell.ExecOutputReturnValue);
