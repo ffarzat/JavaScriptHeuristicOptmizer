@@ -100,7 +100,9 @@ export default class HC extends IHeuristic {
             if (time == this.howManyTimes || finish) { //Done!
                 cb();
             } else {
-                this.executeCalculatedTimes(time, updatedIndexes, nodesIndexList, typeCounter, cb);
+                setTimeout(()=> {
+                    this.executeCalculatedTimes(time, updatedIndexes, nodesIndexList, typeCounter, cb);
+                }, 10);
             }
 
         });
@@ -139,7 +141,9 @@ export default class HC extends IHeuristic {
 
                 counter++;
                 this.operationsCount = counter;
-                this.DoMutationsPerTime(counter++, neighbors, indexes, nodesIndexList, typeIndexCounter, cb);
+                setTimeout(()=> {
+                    this.DoMutationsPerTime(counter++, neighbors, indexes, nodesIndexList, typeIndexCounter, cb);
+                }, 10);
             }
         }
 
