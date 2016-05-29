@@ -15,7 +15,7 @@ import IHeuristic from '../../src/heuristics/IHeuristic';
 import HeuristicFactory from '../../src/heuristics/HeuristicFactory';
 import HC from '../../src/heuristics/HC';
 
-describe('CsvOutWritterTest Tests', () => {
+describe('CsvOutWritterTest Tests', function () {
     
     this.timeout(60*10*1000); //10 minutes
     
