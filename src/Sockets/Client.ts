@@ -43,7 +43,9 @@ export default class Client {
      */
     Mutate(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Processing new Mutant`);
-
+        
+        var ctx = new OperatorContext();
+        
         try {
             var newIndividual = this._astExplorer.Mutate(context);
 
@@ -57,7 +59,7 @@ export default class Client {
                 this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
             }
 
-            var ctx = new OperatorContext();
+            
             ctx.First = newIndividual;
         } catch (err) {
             this.logger.Write(`[Client:${this.id}]Error: ${err}`);
@@ -74,7 +76,9 @@ export default class Client {
     */
     MutateBy(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client:${this.id}]Processing new Mutant [Index]`);
-
+        
+        var ctx = new OperatorContext();
+        
         try {
 
             var newIndividual = this._astExplorer.MutateBy(context);
@@ -89,7 +93,7 @@ export default class Client {
                 this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
             }
 
-            var ctx = new OperatorContext();
+            
             ctx.First = newIndividual;
 
         }
