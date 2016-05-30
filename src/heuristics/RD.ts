@@ -16,6 +16,7 @@ export default class RD extends IHeuristic {
     howManyTimes: number;
 
     intervalId;
+    timeoutId;
     operationsCounter: number;
 
     /**
@@ -32,7 +33,7 @@ export default class RD extends IHeuristic {
      * Run the trial
      */
     RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
-        
+
         this.Start();
 
         this._logger.Write(`[RD] Starting  Random Search`);
@@ -78,9 +79,9 @@ export default class RD extends IHeuristic {
                 cb();
             } else {
 
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.executeCalculatedTimes(time, cb);
-                }, 10);
+                }, 0);
             }
 
         });
@@ -95,25 +96,35 @@ export default class RD extends IHeuristic {
             this._logger.Write(`[RD] Done requests. Just waiting`);
             return;
         } else {
-            
+
             this._logger.Write(`[RD] Asking  mutant ${counter}`);
             var context: OperatorContext = new OperatorContext();
             context.First = this.bestIndividual.Clone();
             this.operationsCounter++;
             this.Mutate(context, (mutant) => {
                 neighbors.push(mutant);
-                
+
                 this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
             });
 
             counter++;
-            
-            setTimeout(()=> {
+
+            setTimeout(() => {
                 this.DoMutationsPerTime(counter, neighbors, cb);
-            }, 10);
+            }, 0);
         }
 
-        
+        if (this.timeoutId == undefined) {
+            this.timeoutId = setTimeout(() => {
+                //
+                if (neighbors.length < this.operationsCounter) {
+                    clearTimeout(this.timeoutId);
+                    this.timeoutId = undefined;
+                    this.DoMutationsPerTime(counter, neighbors, cb); //do again
+                }
+
+            }, this._globalConfig.clientTimeout * 1000);
+        }
 
         //this._logger.Write(`[RD] ${this.intervalId == undefined}`);
         if (this.intervalId == undefined) {
@@ -125,7 +136,7 @@ export default class RD extends IHeuristic {
                     this._logger.Write(`[RD] Interval: doing callback`);
                     cb(neighbors);
                 }
-            }, 10 * 1000);
+            }, 1 * 1000);
         }
     }
 
