@@ -27,6 +27,7 @@ export default class GA extends IHeuristic {
     intervalId;
     timeoutId;
     operationsCounter: number;
+    totalCallBack: number;
 
 
     /**
@@ -96,9 +97,13 @@ export default class GA extends IHeuristic {
             var individual = population[elementIndex];
 
             if (operation == 'c') {
+                this._logger.Write(`[GA] Asking CrossOver for an individual ${elementIndex}`);
+                this.operationsCounter++
                 this.CrossOver(individual, individual, (elements) => {
-                    this._logger.Write(`[GA] Crossover done [+1]`);
-
+                    this._logger.Write(`[GA] Crossover done [${this.totalCallBack}]`);
+                    
+                    this.totalCallBack++;
+                    
                     population.push(elements[0]);
                     population.push(elements[1]);
 
@@ -110,11 +115,23 @@ export default class GA extends IHeuristic {
 
             if (elements.length > 0) {
                 setTimeout(this.ProcessOperations(population, elements, operation, cb), 50);
-            } else {
-                cb();
-            }
+            } 
 
         }, 50);
+        
+        
+        if (this.intervalId == undefined) {
+            this.intervalId = setInterval(() => {
+                this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
+                if (this.operationsCounter == this.totalCallBack) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = undefined;
+                    cb();
+                }
+            }, 1 * 1000);
+        }
+        
+        
 
     }
 
@@ -135,6 +152,9 @@ export default class GA extends IHeuristic {
             }
         }
 
+        this.operationsCounter = 0;
+        this.totalCallBack = 0;
+        
         this.ProcessOperations(population, crossoverIndexes, 'c', () => {
             this._logger.Write(`[GA] Waiting: ${totalOperationsInternal} Operations`);
             cb();
