@@ -116,7 +116,7 @@ export default class GA extends IHeuristic {
 
                 var context: OperatorContext = new OperatorContext();
                 context.First = individual;
-
+                this.operationsCounter++
                 this.Mutate(context, (mutant) => {
                     this._logger.Write(`[GA] Mutation ${this.totalCallBack} done`);
                     this.totalCallBack++;
