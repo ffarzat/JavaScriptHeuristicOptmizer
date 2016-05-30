@@ -72,11 +72,11 @@ export default class GA extends IHeuristic {
             cb(); //Done!
         } else {
             this._logger.Write(`[GA] Starting generation ${generationIndex}`);
-            
+
             this.DoCrossovers(population, () => {
-                
+
                 //Mutation
-                
+
                 this.DoPopuplationCut(population, () => {
                     generationIndex++
                     setTimeout(() => {
@@ -88,41 +88,56 @@ export default class GA extends IHeuristic {
         }
     }
 
-    /**
-     * Calculates crossovers operations over a probability
-     */
-    private DoCrossovers(population: Individual[], cb: () => void) {
-        let crossoverIndex = 0;
-        let totalCallback = 0;
 
-        async.each(population, (individual: Individual, asyncEachCb) => {
+    ProcessOperations(population: Individual[], elements: number[], operation: string, cb: ()=> void) {
 
-            var crossoverChance = this.GenereateRandom(0, 100);
+        setTimeout(() => {
+            var elementIndex = elements.shift();
+            var individual = population[elementIndex];
 
-            if (this.crossoverProbability >= crossoverChance) {
-                this._logger.Write(`[GA] Doing a crossover with individual ${crossoverIndex++}`);
-                
+            if (operation == 'c') {
                 this.CrossOver(individual, individual, (elements) => {
-                    this._logger.Write(`[GA] Crossover ${totalCallback++} done`);
-                    totalCallback++;
+                    this._logger.Write(`[GA] Crossover done [+1]`);
 
                     population.push(elements[0]);
                     population.push(elements[1]);
 
                     this.UpdateBest(elements[0]);
                     this.UpdateBest(elements[1]);
-                    
-                    asyncEachCb();
+
                 });
             }
 
-        }, (err) => {
-            if(err){
-                this._logger.Write(`[GA] Crossover Error: ${err}`);
+            if (elements.length > 0) {
+                setTimeout(arguments.callee, 25);
             }else{
-                this._logger.Write(`[GA] All Crossover operations done.`);
                 cb();
             }
+            
+        }, 25);
+
+    }
+
+    /**
+     * Calculates crossovers operations over a probability
+     */
+    private DoCrossovers(population: Individual[], cb: () => void) {
+        let crossoverIndex = 0;
+        let totalCallback = 0;
+        let crossoverIndexes:  number []= [];
+        let totalOperationsInternal = 0;
+
+        for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
+            var crossoverChance = this.GenereateRandom(0, 100);
+            if (this.crossoverProbability >= crossoverChance) { 
+                totalOperationsInternal++;
+                crossoverIndexes.push(individualIndex);
+            }
+        }
+        
+        this.ProcessOperations(population, crossoverIndexes, 'c', ()=>{
+            this._logger.Write(`[GA] Waiting: ${totalOperationsInternal} Operations`);
+            cb();    
         });
     }
 
