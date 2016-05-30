@@ -71,6 +71,7 @@ export default class GA extends IHeuristic {
         } else {
             this._logger.Write(`[GA] Starting generation ${generationIndex}`);
             this.DoCrossoversAndMutations(population, () => {
+                this.operationsCounter = 0;
                 this.DoPopuplationCut(population, () => {
                     generationIndex++
                     setTimeout(() => {
@@ -87,7 +88,7 @@ export default class GA extends IHeuristic {
      */
     private DoCrossoversAndMutations(population: Individual[], cb: () => void) {
 
-        let totalOperations = 0;
+        let totalOperationsInternal = 0;
         let totalCallback = 0;
         let crossoverIndex = 0;
         let mutationIndex = 0;
@@ -98,11 +99,12 @@ export default class GA extends IHeuristic {
             var crossoverChance = this.GenereateRandom(0, 100);
 
             if (this.crossoverProbability >= crossoverChance) {
+                totalOperationsInternal++;
                 setTimeout(() => {
                     this._logger.Write(`[GA] Doing a crossover with individual ${crossoverIndex++}`);
-                    totalOperations++;
 
                     this.CrossOver(population[individualIndex], population[this.GenereateRandom(0, population.length - 1)], (elements) => {
+                        this._logger.Write(`[GA] Crossover ${totalCallback++} done`);
                         totalCallback++;
 
                         population.push(elements[0]);
@@ -110,38 +112,46 @@ export default class GA extends IHeuristic {
 
                         this.UpdateBest(elements[0]);
                         this.UpdateBest(elements[1]);
-
-                        if (totalOperations == totalCallback) {
-                            cb();
-                        }
                     });
-                }, 0);
+                }, 500);
             }
 
             //Mutation
             var mutationChance = this.GenereateRandom(0, 100);
 
             if (this.mutationProbability >= mutationChance) {
+                totalOperationsInternal++;
+                
                 setTimeout(() => {
                     this._logger.Write(`[GA] Doing a mutation with individual ${mutationIndex++}`);
-
-                    totalOperations++;
 
                     var context: OperatorContext = new OperatorContext();
                     context.First = population[individualIndex];
 
                     this.Mutate(context, (mutant) => {
+                        this._logger.Write(`[GA] Mutation ${totalCallback++} done`);
                         totalCallback++;
                         population.push(mutant);
                         this.UpdateBest(mutant);
 
-                        if (totalOperations == totalCallback) {
-                            cb();
-                        }
                     });
-                }, 0);
+                }, 500);
             }
         }
+
+        this._logger.Write(`[GA] Waiting: ${totalOperationsInternal} Operations`);
+
+        if (this.intervalId == undefined) {
+            this.intervalId = setInterval(() => {
+                this._logger.Write(`[GA] Interval: totalOperations: ${totalOperationsInternal}, totalCallback : ${totalCallback}`);
+                if (totalOperationsInternal == totalCallback) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = undefined;
+                    cb();
+                }
+            }, 1 * 1000);
+        }
+
     }
 
     /**
