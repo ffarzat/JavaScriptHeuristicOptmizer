@@ -75,7 +75,8 @@ export default class GA extends IHeuristic {
             this._logger.Write(`[GA] Starting generation ${generationIndex}`);
 
             this.DoCrossovers(population, () => {
-
+                this.operationsCounter = 0;
+                this.totalCallBack = 0;
                 //Mutation
 
                 this.DoPopuplationCut(population, () => {
