@@ -9,6 +9,8 @@ import OperatorContext from '../OperatorContext';
 import ILogger from '../ILogger';
 import Library from '../Library';
 
+var async = require('async');
+
 /**
  * Genetic Algorithm for Code Improvement
  */
@@ -70,16 +72,58 @@ export default class GA extends IHeuristic {
             cb(); //Done!
         } else {
             this._logger.Write(`[GA] Starting generation ${generationIndex}`);
-            this.DoCrossoversAndMutations(population, () => {
-                this.operationsCounter = 0;
+            
+            this.DoCrossovers(population, () => {
+                
+                //Mutation
+                
                 this.DoPopuplationCut(population, () => {
                     generationIndex++
                     setTimeout(() => {
                         this.executeStack(generationIndex, population, cb);
                     }, 0);
                 });
+
             });
         }
+    }
+
+    /**
+     * Calculates crossovers operations over a probability
+     */
+    private DoCrossovers(population: Individual[], cb: () => void) {
+        let crossoverIndex = 0;
+        let totalCallback = 0;
+
+        async.each(population, (individual: Individual, asyncEachCb) => {
+
+            var crossoverChance = this.GenereateRandom(0, 100);
+
+            if (this.crossoverProbability >= crossoverChance) {
+                this._logger.Write(`[GA] Doing a crossover with individual ${crossoverIndex++}`);
+                
+                this.CrossOver(individual, individual, (elements) => {
+                    this._logger.Write(`[GA] Crossover ${totalCallback++} done`);
+                    totalCallback++;
+
+                    population.push(elements[0]);
+                    population.push(elements[1]);
+
+                    this.UpdateBest(elements[0]);
+                    this.UpdateBest(elements[1]);
+                    
+                    asyncEachCb();
+                });
+            }
+
+        }, (err) => {
+            if(err){
+                this._logger.Write(`[GA] Crossover Error: ${err}`);
+            }else{
+                this._logger.Write(`[GA] All Crossover operations done.`);
+                cb();
+            }
+        });
     }
 
 
@@ -121,7 +165,7 @@ export default class GA extends IHeuristic {
 
             if (this.mutationProbability >= mutationChance) {
                 totalOperationsInternal++;
-                
+
                 setTimeout(() => {
                     this._logger.Write(`[GA] Doing a mutation with individual ${mutationIndex++}`);
 
