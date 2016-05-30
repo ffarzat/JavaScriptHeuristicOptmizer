@@ -106,19 +106,22 @@ export default class ASTExplorer {
      */
     private TryCrossOver(context: OperatorContext): Individual[] {
         var indexesOne: number [] = this.IndexNodes(context.First);
-        var indexesTwo: number [] = this.IndexNodes(context.Second);
+        //var indexesTwo: number [] = this.IndexNodes(context.Second);
         var randomIndexNodeOne: number = this.GenereateRandom(0, indexesOne.length);
-        var randomIndexNodeTwo: number = this.GenereateRandom(0, indexesTwo.length);
+        var randomIndexNodeTwo: number = this.GenereateRandom(0, indexesOne.length);
+        //var randomIndexNodeTwo: number = this.GenereateRandom(0, indexesTwo.length);
 
         //Gets the nodes
         var firstNode = this.GetNode(context.First, indexesOne[randomIndexNodeOne]);
-        var secondNode = this.GetNode(context.Second, indexesTwo[randomIndexNodeTwo]);
+        var secondNode = this.GetNode(context.First, indexesOne[randomIndexNodeTwo]);
+        //var secondNode = this.GetNode(context.Second, indexesTwo[randomIndexNodeTwo]);
         
         //console.log('Node #1:' + JSON.stringify(firstNode));
         //console.log('Node #2:' + JSON.stringify(secondNode));
 
         //Do Crossover
-        var newSon: Individual = this.ReplaceNode(context.Second, indexesTwo[randomIndexNodeTwo], firstNode);
+        //var newSon: Individual = this.ReplaceNode(context.Second, indexesTwo[randomIndexNodeTwo], firstNode);
+        var newSon: Individual = this.ReplaceNode(context.First, indexesOne[randomIndexNodeTwo], firstNode);
         var newDaughter: Individual = this.ReplaceNode(context.First, indexesOne[randomIndexNodeOne], secondNode);
         
         //If err in cross...
@@ -133,7 +136,6 @@ export default class ASTExplorer {
         } catch (error) {
             newDaughter = context.Second.Clone();
         }
-
 
         var result: Individual[] = [newSon, newDaughter];
 

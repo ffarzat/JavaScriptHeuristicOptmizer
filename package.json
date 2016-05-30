@@ -17,7 +17,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "async": "^2.0.0-rc.5",
     "escodegen": "https://github.com/ffarzat/escodegen.git#960138e334432951d761659c5fe9ccdaa136dbf1",
     "esprima": "2.7.2",
     "exectimer": "2.0.0",
@@ -39,7 +38,6 @@
   "devDependencies": {
     "expect.js": "0.3.1",
     "grunt": "1.0.1",
-    "grunt-remove": "^0.1.0",
     "mocha": "2.4.5",
     "tsd": "0.6.5"
   }
