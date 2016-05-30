@@ -9,6 +9,8 @@ import OperatorContext from '../OperatorContext';
 import ILogger from '../ILogger';
 import Library from '../Library';
 
+var async = require("async");
+
 /**
  * Genetic Algorithm for Code Improvement
  */
@@ -66,7 +68,7 @@ export default class GA extends IHeuristic {
             this.DoCrossoversAndMutations(population, () => {
                 this.DoPopuplationCut(population, () => {
                     generationIndex++
-                    setTimeout(()=> {
+                    setTimeout(() => {
                         this.executeStack(generationIndex, population, cb);
                     }, 0);
                 });
@@ -168,22 +170,33 @@ export default class GA extends IHeuristic {
     private Repopulate(population: Individual[], untill: number, cb: (individuals: Individual[]) => void) {
         this._logger.Write(`[GA] Initializing a new population [+ ${untill} new individuals]`);
         var total = 0;
+        var mutantIndex: number = 0;
+
+        var mutationQueue = async.queue((task, callback) => {
+            setTimeout(() => {
+                this._logger.Write(`[GA]Asking for a mutant ${mutantIndex}`);
+                mutantIndex++;
+
+                this.Mutate(task, (mutant) => {
+                    this.UpdateBest(mutant);
+                    population.push(mutant);
+                    total++;
+                    callback();
+                });
+            }, 0);
+        }, this._config.neighborsToProcess);
+
+        mutationQueue.drain = () => {
+            this._logger.Write(`[GA] Repopulate: ${untill} done`);
+            cb(population);
+        }
 
         for (var localIndex = 0; localIndex < untill; localIndex++) {
             var context: OperatorContext = new OperatorContext();
             context.First = this.bestIndividual.Clone();
-            
-            this.Mutate(context, (mutant) => {
-                this._logger.Write(`[GA] mutant: ${total}`);
-                this.UpdateBest(mutant);
-                population.push(mutant);
-                total++;
-                
-                if (total == untill) {
-                    this._logger.Write(`[GA] Repopulate: ${untill} done`);
-                    cb(population);
-                }
-            });
+            mutationQueue.push(context, () => {
+                this._logger.Write(`[GA] mutant done: ${total}`);
+            })
         }
     }
 
