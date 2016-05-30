@@ -71,8 +71,7 @@ function ExecuteTrials(globalTrial: number) {
         if (globalTrial == configuration.trials) {
             return;
         }
-        else
-        {
+        else {
             ExecuteTrials(globalTrial);//next
         }
     });
@@ -92,9 +91,20 @@ function executeHeuristicTrial(trial: number, config: IConfiguration, heuristicT
             return;
 
         } else {
+            runGC();
             executeHeuristicTrial(trial, config, heuristicTrial, cb);
         }
     });
+
+}
+
+/**Executes forced GC */
+function runGC() {
+    if (typeof global.gc != "undefined") {
+        logger.Write(`Mem Usage Pre-GC ` + process.memoryUsage());
+        global.gc();
+        logger.Write(`Mem Usage Post-GC ` + process.memoryUsage());
+    }
 }
 
 function ParseConfigAndLibs() {
