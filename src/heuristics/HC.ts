@@ -174,7 +174,7 @@ export default class HC extends IHeuristic {
                         cb(neighbors, indexes, false);
                     }
                 }
-            }, 10 * 1000); //each ten secs
+            }, 1 * 1000); //each ten secs
         }
     }
 
