@@ -89,7 +89,7 @@ export default class GA extends IHeuristic {
     }
 
 
-    ProcessOperations(population: Individual[], elements: number[], operation: string, cb: ()=> void) {
+    ProcessOperations(population: Individual[], elements: number[], operation: string, cb: () => void) {
 
         setTimeout(() => {
             var elementIndex = elements.shift();
@@ -109,12 +109,12 @@ export default class GA extends IHeuristic {
             }
 
             if (elements.length > 0) {
-                setTimeout(arguments.callee, 25);
-            }else{
+                setTimeout(this.ProcessOperations(population, elements, operation, cb), 50);
+            } else {
                 cb();
             }
-            
-        }, 25);
+
+        }, 50);
 
     }
 
@@ -124,20 +124,20 @@ export default class GA extends IHeuristic {
     private DoCrossovers(population: Individual[], cb: () => void) {
         let crossoverIndex = 0;
         let totalCallback = 0;
-        let crossoverIndexes:  number []= [];
+        let crossoverIndexes: number[] = [];
         let totalOperationsInternal = 0;
 
         for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
             var crossoverChance = this.GenereateRandom(0, 100);
-            if (this.crossoverProbability >= crossoverChance) { 
+            if (this.crossoverProbability >= crossoverChance) {
                 totalOperationsInternal++;
                 crossoverIndexes.push(individualIndex);
             }
         }
-        
-        this.ProcessOperations(population, crossoverIndexes, 'c', ()=>{
+
+        this.ProcessOperations(population, crossoverIndexes, 'c', () => {
             this._logger.Write(`[GA] Waiting: ${totalOperationsInternal} Operations`);
-            cb();    
+            cb();
         });
     }
 
