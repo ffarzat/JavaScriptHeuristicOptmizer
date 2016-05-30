@@ -9,8 +9,6 @@ import OperatorContext from '../OperatorContext';
 import ILogger from '../ILogger';
 import Library from '../Library';
 
-var async = require('async');
-
 /**
  * Genetic Algorithm for Code Improvement
  */
