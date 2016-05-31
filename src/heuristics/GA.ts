@@ -280,7 +280,34 @@ export default class GA extends IHeuristic {
 
         if (counter == totalMutants) {
             this._logger.Write(`[GA] Done requests. Just waiting`);
+
+
+            if (this.timeoutId == undefined) {
+                this.timeoutId = setTimeout(() => {
+                    //
+                    if (neighbors.length < this.operationsCounter) {
+                        clearTimeout(this.timeoutId);
+                        this.timeoutId = undefined;
+                        this.DoMutationsPerTime(counter, neighbors, totalMutants, cb); //do again
+                    }
+
+                }, this._globalConfig.clientTimeout * 1000);
+            }
+
+            if (this.intervalId == undefined) {
+                this.intervalId = setInterval(() => {
+                    this._logger.Write(`[GA] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
+                    if (neighbors.length == this.operationsCounter) {
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
+                        this._logger.Write(`[GA] Interval: doing callback`);
+                        cb(neighbors);
+                    }
+                }, 1 * 1000);
+            }
+
             return;
+            
         } else {
 
             this._logger.Write(`[GA] Asking  mutant ${counter}`);
@@ -289,7 +316,6 @@ export default class GA extends IHeuristic {
             this.operationsCounter++;
             this.Mutate(context, (mutant) => {
                 neighbors.push(mutant);
-
                 this._logger.Write(`[GA] Mutant done: ${neighbors.length}`);
             });
 
@@ -298,31 +324,6 @@ export default class GA extends IHeuristic {
             setTimeout(() => {
                 this.DoMutationsPerTime(counter, neighbors, totalMutants, cb);
             }, 0);
-        }
-
-        if (this.timeoutId == undefined) {
-            this.timeoutId = setTimeout(() => {
-                //
-                if (neighbors.length < this.operationsCounter) {
-                    clearTimeout(this.timeoutId);
-                    this.timeoutId = undefined;
-                    this.DoMutationsPerTime(counter, neighbors, totalMutants, cb); //do again
-                }
-
-            }, this._globalConfig.clientTimeout * 1000);
-        }
-
-        //this._logger.Write(`[GA] ${this.intervalId == undefined}`);
-        if (this.intervalId == undefined) {
-            this.intervalId = setInterval(() => {
-                this._logger.Write(`[GA] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
-                if (neighbors.length == this.operationsCounter) {
-                    clearInterval(this.intervalId);
-                    this.intervalId = undefined;
-                    this._logger.Write(`[GA] Interval: doing callback`);
-                    cb(neighbors);
-                }
-            }, 1 * 1000);
         }
     }
 
