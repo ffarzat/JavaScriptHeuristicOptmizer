@@ -143,8 +143,17 @@ export default class GA extends IHeuristic {
             }, 1 * 1000);
         }
 
+        if (this.timeoutId == undefined) {
+            this.timeoutId = setTimeout(() => {
+                //
+                if (this.totalCallBack != this.operationsCounter) {
+                    clearTimeout(this.timeoutId);
+                    this.timeoutId = undefined;
+                    setTimeout(this.ProcessOperations(population, elements, operation, cb), 50);
+                }
 
-
+            }, this._globalConfig.clientTimeout * 1000);
+        }
     }
 
     /**
