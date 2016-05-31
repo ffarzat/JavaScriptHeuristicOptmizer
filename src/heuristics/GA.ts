@@ -228,7 +228,7 @@ export default class GA extends IHeuristic {
         var countTotal = Math.floor(population.length - this._config.individuals);
         this._logger.Write(`[GA] Sort population`);
         population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });
-        this._logger.Write(`[GA] backing population size`);
+        this._logger.Write(`[GA] backing population size ${population.length} -> ${countTotal}`);
         population.splice(this._config.individuals - 1, countTotal);
 
 
