@@ -43,13 +43,13 @@ export default class HC extends IHeuristic {
      * Run the trial
      */
     RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
-        this.Start();
         this._logger.Write(`[HC] Starting  Trial ${trialIndex}`);
         this._logger.Write(`[HC] Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`[HC] Using nodesType: ${this.nodesType}`);
 
 
         this.SetLibrary(library, () => {
+            this.Start();
             var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
             var indexes: NodeIndex = nodesIndexList[0];
             var totalTrials = this.trials;
