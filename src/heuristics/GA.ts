@@ -48,10 +48,10 @@ export default class GA extends IHeuristic {
      * Run a single trial
      */
     RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
-        this.Start();
         this._logger.Write(`[GA] Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
 
         this.SetLibrary(library, () => {
+            this.Start();
             this.CreatesFirstGeneration(this.Original, (population) => {
                 this.executeStack(1, population, () => {
                     this.Stop();
@@ -225,11 +225,19 @@ export default class GA extends IHeuristic {
             }
         }
 
+        var countTotal = Math.floor(population.length - this._config.individuals);
+        this._logger.Write(`[GA] Sort population`);
+        population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });
+        this._logger.Write(`[GA] backing population size`);
+        population.splice(this._config.individuals - 1, countTotal);
+
+
         if (this.elitism) {
             var countElitism = Math.floor((this.individuals * this.elitismPercentual) / 100);
+
             this._logger.Write(`[GA] Using Elitism. Cuting off ${countElitism} individuals`);
-            population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });
-            population.splice(0, countElitism);
+            population.splice(this._config.individuals - 1, countElitism);
+
             this.Repopulate(population, countElitism, (elements) => {
                 cb();
             });
@@ -323,8 +331,8 @@ export default class GA extends IHeuristic {
      * Returns a list of Mutated new individuals
      */
     CreatesFirstGeneration(original: Individual, cb: (individuals: Individual[]) => void) {
-        var localPopulation: Individual[] = [];
-        this.Repopulate(localPopulation, this.individuals - 1, (newIndividuals: Individual[]) => {
+
+        this.Repopulate([], this.individuals - 1, (newIndividuals: Individual[]) => {
             newIndividuals.unshift(original);
             cb(newIndividuals);
         });

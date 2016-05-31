@@ -34,8 +34,6 @@ export default class RD extends IHeuristic {
      */
     RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
 
-        this.Start();
-
         this._logger.Write(`[RD] Starting  Random Search`);
         this._logger.Write(`[RD] Starting  Trial ${trialIndex} of ${this.Trials}`);
 
@@ -46,6 +44,7 @@ export default class RD extends IHeuristic {
         this._logger.Write(`[RD] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
 
         this.SetLibrary(library, () => {
+            this.Start();
             this.executeCalculatedTimes(0, () => {
                 this.Stop();
                 var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
