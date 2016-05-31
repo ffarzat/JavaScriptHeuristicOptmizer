@@ -76,13 +76,13 @@ export default class Server {
                 }
                 index++;
             });
-            
+
             //this.logger.Write(`Index: ${index}`);
             this.clients.splice(index, 1);  //remove from availables
             this.ValidateRemove(client);
             //this.logger.Write(`Left ${this.clients.length} client(s)`);
-            
-            
+
+
             var waitingIndex = -1;
             this.clientProcessing.forEach(element => {
                 if (element.id === client.id) {
@@ -91,17 +91,20 @@ export default class Server {
                 waitingIndex++;
             });
             this.clientProcessing.splice(waitingIndex, 1);  //remove from availables
-            
+
         });
 
         //Handle on messagem from cliente!
         client.connection.on('message', (message) => {
-            var msg: Message = JSON.parse(message);
-
-            //this.logger.Write(`client[${client.id}]Done inside server`);
-
-            this.Done(client, msg);
-            //this.logger.Write(`Left ${this.clients.length} client(s)`);
+            try {
+                var msg: Message = JSON.parse(message);
+                //this.logger.Write(`client[${client.id}]Done inside server`);
+                this.Done(client, msg);
+                //this.logger.Write(`Left ${this.clients.length} client(s)`);
+            }
+            catch(err){
+                this.logger.Write(`[Server] ${err}`);
+            }
         });
     }
 
