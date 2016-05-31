@@ -93,6 +93,33 @@ export default class RD extends IHeuristic {
 
         if (counter == this._config.neighborsToProcess) {
             this._logger.Write(`[RD] Done requests. Just waiting`);
+
+            if (this.timeoutId == undefined) {
+                this.timeoutId = setTimeout(() => {
+                    //
+                    if (neighbors.length < this.operationsCounter) {
+                        clearTimeout(this.timeoutId);
+                        this.timeoutId = undefined;
+                        this.DoMutationsPerTime(counter, neighbors, cb); //do again
+                    }
+
+                }, this._globalConfig.clientTimeout * 1000);
+            }
+
+            //this._logger.Write(`[RD] ${this.intervalId == undefined}`);
+            if (this.intervalId == undefined) {
+                this.intervalId = setInterval(() => {
+                    this._logger.Write(`[RD] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
+                    if (neighbors.length == this.operationsCounter) {
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
+                        this._logger.Write(`[RD] Interval: doing callback`);
+                        cb(neighbors);
+                    }
+                }, 1 * 1000);
+            }
+
+
             return;
         } else {
 
@@ -111,31 +138,6 @@ export default class RD extends IHeuristic {
             setTimeout(() => {
                 this.DoMutationsPerTime(counter, neighbors, cb);
             }, 0);
-        }
-
-        if (this.timeoutId == undefined) {
-            this.timeoutId = setTimeout(() => {
-                //
-                if (neighbors.length < this.operationsCounter) {
-                    clearTimeout(this.timeoutId);
-                    this.timeoutId = undefined;
-                    this.DoMutationsPerTime(counter, neighbors, cb); //do again
-                }
-
-            }, this._globalConfig.clientTimeout * 1000);
-        }
-
-        //this._logger.Write(`[RD] ${this.intervalId == undefined}`);
-        if (this.intervalId == undefined) {
-            this.intervalId = setInterval(() => {
-                this._logger.Write(`[RD] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
-                if (neighbors.length == this.operationsCounter) {
-                    clearInterval(this.intervalId);
-                    this.intervalId = undefined;
-                    this._logger.Write(`[RD] Interval: doing callback`);
-                    cb(neighbors);
-                }
-            }, 1 * 1000);
         }
     }
 
