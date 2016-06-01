@@ -130,8 +130,8 @@ export default class GA extends IHeuristic {
             }
             else {
                 this._logger.Write(`[GA] Operation requests done. Just waiting.`);
-                
-                
+
+
                 if (this.intervalId == undefined) {
                     this.intervalId = setInterval(() => {
                         this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
@@ -145,12 +145,13 @@ export default class GA extends IHeuristic {
 
                 if (this.timeoutId == undefined) {
                     this.timeoutId = setTimeout(() => {
-                        //
-                        if (this.totalCallBack != this.operationsCounter) {
-                            clearTimeout(this.timeoutId);
-                            this.timeoutId = undefined;
-                            setTimeout(this.ProcessOperations(population, elements, operation, cb), 50);
-                        }
+                        this._logger.Write(`[GA] Operation timeout. Next... `);
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
+                        
+                        clearTimeout(this.timeoutId);
+                        this.timeoutId = undefined;
+                        cb();
 
                     }, this._globalConfig.clientTimeout * 1000);
                 }

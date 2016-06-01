@@ -96,12 +96,14 @@ export default class RD extends IHeuristic {
 
             if (this.timeoutId == undefined) {
                 this.timeoutId = setTimeout(() => {
-                    //
-                    if (neighbors.length < this.operationsCounter) {
+                    this._logger.Write(`[RD] Operation timeout. Next... `);
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
+                        
                         clearTimeout(this.timeoutId);
                         this.timeoutId = undefined;
-                        this.DoMutationsPerTime(counter, neighbors, cb); //do again
-                    }
+                        
+                        cb(neighbors);
 
                 }, this._globalConfig.clientTimeout * 1000);
             }
