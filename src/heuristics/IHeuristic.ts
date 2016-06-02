@@ -172,7 +172,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Transform nano secs in minutes
      */
-    private ToNanosecondsToMinutes(nanovalue: number): number {
+    ToNanosecondsToMinutes(nanovalue: number): number {
         return parseFloat((parseFloat((nanovalue / 1000000000.0).toFixed(1)) / 60).toFixed(1));
     }
 
