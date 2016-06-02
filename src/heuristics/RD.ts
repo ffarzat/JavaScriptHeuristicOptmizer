@@ -106,7 +106,7 @@ export default class RD extends IHeuristic {
                     var minutes = this.DateDiff('n', start, new Date());
                     this._logger.Write(`[RD] time spent: ${minutes} minutes`);
                     
-                    if(minutes >= (this._globalConfig.clientTimeout *1000))
+                    if(minutes >= (this._globalConfig.clientTimeout / 60))
                     {
                         this._logger.Write(`[RD] timed out`);
                         cb(neighbors);
