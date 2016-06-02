@@ -7,6 +7,8 @@ import OperatorContext from '../OperatorContext';
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
 import Library from '../Library';
 
+var exectimer = require("exectimer");
+
 /**
  * Random Search for Code Improvement
  */
@@ -94,24 +96,26 @@ export default class RD extends IHeuristic {
         if (counter == this._config.neighborsToProcess) {
             this._logger.Write(`[RD] Done requests. Just waiting`);
 
-            if (this.timeoutId == undefined) {
-                this.timeoutId = setTimeout(() => {
-                    this._logger.Write(`[RD] Operation timeout. Next... `);
-                        clearInterval(this.intervalId);
-                        this.intervalId = undefined;
-                        
-                        clearTimeout(this.timeoutId);
-                        this.timeoutId = undefined;
-                        
-                        cb(neighbors);
-
-                }, this._globalConfig.clientTimeout * 1000);
-            }
-
             //this._logger.Write(`[RD] ${this.intervalId == undefined}`);
             if (this.intervalId == undefined) {
+                var tick = new exectimer.Tick("DoMutationsPerTime.setInterval");
+                tick.start();
+
                 this.intervalId = setInterval(() => {
                     this._logger.Write(`[RD] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
+                    
+                    
+                    var myFunc_timer = exectimer.timers.myFunction;
+                    var minutes = this.ToNanosecondsToMinutes(myFunc_timer.duration());
+                    this._logger.Write(`[RD] time spent: ${minutes}`);
+                    
+                    if(minutes >= (this._globalConfig.clientTimeout *1000))
+                    {
+                        this._logger.Write(`[RD] timed out`);
+                        cb(neighbors);
+                    }
+                    
+                    
                     if (neighbors.length == this.operationsCounter) {
                         clearInterval(this.intervalId);
                         this.intervalId = undefined;
