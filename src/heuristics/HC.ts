@@ -125,32 +125,6 @@ export default class HC extends IHeuristic {
                 // its over all index?
                 if (this.typeIndexCounter >= nodesIndexList.length - 1) {
                     this._logger.Write(`[HC] All neighbors were visited`);
-
-
-                    //Waiting to be done!
-                    if (!this.intervalId) {
-
-                        this.intervalId = setInterval(() => {
-                            //this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
-
-                            if (neighbors.length == this.operationsCount) {
-                                clearInterval(this.intervalId);
-                                this.intervalId = undefined;
-
-                                if (this.typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
-                                    clearInterval(this.intervalId);
-                                    this.intervalId = undefined;
-                                    cb(neighbors, indexes, true);
-                                }
-                                else {
-                                    cb(neighbors, indexes, false);
-                                }
-                            }
-                        }, 1 * 1000); //each ten secs
-                    }
-
-
-
                     itsover = true;
                     return;
                 } else {
@@ -179,6 +153,28 @@ export default class HC extends IHeuristic {
         if (neighbors.length == this.operationsCount) {
             cb(neighbors, indexes, false);
             return;
+        }
+
+        //Waiting to be done!
+        if (!this.intervalId) {
+
+            this.intervalId = setInterval(() => {
+                //this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
+
+                if (neighbors.length == this.operationsCount) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = undefined;
+
+                    if (this.typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
+                        cb(neighbors, indexes, true);
+                    }
+                    else {
+                        cb(neighbors, indexes, false);
+                    }
+                }
+            }, 1 * 1000); //each ten secs
         }
     }
 
