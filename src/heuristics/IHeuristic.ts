@@ -177,6 +177,23 @@ abstract class IHeuristic extends events.EventEmitter {
     }
 
     /**
+     * datepart: 'y', 'm', 'w', 'd', 'h', 'n', 's'
+     */
+    DateDiff (datepart, fromdate, todate) {
+        datepart = datepart.toLowerCase();
+        var diff = todate - fromdate;
+        var divideBy = {
+            w: 604800000,
+            d: 86400000,
+            h: 3600000,
+            n: 60000,
+            s: 1000
+        };
+
+        return Math.floor(diff / divideBy[datepart]);
+    }
+
+    /**
      * Update global best info
      */
     UpdateBest(newBest: Individual): boolean {
@@ -191,7 +208,7 @@ abstract class IHeuristic extends events.EventEmitter {
                 found = true;
             }
         }
-        catch(err){
+        catch (err) {
             this._logger.Write(`[IHeuristic] ${err}`);
         }
 
