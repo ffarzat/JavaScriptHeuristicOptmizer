@@ -103,10 +103,8 @@ export default class RD extends IHeuristic {
                 this.intervalId = setInterval(() => {
                     this._logger.Write(`[RD] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
                     
-                    
-                    
                     var minutes = this.DateDiff('n', start, new Date());
-                    this._logger.Write(`[RD] time spent: ${minutes}`);
+                    this._logger.Write(`[RD] time spent: ${minutes} minutes`);
                     
                     if(minutes >= (this._globalConfig.clientTimeout *1000))
                     {

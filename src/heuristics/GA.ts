@@ -131,29 +131,26 @@ export default class GA extends IHeuristic {
             else {
                 this._logger.Write(`[GA] Operation requests done. Just waiting.`);
 
-
                 if (this.intervalId == undefined) {
+                    var start = new Date();
+
                     this.intervalId = setInterval(() => {
                         this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
+
+                        var minutes = this.DateDiff('n', start, new Date());
+                        this._logger.Write(`[GA] time spent: ${minutes} minutes`);
+
+                        if (minutes >= (this._globalConfig.clientTimeout * 1000)) {
+                            this._logger.Write(`[GA] timed out`);
+                            cb();
+                        }
+
                         if (this.operationsCounter == this.totalCallBack) {
                             clearInterval(this.intervalId);
                             this.intervalId = undefined;
                             cb();
                         }
                     }, 1 * 1000);
-                }
-
-                if (this.timeoutId == undefined) {
-                    this.timeoutId = setTimeout(() => {
-                        this._logger.Write(`[GA] Operation timeout. Next... `);
-                        clearInterval(this.intervalId);
-                        this.intervalId = undefined;
-                        
-                        clearTimeout(this.timeoutId);
-                        this.timeoutId = undefined;
-                        cb();
-
-                    }, this._globalConfig.clientTimeout * 1000);
                 }
             }
 
