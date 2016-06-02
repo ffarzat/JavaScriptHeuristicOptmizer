@@ -98,15 +98,14 @@ export default class RD extends IHeuristic {
 
             //this._logger.Write(`[RD] ${this.intervalId == undefined}`);
             if (this.intervalId == undefined) {
-                var tick = new exectimer.Tick("DoMutationsPerTime.setInterval");
-                tick.start();
+                var start = new Date();
 
                 this.intervalId = setInterval(() => {
                     this._logger.Write(`[RD] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
                     
                     
-                    var myFunc_timer = exectimer.timers.myFunction;
-                    var minutes = this.ToNanosecondsToMinutes(myFunc_timer.duration());
+                    var end = <any>(new Date()) - <any>start;
+                    var minutes = this.ToNanosecondsToMinutes(end);
                     this._logger.Write(`[RD] time spent: ${minutes}`);
                     
                     if(minutes >= (this._globalConfig.clientTimeout *1000))
