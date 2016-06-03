@@ -5,30 +5,33 @@ myApp.config(['NgAdminConfigurationProvider', function (NgAdminConfigurationProv
     var admin = nga.application('JavaScript Heuristic Optmizer Status, Results and Configurations')
         .debug(false) // debug disabled
         .baseApiUrl('http://localhost:5000/'); // main API endpoint;
-        
-    
 
-    var Log = nga.entity('Log');
+
+
+    var LogLine = nga.entity('LogLine');
     var Config = nga.entity('Config');
     var Results = nga.entity('Results');
     var Status = nga.entity('Status');
 
     admin.addEntity(Status);
+    admin.addEntity(LogLine);
 
     Status.readOnly();                  // a readOnly entity has disabled creation, edition, and deletion views
 
     Status.showView()
         .fields([
-            nga.field('Time', 'datetime'),
-            nga.field('Messages'),
-            nga.field('WaitingMessages'),
-            nga.field('Clients'),
-            nga.field('ClientProcessing')
+            nga.field('Log', 'referenced_list') // display list of related Log Lines
+                .targetEntity(nga.entity('LogLine'))
+                .targetReferenceField('status_id')
+                .targetFields([
+                    nga.field('Date'),
+                    nga.field('Text').label('Info')
+                ])
+                .sortField("Date")
         ]);
 
-
     admin.menu(nga.menu()
-        .addChild(nga.menu(Log).title('Log File').link('/logfile'))
+        .addChild(nga.menu(LogLine).title('Log File').link('/logfile'))
         .addChild(nga.menu(Config).title('Config File').link('/configfile'))
         .addChild(nga.menu(Results).title('Results').link('/resultslist'))
     );
@@ -38,7 +41,7 @@ myApp.config(['NgAdminConfigurationProvider', function (NgAdminConfigurationProv
     var customDashboardTemplate =
         '<div class="row dashboard-starter"></div>' +
         '<div class="row dashboard-content"><div class="col-lg-12"><div class="alert alert-info">' +
-        'Server Status' +
+        'Server Status: Online' +
         '</div></div></div>' +
         '<div class="row dashboard-content">' +
         '<div class="col-lg-12">' +
@@ -52,7 +55,7 @@ myApp.config(['NgAdminConfigurationProvider', function (NgAdminConfigurationProv
     admin.dashboard(nga.dashboard()
         .addCollection(nga.collection(Status)
             .title('Status')
-            .perPage(10)
+            .perPage(1)
             .fields([
                 nga.field('Time').label('Server Time'),
                 nga.field('Messages').label('Messages waiting'),

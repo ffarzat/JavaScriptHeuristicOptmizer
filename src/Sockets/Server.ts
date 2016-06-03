@@ -4,6 +4,8 @@ import ILogger from '../ILogger';
 import Client from './Client';
 import Message from './Message';
 
+
+import fs = require('fs');
 import WebSocketServer = require('ws');
 import express = require('express');
 
@@ -23,10 +25,14 @@ export default class Server {
     clientProcessing: Client[] = []; //store client processing something
     waitingMessages: Message[] = []; //store waiting messages
 
+    configuration: IConfiguration
+
     /**
      * Configs the server to execute
      */
     Setup(configuration: IConfiguration): void {
+
+        this.configuration = configuration;
 
         this.port = configuration.port;
         this.url = configuration.url;
@@ -38,8 +44,6 @@ export default class Server {
         this.wsServer = new WebSocketServer.Server({ server: this.server });
         this.HandleServer();
         this.logger.Write(`[Server]Listening at ${this.url}:${this.port}`);
-
-
     }
 
     /**
@@ -50,7 +54,8 @@ export default class Server {
 
         app.get('/Status', (req, res) => {
             var list = [{
-                "Time": new Date().toISOString().replace(/T/, ' '). replace(/\..+/, ''),
+                "id": 1,
+                "Time": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
                 "Messages": this.messages.length,
                 "WaitingMessages": this.waitingMessages.length,
                 "Clients": this.clients.length,
@@ -58,6 +63,55 @@ export default class Server {
             }];
             res.send(list);
         });
+
+        app.get('/Status/:id', (req, res) => {
+            var list = [{
+                "id": 1,
+                "Time": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+                "Messages": this.messages.length,
+                "WaitingMessages": this.waitingMessages.length,
+                "Clients": this.clients.length,
+                "ClientProcessing": this.clientProcessing.length
+            }];
+            res.send(list);
+        });
+
+        app.get('/LogLine', (req, res) => {
+            var list = [];
+            var lineIndex = 0;
+
+            list.push({
+                "id": lineIndex,
+                "Date": '2016-06-03 18:30:05',
+                "Text": '[GA] says something'
+            });
+
+            res.send(list);
+
+
+            /*
+                        (this.configuration.logFilePath, (lines: string[]) => {
+                            console.log(lines);
+            
+                            lines.forEach(element => {
+                                var values = element.split("|");
+            
+                                list.push({
+                                    "id": lineIndex,
+                                    "Date": values[0],
+                                    "Text": values[1]
+                                });
+                            });
+            
+            
+            
+                            res.send(list);
+                        });
+            
+            */
+
+        });
+
     }
 
     /**
