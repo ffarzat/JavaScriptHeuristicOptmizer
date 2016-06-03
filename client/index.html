@@ -2,37 +2,14 @@
 <html lang="en">
 
 <head>
-  <title>Login</title>
+  <title>JavaScript Heuristic Optmizer Dashboard</title>
   <link rel="stylesheet" href="build/ng-admin.min.css">
 </head>
 
 <body ng-app="myApp">
   <div ui-view></div>
   <script src="build/ng-admin.min.js"></script>
-  <script type="text/javascript">
-    var myApp = angular.module('myApp', ['ng-admin']);
-    myApp.config(['NgAdminConfigurationProvider', function(NgAdminConfigurationProvider) {
-        var nga = NgAdminConfigurationProvider;
-        // create an admin application
-        var admin = nga.application('Optmizer Admin');
-        // more configuration here later
-        
-        var Log = nga.entity('Log');
-        var Config = nga.entity('Config');
-        var Results = nga.entity('Results');
-        
-        
-        
-        admin.menu(nga.menu()
-       .addChild(nga.menu(Log).title('Log File').link('/logfile'))
-       .addChild(nga.menu(Config).title('Config File').link('/configfile'))
-       .addChild(nga.menu(Results).title('Results').link('/resultslist'))
-       );
-        
-        // attach the admin application to the DOM and run it
-        nga.configure(admin);
-    }]);
-  </script>
+  <script src="config.js" type="text/javascript"></script>
 </body>
 
 </html>

@@ -5,6 +5,7 @@ import Client from './Client';
 import Message from './Message';
 
 import WebSocketServer = require('ws');
+import express = require('express');
 
 /**
  * Server to control the optmization process
@@ -29,17 +30,34 @@ export default class Server {
 
         this.port = configuration.port;
         this.url = configuration.url;
-        
-        var express         = require('express');
-        var app             = express();
-        app.use(express.static('build/client'));
-        
-        this.server             = app.listen(this.port);
-        this.wsServer           = new WebSocketServer.Server({server: this.server});
+
+        var app = express();
+        this.configure(app);
+        this.server = app.listen(this.port);
+
+        this.wsServer = new WebSocketServer.Server({ server: this.server });
         this.HandleServer();
         this.logger.Write(`[Server]Listening at ${this.url}:${this.port}`);
-        
-        
+
+
+    }
+
+    /**
+     * Configure express app routes
+     */
+    private configure(app: express.Application) {
+        app.use(express.static('build/client'));
+
+        app.get('/Status', (req, res) => {
+            var list = [{
+                "Time": new Date(),
+                "Messages": this.messages.length,
+                "WaitingMessages": this.waitingMessages.length,
+                "Clients": this.clients.length,
+                "ClientProcessing": this.clientProcessing.length
+            }];
+            res.send(list);
+        });
     }
 
     /**
@@ -108,7 +126,7 @@ export default class Server {
                 this.Done(client, msg);
                 //this.logger.Write(`Left ${this.clients.length} client(s)`);
             }
-            catch(err){
+            catch (err) {
                 this.logger.Write(`[Server] ${err}`);
             }
         });
