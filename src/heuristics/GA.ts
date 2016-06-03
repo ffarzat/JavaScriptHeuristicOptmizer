@@ -140,7 +140,7 @@ export default class GA extends IHeuristic {
                         var minutes = this.DateDiff('n', start, new Date());
                         this._logger.Write(`[GA] time spent: ${minutes} minutes`);
 
-                        if (minutes >= (this._globalConfig.clientTimeout * 1000)) {
+                        if (minutes >= (this._globalConfig.clientTimeout / 60)) {
                             this._logger.Write(`[GA] timed out`);
                             cb();
                         }
