@@ -13,9 +13,9 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC", "RD", "GA"],
+    "heuristics": ["GA", "HC", "RD"],
     "port": 5000,
-    "url": "ws://localhost",
+    "url": "ws://177.70.19.23",
     "clientTimeout":300,
     "libraries" : [
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }
