@@ -126,7 +126,8 @@ export default class GA extends IHeuristic {
             }
 
             if (elements.length > 0) {
-                setTimeout( ()=> {this.ProcessOperations(population, elements, operation, cb);}, 50);
+                setTimeout(() => { this.ProcessOperations(population, elements, operation, cb); }
+                    , 50);
             }
             else {
                 this._logger.Write(`[GA] Operation requests done. Just waiting.`);
