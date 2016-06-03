@@ -270,8 +270,8 @@ export default class GA extends IHeuristic {
         this.DoMutationsPerTime(0, [], untill, (mutants) => {
             this._logger.Write(`[GA] Repopulate: ${untill} done`);
 
-            this.totalCallBack = 0;
-            this.operationsCounter = 0;
+            this.totalCallBack = untill;
+            
 
             mutants.forEach(element => {
                 this.UpdateBest(element);
@@ -293,10 +293,15 @@ export default class GA extends IHeuristic {
 
                 if (minutes >= (this._globalConfig.clientTimeout / 60)) {
                     this._logger.Write(`[GA] timed out`);
+                    clearInterval(this.intervalId);
+                    this.intervalId = undefined;
                     cb(population);
                 }
 
                 if (this.operationsCounter == this.totalCallBack) {
+                    this.totalCallBack = 0;
+                    this.operationsCounter = 0;
+                    
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
                     cb(population);
