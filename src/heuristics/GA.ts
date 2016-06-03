@@ -265,7 +265,7 @@ export default class GA extends IHeuristic {
         var total = 0;
         var mutantIndex: number = 0;
 
-        this.operationsCounter = untill;
+        this.operationsCounter = 0;
         this.totalCallBack = 0;
 
         this.DoMutationsPerTime(0, [], untill, (mutants) => {
