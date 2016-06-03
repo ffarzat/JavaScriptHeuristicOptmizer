@@ -50,7 +50,7 @@ export default class Server {
 
         app.get('/Status', (req, res) => {
             var list = [{
-                "Time": new Date(),
+                "Time": new Date().toISOString().replace(/T/, ' '). replace(/\..+/, ''),
                 "Messages": this.messages.length,
                 "WaitingMessages": this.waitingMessages.length,
                 "Clients": this.clients.length,

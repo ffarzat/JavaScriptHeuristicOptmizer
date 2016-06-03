@@ -19,7 +19,7 @@ myApp.config(['NgAdminConfigurationProvider', function (NgAdminConfigurationProv
 
     Status.showView()
         .fields([
-            nga.field('Time', 'date'),
+            nga.field('Time', 'datetime'),
             nga.field('Messages'),
             nga.field('WaitingMessages'),
             nga.field('Clients'),
@@ -54,6 +54,7 @@ myApp.config(['NgAdminConfigurationProvider', function (NgAdminConfigurationProv
             .title('Status')
             .perPage(10)
             .fields([
+                nga.field('Time').label('Server Time'),
                 nga.field('Messages').label('Messages waiting'),
                 nga.field('WaitingMessages').label('Messages in process'),
                 nga.field('Clients').label('Free Clients'),
