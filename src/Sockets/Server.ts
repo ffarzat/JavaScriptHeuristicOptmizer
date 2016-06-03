@@ -11,6 +11,7 @@ import WebSocketServer = require('ws');
  */
 export default class Server {
 
+    server: any;
     wsServer: WebSocketServer.Server; //new require('websocket').server
     port: number;
     url: string;
@@ -18,9 +19,7 @@ export default class Server {
 
     clients: Client[] = []; //store available clients
     messages: Message[] = []; //store all received messages 
-
     clientProcessing: Client[] = []; //store client processing something
-
     waitingMessages: Message[] = []; //store waiting messages
 
     /**
@@ -33,11 +32,14 @@ export default class Server {
         
         var express         = require('express');
         var app             = express();
-        var server          = app.listen(this.port);
-
-        this.wsServer = new WebSocketServer.Server({server: server});
+        app.use(express.static('/client'));
+        
+        this.server             = app.listen(this.port);
+        this.wsServer           = new WebSocketServer.Server({server: this.server});
         this.HandleServer();
         this.logger.Write(`[Server]Listening at ${this.url}:${this.port}`);
+        
+        
     }
 
     /**
