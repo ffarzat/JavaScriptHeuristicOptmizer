@@ -24,6 +24,7 @@
     "fs-extra": "0.26.7",
     "http": "0.0.0",
     "log4js": "0.6.33",
+    "ng-admin": "^1.0.0-alpha2",
     "node-uuid": "1.4.7",
     "nodemailer": "0.7.1",
     "randomizer": "0.0.1",
