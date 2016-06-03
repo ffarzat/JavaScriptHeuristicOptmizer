@@ -266,12 +266,10 @@ export default class GA extends IHeuristic {
         var mutantIndex: number = 0;
 
         this.operationsCounter = untill;
+        this.totalCallBack = 0;
 
         this.DoMutationsPerTime(0, [], untill, (mutants) => {
             this._logger.Write(`[GA] Repopulate: ${untill} done`);
-
-            this.totalCallBack = untill;
-            
 
             mutants.forEach(element => {
                 this.UpdateBest(element);
@@ -355,6 +353,7 @@ export default class GA extends IHeuristic {
             this.operationsCounter++;
             this.Mutate(context, (mutant) => {
                 neighbors.push(mutant);
+                this.totalCallBack++;
                 this._logger.Write(`[GA] Mutant done: ${neighbors.length}`);
             });
 
