@@ -30,8 +30,12 @@ export default class Server {
 
         this.port = configuration.port;
         this.url = configuration.url;
+        
+        var express         = require('express');
+        var app             = express();
+        var server          = app.listen(this.port);
 
-        this.wsServer = new WebSocketServer.Server({ port: this.port });
+        this.wsServer = new WebSocketServer.Server({server: server});
         this.HandleServer();
         this.logger.Write(`[Server]Listening at ${this.url}:${this.port}`);
     }
