@@ -32,7 +32,7 @@ export default class Server {
         
         var express         = require('express');
         var app             = express();
-        app.use(express.static('/client'));
+        app.use(express.static('build/client'));
         
         this.server             = app.listen(this.port);
         this.wsServer           = new WebSocketServer.Server({server: this.server});
