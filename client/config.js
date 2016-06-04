@@ -4,7 +4,7 @@ myApp.config(['NgAdminConfigurationProvider', function (NgAdminConfigurationProv
     // create an admin application
     var admin = nga.application('JavaScript Heuristic Optmizer Status, Results and Configurations')
         .debug(false) // debug disabled
-        .baseApiUrl('http://localhost:5000/'); // main API endpoint;
+        .baseApiUrl('http://itachi.vitalbusiness.com.br:5000/'); // main API endpoint;
 
 
 
