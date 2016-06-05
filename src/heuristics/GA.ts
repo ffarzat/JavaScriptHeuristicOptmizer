@@ -294,15 +294,15 @@ export default class GA extends IHeuristic {
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
                     cb(population);
-                }
+                } else {
+                    if (this.operationsCounter == this.totalCallBack) {
+                        this.totalCallBack = 0;
+                        this.operationsCounter = 0;
 
-                if (this.operationsCounter == this.totalCallBack) {
-                    this.totalCallBack = 0;
-                    this.operationsCounter = 0;
-                    
-                    clearInterval(this.intervalId);
-                    this.intervalId = undefined;
-                    cb(population);
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
+                        cb(population);
+                    }
                 }
             }, 1 * 1000);
         }
