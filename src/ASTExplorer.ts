@@ -84,8 +84,8 @@ export default class ASTExplorer {
            //console.log(`Crossover trial ${index}`)
            var news = this.TryCrossOver(context);
            
-           newSon = news[0];
-           newDaughter = news[1];
+           newSon = news[0] || context.First.Clone();
+           newDaughter = news[1] || context.Second.Clone();
            
            if((newSon.ToCode() != "" && newSon.ToCode() != originalCode) && (newDaughter.ToCode() != "" && newDaughter.ToCode() != originalCode)){
                break;    
@@ -122,7 +122,7 @@ export default class ASTExplorer {
         //Do Crossover
         //var newSon: Individual = this.ReplaceNode(context.Second, indexesTwo[randomIndexNodeTwo], firstNode);
         var newSon: Individual = this.ReplaceNode(context.First, indexesOne[randomIndexNodeTwo], firstNode);
-        var newDaughter: Individual = this.ReplaceNode(context.First, indexesOne[randomIndexNodeOne], secondNode);
+        //var newDaughter: Individual = this.ReplaceNode(context.First, indexesOne[randomIndexNodeOne], secondNode);
         
         //If err in cross...
         try {
@@ -131,13 +131,15 @@ export default class ASTExplorer {
             newSon = context.First.Clone();
         }
         
+        /*
         try {
             newDaughter.ToCode();
         } catch (error) {
             newDaughter = context.Second.Clone();
         }
-
-        var result: Individual[] = [newSon, newDaughter];
+        */
+        //var result: Individual[] = [newSon, newDaughter];
+        var result: Individual[] = [newSon, undefined];
 
         return result;
     }
