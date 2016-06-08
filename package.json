@@ -7,10 +7,10 @@
     "postinstall": "tsd install",
     "build": "tsc",
     "test": "mocha --recursive build/test",
-    "pretest": "npm run clean && npm run wait && npm run build",
-    "clean": "rmdir build /s /q",
-    "wait": "ping 127.0.0.1 -n 2 > nul",
-    "start": "npm run clean && npm run wait && npm run build && node --expose-gc --max-old-space-size=2047 build/src/index.js"
+    "pretest": "npm run clean && npm run build",
+    "clean": "grunt && tsd install",
+    "start": "npm run clean && npm run build && node --expose-gc --max-old-space-size=2047 build/src/index.js",
+    "clients": "node --expose-gc --max-old-space-size=2047 build/src/Sockets/runClients.js"
   },
   "author": {
     "name": "Fabio Farzat",
@@ -21,22 +21,27 @@
     "escodegen": "https://github.com/ffarzat/escodegen.git#960138e334432951d761659c5fe9ccdaa136dbf1",
     "esprima": "2.7.2",
     "exectimer": "2.0.0",
+    "express": "^4.13.4",
     "fs-extra": "0.26.7",
     "http": "0.0.0",
     "log4js": "0.6.33",
+    "ng-admin": "^1.0.0-alpha2",
     "node-uuid": "1.4.7",
     "nodemailer": "0.7.1",
     "randomizer": "0.0.1",
+    "rmdir": "1.2.0",
     "shelljs": "0.6.0",
-    "traverse": "0.6.6",
+    "snappy": "5.0.3",
     "temporary": "0.0.8",
+    "traverse": "0.6.6",
     "typescript": "1.8.10",
     "websocket": "1.0.22",
     "ws": "1.1.0"
   },
   "devDependencies": {
-    "mocha": "2.4.5",
     "expect.js": "0.3.1",
+    "grunt": "1.0.1",
+    "mocha": "2.4.5",
     "tsd": "0.6.5"
   }
 }

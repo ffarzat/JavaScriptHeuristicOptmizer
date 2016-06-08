@@ -1,8 +1,8 @@
 /// <reference path="../../src/typings/tsd.d.ts" />
 
-import Client from '../../src/sockets/Client';
-import Server from '../../src/sockets//Server';
-import Message from '../../src/sockets//Message';
+import Client from '../../src/Sockets/Client';
+import Server from '../../src/Sockets/Server';
+import Message from '../../src/Sockets/Message';
 
 import OperatorContext from '../../src/OperatorContext';
 import Individual from '../../src//Individual';
@@ -16,12 +16,36 @@ import path = require('path');
 import expect = require('expect.js');
 
 var uuid = require('node-uuid');
+var snappy = require('snappy');
 
 describe('Client Tests', function () {
 
     this.timeout(60 * 10 * 1000); //10 minutes
 
-    it('Should Test uuid lib', function () {
+    it('Should Compress lodash AST', async function () {
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var lib = configuration.libraries[1]; 
+        var libFile: string = lib.mainFilePath;
+        var astExplorer: ASTExplorer = new ASTExplorer();
+        
+        var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
+        
+        var compressed = snappy.compressSync(JSON.stringify(generatedIndividual.AST));
+        var compressedBack = snappy.uncompressSync(compressed, { asBuffer: false });
+        
+        var objectData = new Buffer((JSON.parse(JSON.stringify(compressed)).data));
+        var compressedBackFromData = snappy.uncompressSync(objectData, { asBuffer: false });
+        
+        expect(JSON.stringify(generatedIndividual.AST).length).to.be.greaterThan(compressed.length);
+        expect(JSON.stringify(generatedIndividual.AST)).to.be.equal(compressedBack);
+        expect(JSON.stringify(generatedIndividual.AST)).to.be.equal(compressedBackFromData);
+        //fs.writeFileSync('ASTOriginal.txt', JSON.stringify(generatedIndividual.AST));
+        //fs.writeFileSync('ASTCompacta.txt', compressed);
+        
+    });
+
+    it('Should Test uuid lib', async function () {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
@@ -48,7 +72,7 @@ describe('Client Tests', function () {
         var localClient = new Client();
         localClient.id = clientId;
         localClient.logger = logger;
-        localClient.Setup(configuration);
+        localClient.Setup(configuration, undefined);
 
         var newCtx = localClient.Test(msg.ctx);
 

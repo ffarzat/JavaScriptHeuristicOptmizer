@@ -1,3 +1,4 @@
+import IConfiguration from '../IConfiguration';
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
 import TrialResults from '../Results/TrialResults';
 import ITester from '../ITester';
@@ -13,7 +14,9 @@ import Message from '../Sockets/Message';
 import NodeIndex from './NodeIndex';
 
 import events = require('events');
+import fs = require('fs');
 var uuid = require('node-uuid');
+var exectimer = require('exectimer');
 
 
 
@@ -22,6 +25,7 @@ var uuid = require('node-uuid');
  */
 abstract class IHeuristic extends events.EventEmitter {
     _config: TrialEspecificConfiguration;
+    _globalConfig: IConfiguration
     _logger: ILogger;
     _tester: ITester;
     _astExplorer: ASTExplorer;
@@ -35,82 +39,112 @@ abstract class IHeuristic extends events.EventEmitter {
     public crossOverTrials: number;
 
     public Original: Individual;
-    
+
     waitingMessages: Message[];   //store waiting messages
-       
+
+    Tick: any;
+    trialUuid: any;
+
     /**
      * Forces the Heuristic to validate config
      */
-    Setup(config: TrialEspecificConfiguration): void {
+    Setup(config: TrialEspecificConfiguration, globalConfig: IConfiguration): void {
         this._config = config;
+        this._globalConfig = globalConfig;
         this._astExplorer = new ASTExplorer();
         events.EventEmitter.call(this);
         this.waitingMessages = [];
+        this.trialUuid = uuid.v4();
+
+        process.on('message', (newMsg: Message) => {
+
+            if (this.waitingMessages.length == 0) {
+                //this._logger.Write(`[IHeuristic] ERROR: ${newMsg.id} not found`);
+            }
+            else {
+                this.Done(newMsg);
+            }
+        });
     }
+
+    public Start() {
+        this._logger.Write(`[IHeuristic] Started Event [${this.trialUuid}]`);
+        this.Tick = new exectimer.Tick(this.trialUuid);
+        this.Tick.start();
+    }
+
+    public Stop() {
+        this._logger.Write('[IHeuristic] Finisehd Event');
+        this.Tick.stop();
+    }
+
 
     /**
      * Especific Run for each Heuristic
      */
-    abstract async RunTrial(trialIndex: number): Promise<TrialResults>;
+    abstract RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void);
 
     /**
      *  Releases a Mutation over context 
      */
-    public async Mutate(context: OperatorContext): Promise<Individual> {
+    public Mutate(context: OperatorContext, cb: (mutant: Individual) => void) {
         var msg: Message = new Message();
         context.Operation = "Mutation";
+        context.MutationTrials = this._globalConfig.mutationTrials;
+        context.LibrarieOverTest = this._lib;
+        context.Original = this.bestIndividual;
         msg.ctx = context;
-        var mutant: Individual;
 
-        await this.getResponse(msg, (msg) => {
-            mutant = msg.ctx.First;
+        this.getResponse(msg, (newMsg) => {
+            cb(newMsg.ctx.First);
         });
-        
-        return mutant; 
     }
 
     /**
      * Releases a CrossOver over context
      */
-    public async CrossOver(context: OperatorContext): Promise<Individual[]> {
-        var msg: Message = new Message();
-        context.Operation = "CrossOver";
-        msg.ctx = context;
-        
-        var newOnes: Individual[] = [];
+    public CrossOver(first: Individual, second: Individual, cb: (newOnes: Individual[]) => void) {
 
-        await this.getResponse(msg, (msg) => {
-            newOnes.push(msg.ctx.First);
-            newOnes.push(msg.ctx.Second);
+        var context = new OperatorContext();
+        context.Operation = "CrossOver";
+        context.CrossOverTrials = this._globalConfig.crossOverTrials;
+        context.LibrarieOverTest = this._lib;
+        context.Original = this.bestIndividual;
+        context.First = first;
+        context.Second = second;
+        var msg: Message = new Message();
+        msg.ctx = context;
+
+        this.getResponse(msg, (newMsg) => {
+            cb([newMsg.ctx.First, newMsg.ctx.Second]);
         });
-        
-        return newOnes; 
     }
 
     /**
      * Global Test execution
      */
-    public async Test(individual: Individual): Promise<Individual> {
+    public Test(individual: Individual, cb: (original: Individual) => void) {
         var msg: Message = new Message();
         var context = new OperatorContext();
         context.Operation = "Test";
         context.First = individual;
-        context.Second = this.bestIndividual; //is usual to be the original
+        context.Original = this.bestIndividual; //is usual to be the original
         context.LibrarieOverTest = this._lib;
 
         msg.ctx = context;
-        await this.getResponse(msg, (newMsg) => {
-            individual = newMsg.ctx.First;
-        });     
-        
-        return individual;  
+
+        this.getResponse(msg, (newMsg) => {
+            cb(newMsg.ctx.First);
+        });
     }
 
     /**
      * Calculate results for a trial
      */
     ProcessResult(trialIndex: number, original: Individual, bestIndividual: Individual): TrialResults {
-        
+
+        this.WriteCodeToFile(this.Original, this._lib); //back original Code to lib
+
         var results: TrialResults = new TrialResults();
         var bestCode = bestIndividual.ToCode();
         var originalCode = original.ToCode();
@@ -129,22 +163,58 @@ abstract class IHeuristic extends events.EventEmitter {
         results.originalIndividualCharacters = originalCode.length;
         results.originalIndividualLOC = originalCode.split(/\r\n|\r|\n/).length;
 
+        var trialTimer = exectimer.timers[this.trialUuid];
+        results.time = this.ToNanosecondsToMinutes(trialTimer.duration());
+
+
+
         return results;
     }
 
+    /**
+     * Transform nano secs in minutes
+     */
+    ToNanosecondsToMinutes(nanovalue: number): number {
+        return parseFloat((parseFloat((nanovalue / 1000000000.0).toFixed(1)) / 60).toFixed(1));
+    }
+
+    /**
+     * datepart: 'y', 'm', 'w', 'd', 'h', 'n', 's'
+     */
+    DateDiff(datepart, fromdate, todate) {
+        datepart = datepart.toLowerCase();
+        var diff = todate - fromdate;
+        var divideBy = {
+            w: 604800000,
+            d: 86400000,
+            h: 3600000,
+            n: 60000,
+            s: 1000
+        };
+
+        return Math.floor(diff / divideBy[datepart]);
+    }
 
     /**
      * Update global best info
      */
-    UpdateBest(newBest: Individual) {
-
-        if (newBest.testResults.passedAllTests && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
-            this._logger.Write('=================================');
-            this.bestFit = newBest.testResults.fit;
-            this.bestIndividual = newBest;
-            this._logger.Write(`New Best Fit ${this.bestFit}`);
-            this._logger.Write('=================================');
+    UpdateBest(newBest: Individual): boolean {
+        var found: boolean = false;
+        try {
+            if (newBest.testResults && newBest.testResults.passedAllTests && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
+                this._logger.Write('=================================');
+                this.bestFit = newBest.testResults.fit;
+                this.bestIndividual = newBest;
+                this._logger.Write(`New Best Fit ${this.bestFit}`);
+                this._logger.Write('=================================');
+                found = true;
+            }
         }
+        catch (err) {
+            this._logger.Write(`[IHeuristic] ${err}`);
+        }
+
+        return found;
     }
 
     /**
@@ -160,25 +230,29 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
     * Releases a mutation over an AST  by nodetype and index
     */
-    async MutateBy(clone: Individual, indexes: NodeIndex): Promise<Individual> {
+    MutateBy(clone: Individual, indexes: NodeIndex, cb: (mutant) => void) {
+
         var type = indexes.Type;
-        var actualNodeIndex = indexes[indexes.ActualIndex];
+        var actualNodeIndex = indexes.Indexes[indexes.ActualIndex];
         indexes.ActualIndex++;
+
+        //this._logger.Write(`Mutant: [${type}, ${indexes.ActualIndex}]`);
 
         var ctx: OperatorContext = new OperatorContext();
         ctx.First = clone;
         ctx.NodeIndex = actualNodeIndex;
+        ctx.LibrarieOverTest = this._lib;
+        ctx.Original = this.bestIndividual;
         ctx.Operation = "MutationByIndex";
-        
+        ctx.MutationTrials = this._globalConfig.mutationTrials;
+
         var msg: Message = new Message();
         msg.ctx = ctx;
 
-        var mutant: Individual;
-        await this.getResponse(msg, (msg) => {
-            mutant = msg.ctx.First;
+        this.getResponse(msg, (newMsg) => {
+            cb(newMsg.ctx.First);
         });
-        
-        return mutant; 
+
     }
 
     /**
@@ -189,26 +263,39 @@ abstract class IHeuristic extends events.EventEmitter {
     }
 
     /**
-     * Defines library over optmization
+     * Util for Winmerge comparsions
      */
-    async SetLibrary(library: Library) {
+    private WriteCodeToFile(individual: Individual, lib: Library) {
+        fs.writeFileSync(lib.mainFilePath, individual.ToCode());
+    }
+
+    /**
+     * Defines library and test original code
+     */
+    SetLibrary(library: Library, cb: () => void) {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
-        this.Original = await this.Test(this.Original);
-        //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
-        
-        if(!this.Original.testResults.passedAllTests)
-            throw `Failed to execute tests for ${library.name}`;
-            
-        
-        
-        //Force Best
-        this.bestFit = this.Original.testResults.fit;
         this.bestIndividual = this.Original;
 
-        this._logger.Write(`Original Fit ${this.bestFit}`);
-        this._logger.Write('=================================');
+        this.Test(this.Original, (testedOriginal) => {
+            this.Original = testedOriginal;
+
+            //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
+
+            if (!this.Original.testResults || !this.Original.testResults.passedAllTests)
+                throw new Error(`Failed to execute tests for ${library.name}`);
+
+            //Force Best
+            this.bestFit = this.Original.testResults.fit;
+            this.bestIndividual = this.Original;
+
+            this._logger.Write(`Original Fit ${this.bestFit}`);
+            this._logger.Write('=================================');
+
+            cb();
+        });
+
     }
 
 
@@ -218,78 +305,84 @@ abstract class IHeuristic extends events.EventEmitter {
     CreateOriginalFromLibraryConfiguration(library: Library): Individual {
         return this._astExplorer.GenerateFromFile(library.mainFilePath);
     }
-    
+
     /**
      * Over websockets objects loose instance methods
      */
-    Reload(context:OperatorContext): OperatorContext{
+    Reload(context: OperatorContext): OperatorContext {
         return this._astExplorer.Reload(context);
     }
-    
+
     /**
      * To resolve a single comunication with server trougth cluster comunication
      */
-    async getResponse(msg: Message, cb: (ctx: Message) => void): Promise<void> {
-        
-        //2. Receive response from server
-        var p = new Promise<Message>( (resolve, reject) =>{
-            process.once('message', (newMsg: Message) => {
-                 var localMsg = this.Done(newMsg);
-                 newMsg.ctx = this.Reload(newMsg.ctx);
-                 localMsg.cb(newMsg); 
-                 resolve(newMsg);
-            });
-                
-            this.PushMessage(msg.ctx, cb); //1.Send to server a message
-        });
-    
-        (await Promise.resolve(p));
-    }
-    
-    
-    /**
-     * Send a request to server
-     */
-    PushMessage(context: OperatorContext, cb: (ctx: Message) => void ) {
+    getResponse(msg: Message, cb: (msgBack: Message) => void) {
+        msg.id = uuid.v4();
+        msg.cb = cb;
+        msg.tmeoutId = setTimeout(() => {
+            this._logger.Write(`[IHeuristic] ERROR! Timeout waiting message  ${item.id}`);
+
+            item.ctx.First = this.Original.Clone();
+            item.ctx.Second = this.Original.Clone();
+
+            this.Done(item);
+
+        }, this._globalConfig.clientTimeout * 1000);
+
+        this.waitingMessages.push(msg);
+
         var item = new Message();
-        item.id = uuid.v4();
-        item.ctx = context;
-        item.cb = cb;
-        this.waitingMessages.push(item);
+        item.id = msg.id;
+        item.ctx = msg.ctx;
         process.send(item);
     }
-    
+
     /**
      * Relases the callback magic
      */
-    Done(message: Message): Message{
+    Done(message: Message) {
         //Finds message index
+        var indexFounded = -1;
         for (var index = 0; index < this.waitingMessages.length; index++) {
             var element = this.waitingMessages[index];
             //this._logger.Write(`External: ${element.id} == ${message.id}`);
             //this._logger.Write(`break?: ${element.id === message.id}`);
             //this._logger.Write(`element.id: ${typeof element.id}`);
             //this._logger.Write(`message.id: ${typeof message.id}`);
-            if(element.id === message.id){
+            if (element.id === message.id) {
                 //this._logger.Write(`do break... : ${element.id === message.id}`);
+                indexFounded = index;
                 break;
             }
-                
         }
 
-        var localmsg = this.waitingMessages[index];
-        if(!localmsg)
-            throw 'Incoming message not located inside Heuristic Queue' + message.id;
-        
-        this.waitingMessages.splice(index, 1); //cut off
-        return localmsg;
+
+        //this._logger.Write(`Index fouded ${indexFounded}`);
+        //this._logger.Write(`Messages waiting ${this.waitingMessages.length}`);
+
+        var localmsg = this.waitingMessages[indexFounded];
+
+        if (!localmsg) {
+            //this._logger.Write(`[IHeuristic] FATAL ERROR!!! Message not found  ${message.id}`);
+        }
+        else {
+            try {
+                //this._logger.Write(`[IHeuristic] Message processed  ${message.id}`);
+                //clear timeout
+                clearTimeout(localmsg.tmeoutId);
+                localmsg.tmeoutId = undefined;
+                this.waitingMessages.splice(index, 1); //cut off
+                localmsg.ctx = this.Reload(message.ctx);
+                //this._logger.Write(`[IHeuristic] CB to especific  ${localmsg.id}`);
+                localmsg.cb(localmsg);
+            } catch (error) {
+                localmsg.cb(localmsg);
+                this._logger.Write(`[IHeuristic] Error processing message ${localmsg.id}. ${error}`);
+                this._logger.Write(`${error}`);
+            }
+        }
     }
-    
-    
 }
-
-
-
 
 
 export default IHeuristic;

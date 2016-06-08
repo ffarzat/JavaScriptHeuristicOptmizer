@@ -49,7 +49,7 @@ export default class CsvResultsOutWriter implements IOutWriter {
         if(!fs.existsSync(this.file))
         {
             this.csvcontent = "sep=," + this.newLine;
-            this.csvcontent += "trial,originalIndividualAvgTime,originalIndividualLOC,originalIndividualCharacters,bestIndividualAvgTime,bestIndividualLOC,bestIndividualCharacters" + this.newLine;
+            this.csvcontent += "trial,originalIndividualAvgTime,originalIndividualLOC,originalIndividualCharacters,bestIndividualAvgTime,bestIndividualLOC,bestIndividualCharacters,time" + this.newLine;
             fs.writeFileSync(this.file, this.csvcontent);
         }
     }
@@ -92,7 +92,8 @@ export default class CsvResultsOutWriter implements IOutWriter {
                     result.originalIndividualCharacters + "," + 
                     result.bestIndividualAvgTime + "," + 
                     result.bestIndividualLOC + "," + 
-                    result.bestIndividualCharacters + 
+                    result.bestIndividualCharacters + "," + 
+                    result.time + 
                     this.newLine
         );
         
@@ -111,7 +112,7 @@ export default class CsvResultsOutWriter implements IOutWriter {
         var originalCodeFile = path.join(this.directory, "original.js");
         if(!fs.existsSync(originalCodeFile))
         {
-            fs.writeFileSync(originalCodeFile, result.best.ToCode());    
+            fs.writeFileSync(originalCodeFile, result.original.ToCode());    
         }
     }
     

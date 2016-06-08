@@ -21,7 +21,7 @@
     "type": "git",
     "url": "git://github.com/alexandrusavin/exectimer.git"
   },
-  "main": "./index",
+  "main": "./index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha test/**/*.js",
     "jshint": "jshint --config .jshintrc --exclude node_modules *.js"
