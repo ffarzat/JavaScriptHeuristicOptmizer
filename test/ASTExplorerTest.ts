@@ -110,7 +110,7 @@ describe('ASTExplorer Tests', function () {
         //fs.writeFileSync("mutantIndexFromTests.js", newOne.ToCode());
         expect(newOne.ToCode()).not.equal(generatedIndividual.ToCode());            
     });
-    
+    /*
     it('Should Cross over Nodes from underscore lib', function() {
         
         var astExplorer:ASTExplorer = new ASTExplorer();
@@ -142,7 +142,7 @@ describe('ASTExplorer Tests', function () {
         //fs.writeFileSync("CrossOver1.js", newOnes[1].ToCode());
         expect(newOnes[1].ToCode()).not.equal(originalIndividual.ToCode());            
     });
-    
+    */
       
     
 });

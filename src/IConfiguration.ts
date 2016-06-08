@@ -111,6 +111,11 @@ interface IConfiguration {
     url: string;
     
     /**
+     * Clients timeout in seconds
+     */
+    clientTimeout: number;
+    
+    /**
      * Each trial configurations
      * 
      * Works with a IConfiguration.trials. #trials * each(TrialConfiguration)

@@ -33,6 +33,11 @@ export default class OperatorContext {
     Second: Individual;
     
     /**
+     * Original Lib Individual
+     */
+    Original: Individual;
+    
+    /**
      * Do mutation until...
      */
     MutationTrials: number;

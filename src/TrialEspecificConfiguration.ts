@@ -14,16 +14,10 @@ export default class TrialEspecificConfiguration {
     neighborApproach: string;
     
     /**
-     * Commands to HC restart every N avaliations unsuccessful
-     * 
+     * How many neighbors resolve at once
      */
-    restart: boolean;
+    neighborsToProcess: number;
     
-    /**
-     * How many avaliations before restart
-     */
-    trialsToRestart: number;
-
     /**
      * Budget for HC running
      *  */    

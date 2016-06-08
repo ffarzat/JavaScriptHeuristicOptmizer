@@ -16,6 +16,7 @@
     "heuristics": ["GA", "RD", "HC"],
     "port": 5000,
     "url": "ws://localhost",
+    "clientTimeout":120,
     "libraries" : [
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }
@@ -42,8 +43,7 @@
             "nodesType": ["Function"], 
             "especific": {
                 "neighborApproach":"FirstAscent",
-                "restart":false, 
-                "trialsToRestart":5,
+                "neighborsToProcess": 5,
                 "trials": 1,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 2, 
