@@ -15,7 +15,7 @@
     "outWriter": "CsvResultsOutWriter",
     "heuristics": ["GA", "HC", "RD"],
     "port": 5000,
-    "url": "ws://localhost",
+    "url": "ws://itachi.vitalbusiness.com.br",
     "libraries" : [
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
         {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },
