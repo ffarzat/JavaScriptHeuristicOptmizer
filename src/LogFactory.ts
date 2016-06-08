@@ -22,5 +22,4 @@ class LogFactory {
     }
 }
 
-
 export default LogFactory;
