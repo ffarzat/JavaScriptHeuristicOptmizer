@@ -4,13 +4,17 @@ import ILogger from '../ILogger';
 import Client from './Client';
 import Message from './Message';
 
+
+import fs = require('fs');
 import WebSocketServer = require('ws');
+import express = require('express');
 
 /**
  * Server to control the optmization process
  */
 export default class Server {
 
+    server: any;
     wsServer: WebSocketServer.Server; //new require('websocket').server
     port: number;
     url: string;
@@ -18,22 +22,96 @@ export default class Server {
 
     clients: Client[] = []; //store available clients
     messages: Message[] = []; //store all received messages 
-
     clientProcessing: Client[] = []; //store client processing something
-
     waitingMessages: Message[] = []; //store waiting messages
+
+    configuration: IConfiguration
 
     /**
      * Configs the server to execute
      */
     Setup(configuration: IConfiguration): void {
 
+        this.configuration = configuration;
+
         this.port = configuration.port;
         this.url = configuration.url;
 
-        this.wsServer = new WebSocketServer.Server({ port: this.port });
+        var app = express();
+        this.configure(app);
+        this.server = app.listen(this.port);
+
+        this.wsServer = new WebSocketServer.Server({ server: this.server });
         this.HandleServer();
         this.logger.Write(`[Server]Listening at ${this.url}:${this.port}`);
+    }
+
+    /**
+     * Configure express app routes
+     */
+    private configure(app: express.Application) {
+        app.use(express.static('build/client'));
+
+        app.get('/Status', (req, res) => {
+            var list = [{
+                "id": 1,
+                "Time": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+                "Messages": this.messages.length,
+                "WaitingMessages": this.waitingMessages.length,
+                "Clients": this.clients.length,
+                "ClientProcessing": this.clientProcessing.length
+            }];
+            res.send(list);
+        });
+
+        app.get('/Status/:id', (req, res) => {
+            var list = [{
+                "id": 1,
+                "Time": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+                "Messages": this.messages.length,
+                "WaitingMessages": this.waitingMessages.length,
+                "Clients": this.clients.length,
+                "ClientProcessing": this.clientProcessing.length
+            }];
+            res.send(list);
+        });
+
+        app.get('/LogLine', (req, res) => {
+            var list = [];
+            var lineIndex = 0;
+
+            list.push({
+                "id": lineIndex,
+                "Date": '2016-06-03 18:30:05',
+                "Text": '[GA] says something'
+            });
+
+            res.send(list);
+
+
+            /*
+                        (this.configuration.logFilePath, (lines: string[]) => {
+                            console.log(lines);
+            
+                            lines.forEach(element => {
+                                var values = element.split("|");
+            
+                                list.push({
+                                    "id": lineIndex,
+                                    "Date": values[0],
+                                    "Text": values[1]
+                                });
+                            });
+            
+            
+            
+                            res.send(list);
+                        });
+            
+            */
+
+        });
+
     }
 
     /**
@@ -102,7 +180,7 @@ export default class Server {
                 this.Done(client, msg);
                 //this.logger.Write(`Left ${this.clients.length} client(s)`);
             }
-            catch(err){
+            catch (err) {
                 this.logger.Write(`[Server] ${err}`);
             }
         });
@@ -116,7 +194,10 @@ export default class Server {
             var element = this.waitingMessages[index];
             if (element.clientId == client.id) {
                 this.waitingMessages.splice(index, 1); //remove
+
+                element.clientId = undefined;
                 this.messages.push(element);
+
                 this.logger.Write(`Client[${client.id}]Error: saving back msg: ${element.id} [client disconnected unexpectedly]`);
             }
         }
@@ -167,10 +248,21 @@ export default class Server {
                 this.clientProcessing.push(availableClient);
 
                 var msg = this.messages.pop();
-                msg.clientId = availableClient.id;
-                //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
-                availableClient.connection.send(JSON.stringify(msg));
-                this.waitingMessages.push(msg);
+                if (!msg.clientId) {
+
+                    msg.clientId = availableClient.id;
+                    //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
+
+                    this.logger.Write(`[Server] Sending msg ${msg.id}`);
+
+                    availableClient.connection.send(JSON.stringify(msg));
+                    this.waitingMessages.push(msg);
+                }
+                else {
+                    this.logger.Write(`[Server] ERROR: ${msg.id} already have a client: ${msg.clientId}`);
+                }
+
+
             }
             else {
                 break;

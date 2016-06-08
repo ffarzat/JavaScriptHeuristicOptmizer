@@ -57,10 +57,12 @@ abstract class IHeuristic extends events.EventEmitter {
         this.trialUuid = uuid.v4();
 
         process.on('message', (newMsg: Message) => {
-            var localMsg = this.Done(newMsg);
-            if (localMsg) {
-                newMsg.ctx = this.Reload(newMsg.ctx);
-                localMsg.cb(newMsg);
+
+            if (this.waitingMessages.length == 0) {
+                //this._logger.Write(`[IHeuristic] ERROR: ${newMsg.id} not found`);
+            }
+            else {
+                this.Done(newMsg);
             }
         });
     }
@@ -179,7 +181,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * datepart: 'y', 'm', 'w', 'd', 'h', 'n', 's'
      */
-    DateDiff (datepart, fromdate, todate) {
+    DateDiff(datepart, fromdate, todate) {
         datepart = datepart.toLowerCase();
         var diff = todate - fromdate;
         var divideBy = {
@@ -234,7 +236,7 @@ abstract class IHeuristic extends events.EventEmitter {
         var actualNodeIndex = indexes.Indexes[indexes.ActualIndex];
         indexes.ActualIndex++;
 
-        this._logger.Write(`Mutant: [${type}, ${indexes.ActualIndex}]`);
+        //this._logger.Write(`Mutant: [${type}, ${indexes.ActualIndex}]`);
 
         var ctx: OperatorContext = new OperatorContext();
         ctx.First = clone;
@@ -281,8 +283,8 @@ abstract class IHeuristic extends events.EventEmitter {
 
             //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
 
-            if (!this.Original.testResults.passedAllTests)
-                throw `Failed to execute tests for ${library.name}`;
+            if (!this.Original.testResults || !this.Original.testResults.passedAllTests)
+                throw new Error(`Failed to execute tests for ${library.name}`);
 
             //Force Best
             this.bestFit = this.Original.testResults.fit;
@@ -315,18 +317,30 @@ abstract class IHeuristic extends events.EventEmitter {
      * To resolve a single comunication with server trougth cluster comunication
      */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
+        msg.id = uuid.v4();
+        msg.cb = cb;
+        msg.tmeoutId = setTimeout(() => {
+            this._logger.Write(`[IHeuristic] ERROR! Timeout waiting message  ${item.id}`);
+
+            item.ctx.First = this.Original.Clone();
+            item.ctx.Second = this.Original.Clone();
+
+            this.Done(item);
+
+        }, this._globalConfig.clientTimeout * 1000);
+
+        this.waitingMessages.push(msg);
+
         var item = new Message();
-        item.id = uuid.v4();
+        item.id = msg.id;
         item.ctx = msg.ctx;
-        item.cb = cb;
-        this.waitingMessages.push(item);
         process.send(item);
     }
 
     /**
      * Relases the callback magic
      */
-    Done(message: Message): Message {
+    Done(message: Message) {
         //Finds message index
         var indexFounded = -1;
         for (var index = 0; index < this.waitingMessages.length; index++) {
@@ -347,14 +361,26 @@ abstract class IHeuristic extends events.EventEmitter {
         //this._logger.Write(`Messages waiting ${this.waitingMessages.length}`);
 
         var localmsg = this.waitingMessages[indexFounded];
+
         if (!localmsg) {
-            //this._logger.Write('Incoming message not located inside Heuristic Queue ' + message.id); //error log?
+            //this._logger.Write(`[IHeuristic] FATAL ERROR!!! Message not found  ${message.id}`);
         }
         else {
-            this.waitingMessages.splice(index, 1); //cut off    
+            try {
+                //this._logger.Write(`[IHeuristic] Message processed  ${message.id}`);
+                //clear timeout
+                clearTimeout(localmsg.tmeoutId);
+                localmsg.tmeoutId = undefined;
+                this.waitingMessages.splice(index, 1); //cut off
+                localmsg.ctx = this.Reload(message.ctx);
+                //this._logger.Write(`[IHeuristic] CB to especific  ${localmsg.id}`);
+                localmsg.cb(localmsg);
+            } catch (error) {
+                localmsg.cb(localmsg);
+                this._logger.Write(`[IHeuristic] Error processing message ${localmsg.id}. ${error}`);
+                this._logger.Write(`${error}`);
+            }
         }
-
-        return localmsg; //maybe a message or undefined
     }
 }
 

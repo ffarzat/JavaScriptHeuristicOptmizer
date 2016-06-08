@@ -9,6 +9,6 @@ export default class Message{
     id: string
     clientId: string;
     ctx: OperatorContext;
-    
+    tmeoutId: any;
     cb: any //callback function
 }

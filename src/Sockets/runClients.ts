@@ -43,12 +43,16 @@ if (cluster.isMaster) {
         logger.Write(`Fork: ${i}`);
         var slave = cluster.fork();
 
-        slave.on('createnewone', (worker: cluster.Worker) => {
+
+        // Be notified when worker processes die.
+        cluster.on('death', function (worker) {
+            logger.Write('Worker ' + worker.pid + ' died.');
             i++;
             logger.Write(`[runClient]Start new client from [cluster.Worker.death] event`);
             logger.Write(`Fork: ${i}`);
             cluster.fork();
         });
+
 
     }
 } else {
@@ -110,6 +114,7 @@ function ExecuteOperations(clientLocal: Client) {
 
             var msg: Message = JSON.parse(e.data);
             msg.ctx = clientLocal.Reload(msg.ctx);
+            logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
 
             if (msg.ctx.Operation == "Mutation") {
                 operationPromise = new Promise<OperatorContext>((resolve) => {
@@ -156,7 +161,6 @@ function ExecuteOperations(clientLocal: Client) {
             
             ws.close();
             
-            process.emit('createnewone');
             process.exit(-1);
         }
     });

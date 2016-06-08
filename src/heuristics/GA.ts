@@ -95,10 +95,10 @@ export default class GA extends IHeuristic {
             var individual = population[elementIndex];
 
             if (operation == 'c') {
-                this._logger.Write(`[GA] Asking CrossOver for an individual ${elementIndex}`);
+                //this._logger.Write(`[GA] Asking CrossOver for an individual ${elementIndex}`);
                 this.operationsCounter++
                 this.CrossOver(individual, individual, (elements) => {
-                    this._logger.Write(`[GA] Crossover done [${this.totalCallBack}]`);
+                    //this._logger.Write(`[GA] Crossover done [${this.totalCallBack}]`);
 
                     this.totalCallBack++;
 
@@ -112,13 +112,13 @@ export default class GA extends IHeuristic {
             }
 
             if (operation == 'm') {
-                this._logger.Write(`[GA] Doing a mutation with individual ${elementIndex++}`);
+                //this._logger.Write(`[GA] Doing a mutation with individual ${elementIndex++}`);
 
                 var context: OperatorContext = new OperatorContext();
                 context.First = individual;
                 this.operationsCounter++
                 this.Mutate(context, (mutant) => {
-                    this._logger.Write(`[GA] Mutation ${this.totalCallBack} done`);
+                    //this._logger.Write(`[GA] Mutation ${this.totalCallBack} done`);
                     this.totalCallBack++;
                     population.push(mutant);
                     this.UpdateBest(mutant);
@@ -130,21 +130,13 @@ export default class GA extends IHeuristic {
                     , 50);
             }
             else {
-                this._logger.Write(`[GA] Operation requests done. Just waiting.`);
+                this._logger.Write(`[GA] Operation requests done. Just waiting for clients.`);
 
                 if (this.intervalId == undefined) {
-                    var start = new Date();
 
                     this.intervalId = setInterval(() => {
-                        this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
-
-                        var minutes = this.DateDiff('n', start, new Date());
-                        this._logger.Write(`[GA] time spent: ${minutes} minutes`);
-
-                        if (minutes >= (this._globalConfig.clientTimeout / 60)) {
-                            this._logger.Write(`[GA] timed out`);
-                            cb();
-                        }
+                        //this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
+                        this._logger.Write(`[GA] ProcessOperations: ${this.totalCallBack}/${this.operationsCounter}`);
 
                         if (this.operationsCounter == this.totalCallBack) {
                             clearInterval(this.intervalId);
@@ -156,9 +148,6 @@ export default class GA extends IHeuristic {
             }
 
         }, 50);
-
-
-
     }
 
     /**
@@ -233,9 +222,9 @@ export default class GA extends IHeuristic {
         var countTotal = Math.floor(population.length - this._config.individuals);
         this._logger.Write(`[GA] Sort population`);
         population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });
-        this._logger.Write(`[GA] backing population size -${countTotal}`);
+        this._logger.Write(`[GA] Population cut (${population.length}-${countTotal})`);
         population.splice(this._config.individuals - 1, countTotal);
-        this._logger.Write(`[GA] Population:${population.length}`);
+        this._logger.Write(`[GA] Population now:${population.length}`);
 
         if (this.elitism) {
             var countElitism = Math.floor((this.individuals * this.elitismPercentual) / 100);
@@ -284,26 +273,18 @@ export default class GA extends IHeuristic {
             var start = new Date();
 
             this.intervalId = setInterval(() => {
-                this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
-
-                var minutes = this.DateDiff('n', start, new Date());
-                this._logger.Write(`[GA] time spent: ${minutes} minutes`);
-
-                if (minutes >= (this._globalConfig.clientTimeout / 60)) {
-                    this._logger.Write(`[GA] timed out`);
-                    clearInterval(this.intervalId);
-                    this.intervalId = undefined;
-                    cb(population);
-                }
+                //this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
+                this._logger.Write(`[GA] Repopulate: ${this.totalCallBack}/${this.operationsCounter}`);
 
                 if (this.operationsCounter == this.totalCallBack) {
                     this.totalCallBack = 0;
                     this.operationsCounter = 0;
-                    
+
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
                     cb(population);
                 }
+
             }, 1 * 1000);
         }
 
@@ -333,11 +314,12 @@ export default class GA extends IHeuristic {
 
             if (this.intervalId == undefined) {
                 this.intervalId = setInterval(() => {
-                    this._logger.Write(`[GA] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
+                    //this._logger.Write(`[GA] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
+                    this._logger.Write(`[GA] DoMutationsPerTime: ${neighbors.length}[${this.operationsCounter}]`);
                     if (neighbors.length == this.operationsCounter) {
                         clearInterval(this.intervalId);
                         this.intervalId = undefined;
-                        this._logger.Write(`[GA] Interval: doing callback`);
+                        //this._logger.Write(`[GA] Interval: doing callback`);
                         cb(neighbors);
                     }
                 }, 1 * 1000);
@@ -347,14 +329,14 @@ export default class GA extends IHeuristic {
 
         } else {
 
-            this._logger.Write(`[GA] Asking  mutant ${counter}`);
+            //this._logger.Write(`[GA] Asking  mutant ${counter}`);
             var context: OperatorContext = new OperatorContext();
             context.First = this.bestIndividual.Clone();
             this.operationsCounter++;
             this.Mutate(context, (mutant) => {
                 neighbors.push(mutant);
                 this.totalCallBack++;
-                this._logger.Write(`[GA] Mutant done: ${neighbors.length}`);
+                //this._logger.Write(`[GA] Mutant done: ${neighbors.length}`);
             });
 
             counter++;

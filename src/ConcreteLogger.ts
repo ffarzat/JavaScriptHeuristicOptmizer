@@ -65,7 +65,7 @@ export default class ConcreteLogger implements ILogger {
                    layout: 
                    {
                         "type": "pattern",
-                        "pattern": "%r|%m"
+                        "pattern": "%d{ISO8601_WITH_TZ_OFFSET}|%m"
                    }
                 }
             ]
