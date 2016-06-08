@@ -253,7 +253,7 @@ export default class Server {
                     msg.clientId = availableClient.id;
                     //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
 
-                    this.logger.Write(`[Server] Sending msg ${msg.id}`);
+                    //this.logger.Write(`[Server] Sending msg ${msg.id}`);
 
                     availableClient.connection.send(JSON.stringify(msg));
                     this.waitingMessages.push(msg);
