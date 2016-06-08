@@ -138,6 +138,7 @@ export default class GA extends IHeuristic {
                     this.intervalId = setInterval(() => {
                         this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
 
+                        /*
                         var minutes = this.DateDiff('n', start, new Date());
                         this._logger.Write(`[GA] time spent: ${minutes} minutes`);
 
@@ -145,6 +146,7 @@ export default class GA extends IHeuristic {
                             this._logger.Write(`[GA] timed out`);
                             cb();
                         }
+                        */
 
                         if (this.operationsCounter == this.totalCallBack) {
                             clearInterval(this.intervalId);
@@ -156,9 +158,6 @@ export default class GA extends IHeuristic {
             }
 
         }, 50);
-
-
-
     }
 
     /**

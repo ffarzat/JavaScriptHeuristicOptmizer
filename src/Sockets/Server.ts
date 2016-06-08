@@ -194,7 +194,10 @@ export default class Server {
             var element = this.waitingMessages[index];
             if (element.clientId == client.id) {
                 this.waitingMessages.splice(index, 1); //remove
+
+                element.clientId = undefined;
                 this.messages.push(element);
+
                 this.logger.Write(`Client[${client.id}]Error: saving back msg: ${element.id} [client disconnected unexpectedly]`);
             }
         }
@@ -245,10 +248,21 @@ export default class Server {
                 this.clientProcessing.push(availableClient);
 
                 var msg = this.messages.pop();
-                msg.clientId = availableClient.id;
-                //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
-                availableClient.connection.send(JSON.stringify(msg));
-                this.waitingMessages.push(msg);
+                if (!msg.clientId) {
+
+                    msg.clientId = availableClient.id;
+                    //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
+
+                    this.logger.Write(`[Server] Sending msg ${msg.id}`);
+
+                    availableClient.connection.send(JSON.stringify(msg));
+                    this.waitingMessages.push(msg);
+                }
+                else {
+                    this.logger.Write(`[Server] ERROR: ${msg.id} already have a client: ${msg.clientId}`);
+                }
+
+
             }
             else {
                 break;

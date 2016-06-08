@@ -114,6 +114,7 @@ function ExecuteOperations(clientLocal: Client) {
 
             var msg: Message = JSON.parse(e.data);
             msg.ctx = clientLocal.Reload(msg.ctx);
+            logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
 
             if (msg.ctx.Operation == "Mutation") {
                 operationPromise = new Promise<OperatorContext>((resolve) => {

@@ -23,7 +23,7 @@ var testOldDirectory: string = process.cwd();
 //=========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
-process.setMaxListeners(0);
+//process.setMaxListeners(0);
 //=========================================================================================== Server!
 if (cluster.isMaster) {
     localServer.logger = logger;
@@ -33,14 +33,25 @@ if (cluster.isMaster) {
 
     var optmizerWorker = cluster.fork(); //optmizer worker
 
-    optmizerWorker.on('message', (msg: Message)=> {
+    optmizerWorker.on('message', (msg: Message) => {
+
+        //logger.Write(`[index] Send to server. Msg : ${msg.id}`);
+
         localServer.DoAnOperation(msg, (newMsg) => {
-            logger.Write(`[index] msg.id == newMsg.id? ${msg.id === newMsg.id}`);
-            
+
+            //logger.Write(`[index] Server done msg : ${msg.id}`);
+            //logger.Write(`[index] ${msg.id} == ${newMsg.id} : ${msg.id === newMsg.id}`);
+
             optmizerWorker.send(newMsg);
         });
-
     });
+
+    /*
+    setInterval(function () {
+        logger.Write(`[index.Master] workers: ${cluster.listeners.length}`);
+    }, 1000);
+    */
+
 
 } else {
     logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
