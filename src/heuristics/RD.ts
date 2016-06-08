@@ -101,23 +101,11 @@ export default class RD extends IHeuristic {
                 var start = new Date();
 
                 this.intervalId = setInterval(() => {
-                    this._logger.Write(`[RD] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
-                    
-                    /*
-                    var minutes = this.DateDiff('n', start, new Date());
-                    this._logger.Write(`[RD] time spent: ${minutes} minutes`);
-                    
-                    if(minutes >= (this._globalConfig.clientTimeout / 60))
-                    {
-                        this._logger.Write(`[RD] timed out`);
-                        cb(neighbors);
-                    }
-                    */
+                    this._logger.Write(`[RD] Mutations total: ${neighbors.length}/${this.operationsCounter}`);
                     
                     if (neighbors.length == this.operationsCounter) {
                         clearInterval(this.intervalId);
                         this.intervalId = undefined;
-                        this._logger.Write(`[RD] Interval: doing callback`);
                         cb(neighbors);
                     }
                 }, 1 * 1000);
@@ -127,14 +115,15 @@ export default class RD extends IHeuristic {
             return;
         } else {
 
-            this._logger.Write(`[RD] Asking  mutant ${counter}`);
+            //this._logger.Write(`[RD] Asking  mutant ${counter}`);
             var context: OperatorContext = new OperatorContext();
             context.First = this.bestIndividual.Clone();
             this.operationsCounter++;
+            
             this.Mutate(context, (mutant) => {
                 neighbors.push(mutant);
 
-                this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
+                //this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
             });
 
             counter++;
