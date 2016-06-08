@@ -348,7 +348,8 @@ abstract class IHeuristic extends events.EventEmitter {
 
         var localmsg = this.waitingMessages[indexFounded];
         if (!localmsg) {
-            //this._logger.Write('Incoming message not located inside Heuristic Queue ' + message.id); //error log?
+            this._logger.Write('[IHeuristic] Incoming message not located inside Heuristic Queue ' + message.id); 
+            this._logger.Write('[IHeuristic] Total messages ' +this.waitingMessages.length ); 
         }
         else {
             this.waitingMessages.splice(index, 1); //cut off    
