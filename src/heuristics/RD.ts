@@ -41,7 +41,7 @@ export default class RD extends IHeuristic {
 
 
         var totalTrials = this.trials;
-        this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
+        this.howManyTimes = (totalTrials % this._config.neighborsToProcess);
 
         this._logger.Write(`[RD] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
 
