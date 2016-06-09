@@ -38,10 +38,8 @@ export default class RD extends IHeuristic {
 
         this._logger.Write(`[RD] Starting  Random Search`);
         this._logger.Write(`[RD] Starting  Trial ${trialIndex} of ${this.Trials}`);
-
-
-        var totalTrials = this.trials;
-        this.howManyTimes = (totalTrials % this._config.neighborsToProcess);
+        
+        this.howManyTimes = Math.floor((this.trials % this._config.neighborsToProcess) + (this.trials / this._config.neighborsToProcess)); // force interger
 
         this._logger.Write(`[RD] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
 
@@ -63,13 +61,14 @@ export default class RD extends IHeuristic {
     private executeCalculatedTimes(time: number, cb: () => void) {
 
         this.operationsCounter = 0;
+
         this.DoMutationsPerTime(0, [], (mutants) => {
 
             time++;
 
-            this._logger.Write(`[RD]How Many: ${time}`);
+            this._logger.Write(`[RD] internal trial: ${time}/${this.howManyTimes}`);
             //this._logger.Write(`[RD]mutants: ${mutants.length}`);
-            this._logger.Write(`[RD]Done? ${time == this.howManyTimes}`);
+            
 
             mutants.forEach(element => {
                 this.UpdateBest(element);
@@ -102,7 +101,7 @@ export default class RD extends IHeuristic {
 
                 this.intervalId = setInterval(() => {
                     this._logger.Write(`[RD] Mutations total: ${neighbors.length}/${this.operationsCounter}`);
-                    
+
                     if (neighbors.length == this.operationsCounter) {
                         clearInterval(this.intervalId);
                         this.intervalId = undefined;
@@ -119,7 +118,7 @@ export default class RD extends IHeuristic {
             var context: OperatorContext = new OperatorContext();
             context.First = this.bestIndividual.Clone();
             this.operationsCounter++;
-            
+
             this.Mutate(context, (mutant) => {
                 neighbors.push(mutant);
 
@@ -130,7 +129,7 @@ export default class RD extends IHeuristic {
 
             setTimeout(() => {
                 this.DoMutationsPerTime(counter, neighbors, cb);
-            }, 0);
+            }, 50);
         }
     }
 
