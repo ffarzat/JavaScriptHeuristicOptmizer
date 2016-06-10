@@ -27,6 +27,12 @@ export default class Server {
 
     configuration: IConfiguration
 
+    ActualHeuristic: string;
+    ActualGlobalTrial: number
+    ActualInternalTrial: number
+    ActualLibrary: string;
+    ActualLog: string [];
+
     /**
      * Configs the server to execute
      */
@@ -254,21 +260,41 @@ export default class Server {
                     //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
 
                     //this.logger.Write(`[Server] Sending msg ${msg.id}`);
-
-                    availableClient.connection.send(JSON.stringify(msg));
+                    var stringMSG = JSON.stringify(msg);
+                    console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
+                    availableClient.connection.send(stringMSG);
                     this.waitingMessages.push(msg);
                 }
                 else {
                     this.logger.Write(`[Server] ERROR: ${msg.id} already have a client: ${msg.clientId}`);
                 }
-
-
             }
             else {
                 break;
             }
         }
     }
+
+    /**
+     * Calculates size of a string in bytes
+     */
+    getBytes(string): string {
+        var bytes = Buffer.byteLength(string, 'utf8');
+        return this.formatBytes(bytes, 2);
+    }
+
+    /**
+     * Format for especific size
+     */
+    formatBytes(bytes, decimals) {
+        if (bytes == 0) return '0 Byte';
+        var k = 1000;
+        var dm = decimals + 1 || 3;
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
 
     /**
      * Relases the callback magic
