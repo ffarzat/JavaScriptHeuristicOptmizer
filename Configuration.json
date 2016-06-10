@@ -18,7 +18,7 @@
     "url": "ws://itachi.vitalbusiness.com.br",
     "clientTimeout":300,
     "libraries" : [
-	    {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/moment.js" },
+	    {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" },
         {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
