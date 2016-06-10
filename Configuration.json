@@ -15,7 +15,7 @@
     "outWriter": "CsvResultsOutWriter",
     "heuristics": ["RD"],
     "port": 5000,
-    "url": "ws://itachi.vitalbusiness.com.br",
+    "url": "ws://10.0.21.113",
     "clientTimeout":300,
     "libraries" : [
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },

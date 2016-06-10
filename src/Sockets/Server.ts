@@ -260,9 +260,9 @@ export default class Server {
                     //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
 
                     //this.logger.Write(`[Server] Sending msg ${msg.id}`);
-                    var stringMSG = JSON.stringify(msg);
-                    console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
-                    availableClient.connection.send(stringMSG);
+                    //var stringMSG = JSON.stringify(msg);
+                    //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
+                    availableClient.connection.send(JSON.stringify(msg));
                     this.waitingMessages.push(msg);
                 }
                 else {
