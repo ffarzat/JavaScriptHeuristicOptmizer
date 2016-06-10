@@ -45,6 +45,7 @@ describe('CsvOutWritterTest Tests', function () {
         fakeResult.originalIndividualLOC = 70000;
         fakeResult.original = generatedAST.Clone();
         fakeResult.time = 2.5;
+        fakeResult.better = false;
         
         concrete.WriteTrialResults(fakeResult);
         
@@ -59,6 +60,7 @@ describe('CsvOutWritterTest Tests', function () {
         fakeResult.originalIndividualLOC = 20000;
         fakeResult.original = generatedAST.Clone();
         fakeResult.time = 1;
+        fakeResult.better = true;
                 
         concrete.WriteTrialResults(fakeResult);
                 
