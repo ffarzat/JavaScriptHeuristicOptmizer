@@ -66,7 +66,7 @@ if (cluster.isMaster) {
     DisplayConfig();
 
     //=========================================================================================== For all trials
-    ExecuteTrials(0);
+    ExecuteTrials(configuration.startTrial);
 
 
 }

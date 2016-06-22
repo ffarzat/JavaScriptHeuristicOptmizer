@@ -7,27 +7,27 @@ import TrialConfiguration from './TrialConfiguration';
  * Configuration Interface for Json file
  */
 interface IConfiguration {
-    
+
     /**
      * This file path
      */
     file: string;
-    
+
     /**
      * Diretory for Code Files and csv files 
      */
     resultsDirectory: string
-    
+
     /**
      * Filename for results.csv
      */
     trialResultsFile: string;
-    
+
     /**
      * Subjects
      */
     libraries: Library[];
-    
+
     /**
      * Configurated Heuristics 
      * 
@@ -35,7 +35,7 @@ interface IConfiguration {
      * [GA, HC, RD]
      */
     heuristics: string[];
-    
+
     /**
      * Logtype
      * 
@@ -47,9 +47,9 @@ interface IConfiguration {
 
     /**
      * Results writter
-     *  */    
+     *  */
     outWriter: string;
-    
+
     /**
      * Tester Type
      * 
@@ -59,62 +59,67 @@ interface IConfiguration {
      * 
      */
     tester: string;
-    
+
     /**
      * #Time to run optmization process
      */
     trials: number;
-    
+
+    /**
+     * #trial to restart a optmization
+     */
+    startTrial: number;
+
     /**
      * #Time to run tests 
      */
     testUntil: number;
-    
+
     /**
      * Mutation until this number
      */
     mutationTrials: number;
-    
+
     /**
      * crossOverTrials until this number
      */
     crossOverTrials: number;
-    
+
     /**
      * Fit type: can be mean or median 
      */
-    fitType: string; 
-    
+    fitType: string;
+
     /**
      * Path to Log File [Relative]
      */
     logFilePath: string;
-    
+
     /**
      * Category for Logger
      */
     logCategory: string;
-    
+
     /**
      * Determines delete or not a Log file (and others olds files) at the begining of process
      */
     logFileClearing: boolean;
-    
+
     /**
      * Server port 
      */
-    port: number; 
-    
+    port: number;
+
     /**
      * Servers url
      */
     url: string;
-    
+
     /**
      * Clients timeout in seconds
      */
     clientTimeout: number;
-    
+
     /**
      * Each trial configurations
      * 
@@ -125,8 +130,8 @@ interface IConfiguration {
      *  #TrialConfiguration = 2 (global, function scope)
      *  #total executions = 120 per Heuristic (360 by now)
      */
-    trialsConfiguration: TrialConfiguration [];
-    
+    trialsConfiguration: TrialConfiguration[];
+
 }
 
 export default IConfiguration;
