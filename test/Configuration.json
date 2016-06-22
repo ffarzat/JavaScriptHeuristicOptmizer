@@ -1,6 +1,7 @@
 {
     "file": "Configuration.json",
     "trials":60,
+    "startTrial": 0,
     "fitType":"mean",
     "testUntil": 1,
     "mutationTrials": 100,
