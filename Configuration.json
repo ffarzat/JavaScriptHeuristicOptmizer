@@ -17,7 +17,7 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://10.0.21.113",
-    "clientTimeout":300,
+    "clientTimeout":600,
     "libraries" : [
         {"name":"moment",         "path":"Libraries/moment/",           "mainFilePath":"Libraries/moment/global.js" }
     ],
