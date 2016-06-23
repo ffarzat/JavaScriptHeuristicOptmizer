@@ -20,7 +20,6 @@
     "clientTimeout":300,
     "libraries" : [
          {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
-         {"name":"Jade",         "path":"Libraries/Jade/",           "mainFilePath":"Libraries/Jade/lib/index.js"  },
          {"name":"xml2js",       "path":"Libraries/xml2js/",         "mainFilePath":"Libraries/xml2js/lib/xml2js.js" }
     ],
     "trialsConfiguration":[
