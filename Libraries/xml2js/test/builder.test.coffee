@@ -133,6 +133,7 @@ module.exports =
     diffeq expected, actual
     test.finish()
 
+  ###
   'test parser -> builder roundtrip': (test) ->
     fileName = path.join __dirname, '/fixtures/build_sample.xml'
     fs.readFile fileName, (err, xmlData) ->
@@ -143,7 +144,8 @@ module.exports =
         xmlActual = builder.buildObject obj
         diffeq xmlExpected, xmlActual
         test.finish()
-
+  ###
+  
   'test building obj with undefined value' : (test) ->
     obj = { node: 'string', anothernode: undefined }
     builder = new xml2js.Builder renderOpts: { pretty: false }
