@@ -1,5 +1,5 @@
 'use strict';
-
+/*
 const should = require('should');
 const async = require('async');
 
@@ -66,3 +66,4 @@ describe('Integration - each 10 loops of 100ms timeouts', function () {
     });
 
 });
+*/
