@@ -206,7 +206,7 @@ export default class Server {
                 element.clientId = undefined;
                 this.messages.push(element);
 
-                this.logger.Write(`Client[${client.id}]Error: saving back msg: ${element.id} [client disconnected unexpectedly]`);
+                this.logger.Write(`Client[${client.id}]Error: saving back msg: ${element.id}`);
             }
         }
     }
