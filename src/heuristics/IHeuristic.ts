@@ -318,15 +318,6 @@ abstract class IHeuristic extends events.EventEmitter {
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
         msg.id = uuid.v4();
         msg.cb = cb;
-        msg.tmeoutId = setTimeout(() => {
-            this._logger.Write(`[IHeuristic] ERROR! Timeout waiting message  ${item.id}`);
-
-            item.ctx.First = this.Original.Clone();
-            item.ctx.Second = this.Original.Clone();
-
-            this.Done(item);
-
-        }, this._globalConfig.clientTimeout * 1000);
 
         this.waitingMessages.push(msg);
 

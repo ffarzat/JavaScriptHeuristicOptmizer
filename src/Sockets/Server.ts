@@ -33,6 +33,8 @@ export default class Server {
     ActualLibrary: string;
     ActualLog: string[];
 
+    timeouts = {};
+
     /**
      * Configs the server to execute
      */
@@ -265,6 +267,16 @@ export default class Server {
                     //var stringMSG = JSON.stringify(msg);
                     //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
                     availableClient.connection.send(JSON.stringify(msg));
+
+                    this.timeouts[msg.id] = setTimeout(() => {
+                        this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
+                        clearTimeout(this.timeouts[msg.id]);
+                        delete this.timeouts[msg.id];
+                        this.ValidateRemove(availableClient);
+
+
+                    }, this.configuration.clientTimeout * 1000);
+
                     this.waitingMessages.push(msg);
                 }
                 else {
@@ -303,6 +315,8 @@ export default class Server {
      */
     Done(client: Client, message: Message) {
 
+        //this.logger.Write(`[DONE] message :[${message.id}]`);
+
         for (var clientIndex = 0; clientIndex < this.clientProcessing.length; clientIndex++) {
             var clientelement = this.clientProcessing[clientIndex];
 
@@ -312,10 +326,9 @@ export default class Server {
             }
 
         }
-        //this.logger.Write(`client index:[${clientIndex}] (out of for)`);
+
         this.clientProcessing.splice(clientIndex, 1); //cut off
         this.clients.push(client); //be available again
-        //this.logger.Write(`client[${client.id}] available`);
 
         //Finds message index
         for (var index = 0; index < this.waitingMessages.length; index++) {
@@ -325,26 +338,21 @@ export default class Server {
                 break;
             }
         }
-        //this.logger.Write(`         [Server]Checking Testresults`);
-        //this.logger.Write(`         [Server]First ${message.ctx.First.testResults}`);
-        //if(message.ctx.Second)
-        //this.logger.Write(`         [Server]Second ${message.ctx.Second.testResults}`);
-        //if(message.ctx.Original)
-        //this.logger.Write(`         [Server]Original ${message.ctx.Original.testResults}`);
 
-        //this.logger.Write(`message index:[${index}] (out of for)`);
         var localmsg = this.waitingMessages[index];
+
         this.waitingMessages.splice(index, 1); //cut off
-        //this.logger.Write("[Server] Before Message Callback ");
+        clearTimeout(this.timeouts[localmsg.id]);
+        delete this.timeouts[localmsg.id];
         localmsg.cb(message); //do the callback!
-        //this.logger.Write("[Server] After Message Callback ");
+
     }
 
     runGC() {
         if (typeof global.gc != "undefined") {
-            this.logger.Write(`Mem Usage Pre-GC ${process.memoryUsage().heapTotal}`);
+            this.logger.Write(`Mem Usage Pre-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
             global.gc();
-            this.logger.Write(`Mem Usage Post-GC ${process.memoryUsage().heapTotal}`);
+            this.logger.Write(`Mem Usage Post-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
         }
     }
 }

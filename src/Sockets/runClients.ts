@@ -48,7 +48,7 @@ if (cluster.isMaster) {
         // Be notified when worker processes die.
         cluster.on('exit', function (worker, code, signal) {
             logger.Write('Worker ' + worker.process.pid + ' died.');
-            
+
             if (signal) {
                 logger.Write(`worker was killed by signal: ${signal}`);
             } else if (code !== 0) {
@@ -91,11 +91,24 @@ if (cluster.isMaster) {
 //=========================================================================================== Functions
 function runGC() {
     if (typeof global.gc != "undefined") {
-        logger.Write(`Mem Usage Pre-GC ${process.memoryUsage().heapTotal}`);
+        //logger.Write(`Mem Usage Pre-GC ${process.memoryUsage().heapTotal}`);
         global.gc();
-        logger.Write(`Mem Usage Pre-GC ${process.memoryUsage().heapTotal}`);
+        console.log(`Mem Usage ${formatBytes(process.memoryUsage().heapTotal, 2)}`);
     }
 }
+
+/**
+ * Format for especific size
+ */
+function formatBytes(bytes, decimals) {
+    if (bytes == 0) return '0 Byte';
+    var k = 1000;
+    var dm = decimals + 1 || 3;
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 function ExecuteOperations(clientLocal: Client) {
     let timeoutId;
     let promisedId;
@@ -127,7 +140,7 @@ function ExecuteOperations(clientLocal: Client) {
     ws.addEventListener("message", async (e) => {
 
         try {
-            
+
             var msg: Message = JSON.parse(e.data);
             msg.ctx = clientLocal.Reload(msg.ctx);
             logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
