@@ -17,16 +17,18 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://10.0.21.113",
-    "clientTimeout":600,
+    "clientTimeout":300,
     "libraries" : [
-        {"name":"moment",         "path":"Libraries/moment/",           "mainFilePath":"Libraries/moment/global.js" }
+ -        {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
+ -        {"name":"Jade",         "path":"Libraries/Jade/",           "mainFilePath":"Libraries/Jade/lib/index.js"  },
+ -        {"name":"xml2js",       "path":"Libraries/xml2js/",         "mainFilePath":"Libraries/xml2js/lib/xml2js.js" }
     ],
     "trialsConfiguration":[
         {
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 20,
+                "neighborsToProcess": 50,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
