@@ -1,13 +1,10 @@
 'use strict';
-
 const co = require('co');
-
 /**
  * Contains all timers.
  * @type {{}}
  */
 const timers = {};
-
 /**
  * Timers factory object.
  * @param name
@@ -17,7 +14,6 @@ const timer = function (name) {
     if (typeof timers[name] === 'undefined') {
         timers[name] = {
             ticks: [],
-
             /**
              * Get the median of all ticks.
              * @returns {*}
@@ -25,13 +21,10 @@ const timer = function (name) {
             median: function () {
                 if (this.ticks.length > 1) {
                     this.ticks.sort(function (a, b) {
-                        return a && b && (a.getDiff() - b.getDiff()) || 0;
+                        return a && b && a.getDiff() - b.getDiff() || 0;
                     });
-
                     const l = this.ticks.length;
                     const half = Math.floor(l / 2);
-
-
                     if (l % 2) {
                         return this.ticks[half].getDiff();
                     } else {
@@ -41,7 +34,6 @@ const timer = function (name) {
                     return this.ticks[0].getDiff();
                 }
             },
-
             /**
              * Get the average duration of all ticks.
              * @returns {number}
@@ -49,7 +41,6 @@ const timer = function (name) {
             mean: function () {
                 return this.duration() / this.ticks.length;
             },
-
             /**
              * Get the duration of all ticks.
              * @returns {number}
@@ -61,7 +52,6 @@ const timer = function (name) {
                 }
                 return sum;
             },
-
             /**
              * Get the shortest tick.
              * @returns {number}
@@ -73,10 +63,8 @@ const timer = function (name) {
                         min = tick.getDiff();
                     }
                 });
-
                 return min;
             },
-
             /**
              * Get the longest tick.
              * @returns {number}
@@ -88,10 +76,8 @@ const timer = function (name) {
                         max = tick.getDiff();
                     }
                 });
-
                 return max;
             },
-
             /**
              * Get the number of ticks.
              * @returns {Number}
@@ -99,29 +85,26 @@ const timer = function (name) {
             count: function () {
                 return Object.keys(this.ticks).length;
             },
-
             /**
              * Parse the numbers nicely.
              * @param num
              * @returns {string}
              */
             parse: function (num) {
-                if (num < 1e3) {
+                if (num < 1000) {
                     return num + 'ns';
-                } else if (num >= 1e3 && num < 1e6) {
-                    return num / 1e3 + 'us';
-                } else if (num >= 1e6 && num < 1e9) {
-                    return num / 1e6 + 'ms';
-                } else if (num >= 1e9) {
-                    return num / 1e9 + 's';
+                } else if (num >= 1000 && num < 1000000) {
+                    return num / 1000 + 'us';
+                } else if (num >= 1000000 && num < 1000000000) {
+                    return num / 1000000 + 'ms';
+                } else if (num >= 1000000000) {
+                    return num / 1000000000 + 's';
                 }
             }
         };
     }
-
     return timers[name];
 };
-
 /**
  * Check if `obj` is a generator function.
  *
@@ -131,19 +114,14 @@ const timer = function (name) {
  */
 function isGeneratorFunction(obj) {
     var constructor = obj.constructor;
-
     if (!constructor) {
         return false;
     }
-
     if ('GeneratorFunction' === constructor.name || 'GeneratorFunction' === constructor.displayName) {
         return true;
     }
-
     return 'function' === typeof constructor.prototype.next && 'function' === typeof constructor.prototype.throw;
 }
-
-
 /**
  * Constructor of tick.
  * @param name The name of this tick.
@@ -154,27 +132,22 @@ function Tick(name) {
     this.name = name;
     return this;
 }
-
 Tick.wrap = function (name, callback) {
     if (typeof name === 'function') {
         callback = name;
         name = functionName(callback);
     }
-
     if (name === '') {
         name = 'anon';
     }
-
     const tick = new Tick(name);
     tick.start();
-
     const done = function () {
         tick.stop();
     };
-
     if (isGeneratorFunction(callback)) {
         co(callback).then(done, done);
-    } else if(!!callback.toString().match(/^function.*\(.*\)/)) {
+    } else if (!!callback.toString().match(/^function.*\(.*\)/)) {
         // If done is passed when the callback is declared than we assume is async
         callback(done);
     } else {
@@ -182,17 +155,14 @@ Tick.wrap = function (name, callback) {
         callback();
         tick.stop();
     }
-
     return tick;
 };
-
 /**
  * Starts the tick.
  */
 Tick.prototype.start = function () {
     this.hrstart = process.hrtime();
 };
-
 /**
  * Ends the tick.
  */
@@ -200,21 +170,18 @@ Tick.prototype.stop = function () {
     this.hrend = process.hrtime(this.hrstart);
     timer(this.name).ticks.push(this);
 };
-
 /**
  * Get the duration of the tick.
  * @returns Long nanoseconds
  */
 Tick.prototype.getDiff = function () {
-    return this.hrend[0] * 1e9 + this.hrend[1];
+    return this.hrend[0] * 1000000000 + this.hrend[1];
 };
-
 module.exports = {
     timer: timer,
     timers: timers,
     Tick: Tick
 };
-
 /**
  * Helper function used to retrieve function name.
  * @param fun
