@@ -31,7 +31,7 @@ export default class Server {
     ActualGlobalTrial: number
     ActualInternalTrial: number
     ActualLibrary: string;
-    ActualLog: string [];
+    ActualLog: string[];
 
     /**
      * Configs the server to execute
@@ -219,6 +219,8 @@ export default class Server {
         console.log(`${this.clients.length} client(s) waiting task(s)`);
         console.log(`${this.clientProcessing.length} client(s) working now`);
         console.log(`=============`);
+
+        this.runGC();
     }
 
 
@@ -330,14 +332,20 @@ export default class Server {
         //if(message.ctx.Original)
         //this.logger.Write(`         [Server]Original ${message.ctx.Original.testResults}`);
 
-
-
         //this.logger.Write(`message index:[${index}] (out of for)`);
         var localmsg = this.waitingMessages[index];
         this.waitingMessages.splice(index, 1); //cut off
         //this.logger.Write("[Server] Before Message Callback ");
         localmsg.cb(message); //do the callback!
         //this.logger.Write("[Server] After Message Callback ");
+    }
+
+    runGC() {
+        if (typeof global.gc != "undefined") {
+            this.logger.Write(`Mem Usage Pre-GC ${process.memoryUsage().heapTotal}`);
+            global.gc();
+            this.logger.Write(`Mem Usage Post-GC ${process.memoryUsage().heapTotal}`);
+        }
     }
 }
 
