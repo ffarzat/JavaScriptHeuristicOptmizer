@@ -28,7 +28,7 @@ var rmdir = require('rmdir');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = require('os').cpus().length; //-2;
+var numCPUs = (require('os').cpus().length) - 1; //-2;
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -40,19 +40,28 @@ if (cluster.isMaster) {
 
     var i = 0
     for (i = 0; i < numCPUs; i++) {
-        logger.Write(`Fork: ${i}`);
         var slave = cluster.fork();
+        logger.Write(`Fork: ${i}`);
+        runGC();
 
 
         // Be notified when worker processes die.
-        cluster.on('death', function (worker) {
-            logger.Write('Worker ' + worker.pid + ' died.');
+        cluster.on('exit', function (worker, code, signal) {
+            logger.Write('Worker ' + worker.process.pid + ' died.');
+            
+            if (signal) {
+                logger.Write(`worker was killed by signal: ${signal}`);
+            } else if (code !== 0) {
+                logger.Write(`worker exited with error code: ${code}`);
+            } else {
+                logger.Write('worker success!');
+            }
+
             i++;
             logger.Write(`[runClient]Start new client from [cluster.Worker.death] event`);
             logger.Write(`Fork: ${i}`);
             cluster.fork();
         });
-
 
     }
 } else {
@@ -80,6 +89,13 @@ if (cluster.isMaster) {
 }
 //=========================================================================================== //======>
 //=========================================================================================== Functions
+function runGC() {
+    if (typeof global.gc != "undefined") {
+        logger.Write(`Mem Usage Pre-GC ${process.memoryUsage().heapTotal}`);
+        global.gc();
+        logger.Write(`Mem Usage Pre-GC ${process.memoryUsage().heapTotal}`);
+    }
+}
 function ExecuteOperations(clientLocal: Client) {
     let timeoutId;
     let promisedId;
@@ -105,13 +121,13 @@ function ExecuteOperations(clientLocal: Client) {
             logger.Write(`[runClient]Client ${localClient.id} Done.`);
             process.exit(0);
         });
-        
+
     });
 
     ws.addEventListener("message", async (e) => {
 
         try {
-
+            
             var msg: Message = JSON.parse(e.data);
             msg.ctx = clientLocal.Reload(msg.ctx);
             logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
@@ -158,11 +174,14 @@ function ExecuteOperations(clientLocal: Client) {
             clearTimeout(promisedId);
             logger.Write(`[runClient]Client error: ${err}`);
             logger.Write(`[runClient]Client ${localClient.id} disconneting...`);
-            
+
             ws.close();
-            
+
             process.exit(-1);
         }
+
+        runGC();
+
     });
 }
 
