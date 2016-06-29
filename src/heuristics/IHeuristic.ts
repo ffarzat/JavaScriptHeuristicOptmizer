@@ -372,6 +372,27 @@ abstract class IHeuristic extends events.EventEmitter {
             }
         }
     }
+
+    runGC() {
+        if (typeof global.gc != "undefined") {
+            this._logger.Write(`Mem Usage Pre-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
+            global.gc();
+            this._logger.Write(`Mem Usage Post-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
+        }
+    }
+
+    /**
+     * Format for especific size
+     */
+    formatBytes(bytes, decimals) {
+        if (bytes == 0) return '0 Byte';
+        var k = 1000;
+        var dm = decimals + 1 || 3;
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
 }
 
 

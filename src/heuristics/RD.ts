@@ -47,6 +47,7 @@ export default class RD extends IHeuristic {
             this.Start();
             this.executeCalculatedTimes(0, () => {
                 this.Stop();
+                this.runGC();
                 var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
                 cb(results);
                 return;

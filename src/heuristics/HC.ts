@@ -59,6 +59,7 @@ export default class HC extends IHeuristic {
 
             this.executeCalculatedTimes(0, indexes, nodesIndexList, () => {
                 this.Stop();
+                this.runGC();
                 var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
                 cb(results);
                 return;

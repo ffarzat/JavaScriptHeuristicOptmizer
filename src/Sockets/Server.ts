@@ -222,7 +222,7 @@ export default class Server {
         console.log(`${this.clientProcessing.length} client(s) working now`);
         console.log(`=============`);
 
-        this.runGC();
+        //this.runGC();
     }
 
 
@@ -346,14 +346,6 @@ export default class Server {
         delete this.timeouts[localmsg.id];
         localmsg.cb(message); //do the callback!
 
-    }
-
-    runGC() {
-        if (typeof global.gc != "undefined") {
-            this.logger.Write(`Mem Usage Pre-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
-            global.gc();
-            this.logger.Write(`Mem Usage Post-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
-        }
     }
 }
 
