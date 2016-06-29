@@ -16,7 +16,7 @@
     "outWriter": "CsvResultsOutWriter",
     "heuristics": ["RD"],
     "port": 5000,
-    "url": "ws://10.0.21.113",
+    "url": "ws://10.0.0.131",
     "clientTimeout":300,
     "libraries" : [
          {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" }
