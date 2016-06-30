@@ -375,9 +375,9 @@ abstract class IHeuristic extends events.EventEmitter {
 
     runGC() {
         if (typeof global.gc != "undefined") {
-            this._logger.Write(`Mem Usage Pre-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
-            global.gc();
-            this._logger.Write(`Mem Usage Post-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
+            //this._logger.Write(`Mem Usage Pre-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
+            //global.gc();
+            //this._logger.Write(`Mem Usage Post-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
         }
     }
 
