@@ -92,8 +92,8 @@ if (cluster.isMaster) {
 function runGC() {
     if (typeof global.gc != "undefined") {
         //logger.Write(`Mem Usage Pre-GC ${process.memoryUsage().heapTotal}`);
-        global.gc();
-        console.log(`Mem Usage ${formatBytes(process.memoryUsage().heapTotal, 2)}`);
+        //global.gc();
+        //console.log(`Mem Usage ${formatBytes(process.memoryUsage().heapTotal, 2)}`);
     }
 }
 
