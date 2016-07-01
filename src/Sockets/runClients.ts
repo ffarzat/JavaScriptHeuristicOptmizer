@@ -56,11 +56,6 @@ if (cluster.isMaster) {
             } else {
                 logger.Write('worker success!');
             }
-
-            i++;
-            logger.Write(`[runClient]Start new client from [cluster.Worker.death] event`);
-            logger.Write(`Fork: ${i}`);
-            cluster.fork();
         });
 
     }

@@ -221,8 +221,6 @@ export default class Server {
         console.log(`${this.clients.length} client(s) waiting task(s)`);
         console.log(`${this.clientProcessing.length} client(s) working now`);
         console.log(`=============`);
-
-        //this.runGC();
     }
 
 
