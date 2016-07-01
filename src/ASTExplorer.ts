@@ -24,6 +24,14 @@ export default class ASTExplorer {
     GenerateFromFile(file: string): Individual {
 
         var sourceCode: string = fs.readFileSync(file, 'utf8');
+        return this.GenerateFromCode(sourceCode);
+    }
+
+        /**
+    * Generates the AST for especified code
+    */
+    GenerateFromCode(sourceCode: string): Individual {
+
         var generatedAST = esprima.parse(sourceCode, this.globalOptions) as any;
 
         var newIndividual: Individual = new Individual();
