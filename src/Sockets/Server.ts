@@ -154,30 +154,7 @@ export default class Server {
 
         //Handle on close
         client.connection.on('close', (reasonCode, description) => {
-            this.logger.Write(`Client[${client.id}]Disconnected. Bye!`);
-            var index = -1;
-            this.clients.forEach(element => {
-                if (element.id === client.id) {
-                    return;
-                }
-                index++;
-            });
-
-            //this.logger.Write(`Index: ${index}`);
-            this.clients.splice(index, 1);  //remove from availables
-            this.ValidateRemove(client);
-            //this.logger.Write(`Left ${this.clients.length} client(s)`);
-
-
-            var waitingIndex = -1;
-            this.clientProcessing.forEach(element => {
-                if (element.id === client.id) {
-                    return;
-                }
-                waitingIndex++;
-            });
-            this.clientProcessing.splice(waitingIndex, 1);  //remove from availables
-
+            this.RemoveClient(client);
         });
 
         //Handle on messagem from cliente!
@@ -205,6 +182,8 @@ export default class Server {
 
                 element.clientId = undefined;
                 this.messages.push(element);
+
+                this.RemoveClient(client);
 
                 this.logger.Write(`Client[${client.id}]Error: saving back msg: ${element.id}`);
             }
@@ -259,23 +238,29 @@ export default class Server {
                 if (!msg.clientId) {
 
                     msg.clientId = availableClient.id;
-                    //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
 
-                    //this.logger.Write(`[Server] Sending msg ${msg.id}`);
-                    //var stringMSG = JSON.stringify(msg);
-                    //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
-                    availableClient.connection.send(JSON.stringify(msg));
+                    if (availableClient.connection.readyState == availableClient.connection.OPEN) {
+                        //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
 
-                    this.timeouts[msg.id] = setTimeout(() => {
-                        this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
-                        clearTimeout(this.timeouts[msg.id]);
-                        delete this.timeouts[msg.id];
+                        //this.logger.Write(`[Server] Sending msg ${msg.id}`);
+                        //var stringMSG = JSON.stringify(msg);
+                        //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
+                        availableClient.connection.send(JSON.stringify(msg));
+
+                        this.timeouts[msg.id] = setTimeout(() => {
+                            this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
+                            clearTimeout(this.timeouts[msg.id]);
+                            delete this.timeouts[msg.id];
+                            this.ValidateRemove(availableClient);
+
+
+                        }, this.configuration.clientTimeout * 1000);
+
+                        this.waitingMessages.push(msg);
+                    }
+                    else {
                         this.ValidateRemove(availableClient);
-
-
-                    }, this.configuration.clientTimeout * 1000);
-
-                    this.waitingMessages.push(msg);
+                    }
                 }
                 else {
                     this.logger.Write(`[Server] ERROR: ${msg.id} already have a client: ${msg.clientId}`);
@@ -345,5 +330,32 @@ export default class Server {
         localmsg.cb(message); //do the callback!
 
     }
+
+    RemoveClient(client) {
+        this.logger.Write(`Client[${client.id}]Disconnected. Bye!`);
+        var index = -1;
+        this.clients.forEach(element => {
+            if (element.id === client.id) {
+                return;
+            }
+            index++;
+        });
+
+        //this.logger.Write(`Index: ${index}`);
+        this.clients.splice(index, 1);  //remove from availables
+        this.ValidateRemove(client);
+        //this.logger.Write(`Left ${this.clients.length} client(s)`);
+
+
+        var waitingIndex = -1;
+        this.clientProcessing.forEach(element => {
+            if (element.id === client.id) {
+                return;
+            }
+            waitingIndex++;
+        });
+        this.clientProcessing.splice(waitingIndex, 1);  //remove from availables
+    }
+
 }
 
