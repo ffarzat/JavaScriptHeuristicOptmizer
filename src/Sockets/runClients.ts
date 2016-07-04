@@ -28,7 +28,7 @@ var rmdir = require('rmdir');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = (require('os').cpus().length) - 1; //-2;
+var numCPUs = (require('os').cpus().length) - 3; //-2;
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
