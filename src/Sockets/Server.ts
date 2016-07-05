@@ -244,12 +244,11 @@ export default class Server {
 
                     if (!msg.clientId) {
 
-                        msg.clientId = availableClient.id;
-
                         if (availableClient.connection.readyState == availableClient.connection.OPEN) {
                             //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
 
-
+                            msg.clientId = availableClient.id;
+                            
                             this.timeouts[msg.id] = setTimeout(() => {
                                 this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
 
