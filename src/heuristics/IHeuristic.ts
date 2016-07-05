@@ -45,6 +45,13 @@ abstract class IHeuristic extends events.EventEmitter {
     Tick: any;
     trialUuid: any;
 
+    ActualHeuristic: string;
+    ActualGlobalTrial: number
+    ActualInternalTrial: number
+    ActualLibrary: string;
+    CleanServer: boolean;
+
+
     /**
      * Forces the Heuristic to validate config
      */
