@@ -305,22 +305,31 @@ export default class Server {
      */
     Done(client: Client, message: Message) {
 
-        var clientelement = this.clientProcessing[client.id];
-        delete this.clientProcessing[client.id];
+        if (!client)
+            this.logger.Write(`Undefined Client`);
 
-        this.clients[client.id] = client; //be available again
+        if (!message)
+            this.logger.Write(`Undefined message`);
 
-        var element = this.waitingMessages[message.id];
+        try {
+            var clientelement = this.clientProcessing[client.id];
+            delete this.clientProcessing[client.id];
 
-        delete this.waitingMessages[element.id];
-        clearTimeout(this.timeouts[element.id]);
-        delete this.timeouts[element.id];
+            this.clients[client.id] = client; //be available again
 
-        element.cb(message); //do the callback!
+            var element = this.waitingMessages[message.id];
 
-        this.logger.Write(`[Server] Msg ${message.id} CB done`);
-        this.logger.Write(`${Object.keys(this.waitingMessages).length} message(s) left in waitingMessages`);
+            delete this.waitingMessages[element.id];
+            clearTimeout(this.timeouts[element.id]);
+            delete this.timeouts[element.id];
 
+            element.cb(message); //do the callback!
+
+            this.logger.Write(`[Server] Msg ${message.id} CB done`);
+            this.logger.Write(`${Object.keys(this.waitingMessages).length} message(s) left in waitingMessages`);
+        } catch (error) {
+            this.logger.Write(`[Server] Msg ${message.id} ${error}`);
+        }
     }
 
 
