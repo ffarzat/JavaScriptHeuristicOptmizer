@@ -71,8 +71,17 @@ if (cluster.isMaster) {
     ParseConfigAndLibs(clientWorkDir.path);
 
     //=========================================================== Client initialization
-    ExecuteOperations(clientWorkDir);
+    var clientId = uuid.v4();
+    var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
+    logger.Write(`[Client:${clientId}] conecting at ${serverUrl}`);
 
+    var localClient = new Client();
+    localClient.id = clientId;
+    localClient.logger = logger;
+
+    localClient.Setup(configuration, clientWorkDir);
+
+    ExecuteOperations(localClient);
 }
 //=========================================================================================== //======>
 //=========================================================================================== Functions
@@ -96,17 +105,7 @@ function formatBytes(bytes, decimals) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-function ExecuteOperations(clientWorkDir) {
-    var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
-    var clientId = uuid.v4();
-    var clientLocal = new Client();
-    clientLocal.id = clientId;
-    clientLocal.logger = logger;
-
-    clientLocal.Setup(configuration, clientWorkDir);
-
-
-
+function ExecuteOperations(clientLocal: Client) {
     let timeoutId;
     let promisedId;
 
@@ -119,31 +118,30 @@ function ExecuteOperations(clientWorkDir) {
     let operationPromise: Promise<OperatorContext>;
 
     var ws = new WebSocket(serverUrl, 'echo-protocol'); //conect
-    logger.Write(`[Client:${clientId}] conecting at ${serverUrl}`);
 
     ws.addEventListener("close", (data) => {
-        logger.Write(`[runClient]Client ${clientLocal.id} clean temp data...`);
+        logger.Write(`[runClient]Client ${localClient.id} clean temp data...`);
 
         rmdir(clientLocal.TempDirectory.path, function (err, dirs, files) {
             //console.log(dirs);
             //console.log(files);
             //console.log('all files are removed');
-            logger.Write(`[runClient]Client ${clientLocal.id}   Temp data cleaned.`);
-            logger.Write(`[runClient]Client ${clientLocal.id} Done.`);
+            logger.Write(`[runClient]Client ${localClient.id}   Temp data cleaned.`);
+            logger.Write(`[runClient]Client ${localClient.id} Done.`);
             process.exit(0);
         });
 
     });
 
     ws.addEventListener("error", (data) => {
-        logger.Write(`[runClient]Client ${clientLocal.id} clean temp data...`);
+        logger.Write(`[runClient]Client ${localClient.id} clean temp data...`);
 
         rmdir(clientLocal.TempDirectory.path, function (err, dirs, files) {
             //console.log(dirs);
             //console.log(files);
             //console.log('all files are removed');
-            logger.Write(`[runClient]Client ${clientLocal.id}   Temp data cleaned.`);
-            logger.Write(`[runClient]Client ${clientLocal.id} Done.`);
+            logger.Write(`[runClient]Client ${localClient.id}   Temp data cleaned.`);
+            logger.Write(`[runClient]Client ${localClient.id} Done.`);
             process.exit(101010);
         });
 
@@ -161,7 +159,7 @@ function ExecuteOperations(clientWorkDir) {
             var msg: Message = JSON.parse(e.data);
             //logger.Write(`[runClient] msg ${msg.ctx.First._astFile.path}`);
             msg.ctx = clientLocal.Reload(msg.ctx);
-            logger.Write(`[runClient]Client ${clientLocal.id} processing message ${msg.id}`);
+            logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
 
             if (msg.ctx.Operation == "Mutation") {
                 operationPromise = new Promise<OperatorContext>((resolve) => {
@@ -205,7 +203,7 @@ function ExecuteOperations(clientWorkDir) {
         catch (err) {
             clearTimeout(promisedId);
             logger.Write(`[runClient]Client error: ${err}`);
-            logger.Write(`[runClient]Client ${clientLocal.id} disconneting...`);
+            logger.Write(`[runClient]Client ${localClient.id} disconneting...`);
 
             ws.close();
 
