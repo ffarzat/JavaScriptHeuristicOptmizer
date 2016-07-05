@@ -205,6 +205,11 @@ export default class Server {
         console.log(`=============`);
         console.log(`${this.messages.length} message(s) waiting free client(s)`);
         console.log(`${this.waitingMessages.length} message(s) in process`);
+        if(this.waitingMessages.length == 1){
+            console.log(`msg: ${this.waitingMessages[0].id}`);
+            console.log(`client: ${this.waitingMessages[0].clientId}`);
+        }
+
         console.log(`${this.clients.length} client(s) waiting task(s)`);
         console.log(`${this.clientProcessing.length} client(s) working now`);
         console.log(`=============`);
@@ -342,15 +347,17 @@ export default class Server {
         
         for (var index = 0; index < this.waitingMessages.length; index++) {
             var msgelement = this.waitingMessages[index];
-            if (msgelement.id == message.id) {
-                this.logger.Write(`message index:[${index}] (inside Timeout for)`);
+            this.logger.Write(`message index:[${index}] (inside Timeout for)`);
 
+            if (msgelement.id == message.id) {
+                
                 var localmsg = this.waitingMessages[index];
 
                 this.waitingMessages.splice(index, 1); //cut off
                 clearTimeout(this.timeouts[localmsg.id]);
                 delete this.timeouts[localmsg.id];
                 localmsg.cb(message); //do the callback!
+                
                 break;
             }
         }
