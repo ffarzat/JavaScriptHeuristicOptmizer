@@ -67,7 +67,7 @@ export default class RD extends IHeuristic {
 
             time++;
 
-            this._logger.Write(`[RD] internal trial: ${time}/${this.howManyTimes}`);
+            this._logger.Write(`[RD] internal trial: ${time}/${this.howManyTimes} done.`);
             //this._logger.Write(`[RD]mutants: ${mutants.length}`);
             
 

@@ -167,6 +167,13 @@ export default class Server {
             }
             catch (err) {
                 this.logger.Write(`[Server] ${err}`);
+
+                if (this.waitingMessages.length == 1) {
+                    //Maldito erro da 49 mensagem!
+                    if (this.waitingMessages.length == 1)
+                        this.Done(client, this.waitingMessages[0]); //Force
+                }
+
             }
         });
     }
@@ -261,8 +268,8 @@ export default class Server {
                             try {
                                 this.Done(availableClient, msg); //ends the process
                             }
-                            catch (err){
-                                if(this.waitingMessages.length == 1)
+                            catch (err) {
+                                if (this.waitingMessages.length == 1)
                                     this.Done(availableClient, this.waitingMessages[0]); //Force
                             }
 
