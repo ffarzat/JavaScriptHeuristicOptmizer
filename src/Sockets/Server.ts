@@ -257,11 +257,14 @@ export default class Server {
 
                         this.timeouts[msg.id] = setTimeout(() => {
                             this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
-                            
-                            clearTimeout(this.timeouts[msg.id]);
-                            delete this.timeouts[msg.id];
-                            this.Done(availableClient, msg); //ends the process
 
+                            try {
+                                this.Done(availableClient, msg); //ends the process
+                            }
+                            catch (err){
+                                if(this.waitingMessages.length == 1)
+                                    this.Done(availableClient, this.waitingMessages[0]); //Force
+                            }
 
                         }, this.configuration.clientTimeout * 1000);
 
@@ -328,16 +331,19 @@ export default class Server {
             var msgelement = this.waitingMessages[index];
             if (msgelement.id == message.id) {
                 //this.logger.Write(`message index:[${index}] (inside for)`);
+
+                var localmsg = this.waitingMessages[index];
+
+                this.waitingMessages.splice(index, 1); //cut off
+                clearTimeout(this.timeouts[localmsg.id]);
+                delete this.timeouts[localmsg.id];
+                localmsg.cb(message); //do the callback!
+
                 break;
             }
         }
 
-        var localmsg = this.waitingMessages[index];
 
-        this.waitingMessages.splice(index, 1); //cut off
-        clearTimeout(this.timeouts[localmsg.id]);
-        delete this.timeouts[localmsg.id];
-        localmsg.cb(message); //do the callback!
 
     }
 
