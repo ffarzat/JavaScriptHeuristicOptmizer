@@ -162,7 +162,6 @@ export default class Server {
 
         //Handle on messagem from cliente!
         client.connection.on('message', async (message) => {
-
             this.concludedMessages[message.id] = message;
         });
     }
@@ -223,7 +222,7 @@ export default class Server {
 
                 try {
                     var msg = this.concludedMessages[key]; //get
-                    delete this.concludedMessages[key]; //delete
+                    
 
                     var msgProcessed: Message = JSON.parse(msg);
                     var client = this.clientProcessing[msgProcessed.clientId];
@@ -235,6 +234,9 @@ export default class Server {
                 catch (err) {
                     msgProcessed.cb(msgProcessed);
                     this.logger.Write(`[Server] Error: ${err}`);
+                }
+                finally{
+                    delete this.concludedMessages[key]; //delete
                 }
             }
         }
@@ -252,14 +254,14 @@ export default class Server {
 
             this.processing = true;
 
-            for (var clientIndex = 0; clientIndex < Object.keys(this.clients).length; clientIndex++) {
+            for (var clientKey in this.clients) {
 
                 if (Object.keys(this.messages).length > 0) {
 
-                    var availableClient = this.clients[Object.keys(this.clients)[0]];
-                    delete this.clients[availableClient.id];
+                    var availableClient = this.clients[clientKey];
+                    delete this.clients[clientKey];
 
-                    this.clientProcessing[availableClient.id] = availableClient;
+                    this.clientProcessing[clientKey] = availableClient;
 
                     var msg = this.messages[Object.keys(this.messages)[0]]; //get
 
