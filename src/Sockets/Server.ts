@@ -166,8 +166,8 @@ export default class Server {
 
         //Handle on messagem from cliente!
         client.connection.on('message', async (message) => {
-            this.totalReturnedMessages += 1;
             this.concludedMessages[message.id] = message;
+            this.totalReturnedMessages += 1;
         });
     }
 
