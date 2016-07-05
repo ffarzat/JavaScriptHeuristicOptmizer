@@ -161,7 +161,7 @@ export default class Server {
         client.connection.on('message', (message) => {
             try {
                 var msg: Message = JSON.parse(message);
-                
+
                 this.logger.Write(`[Server] msg [${msg.id}]`);
 
                 this.Done(client, msg);
@@ -311,16 +311,16 @@ export default class Server {
         this.clients[client.id] = client; //be available again
 
         var element = this.waitingMessages[message.id];
-        
+
         delete this.waitingMessages[element.id];
         clearTimeout(this.timeouts[element.id]);
         delete this.timeouts[element.id];
-        
+
         element.cb(message); //do the callback!
 
         this.logger.Write(`[Server] Msg ${message.id} CB done`);
         this.logger.Write(`${Object.keys(this.waitingMessages).length} message(s) left in waitingMessages`);
-        
+
     }
 
 
@@ -328,23 +328,17 @@ export default class Server {
      * Message execution timeout from Server (without Client agreement)
      */
     ExecuteMsgTimeout(message) {
+        var element = this.waitingMessages[message.id];
+        this.logger.Write(`message index:[${element.id}] (inside Timeout for)`);
 
-        for (var key in this.waitingMessages) {
-            var element = this.waitingMessages[key];
+        delete this.waitingMessages[element.id];
+        clearTimeout(this.timeouts[element.id]);
+        delete this.timeouts[element.id];
 
-            if (element.id == message.id) {
-                this.logger.Write(`message index:[${element.id}] (inside Timeout for)`);
-
-                delete this.waitingMessages[element.id];
-                clearTimeout(this.timeouts[element.id]);
-                delete this.timeouts[element.id];
-
-
-                element.cb(element); //do the callback!
-                break;
-            }
-        }
+        element.cb(element); //do the callback!
     }
+
+
 
     /**
      * Delete a Client from trial
