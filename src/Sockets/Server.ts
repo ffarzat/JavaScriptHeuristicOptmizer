@@ -38,6 +38,9 @@ export default class Server {
 
     processing: boolean = false;
 
+    totalSendMessages = 0;
+    totalReturnedMessages = 0;
+
     /**
      * Configs the server to execute
      */
@@ -195,6 +198,7 @@ export default class Server {
         console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
         console.log(`${Object.keys(this.clients).length} client(s) waiting task(s)`);
         console.log(`${Object.keys(this.clientProcessing).length} client(s) working now`);
+        console.log(`-> ${Object.keys(this.totalSendMessages).length} | ${Object.keys(this.totalReturnedMessages).length} <--`);
         console.log(`=============`);
     }
 
@@ -216,6 +220,8 @@ export default class Server {
      */
     ProcessRetun() {
 
+        this.logger.Write(`[Server.ProcessReturn] ${Object.keys(this.concludedMessages).length} messages`)
+
         if (Object.keys(this.concludedMessages).length > 0) {
 
             for (var key in this.concludedMessages) {
@@ -227,7 +233,7 @@ export default class Server {
                     var client = this.clientProcessing[msgProcessed.clientId];
 
                     this.Done(client, msgProcessed);
-
+                    this.totalReturnedMessages++;
                     //this.logger.Write(`Left ${this.clients.length} client(s)`);
                 }
                 catch (err) {
@@ -283,6 +289,7 @@ export default class Server {
                         //var stringMSG = JSON.stringify(msg);
                         //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
                         availableClient.connection.send(JSON.stringify(msg));
+                        this.totalSendMessages ++;
                         //this.logger.Write(`[Server] Sending msg ${msg.id}`);
                     }
                     else {
