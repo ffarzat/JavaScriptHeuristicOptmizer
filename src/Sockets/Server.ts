@@ -179,8 +179,8 @@ export default class Server {
             var element = this.waitingMessages[index];
             if (element.clientId == client.id) {
                 
-                clearTimeout(this.timeouts[msg.id]);
-                delete this.timeouts[msg.id];
+                clearTimeout(this.timeouts[element.id]);
+                delete this.timeouts[element.id];
 
                 this.waitingMessages.splice(index, 1); //remove
 
