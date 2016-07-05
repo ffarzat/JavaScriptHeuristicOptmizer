@@ -167,13 +167,6 @@ export default class Server {
             }
             catch (err) {
                 this.logger.Write(`[Server] ${err}`);
-                console.log("Error inside HandleConnections " + err);
-                if (this.waitingMessages.length == 1) {
-                    //Maldito erro da 49 mensagem!
-                    if (this.waitingMessages.length == 1)
-                        this.Done(client, this.waitingMessages[0]); //Force
-                }
-
             }
         });
     }
@@ -265,15 +258,7 @@ export default class Server {
                         this.timeouts[msg.id] = setTimeout(() => {
                             this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
 
-                            try {
-                                this.Done(availableClient, msg); //ends the process
-                            }
-                            catch (err) {
-                                console.log("Error inside ProcessQueue " + err);
-
-                                if (this.waitingMessages.length == 1)
-                                    this.Done(availableClient, this.waitingMessages[0]); //Force
-                            }
+                            this.Done(availableClient, msg); //ends the process
 
                         }, this.configuration.clientTimeout * 1000);
 
@@ -335,6 +320,8 @@ export default class Server {
         this.clientProcessing.splice(clientIndex, 1); //cut off
         this.clients.push(client); //be available again
 
+        var done = false;
+
         //Finds message index
         for (var index = 0; index < this.waitingMessages.length; index++) {
             var msgelement = this.waitingMessages[index];
@@ -347,12 +334,18 @@ export default class Server {
                 clearTimeout(this.timeouts[localmsg.id]);
                 delete this.timeouts[localmsg.id];
                 localmsg.cb(message); //do the callback!
-
+                done = true;
                 break;
             }
         }
 
-
+        if (this.waitingMessages.length == 1 && !done) {
+            var localmsg = this.waitingMessages[0];
+            this.waitingMessages.splice(0, 1); //cut off
+            clearTimeout(this.timeouts[localmsg.id]);
+            delete this.timeouts[localmsg.id];
+            localmsg.cb(message); //do the callback!
+        }
 
     }
 
