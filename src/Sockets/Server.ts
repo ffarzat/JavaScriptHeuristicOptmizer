@@ -24,6 +24,7 @@ export default class Server {
     messages = {}; //store all received messages 
     clientProcessing = {}; //store client processing something
     waitingMessages = {}; //store waiting messages
+    concludedMessages = {}; // store returned messages
 
     configuration: IConfiguration
 
@@ -161,17 +162,8 @@ export default class Server {
 
         //Handle on messagem from cliente!
         client.connection.on('message', async (message) => {
-            try {
-                var msg: Message = JSON.parse(message);
 
-                //this.logger.Write(`[Server] msg [${msg.id}]`);
-
-                this.Done(client, msg);
-                //this.logger.Write(`Left ${this.clients.length} client(s)`);
-            }
-            catch (err) {
-                this.logger.Write(`[Server] Error: ${err}`);
-            }
+            this.concludedMessages[message.id] = message;
         });
     }
 
@@ -221,9 +213,38 @@ export default class Server {
     }
 
     /**
+     * Send Back messages
+     */
+    async ProcessRetun() {
+
+        if (Object.keys(this.concludedMessages).length > 0) {
+
+            for (var key in this.concludedMessages) {
+
+                try {
+                    var msg = this.concludedMessages[key]; //get
+                    delete this.concludedMessages[key]; //delete
+
+                    var msgProcessed: Message = JSON.parse(msg);
+                    var client = this.clientProcessing[msgProcessed.clientId];
+
+                    this.Done(client, msgProcessed);
+
+                    //this.logger.Write(`Left ${this.clients.length} client(s)`);
+                }
+                catch (err) {
+                    msgProcessed.cb(msgProcessed);
+                    this.logger.Write(`[Server] Error: ${err}`);
+                }
+            }
+        }
+    }
+
+
+    /**
      * Process messages
      */
-    ProcessQueue() {
+    async ProcessQueue() {
 
         //this.logger.Write(`[Server] ProcessQueue? [${this.processing}]`);
 
@@ -244,7 +265,7 @@ export default class Server {
 
                     if (availableClient.connection.readyState == availableClient.connection.OPEN) {
                         //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
-                        
+
                         delete this.messages[msg.id]; //delete
                         msg.clientId = availableClient.id;
 
