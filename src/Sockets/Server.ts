@@ -37,6 +37,7 @@ export default class Server {
     timeouts = {};
 
     processing: boolean = false;
+    returning: boolean = false;
 
     totalSendMessages = 0;
     totalReturnedMessages = 0;
@@ -222,31 +223,38 @@ export default class Server {
      */
     ProcessRetun() {
 
-        //this.logger.Write(`[Server.ProcessReturn] ${Object.keys(this.concludedMessages).length} messages`)
 
-        if (Object.keys(this.concludedMessages).length > 0) {
+        if (this.returning == false) {
+            this.returning = true;
 
-            for (var key in this.concludedMessages) {
+            //this.logger.Write(`[Server.ProcessReturn] ${Object.keys(this.concludedMessages).length} messages`)
 
-                try {
-                    var msg = this.concludedMessages[key]; //get
-                    
-                    var msgProcessed: Message = JSON.parse(msg);
-                    var client = this.clientProcessing[msgProcessed.clientId];
+            if (Object.keys(this.concludedMessages).length > 0) {
 
-                    this.Done(client, msgProcessed);
-                    this.totalReturnedMessagesDone += 1;
-                    //this.logger.Write(`Left ${this.clients.length} client(s)`);
-                }
-                catch (err) {
-                    console.log(`[Server.ProcessRetun] Error: ${err}`);
-                    this.logger.Write(`[Server.ProcessRetun] Error: ${err}`);
-                    msgProcessed.cb(msgProcessed);
-                }
-                finally{
-                    delete this.concludedMessages[key]; //delete
+                for (var key in this.concludedMessages) {
+
+                    try {
+                        var msg = this.concludedMessages[key]; //get
+
+                        var msgProcessed: Message = JSON.parse(msg);
+                        var client = this.clientProcessing[msgProcessed.clientId];
+
+                        this.Done(client, msgProcessed);
+                        this.totalReturnedMessagesDone += 1;
+                        //this.logger.Write(`Left ${this.clients.length} client(s)`);
+                    }
+                    catch (err) {
+                        console.log(`[Server.ProcessRetun] Error: ${err}`);
+                        this.logger.Write(`[Server.ProcessRetun] Error: ${err}`);
+                        msgProcessed.cb(msgProcessed);
+                    }
+                    finally {
+                        delete this.concludedMessages[key]; //delete
+                    }
                 }
             }
+            
+            this.returning = false;
         }
     }
 
@@ -292,7 +300,7 @@ export default class Server {
                         //var stringMSG = JSON.stringify(msg);
                         //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
                         availableClient.connection.send(JSON.stringify(msg));
-                        this.totalSendMessages +=1;
+                        this.totalSendMessages += 1;
                         //this.logger.Write(`[Server] Sending msg ${msg.id}`);
                     }
                     else {
@@ -334,7 +342,7 @@ export default class Server {
     /**
      * Relases the callback magic
      */
-   async Done(client: Client, message: Message) {
+    async Done(client: Client, message: Message) {
 
         try {
             var clientelement = this.clientProcessing[client.id];
@@ -348,9 +356,9 @@ export default class Server {
             clearTimeout(this.timeouts[element.id]);
             delete this.timeouts[element.id];
 
-            setTimeout(function() {
+            setTimeout(function () {
                 element.cb(message); //do the callback!
-            }, 50); 
+            }, 50);
 
             //this.logger.Write(`[Server] Msg ${message.id} CB done`);
             //this.logger.Write(`${Object.keys(this.waitingMessages).length} message(s) left in waitingMessages`);
