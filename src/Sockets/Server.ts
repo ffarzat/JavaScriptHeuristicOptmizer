@@ -210,17 +210,14 @@ export default class Server {
         console.log(`${Object.keys(this.clientProcessing).length} client(s) working now`);
         console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--`);
         console.log(`=============`);
-
-        for(var key in this.clientProcessing)
+        
+        if(Object.keys(this.timeouts).length == 0 && Object.keys(this.waitingMessages).length == 1)
         {
-            var clientP: Client = this.clientProcessing[key];
-            try{
-                clientP.connection.ping();
-            }
-            catch(err)
-            {
-                clientP.connection.terminate();
-            }
+            //Maldito Bug do 49!!!
+            var key = Object.keys(this.waitingMessages)[0];
+            var msgFail: Message = this.waitingMessages[key];
+            msgFail.cb(msgFail); //será???
+            this.logger.Write(`[Server.Status] Error49`);
         }
     }
 
