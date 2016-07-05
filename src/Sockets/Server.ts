@@ -22,7 +22,7 @@ export default class Server {
 
     clients = {}; //store available clients
     messages = {}; //store all received messages 
-    clientProcessing: Client[] = []; //store client processing something
+    clientProcessing = {}; //store client processing something
     waitingMessages = {}; //store waiting messages
 
     configuration: IConfiguration
@@ -67,7 +67,7 @@ export default class Server {
                 "Messages": Object.keys(this.messages).length,
                 "WaitingMessages": Object.keys(this.waitingMessages).length,
                 "Clients": Object.keys(this.clients).length,
-                "ClientProcessing": this.clientProcessing.length
+                "ClientProcessing": Object.keys(this.clientProcessing).length
             }];
             res.send(list);
         });
@@ -79,7 +79,7 @@ export default class Server {
                 "Messages": Object.keys(this.messages).length,
                 "WaitingMessages": Object.keys(this.waitingMessages).length,
                 "Clients": Object.keys(this.clients).length,
-                "ClientProcessing": this.clientProcessing.length
+                "ClientProcessing": Object.keys(this.clientProcessing).length
             }];
             res.send(list);
         });
@@ -135,7 +135,7 @@ export default class Server {
             client.id = id;
             client.connection = connection;
             client.available = true;
-            this.clients[client.id] =client;
+            this.clients[client.id] = client;
 
             this.logger.Write('Connection accepted [' + id + ']');
             //this.logger.Write(`${this.clients.length} client(s)`);
@@ -199,7 +199,7 @@ export default class Server {
         console.log(`${Object.keys(this.messages).length} message(s) waiting free client(s)`);
         console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
         console.log(`${Object.keys(this.clients).length} client(s) waiting task(s)`);
-        console.log(`${this.clientProcessing.length} client(s) working now`);
+        console.log(`${Object.keys(this.clientProcessing).length} client(s) working now`);
         console.log(`=============`);
     }
 
@@ -235,7 +235,7 @@ export default class Server {
                 var availableClient = this.clients[Object.keys(this.clients)[0]]
                 delete this.clients[availableClient.id];
 
-                this.clientProcessing.push(availableClient);
+                this.clientProcessing[availableClient.id] = availableClient;
 
                 var msg = this.messages[Object.keys(this.messages)[0]]; //get
                 delete this.messages[msg.id]; //delete
@@ -302,18 +302,10 @@ export default class Server {
      * Relases the callback magic
      */
     Done(client: Client, message: Message) {
-        for (var clientIndex = 0; clientIndex < this.clientProcessing.length; clientIndex++) {
-            var clientelement = this.clientProcessing[clientIndex];
 
-            if (client.id === clientelement.id) {
-                //this.logger.Write(`client index:[${clientIndex}] (inside for)`);
-                break;
-            }
+        var clientelement = this.clientProcessing[client.id];
+        delete this.clientProcessing[client.id];
 
-        }
-
-        this.clientProcessing.splice(clientIndex, 1); //cut off
-        
         this.clients[client.id] = client; //be available again
 
         if (Object.keys(this.waitingMessages).length == 1) {
@@ -356,15 +348,7 @@ export default class Server {
     RemoveClient(client) {
         this.logger.Write(`[Server] Client[${client.id}] Disconnected. Removed.`);
         delete this.clients[client.id];
-
-        var waitingIndex = -1;
-        this.clientProcessing.forEach(element => {
-            if (element.id === client.id) {
-                return;
-            }
-            waitingIndex++;
-        });
-        this.clientProcessing.splice(waitingIndex, 1);  //remove from availables
+        delete this.clientProcessing[client.id];
     }
 
 }
