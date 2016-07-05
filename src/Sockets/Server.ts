@@ -198,11 +198,6 @@ export default class Server {
         console.log(`=============`);
         console.log(`${this.messages.length} message(s) waiting free client(s)`);
         console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
-        if (Object.keys(this.waitingMessages).length == 1) {
-            console.log(`msg: ${this.waitingMessages[0].id}`);
-            console.log(`client: ${this.waitingMessages[0].clientId}`);
-        }
-
         console.log(`${this.clients.length} client(s) waiting task(s)`);
         console.log(`${this.clientProcessing.length} client(s) working now`);
         console.log(`=============`);
