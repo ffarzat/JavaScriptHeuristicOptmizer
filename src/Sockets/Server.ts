@@ -257,9 +257,10 @@ export default class Server {
 
                         this.timeouts[msg.id] = setTimeout(() => {
                             this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
+                            
                             clearTimeout(this.timeouts[msg.id]);
                             delete this.timeouts[msg.id];
-                            this.ValidateRemove(availableClient);
+                            this.Done(availableClient, msg); //ends the process
 
 
                         }, this.configuration.clientTimeout * 1000);
