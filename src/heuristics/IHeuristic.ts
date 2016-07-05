@@ -40,7 +40,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
     public Original: Individual;
 
-    waitingMessages: Message[];   //store waiting messages
+    waitingMessages: any;   //store waiting messages
 
     Tick: any;
     trialUuid: any;
@@ -53,7 +53,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this._globalConfig = globalConfig;
         this._astExplorer = new ASTExplorer();
         events.EventEmitter.call(this);
-        this.waitingMessages = [];
+        this.waitingMessages = {};
         this.trialUuid = uuid.v4();
 
         process.on('message', (newMsg: Message) => {
@@ -165,7 +165,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         var trialTimer = exectimer.timers[this.trialUuid];
         results.time = this.ToNanosecondsToMinutes(trialTimer.duration());
-        results.better =  bestCode != originalCode
+        results.better = bestCode != originalCode
 
         return results;
     }
@@ -319,7 +319,7 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.id = uuid.v4();
         msg.cb = cb;
 
-        this.waitingMessages.push(msg);
+        this.waitingMessages[msg.id] = msg;
 
         var item = new Message();
         item.id = msg.id;
@@ -331,45 +331,18 @@ abstract class IHeuristic extends events.EventEmitter {
      * Relases the callback magic
      */
     Done(message: Message) {
-        //Finds message index
-        var indexFounded = -1;
-        for (var index = 0; index < this.waitingMessages.length; index++) {
-            var element = this.waitingMessages[index];
-            //this._logger.Write(`External: ${element.id} == ${message.id}`);
-            //this._logger.Write(`break?: ${element.id === message.id}`);
-            //this._logger.Write(`element.id: ${typeof element.id}`);
-            //this._logger.Write(`message.id: ${typeof message.id}`);
-            if (element.id === message.id) {
-                //this._logger.Write(`do break... : ${element.id === message.id}`);
-                indexFounded = index;
-                break;
-            }
-        }
+        var localmsg = this.waitingMessages[message.id];
 
-
-        //this._logger.Write(`Index fouded ${indexFounded}`);
-        //this._logger.Write(`Messages waiting ${this.waitingMessages.length}`);
-
-        var localmsg = this.waitingMessages[indexFounded];
-
-        if (!localmsg) {
-            //this._logger.Write(`[IHeuristic] FATAL ERROR!!! Message not found  ${message.id}`);
-        }
-        else {
-            try {
-                //this._logger.Write(`[IHeuristic] Message processed  ${message.id}`);
-                //clear timeout
-                clearTimeout(localmsg.tmeoutId);
-                localmsg.tmeoutId = undefined;
-                this.waitingMessages.splice(index, 1); //cut off
-                localmsg.ctx = this.Reload(message.ctx);
-                //this._logger.Write(`[IHeuristic] CB to especific  ${localmsg.id}`);
-                localmsg.cb(localmsg);
-            } catch (error) {
-                localmsg.cb(localmsg);
-                this._logger.Write(`[IHeuristic] Error processing message ${localmsg.id}. ${error}`);
-                this._logger.Write(`${error}`);
-            }
+        try {
+            clearTimeout(localmsg.tmeoutId);
+            localmsg.tmeoutId = undefined;
+            delete this.waitingMessages[message.id];
+            localmsg.ctx = this.Reload(message.ctx);
+            localmsg.cb(localmsg);
+        } catch (error) {
+            localmsg.cb(localmsg);
+            this._logger.Write(`[IHeuristic] Error processing message ${localmsg.id}. ${error}`);
+            this._logger.Write(`${error}`);
         }
     }
 

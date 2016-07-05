@@ -310,15 +310,11 @@ export default class Server {
 
         this.clients[client.id] = client; //be available again
 
-        if (Object.keys(this.waitingMessages).length == 1) {
-            this.logger.Write(`[DONE] waitingMessages inside  :[${this.waitingMessages[Object.keys(this.waitingMessages)[0]].id}]`);
-        }
-
         var element = this.waitingMessages[message.id];
         element.cb(message); //do the callback!
 
         this.logger.Write(`[Server] Msg ${message.id} CB done`);
-
+        this.logger.Write(`${Object.keys(this.waitingMessages).length} message(s) left in waitingMessages`);
         delete this.waitingMessages[element.id];
         clearTimeout(this.timeouts[element.id]);
         delete this.timeouts[element.id];
