@@ -214,7 +214,7 @@ export default class Server {
     /**
      * Send Back messages
      */
-    async ProcessRetun() {
+    ProcessRetun() {
 
         if (Object.keys(this.concludedMessages).length > 0) {
 
@@ -246,7 +246,7 @@ export default class Server {
     /**
      * Process messages
      */
-    async ProcessQueue() {
+    ProcessQueue() {
 
         //this.logger.Write(`[Server] ProcessQueue? [${this.processing}]`);
 
