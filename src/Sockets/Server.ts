@@ -239,6 +239,7 @@ export default class Server {
                     //this.logger.Write(`Left ${this.clients.length} client(s)`);
                 }
                 catch (err) {
+                    console.log(`[Server.ProcessRetun] Error: ${err}`);
                     this.logger.Write(`[Server.ProcessRetun] Error: ${err}`);
                     msgProcessed.cb(msgProcessed);
                 }
