@@ -2,7 +2,7 @@
  * Starts the client of Improvment Process based on configFile [Configuration.Json]
  * 
  * 
- * node --expose-gc --max-old-space-size=2047 build/src/Sockets/runClients.js
+ * node --expose-gc --max-old-space-size=8192 build/src/Sockets/runClients.js
  * 
  */
 import IConfiguration from '../IConfiguration';
@@ -28,7 +28,7 @@ var rmdir = require('rmdir');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = (require('os').cpus().length) - 3; //-2;
+var numCPUs = ((require('os').cpus().length) - 3) * 2 ; //-2;
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
