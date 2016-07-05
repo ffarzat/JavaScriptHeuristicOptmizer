@@ -161,7 +161,9 @@ export default class Server {
         client.connection.on('message', (message) => {
             try {
                 var msg: Message = JSON.parse(message);
+                
                 this.logger.Write(`[Server] msg [${msg.id}]`);
+
                 this.Done(client, msg);
                 //this.logger.Write(`Left ${this.clients.length} client(s)`);
             }
@@ -314,6 +316,8 @@ export default class Server {
 
         var element = this.waitingMessages[message.id];
         element.cb(message); //do the callback!
+
+        this.logger.Write(`[Server] Msg ${message.id} CB done`);
 
         delete this.waitingMessages[element.id];
         clearTimeout(this.timeouts[element.id]);
