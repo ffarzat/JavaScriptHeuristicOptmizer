@@ -167,7 +167,7 @@ export default class Server {
             }
             catch (err) {
                 this.logger.Write(`[Server] ${err}`);
-
+                console.log("Error inside HandleConnections " + err);
                 if (this.waitingMessages.length == 1) {
                     //Maldito erro da 49 mensagem!
                     if (this.waitingMessages.length == 1)
@@ -269,6 +269,8 @@ export default class Server {
                                 this.Done(availableClient, msg); //ends the process
                             }
                             catch (err) {
+                                console.log("Error inside ProcessQueue " + err);
+
                                 if (this.waitingMessages.length == 1)
                                     this.Done(availableClient, this.waitingMessages[0]); //Force
                             }
