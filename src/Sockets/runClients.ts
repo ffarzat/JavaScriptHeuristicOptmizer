@@ -33,6 +33,12 @@ var numCPUs = (require('os').cpus().length) - 3;
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
+process.once('uncaughtException', function (err) {
+    logger.Write((new Date).toUTCString() + ' uncaughtException: ' + err.message)
+    logger.Write(err.stack)
+    process.exit(1)
+});
+
 //=========================================================================================== Cluster
 if (cluster.isMaster) {
     logger.Write(`[runClients] Creating ${numCPUs} Clients`)
@@ -160,7 +166,7 @@ function ExecuteOperations() {
             var msg: Message = JSON.parse(e.data);
             //logger.Write(`[runClient] msg ${msg.ctx.First._astFile.path}`);
             msg.ctx = clientLocal.Reload(msg.ctx);
-            logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
+            logger.Write(`[runClient]Client ${clientLocal.id} processing message ${msg.id}`);
 
             if (msg.ctx.Operation == "Mutation") {
                 operationPromise = new Promise<OperatorContext>((resolve) => {
@@ -204,7 +210,7 @@ function ExecuteOperations() {
         catch (err) {
             clearTimeout(promisedId);
             logger.Write(`[runClient]Client error: ${err}`);
-            logger.Write(`[runClient]Client ${localClient.id} disconneting...`);
+            logger.Write(`[runClient]Client ${clientLocal.id} disconneting...`);
 
             ws.close();
 
