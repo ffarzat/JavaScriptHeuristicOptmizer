@@ -178,18 +178,22 @@ export default class Server {
         for (var index = 0; index < this.waitingMessages.length; index++) {
             var element = this.waitingMessages[index];
             if (element.clientId == client.id) {
-                
-                clearTimeout(this.timeouts[element.id]);
-                delete this.timeouts[element.id];
-
-                this.waitingMessages.splice(index, 1); //remove
-
-                element.clientId = undefined;
-                this.messages.push(element);
-
                 this.RemoveClient(client);
 
-                this.logger.Write(`Client[${client.id}]Error: saving back msg: ${element.id}`);
+                //Finds message index
+                for (var index = 0; index < this.waitingMessages.length; index++) {
+                    var msgelement = this.waitingMessages[index];
+                    if (msgelement.clientId == client.id) {
+
+                        var localmsg = this.waitingMessages[index];
+                        this.waitingMessages.splice(index, 1); //cut off
+                        clearTimeout(this.timeouts[localmsg.id]);
+                        delete this.timeouts[localmsg.id];
+                        localmsg.cb(msgelement); //do the callback!
+
+                        break;
+                    }
+                }
             }
         }
     }
@@ -338,7 +342,7 @@ export default class Server {
 
     RemoveClient(client) {
         this.logger.Write(`[Server] Client[${client.id}] Disconnected. Removed.`);
-        
+
         var index = -1;
         this.clients.forEach(element => {
             if (element.id === client.id) {
