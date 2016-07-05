@@ -28,7 +28,7 @@ var rmdir = require('rmdir');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = ((require('os').cpus().length) - 3) * 2 ; //-2;
+var numCPUs = (require('os').cpus().length) - 3;
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -40,24 +40,8 @@ if (cluster.isMaster) {
 
     var i = 0
     for (i = 0; i < numCPUs; i++) {
-        var slave = cluster.fork();
+        cluster.fork();
         logger.Write(`Fork: ${i}`);
-        runGC();
-
-
-        // Be notified when worker processes die.
-        cluster.on('exit', function (worker, code, signal) {
-            logger.Write('Worker ' + worker.process.pid + ' died.');
-
-            if (signal) {
-                logger.Write(`worker was killed by signal: ${signal}`);
-            } else if (code !== 0) {
-                logger.Write(`worker exited with error code: ${code}`);
-            } else {
-                logger.Write('worker success!');
-            }
-        });
-
     }
 } else {
     //=========================================================================================== Slave
@@ -201,7 +185,7 @@ function ExecuteOperations(clientLocal: Client) {
 
             ws.close();
          
-            process.exit(-1);
+            process.exit(111111);
         }
 
         runGC();

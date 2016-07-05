@@ -259,6 +259,7 @@ export default class Server {
                         this.waitingMessages.push(msg);
                     }
                     else {
+                        this.logger.Write(`[Server] Client connection state error ${availableClient.id}`);
                         this.ValidateRemove(availableClient);
                     }
                 }
@@ -332,7 +333,8 @@ export default class Server {
     }
 
     RemoveClient(client) {
-        this.logger.Write(`Client[${client.id}]Disconnected. Bye!`);
+        this.logger.Write(`[Server] Client[${client.id}] Disconnected. Removed.`);
+        
         var index = -1;
         this.clients.forEach(element => {
             if (element.id === client.id) {
@@ -343,9 +345,6 @@ export default class Server {
 
         //this.logger.Write(`Index: ${index}`);
         this.clients.splice(index, 1);  //remove from availables
-        this.ValidateRemove(client);
-        //this.logger.Write(`Left ${this.clients.length} client(s)`);
-
 
         var waitingIndex = -1;
         this.clientProcessing.forEach(element => {
