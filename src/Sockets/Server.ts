@@ -329,13 +329,13 @@ export default class Server {
      */
     ExecuteMsgTimeout(message) {
         var element = this.waitingMessages[message.id];
-        this.logger.Write(`message index:[${element.id}] (inside Timeout for)`);
-
         delete this.waitingMessages[element.id];
         clearTimeout(this.timeouts[element.id]);
         delete this.timeouts[element.id];
 
         element.cb(element); //do the callback!
+
+        this.logger.Write(`message index:[${element.id}] (inside Timeout for)`);
     }
 
 
@@ -344,7 +344,6 @@ export default class Server {
      * Delete a Client from trial
      */
     RemoveClient(client) {
-        this.logger.Write(`[Server] Client[${client.id}] Disconnected. Removed.`);
 
         if (this.clients[client.id])
             this.clients[client.id].connection.close();
@@ -355,6 +354,8 @@ export default class Server {
 
         delete this.clients[client.id];
         delete this.clientProcessing[client.id];
+
+        this.logger.Write(`[Server] Client[${client.id}] Disconnected. Removed.`);
     }
 
 }
