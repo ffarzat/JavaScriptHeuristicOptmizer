@@ -45,16 +45,19 @@ if (cluster.isMaster) {
     }
 
     cluster.on('exit', function (deadWorker, code, signal) {
-        // Restart the worker
-        var worker = cluster.fork();
 
-        // Note the process IDs
-        var newPID = worker.process.pid;
-        var oldPID = deadWorker.process.pid;
+        if (code != 0) {
+            // Restart the worker
+            var worker = cluster.fork();
 
-        // Log the event
-        console.log('[runClient] worker ' + oldPID + ' died.');
-        console.log('[runClient] worker ' + newPID + ' born.');
+            // Note the process IDs
+            var newPID = worker.process.pid;
+            var oldPID = deadWorker.process.pid;
+
+            // Log the event
+            console.log('[runClient] worker ' + oldPID + ' died.');
+            console.log('[runClient] worker ' + newPID + ' born.');
+        }
     });
 
 } else {
