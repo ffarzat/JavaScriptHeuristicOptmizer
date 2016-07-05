@@ -210,6 +210,18 @@ export default class Server {
         console.log(`${Object.keys(this.clientProcessing).length} client(s) working now`);
         console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--`);
         console.log(`=============`);
+
+        for(var key in this.clientProcessing)
+        {
+            var clientP: Client = this.clientProcessing[key];
+            try{
+                clientP.connection.ping();
+            }
+            catch(err)
+            {
+                clientP.connection.terminate();
+            }
+        }
     }
 
 
@@ -281,7 +293,8 @@ export default class Server {
 
                 if (Object.keys(this.messages).length > 0) {
 
-                    var availableClient = this.clients[clientKey];
+                    var availableClient: Client = this.clients[clientKey];
+
                     delete this.clients[clientKey];
 
                     this.clientProcessing[clientKey] = availableClient;

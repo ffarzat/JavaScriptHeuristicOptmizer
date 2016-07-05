@@ -147,6 +147,10 @@ function ExecuteOperations(clientLocal: Client) {
 
     });
 
+    ws.addEventListener("ping", () => {
+        ws.pong();
+    });
+
 
     ws.addEventListener("message", async (e) => {
 
