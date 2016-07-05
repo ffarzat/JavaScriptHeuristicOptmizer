@@ -132,11 +132,27 @@ function ExecuteOperations(clientLocal: Client) {
 
     });
 
+    ws.addEventListener("error", (data) => {
+        logger.Write(`[runClient]Client ${localClient.id} clean temp data...`);
+
+        rmdir(clientLocal.TempDirectory.path, function (err, dirs, files) {
+            //console.log(dirs);
+            //console.log(files);
+            //console.log('all files are removed');
+            logger.Write(`[runClient]Client ${localClient.id}   Temp data cleaned.`);
+            logger.Write(`[runClient]Client ${localClient.id} Done.`);
+            process.exit(101010);
+        });
+
+    });
+
+
     ws.addEventListener("message", async (e) => {
 
         try {
 
             var msg: Message = JSON.parse(e.data);
+            //logger.Write(`[runClient] msg ${msg.ctx.First._astFile.path}`);
             msg.ctx = clientLocal.Reload(msg.ctx);
             logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
 
@@ -184,7 +200,7 @@ function ExecuteOperations(clientLocal: Client) {
             logger.Write(`[runClient]Client ${localClient.id} disconneting...`);
 
             ws.close();
-
+         
             process.exit(-1);
         }
 
