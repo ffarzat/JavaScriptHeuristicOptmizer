@@ -160,7 +160,7 @@ export default class Server {
         });
 
         //Handle on messagem from cliente!
-        client.connection.on('message', (message) => {
+        client.connection.on('message', async (message) => {
             try {
                 var msg: Message = JSON.parse(message);
 
