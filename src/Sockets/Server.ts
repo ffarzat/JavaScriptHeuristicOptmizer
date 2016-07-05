@@ -21,7 +21,7 @@ export default class Server {
     logger: ILogger;
 
     clients: Client[] = []; //store available clients
-    messages: Message[] = []; //store all received messages 
+    messages = {}; //store all received messages 
     clientProcessing: Client[] = []; //store client processing something
     waitingMessages = {}; //store waiting messages
 
@@ -64,7 +64,7 @@ export default class Server {
             var list = [{
                 "id": 1,
                 "Time": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
-                "Messages": this.messages.length,
+                "Messages": Object.keys(this.messages).length,
                 "WaitingMessages": Object.keys(this.waitingMessages).length,
                 "Clients": this.clients.length,
                 "ClientProcessing": this.clientProcessing.length
@@ -76,7 +76,7 @@ export default class Server {
             var list = [{
                 "id": 1,
                 "Time": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
-                "Messages": this.messages.length,
+                "Messages": Object.keys(this.messages).length,
                 "WaitingMessages": Object.keys(this.waitingMessages).length,
                 "Clients": this.clients.length,
                 "ClientProcessing": this.clientProcessing.length
@@ -196,7 +196,7 @@ export default class Server {
      */
     Status(): void {
         console.log(`=============`);
-        console.log(`${this.messages.length} message(s) waiting free client(s)`);
+        console.log(`${Object.keys(this.messages).length} message(s) waiting free client(s)`);
         console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
         console.log(`${this.clients.length} client(s) waiting task(s)`);
         console.log(`${this.clientProcessing.length} client(s) working now`);
@@ -212,7 +212,7 @@ export default class Server {
         item.id = msg.id;
         item.ctx = msg.ctx;
         item.cb = cb;
-        this.messages.push(item);
+        this.messages[item.id] = item;
         //this.logger.Write(`Saving msg...`);
     }
 
@@ -224,18 +224,20 @@ export default class Server {
         if (this.clients.length == 0)
             return;
 
-        if (this.messages.length == 0)
+        if (Object.keys(this.messages).length == 0)
             return;
 
         //this.logger.Write(`Left ${this.messages.length} operations to process.`);
 
         for (var clientIndex = 0; clientIndex < this.clients.length; clientIndex++) {
-            if (this.messages.length > 0) {
+            if (Object.keys(this.messages).length > 0) {
 
                 var availableClient = this.clients.pop();
                 this.clientProcessing.push(availableClient);
 
-                var msg = this.messages.pop();
+                var msg = this.messages[Object.keys(this.messages)[0]]; //get
+                delete this.messages[msg.id]; //delete
+
                 if (!msg.clientId) {
 
                     msg.clientId = availableClient.id;
@@ -322,8 +324,11 @@ export default class Server {
         element.cb(message); //do the callback!
     }
 
-    ExecuteMsgTimeout(message) {
 
+    /**
+     * Message execution timeout from Server (without Client agreement)
+     */
+    ExecuteMsgTimeout(message) {
 
         for (var key in this.waitingMessages) {
             var element = this.waitingMessages[key];
@@ -342,7 +347,9 @@ export default class Server {
         }
     }
 
-
+    /**
+     * Delete a Client from trial
+     */
     RemoveClient(client) {
         this.logger.Write(`[Server] Client[${client.id}] Disconnected. Removed.`);
 
