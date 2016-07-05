@@ -58,9 +58,9 @@ export default class Client {
                 newIndividual = context.Original;
                 this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
             }
-
             
             ctx.First = newIndividual;
+
         } catch (err) {
             this.logger.Write(`[Client:${this.id}]Error: ${err}`);
             newIndividual = context.Original;

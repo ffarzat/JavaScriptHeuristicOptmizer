@@ -258,7 +258,8 @@ export default class Server {
                         this.timeouts[msg.id] = setTimeout(() => {
                             this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
 
-                            this.Done(availableClient, msg); //ends the process
+                            this.ExecuteMsgTimeout(msg); //ends the process
+                            this.RemoveClient(availableClient);
 
                         }, this.configuration.clientTimeout * 1000);
 
@@ -320,8 +321,6 @@ export default class Server {
         this.clientProcessing.splice(clientIndex, 1); //cut off
         this.clients.push(client); //be available again
 
-        var done = false;
-
         //Finds message index
         for (var index = 0; index < this.waitingMessages.length; index++) {
             var msgelement = this.waitingMessages[index];
@@ -334,20 +333,29 @@ export default class Server {
                 clearTimeout(this.timeouts[localmsg.id]);
                 delete this.timeouts[localmsg.id];
                 localmsg.cb(message); //do the callback!
-                done = true;
                 break;
             }
         }
-
-        if (this.waitingMessages.length == 1 && !done) {
-            var localmsg = this.waitingMessages[0];
-            this.waitingMessages.splice(0, 1); //cut off
-            clearTimeout(this.timeouts[localmsg.id]);
-            delete this.timeouts[localmsg.id];
-            localmsg.cb(message); //do the callback!
-        }
-
     }
+
+    ExecuteMsgTimeout(message) {
+        
+        for (var index = 0; index < this.waitingMessages.length; index++) {
+            var msgelement = this.waitingMessages[index];
+            if (msgelement.id == message.id) {
+                this.logger.Write(`message index:[${index}] (inside Timeout for)`);
+
+                var localmsg = this.waitingMessages[index];
+
+                this.waitingMessages.splice(index, 1); //cut off
+                clearTimeout(this.timeouts[localmsg.id]);
+                delete this.timeouts[localmsg.id];
+                localmsg.cb(message); //do the callback!
+                break;
+            }
+        }
+    }
+
 
     RemoveClient(client) {
         this.logger.Write(`[Server] Client[${client.id}] Disconnected. Removed.`);

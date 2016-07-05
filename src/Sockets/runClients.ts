@@ -193,6 +193,7 @@ function ExecuteOperations(clientLocal: Client) {
             clearTimeout(timeoutId);
 
             var msgProcessada = JSON.stringify(msg);
+            logger.Write(`[runClients] Msg ${msg.id} done.`);
             ws.send(msgProcessada); //send back the result
         }
         catch (err) {
