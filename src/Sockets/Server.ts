@@ -23,7 +23,7 @@ export default class Server {
     clients: Client[] = []; //store available clients
     messages: Message[] = []; //store all received messages 
     clientProcessing: Client[] = []; //store client processing something
-    waitingMessages: Message[] = []; //store waiting messages
+    waitingMessages = {}; //store waiting messages
 
     configuration: IConfiguration
 
@@ -65,7 +65,7 @@ export default class Server {
                 "id": 1,
                 "Time": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
                 "Messages": this.messages.length,
-                "WaitingMessages": this.waitingMessages.length,
+                "WaitingMessages": Object.keys(this.waitingMessages).length,
                 "Clients": this.clients.length,
                 "ClientProcessing": this.clientProcessing.length
             }];
@@ -77,7 +77,7 @@ export default class Server {
                 "id": 1,
                 "Time": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
                 "Messages": this.messages.length,
-                "WaitingMessages": this.waitingMessages.length,
+                "WaitingMessages": Object.keys(this.waitingMessages).length,
                 "Clients": this.clients.length,
                 "ClientProcessing": this.clientProcessing.length
             }];
@@ -172,28 +172,21 @@ export default class Server {
     }
 
     /**
-     * Mode messages from waitingMessages to messages
+     * Move messages from waitingMessages to messages
     */
     ValidateRemove(client: Client) {
-        for (var index = 0; index < this.waitingMessages.length; index++) {
-            var element = this.waitingMessages[index];
+
+        for (var key in this.waitingMessages) {
+            var element = this.waitingMessages[key];
+
             if (element.clientId == client.id) {
                 this.RemoveClient(client);
 
-                //Finds message index
-                for (var index = 0; index < this.waitingMessages.length; index++) {
-                    var msgelement = this.waitingMessages[index];
-                    if (msgelement.clientId == client.id) {
-
-                        var localmsg = this.waitingMessages[index];
-                        this.waitingMessages.splice(index, 1); //cut off
-                        clearTimeout(this.timeouts[localmsg.id]);
-                        delete this.timeouts[localmsg.id];
-                        localmsg.cb(msgelement); //do the callback!
-
-                        break;
-                    }
-                }
+                delete this.waitingMessages[element.id];
+                clearTimeout(this.timeouts[element.id]);
+                delete this.timeouts[element.id];
+                element.cb(element); //do the callback!
+                break;
             }
         }
     }
@@ -204,8 +197,8 @@ export default class Server {
     Status(): void {
         console.log(`=============`);
         console.log(`${this.messages.length} message(s) waiting free client(s)`);
-        console.log(`${this.waitingMessages.length} message(s) in process`);
-        if(this.waitingMessages.length == 1){
+        console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
+        if (Object.keys(this.waitingMessages).length == 1) {
             console.log(`msg: ${this.waitingMessages[0].id}`);
             console.log(`client: ${this.waitingMessages[0].clientId}`);
         }
@@ -268,7 +261,7 @@ export default class Server {
 
                         }, this.configuration.clientTimeout * 1000);
 
-                        this.waitingMessages.push(msg);
+                        this.waitingMessages[msg.id];
                     }
                     else {
                         this.logger.Write(`[Server] Client connection state error ${availableClient.id}`);
@@ -310,7 +303,6 @@ export default class Server {
      * Relases the callback magic
      */
     Done(client: Client, message: Message) {
-
         //this.logger.Write(`[DONE] message :[${message.id}]`);
 
         for (var clientIndex = 0; clientIndex < this.clientProcessing.length; clientIndex++) {
@@ -326,38 +318,36 @@ export default class Server {
         this.clientProcessing.splice(clientIndex, 1); //cut off
         this.clients.push(client); //be available again
 
-        //Finds message index
-        for (var index = 0; index < this.waitingMessages.length; index++) {
-            var msgelement = this.waitingMessages[index];
-            if (msgelement.id == message.id) {
-                //this.logger.Write(`message index:[${index}] (inside for)`);
+        for (var key in this.waitingMessages) {
+            var element = this.waitingMessages[key];
 
-                var localmsg = this.waitingMessages[index];
+            if (element.id == message.id) {
 
-                this.waitingMessages.splice(index, 1); //cut off
-                clearTimeout(this.timeouts[localmsg.id]);
-                delete this.timeouts[localmsg.id];
-                localmsg.cb(message); //do the callback!
+
+                delete this.waitingMessages[element.id];
+                clearTimeout(this.timeouts[element.id]);
+                delete this.timeouts[element.id];
+                element.cb(element); //do the callback!
                 break;
             }
         }
     }
 
     ExecuteMsgTimeout(message) {
-        
-        for (var index = 0; index < this.waitingMessages.length; index++) {
-            var msgelement = this.waitingMessages[index];
-            this.logger.Write(`message index:[${index}] (inside Timeout for)`);
 
-            if (msgelement.id == message.id) {
-                
-                var localmsg = this.waitingMessages[index];
 
-                this.waitingMessages.splice(index, 1); //cut off
-                clearTimeout(this.timeouts[localmsg.id]);
-                delete this.timeouts[localmsg.id];
-                localmsg.cb(message); //do the callback!
+        for (var key in this.waitingMessages) {
+            var element = this.waitingMessages[key];
+
+            if (element.id == message.id) {
+                this.logger.Write(`message index:[${element.id}] (inside Timeout for)`);
                 
+                delete this.waitingMessages[element.id];
+                clearTimeout(this.timeouts[element.id]);
+                delete this.timeouts[element.id];
+
+
+                element.cb(element); //do the callback!
                 break;
             }
         }
