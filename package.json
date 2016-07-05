@@ -10,7 +10,7 @@
     "pretest": "npm run clean && npm run build",
     "clean": "grunt && tsd install",
     "start": "npm run clean && npm run build && node --expose-gc --max-old-space-size=2047 build/src/index.js",
-    "clients": "node --expose-gc --max-old-space-size=2047 build/src/Sockets/runClients.js"
+    "clients": "node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js"
   },
   "author": {
     "name": "Fabio Farzat",
