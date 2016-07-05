@@ -298,8 +298,6 @@ export default class Server {
      * Relases the callback magic
      */
     Done(client: Client, message: Message) {
-        //this.logger.Write(`[DONE] message :[${message.id}]`);
-
         for (var clientIndex = 0; clientIndex < this.clientProcessing.length; clientIndex++) {
             var clientelement = this.clientProcessing[clientIndex];
 
@@ -313,7 +311,9 @@ export default class Server {
         this.clientProcessing.splice(clientIndex, 1); //cut off
         this.clients.push(client); //be available again
 
-
+        if (Object.keys(this.waitingMessages).length == 1) {
+            this.logger.Write(`[DONE] waitingMessages inside  :[${this.waitingMessages[Object.keys(this.waitingMessages)[0]].id}]`);
+        }
 
         var element = this.waitingMessages[message.id];
         delete this.waitingMessages[element.id];
