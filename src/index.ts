@@ -28,8 +28,8 @@ logger.Initialize(configuration);
 if (cluster.isMaster) {
     localServer.logger = logger;
     localServer.Setup(configuration);
-    setInterval(function () { localServer.ProcessQueue(); }, 1000); //1x per 3 second
-    setInterval(function () { localServer.ProcessRetun(); }, 1000); //1x per 3 second
+    setInterval(function () { localServer.ProcessQueue(); }, 100); //1x per 3 second
+    setInterval(function () { localServer.ProcessRetun(); }, 100); //1x per 3 second
     
     setInterval(function () { localServer.Status(); }, 60000);
 
