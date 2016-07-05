@@ -261,7 +261,7 @@ export default class Server {
 
                         }, this.configuration.clientTimeout * 1000);
 
-                        this.waitingMessages[msg.id];
+                        this.waitingMessages[msg.id] = msg;
                     }
                     else {
                         this.logger.Write(`[Server] Client connection state error ${availableClient.id}`);
