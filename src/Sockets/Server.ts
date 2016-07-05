@@ -329,16 +329,6 @@ export default class Server {
      * Cleanups the server for next trial
      */
     CleanUp() {
-        for (var cKey in this.clients) {
-            this.clients[cKey].connection.close();
-            delete this.clients[cKey];
-        }
-
-        for (var cKey in this.clientProcessing) {
-            this.clientProcessing[cKey].connection.close();
-            delete this.clientProcessing[cKey];
-        }
-
         for (var mKey in this.messages) {
             delete this.messages[mKey];
         }
@@ -347,10 +337,7 @@ export default class Server {
             delete this.waitingMessages[mKey];
         }
 
-
-        this.clients = {};
         this.messages = {};
-        this.clientProcessing = {};
         this.waitingMessages = {};
         this.concludedMessages = {};
 
