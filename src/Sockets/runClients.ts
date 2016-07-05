@@ -68,25 +68,17 @@ if (cluster.isMaster) {
 
 } else {
     //=========================================================================================== Slave
-    var domain = require('domain');
-    var d = domain.create();
-    
-    d.on('error', function(err) {
-        logger.Write(err);
-    });
+    process.stdin.resume();
+    var clientWorkDir = new tmp.Dir();
+    process.setMaxListeners(0);
 
-    d.run(() => {
-        process.stdin.resume();
-        var clientWorkDir = new tmp.Dir();
-        process.setMaxListeners(0);
+    //=========================================================== Libs initialization
 
-        //=========================================================== Libs initialization
+    ParseConfigAndLibs(clientWorkDir.path);
 
-        ParseConfigAndLibs(clientWorkDir.path);
+    //=========================================================== Client initialization
+    ExecuteOperations(clientWorkDir);
 
-        //=========================================================== Client initialization
-        ExecuteOperations(clientWorkDir);
-    });
 }
 //=========================================================================================== //======>
 //=========================================================================================== Functions
