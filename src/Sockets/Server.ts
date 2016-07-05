@@ -347,7 +347,9 @@ export default class Server {
             clearTimeout(this.timeouts[element.id]);
             delete this.timeouts[element.id];
 
-            element.cb(message); //do the callback!
+            setTimeout(function() {
+                element.cb(message); //do the callback!
+            }, 50); 
 
             //this.logger.Write(`[Server] Msg ${message.id} CB done`);
             //this.logger.Write(`${Object.keys(this.waitingMessages).length} message(s) left in waitingMessages`);
