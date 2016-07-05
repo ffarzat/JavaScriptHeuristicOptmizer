@@ -167,8 +167,15 @@ export default class Server {
 
         //Handle on messagem from cliente!
         client.connection.on('message', async (message) => {
-            this.concludedMessages[message.id] = message;
+            //this.concludedMessages[message.id] = message;
             this.totalReturnedMessages += 1;
+
+            var msgProcessed: Message = JSON.parse(message);
+            var client = this.clientProcessing[msgProcessed.clientId];
+
+            this.Done(client, msgProcessed);
+            this.totalReturnedMessagesDone += 1;
+
         });
     }
 
@@ -253,7 +260,7 @@ export default class Server {
                     }
                 }
             }
-            
+
             this.returning = false;
         }
     }
@@ -342,7 +349,7 @@ export default class Server {
     /**
      * Relases the callback magic
      */
-    async Done(client: Client, message: Message) {
+    Done(client: Client, message: Message) {
 
         try {
             var clientelement = this.clientProcessing[client.id];
