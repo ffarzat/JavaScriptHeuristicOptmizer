@@ -42,6 +42,21 @@ if (cluster.isMaster) {
     for (i = 0; i < numCPUs; i++) {
         cluster.fork();
         logger.Write(`Fork: ${i}`);
+
+
+        cluster.on('exit', function(deadWorker, code, signal) {
+            // Restart the worker
+            var worker = cluster.fork();
+
+            // Note the process IDs
+            var newPID = worker.process.pid;
+            var oldPID = deadWorker.process.pid;
+
+            // Log the event
+            console.log('[runClient] worker '+oldPID+' died.');
+            console.log('[runClient] worker '+newPID+' born.');
+        });
+
     }
 } else {
     //=========================================================================================== Slave
