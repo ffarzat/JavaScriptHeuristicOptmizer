@@ -225,7 +225,7 @@ export default class Server {
      */
     ProcessQueue() {
 
-        this.logger.Write(`[Server] ProcessQueue? [${this.processing}]`);
+        //this.logger.Write(`[Server] ProcessQueue? [${this.processing}]`);
         
         if (this.processing == false) {
             
