@@ -11,4 +11,10 @@ export default class Message{
     ctx: OperatorContext;
     tmeoutId: any;
     cb: any //callback function
+
+    ActualHeuristic: string;
+    ActualGlobalTrial: number
+    ActualInternalTrial: number
+    ActualLibrary: string;
+    CleanServer: boolean;
 }
