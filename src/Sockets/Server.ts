@@ -20,7 +20,7 @@ export default class Server {
     url: string;
     logger: ILogger;
 
-    clients: Client[] = []; //store available clients
+    clients = {}; //store available clients
     messages = {}; //store all received messages 
     clientProcessing: Client[] = []; //store client processing something
     waitingMessages = {}; //store waiting messages
@@ -66,7 +66,7 @@ export default class Server {
                 "Time": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
                 "Messages": Object.keys(this.messages).length,
                 "WaitingMessages": Object.keys(this.waitingMessages).length,
-                "Clients": this.clients.length,
+                "Clients": Object.keys(this.clients).length,
                 "ClientProcessing": this.clientProcessing.length
             }];
             res.send(list);
@@ -78,7 +78,7 @@ export default class Server {
                 "Time": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
                 "Messages": Object.keys(this.messages).length,
                 "WaitingMessages": Object.keys(this.waitingMessages).length,
-                "Clients": this.clients.length,
+                "Clients": Object.keys(this.clients).length,
                 "ClientProcessing": this.clientProcessing.length
             }];
             res.send(list);
@@ -135,7 +135,7 @@ export default class Server {
             client.id = id;
             client.connection = connection;
             client.available = true;
-            this.clients.push(client);
+            this.clients[client.id] =client;
 
             this.logger.Write('Connection accepted [' + id + ']');
             //this.logger.Write(`${this.clients.length} client(s)`);
@@ -198,7 +198,7 @@ export default class Server {
         console.log(`=============`);
         console.log(`${Object.keys(this.messages).length} message(s) waiting free client(s)`);
         console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
-        console.log(`${this.clients.length} client(s) waiting task(s)`);
+        console.log(`${Object.keys(this.clients).length} client(s) waiting task(s)`);
         console.log(`${this.clientProcessing.length} client(s) working now`);
         console.log(`=============`);
     }
@@ -221,7 +221,7 @@ export default class Server {
      */
     ProcessQueue() {
 
-        if (this.clients.length == 0)
+        if (Object.keys(this.clients).length == 0)
             return;
 
         if (Object.keys(this.messages).length == 0)
@@ -229,10 +229,12 @@ export default class Server {
 
         //this.logger.Write(`Left ${this.messages.length} operations to process.`);
 
-        for (var clientIndex = 0; clientIndex < this.clients.length; clientIndex++) {
+        for (var clientIndex = 0; clientIndex < Object.keys(this.clients).length; clientIndex++) {
             if (Object.keys(this.messages).length > 0) {
 
-                var availableClient = this.clients.pop();
+                var availableClient = this.clients[Object.keys(this.clients)[0]]
+                delete this.clients[availableClient.id];
+
                 this.clientProcessing.push(availableClient);
 
                 var msg = this.messages[Object.keys(this.messages)[0]]; //get
@@ -311,7 +313,8 @@ export default class Server {
         }
 
         this.clientProcessing.splice(clientIndex, 1); //cut off
-        this.clients.push(client); //be available again
+        
+        this.clients[client.id] = client; //be available again
 
         if (Object.keys(this.waitingMessages).length == 1) {
             this.logger.Write(`[DONE] waitingMessages inside  :[${this.waitingMessages[Object.keys(this.waitingMessages)[0]].id}]`);
@@ -352,17 +355,7 @@ export default class Server {
      */
     RemoveClient(client) {
         this.logger.Write(`[Server] Client[${client.id}] Disconnected. Removed.`);
-
-        var index = -1;
-        this.clients.forEach(element => {
-            if (element.id === client.id) {
-                return;
-            }
-            index++;
-        });
-
-        //this.logger.Write(`Index: ${index}`);
-        this.clients.splice(index, 1);  //remove from availables
+        delete this.clients[client.id];
 
         var waitingIndex = -1;
         this.clientProcessing.forEach(element => {
