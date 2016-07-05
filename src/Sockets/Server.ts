@@ -206,7 +206,8 @@ export default class Server {
         console.log(`=============`);
         console.log(`Lib: ${this.ActualLibrary}`);
         console.log(`Global Trial: ${this.ActualGlobalTrial}`);
-        console.log(`Heuristic Trial: ${this.ActualHeuristic}`);
+        console.log(`Heuristic: ${this.ActualHeuristic}`);
+        console.log(`Heuristic Trial: ${this.ActualInternalTrial}`);
         console.log(`${Object.keys(this.messages).length} message(s) waiting free client(s)`);
         console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
         console.log(`${Object.keys(this.clients).length} client(s) waiting task(s)`);

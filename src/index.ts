@@ -30,19 +30,23 @@ if (cluster.isMaster) {
     localServer.Setup(configuration);
     setInterval(function () { localServer.ProcessQueue(); }, 100); //1x per 3 second
     //setInterval(function () { localServer.ProcessRetun(); }, 100); //1x per 3 second
-    
+
     setInterval(function () { localServer.Status(); }, 10000);
 
     var optmizerWorker = cluster.fork(); //optmizer worker
 
     optmizerWorker.on('message', (msg: Message) => {
 
-        if(msg.CleanServer)
-        {
+        localServer.ActualHeuristic = msg.ActualHeuristic
+        localServer.ActualGlobalTrial = msg.ActualGlobalTrial
+        localServer.ActualInternalTrial = msg.ActualInternalTrial
+        localServer.ActualLibrary = msg.ActualLibrary
+
+        if (msg.CleanServer) {
             logger.Write(`[index] Cleanup the Server`);
-            localServer.CleanUp();    
+            localServer.CleanUp();
         }
-        
+
         //logger.Write(`[index] Send to server. Msg : ${msg.id}`);
 
         localServer.DoAnOperation(msg, (newMsg) => {

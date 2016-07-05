@@ -162,7 +162,7 @@ export default class Optmizer {
             this.logger.Write(`[Optmizer] Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
 
             this.InitializeOutWritter(actualLibrary, actualHeuristic);
-            //TODO: trocar ponteiro da heuristica
+            
             actualHeuristic.ActualGlobalTrial = this.trialIndex;
             actualHeuristic.ActualInternalTrial = this.heuristicTrial;
             actualHeuristic.ActualLibrary = actualLibrary.name;
