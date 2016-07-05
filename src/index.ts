@@ -75,6 +75,7 @@ if (cluster.isMaster) {
 //=========================================================================================== Functions
 function ExecuteTrials(globalTrial: number) {
     logger.Write(`============================= Optmizer Global trial: ${globalTrial}`);
+    localServer.CleanUp();
 
     executeHeuristicTrial(globalTrial, configuration, 0, () => {
         logger.Write(`============================= Optmizer Global trial: ${globalTrial} Done!`);

@@ -326,6 +326,45 @@ export default class Server {
     }
 
     /**
+     * Cleanups the server for next trial
+     */
+    CleanUp() {
+        for (var cKey in this.clients) {
+            this.clients[cKey].connection.close();
+            delete this.clients[cKey];
+        }
+
+        for (var cKey in this.clientProcessing) {
+            this.clientProcessing[cKey].connection.close();
+            delete this.clientProcessing[cKey];
+        }
+
+        for (var mKey in this.messages) {
+            delete this.messages[mKey];
+        }
+
+        for (var mKey in this.waitingMessages) {
+            delete this.waitingMessages[mKey];
+        }
+
+
+        this.clients = {};
+        this.messages = {};
+        this.clientProcessing = {};
+        this.waitingMessages = {};
+        this.concludedMessages = {};
+
+        this.timeouts = {};
+
+        this.processing = false;
+        this.returning = false;
+
+        this.totalSendMessages = 0;
+        this.totalReturnedMessages = 0;
+        this.totalReturnedMessagesDone = 0;
+    }
+
+    /**
      * Calculates size of a string in bytes
      */
     getBytes(string): string {
