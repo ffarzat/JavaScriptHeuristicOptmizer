@@ -85,7 +85,7 @@ if (cluster.isMaster) {
         ParseConfigAndLibs(clientWorkDir.path);
 
         //=========================================================== Client initialization
-        ExecuteOperations();
+        ExecuteOperations(clientWorkDir);
     });
 }
 //=========================================================================================== //======>
@@ -110,7 +110,7 @@ function formatBytes(bytes, decimals) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-function ExecuteOperations() {
+function ExecuteOperations(clientWorkDir) {
     var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
     var clientId = uuid.v4();
     var clientLocal = new Client();
