@@ -231,15 +231,6 @@ export default class Server {
             
             this.processing = true;
 
-
-            if (Object.keys(this.clients).length == 0)
-                return;
-
-            if (Object.keys(this.messages).length == 0)
-                return;
-
-            //this.logger.Write(`Left ${this.messages.length} operations to process.`);
-
             for (var clientIndex = 0; clientIndex < Object.keys(this.clients).length; clientIndex++) {
                 if (Object.keys(this.messages).length > 0) {
 
