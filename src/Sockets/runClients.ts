@@ -33,12 +33,6 @@ var numCPUs = (require('os').cpus().length) - 3;
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
-process.once('uncaughtException', function (err) {
-    logger.Write((new Date).toUTCString() + ' uncaughtException: ' + err.message)
-    logger.Write(err.stack)
-    process.exit(1)
-});
-
 //=========================================================================================== Cluster
 if (cluster.isMaster) {
     logger.Write(`[runClients] Creating ${numCPUs} Clients`)
@@ -68,17 +62,25 @@ if (cluster.isMaster) {
 
 } else {
     //=========================================================================================== Slave
-    process.stdin.resume();
-    var clientWorkDir = new tmp.Dir();
-    process.setMaxListeners(0);
+    var domain = require('domain');
+    var d = domain.create();
+    
+    d.on('error', function(err) {
+        logger.Write(err);
+    });
 
-    //=========================================================== Libs initialization
+    d.run(() => {
+        process.stdin.resume();
+        var clientWorkDir = new tmp.Dir();
+        process.setMaxListeners(0);
 
-    ParseConfigAndLibs(clientWorkDir.path);
+        //=========================================================== Libs initialization
 
-    //=========================================================== Client initialization
-    ExecuteOperations(clientWorkDir);
+        ParseConfigAndLibs(clientWorkDir.path);
 
+        //=========================================================== Client initialization
+        ExecuteOperations(clientWorkDir);
+    });
 }
 //=========================================================================================== //======>
 //=========================================================================================== Functions
