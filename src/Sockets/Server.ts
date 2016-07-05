@@ -249,7 +249,7 @@ export default class Server {
                     if (availableClient.connection.readyState == availableClient.connection.OPEN) {
                         //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
 
-                        //this.logger.Write(`[Server] Sending msg ${msg.id}`);
+                        
                         //var stringMSG = JSON.stringify(msg);
                         //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
                         availableClient.connection.send(JSON.stringify(msg));
@@ -263,6 +263,7 @@ export default class Server {
                         }, this.configuration.clientTimeout * 1000);
 
                         this.waitingMessages[msg.id] = msg;
+                        this.logger.Write(`[Server] Sending msg ${msg.id}`);
                     }
                     else {
                         this.logger.Write(`[Server] Client connection state error ${availableClient.id}`);
