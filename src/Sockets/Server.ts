@@ -318,19 +318,13 @@ export default class Server {
         this.clientProcessing.splice(clientIndex, 1); //cut off
         this.clients.push(client); //be available again
 
-        for (var key in this.waitingMessages) {
-            var element = this.waitingMessages[key];
-
-            if (element.id == message.id) {
 
 
-                delete this.waitingMessages[element.id];
-                clearTimeout(this.timeouts[element.id]);
-                delete this.timeouts[element.id];
-                element.cb(element); //do the callback!
-                break;
-            }
-        }
+        var element = this.waitingMessages[message.id];
+        delete this.waitingMessages[element.id];
+        clearTimeout(this.timeouts[element.id]);
+        delete this.timeouts[element.id];
+        element.cb(element); //do the callback!
     }
 
     ExecuteMsgTimeout(message) {
@@ -341,7 +335,7 @@ export default class Server {
 
             if (element.id == message.id) {
                 this.logger.Write(`message index:[${element.id}] (inside Timeout for)`);
-                
+
                 delete this.waitingMessages[element.id];
                 clearTimeout(this.timeouts[element.id]);
                 delete this.timeouts[element.id];
