@@ -223,7 +223,6 @@ export default class Server {
                 try {
                     var msg = this.concludedMessages[key]; //get
                     
-
                     var msgProcessed: Message = JSON.parse(msg);
                     var client = this.clientProcessing[msgProcessed.clientId];
 
@@ -326,14 +325,6 @@ export default class Server {
      * Relases the callback magic
      */
     Done(client: Client, message: Message) {
-
-        /*
-        if (!client)
-            this.logger.Write(`Undefined Client`);
-
-        if (!message)
-            this.logger.Write(`Undefined message`);
-        */
 
         try {
             var clientelement = this.clientProcessing[client.id];
