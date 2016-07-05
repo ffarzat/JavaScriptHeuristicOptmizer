@@ -161,7 +161,7 @@ export default class Server {
         client.connection.on('message', (message) => {
             try {
                 var msg: Message = JSON.parse(message);
-                //this.logger.Write(`client[${client.id}]Done inside server`);
+                this.logger.Write(`[Server] msg [${msg.id}]`);
                 this.Done(client, msg);
                 //this.logger.Write(`Left ${this.clients.length} client(s)`);
             }
@@ -303,7 +303,7 @@ export default class Server {
      * Relases the callback magic
      */
     Done(client: Client, message: Message) {
-        //this.logger.Write(`[DONE] message :[${message.id}]`);
+        this.logger.Write(`[DONE] message :[${message.id}]`);
 
         for (var clientIndex = 0; clientIndex < this.clientProcessing.length; clientIndex++) {
             var clientelement = this.clientProcessing[clientIndex];
