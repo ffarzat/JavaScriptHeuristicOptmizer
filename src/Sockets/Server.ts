@@ -161,7 +161,7 @@ export default class Server {
         client.connection.on('message', (message) => {
             try {
                 var msg: Message = JSON.parse(message);
-                this.logger.Write(`[Server] msg [${msg.id}]`);
+                //this.logger.Write(`[Server] msg [${msg.id}]`);
                 this.Done(client, msg);
                 //this.logger.Write(`Left ${this.clients.length} client(s)`);
             }
