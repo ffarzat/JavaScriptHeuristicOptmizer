@@ -37,6 +37,12 @@ if (cluster.isMaster) {
 
     optmizerWorker.on('message', (msg: Message) => {
 
+        if(msg.CleanServer)
+        {
+            logger.Write(`[index] Cleanup the Server`);
+            localServer.CleanUp();    
+        }
+        
         //logger.Write(`[index] Send to server. Msg : ${msg.id}`);
 
         localServer.DoAnOperation(msg, (newMsg) => {

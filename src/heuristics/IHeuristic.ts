@@ -45,11 +45,9 @@ abstract class IHeuristic extends events.EventEmitter {
     Tick: any;
     trialUuid: any;
 
-    ActualHeuristic: string;
     ActualGlobalTrial: number
     ActualInternalTrial: number
     ActualLibrary: string;
-    CleanServer: boolean;
 
 
     /**
@@ -325,6 +323,13 @@ abstract class IHeuristic extends events.EventEmitter {
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
         msg.id = uuid.v4();
         msg.cb = cb;
+
+
+        msg.ActualGlobalTrial = this.ActualGlobalTrial;
+        msg.ActualHeuristic = this.Name;
+        msg.ActualInternalTrial = this.ActualInternalTrial;
+        msg.ActualLibrary = this.ActualLibrary;
+        msg.CleanServer = this.ActualInternalTrial ==0? true: false; //each time a Heuristic start do the clean
 
         this.waitingMessages[msg.id] = msg;
 

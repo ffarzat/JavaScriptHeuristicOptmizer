@@ -163,6 +163,9 @@ export default class Optmizer {
 
             this.InitializeOutWritter(actualLibrary, actualHeuristic);
             //TODO: trocar ponteiro da heuristica
+            actualHeuristic.ActualGlobalTrial = this.trialIndex;
+            actualHeuristic.ActualInternalTrial = this.heuristicTrial;
+            actualHeuristic.ActualLibrary = actualLibrary.name;
 
             actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
                 this.outter.WriteTrialResults(resultaForTrial);

@@ -204,10 +204,14 @@ export default class Server {
      */
     Status(): void {
         console.log(`=============`);
+        console.log(`Lib: ${this.ActualLibrary}`);
+        console.log(`Global Trial: ${this.ActualGlobalTrial}`);
+        console.log(`Heuristic Trial: ${this.ActualHeuristic}`);
         console.log(`${Object.keys(this.messages).length} message(s) waiting free client(s)`);
         console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
         console.log(`${Object.keys(this.clients).length} client(s) waiting task(s)`);
         console.log(`${Object.keys(this.clientProcessing).length} client(s) working now`);
+        console.log(`${Object.keys(this.timeouts).length} timeouts(s) waiting`);
         console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--`);
         console.log(`=============`);
         
