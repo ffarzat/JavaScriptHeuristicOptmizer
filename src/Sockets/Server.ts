@@ -154,7 +154,7 @@ export default class Server {
 
         //Handle on close
         client.connection.on('close', (reasonCode, description) => {
-            this.RemoveClient(client);
+            this.ValidateRemove(client);
         });
 
         //Handle on messagem from cliente!
