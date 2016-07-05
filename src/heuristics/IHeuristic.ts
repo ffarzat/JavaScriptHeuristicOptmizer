@@ -331,9 +331,9 @@ abstract class IHeuristic extends events.EventEmitter {
      * Relases the callback magic
      */
     Done(message: Message) {
-        var localmsg = this.waitingMessages[message.id];
-
+        
         try {
+            var localmsg = this.waitingMessages[message.id];
             clearTimeout(localmsg.tmeoutId);
             localmsg.tmeoutId = undefined;
             delete this.waitingMessages[message.id];
@@ -341,8 +341,8 @@ abstract class IHeuristic extends events.EventEmitter {
             //this._logger.Write(`[IHeuristic] msg ${localmsg.id} done`);
             localmsg.cb(localmsg);
         } catch (error) {
-            localmsg.cb(localmsg);
-            this._logger.Write(`[IHeuristic] Error processing message ${localmsg.id}. ${error}`);
+            //localmsg.cb(localmsg);
+            //this._logger.Write(`[IHeuristic] Error processing message ${localmsg.id}. ${error}`);
             this._logger.Write(`${error}`);
         }
     }
