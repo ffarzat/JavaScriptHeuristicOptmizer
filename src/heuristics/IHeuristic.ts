@@ -338,7 +338,7 @@ abstract class IHeuristic extends events.EventEmitter {
             localmsg.tmeoutId = undefined;
             delete this.waitingMessages[message.id];
             localmsg.ctx = this.Reload(message.ctx);
-            this._logger.Write(`[IHeuristic] msg ${localmsg.id} done`);
+            //this._logger.Write(`[IHeuristic] msg ${localmsg.id} done`);
             localmsg.cb(localmsg);
         } catch (error) {
             localmsg.cb(localmsg);

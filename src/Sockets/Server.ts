@@ -162,13 +162,13 @@ export default class Server {
             try {
                 var msg: Message = JSON.parse(message);
 
-                this.logger.Write(`[Server] msg [${msg.id}]`);
+                //this.logger.Write(`[Server] msg [${msg.id}]`);
 
                 this.Done(client, msg);
                 //this.logger.Write(`Left ${this.clients.length} client(s)`);
             }
             catch (err) {
-                this.logger.Write(`[Server] ${err}`);
+                this.logger.Write(`[Server] Error: ${err}`);
             }
         });
     }
@@ -263,7 +263,7 @@ export default class Server {
                         }, this.configuration.clientTimeout * 1000);
 
                         this.waitingMessages[msg.id] = msg;
-                        this.logger.Write(`[Server] Sending msg ${msg.id}`);
+                        //this.logger.Write(`[Server] Sending msg ${msg.id}`);
                     }
                     else {
                         this.logger.Write(`[Server] Client connection state error ${availableClient.id}`);
@@ -306,11 +306,13 @@ export default class Server {
      */
     Done(client: Client, message: Message) {
 
+        /*
         if (!client)
             this.logger.Write(`Undefined Client`);
 
         if (!message)
             this.logger.Write(`Undefined message`);
+        */
 
         try {
             var clientelement = this.clientProcessing[client.id];
@@ -326,8 +328,8 @@ export default class Server {
 
             element.cb(message); //do the callback!
 
-            this.logger.Write(`[Server] Msg ${message.id} CB done`);
-            this.logger.Write(`${Object.keys(this.waitingMessages).length} message(s) left in waitingMessages`);
+            //this.logger.Write(`[Server] Msg ${message.id} CB done`);
+            //this.logger.Write(`${Object.keys(this.waitingMessages).length} message(s) left in waitingMessages`);
         } catch (error) {
             this.logger.Write(`[Server] Msg ${message.id} ${error}`);
         }
@@ -347,7 +349,7 @@ export default class Server {
 
             element.cb(element); //do the callback!
 
-            this.logger.Write(`message index:[${element.id}] (inside Timeout for)`);
+            this.logger.Write(`[Server] Message [${element.id}] timeout done`);
         }
         else{
             this.logger.Write(`[Server] Message:[${message.id}] not founded`);
