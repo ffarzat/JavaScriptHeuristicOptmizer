@@ -225,7 +225,7 @@ export default class Server {
      */
     ProcessQueue() {
 
-        if (!this.processing) {
+        if (this.processing == false) {
             
             this.processing = true;
 
