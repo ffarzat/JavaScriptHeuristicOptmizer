@@ -232,7 +232,7 @@ export default class Server {
         for (var clientIndex = 0; clientIndex < Object.keys(this.clients).length; clientIndex++) {
             if (Object.keys(this.messages).length > 0) {
 
-                var availableClient = this.clients[Object.keys(this.clients)[0]]
+                var availableClient = this.clients[Object.keys(this.clients)[0]];
                 delete this.clients[availableClient.id];
 
                 this.clientProcessing[availableClient.id] = availableClient;
@@ -347,6 +347,14 @@ export default class Server {
      */
     RemoveClient(client) {
         this.logger.Write(`[Server] Client[${client.id}] Disconnected. Removed.`);
+
+        if (this.clients[client.id])
+            this.clients[client.id].connection.close();
+
+        if (this.clientProcessing[client.id])
+            this.clientProcessing[client.id].connection.close()
+
+
         delete this.clients[client.id];
         delete this.clientProcessing[client.id];
     }
