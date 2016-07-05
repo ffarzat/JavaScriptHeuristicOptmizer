@@ -35,7 +35,7 @@ export default class Server {
 
     timeouts = {};
 
-    processing: boolean;
+    processing: boolean = false;
 
     /**
      * Configs the server to execute
