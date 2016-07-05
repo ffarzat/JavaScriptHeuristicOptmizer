@@ -249,7 +249,7 @@ export default class Server {
                     if (availableClient.connection.readyState == availableClient.connection.OPEN) {
                         //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
 
-                        
+
                         //var stringMSG = JSON.stringify(msg);
                         //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
                         availableClient.connection.send(JSON.stringify(msg));
@@ -339,13 +339,19 @@ export default class Server {
      */
     ExecuteMsgTimeout(message) {
         var element = this.waitingMessages[message.id];
-        delete this.waitingMessages[element.id];
-        clearTimeout(this.timeouts[element.id]);
-        delete this.timeouts[element.id];
 
-        element.cb(element); //do the callback!
+        if (element) {
+            delete this.waitingMessages[element.id];
+            clearTimeout(this.timeouts[element.id]);
+            delete this.timeouts[element.id];
 
-        this.logger.Write(`message index:[${element.id}] (inside Timeout for)`);
+            element.cb(element); //do the callback!
+
+            this.logger.Write(`message index:[${element.id}] (inside Timeout for)`);
+        }
+        else{
+            this.logger.Write(`[Server] Message:[${message.id}] not founded`);
+        }
     }
 
 
