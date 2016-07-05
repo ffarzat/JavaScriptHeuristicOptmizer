@@ -40,6 +40,7 @@ export default class Server {
 
     totalSendMessages = 0;
     totalReturnedMessages = 0;
+    totalReturnedMessagesDone = 0;
 
     /**
      * Configs the server to execute
@@ -165,6 +166,7 @@ export default class Server {
 
         //Handle on messagem from cliente!
         client.connection.on('message', async (message) => {
+            this.totalReturnedMessages += 1;
             this.concludedMessages[message.id] = message;
         });
     }
@@ -198,7 +200,7 @@ export default class Server {
         console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
         console.log(`${Object.keys(this.clients).length} client(s) waiting task(s)`);
         console.log(`${Object.keys(this.clientProcessing).length} client(s) working now`);
-        console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages} <--`);
+        console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--`);
         console.log(`=============`);
     }
 
@@ -233,7 +235,7 @@ export default class Server {
                     var client = this.clientProcessing[msgProcessed.clientId];
 
                     this.Done(client, msgProcessed);
-                    this.totalReturnedMessages += 1;
+                    this.totalReturnedMessagesDone += 1;
                     //this.logger.Write(`Left ${this.clients.length} client(s)`);
                 }
                 catch (err) {
