@@ -31,7 +31,7 @@ if (cluster.isMaster) {
     setInterval(function () { localServer.ProcessQueue(); }, 100); //1x per 3 second
     setInterval(function () { localServer.ProcessRetun(); }, 100); //1x per 3 second
     
-    setInterval(function () { localServer.Status(); }, 60000);
+    setInterval(function () { localServer.Status(); }, 10000);
 
     var optmizerWorker = cluster.fork(); //optmizer worker
 

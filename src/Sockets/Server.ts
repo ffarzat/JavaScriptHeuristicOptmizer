@@ -198,7 +198,7 @@ export default class Server {
         console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
         console.log(`${Object.keys(this.clients).length} client(s) waiting task(s)`);
         console.log(`${Object.keys(this.clientProcessing).length} client(s) working now`);
-        console.log(`-> ${Object.keys(this.totalSendMessages).length} | ${Object.keys(this.totalReturnedMessages).length} <--`);
+        console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages} <--`);
         console.log(`=============`);
     }
 
