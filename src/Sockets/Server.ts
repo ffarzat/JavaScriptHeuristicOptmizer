@@ -303,7 +303,7 @@ export default class Server {
      * Relases the callback magic
      */
     Done(client: Client, message: Message) {
-        this.logger.Write(`[DONE] message :[${message.id}]`);
+        //this.logger.Write(`[DONE] message :[${message.id}]`);
 
         for (var clientIndex = 0; clientIndex < this.clientProcessing.length; clientIndex++) {
             var clientelement = this.clientProcessing[clientIndex];
@@ -324,7 +324,7 @@ export default class Server {
         delete this.waitingMessages[element.id];
         clearTimeout(this.timeouts[element.id]);
         delete this.timeouts[element.id];
-        element.cb(element); //do the callback!
+        element.cb(message); //do the callback!
     }
 
     ExecuteMsgTimeout(message) {
