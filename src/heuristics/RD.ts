@@ -122,8 +122,7 @@ export default class RD extends IHeuristic {
 
             this.Mutate(context, (mutant) => {
                 neighbors.push(mutant);
-
-                //this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
+                this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
             });
 
             counter++;
