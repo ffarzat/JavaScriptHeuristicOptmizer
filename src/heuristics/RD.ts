@@ -38,7 +38,7 @@ export default class RD extends IHeuristic {
 
         this._logger.Write(`[RD] Starting  Random Search`);
         this._logger.Write(`[RD] Starting  Trial ${trialIndex} of ${this.Trials}`);
-        
+
         this.howManyTimes = Math.floor((this.trials % this._config.neighborsToProcess) + (this.trials / this._config.neighborsToProcess)); // force interger
 
         this._logger.Write(`[RD] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
@@ -69,7 +69,7 @@ export default class RD extends IHeuristic {
 
             this._logger.Write(`[RD] internal trial: ${time}/${this.howManyTimes} done.`);
             //this._logger.Write(`[RD]mutants: ${mutants.length}`);
-            
+
 
             mutants.forEach(element => {
                 this.UpdateBest(element);
@@ -121,8 +121,15 @@ export default class RD extends IHeuristic {
             this.operationsCounter++;
 
             this.Mutate(context, (mutant) => {
-                neighbors.push(mutant);
-                this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
+                try {
+                    neighbors.push(mutant);
+                    this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
+                } catch (error) {
+                    this._logger.Write(`[RD] Mutant error: ${error}`);
+                    
+                    neighbors.push(this.bestIndividual);
+                    this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
+                }
             });
 
             counter++;
