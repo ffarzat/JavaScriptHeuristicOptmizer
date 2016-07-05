@@ -226,9 +226,9 @@ export default class Server {
     ProcessQueue() {
 
         //this.logger.Write(`[Server] ProcessQueue? [${this.processing}]`);
-        
+
         if (this.processing == false) {
-            
+
             this.processing = true;
 
             for (var clientIndex = 0; clientIndex < Object.keys(this.clients).length; clientIndex++) {
@@ -250,10 +250,6 @@ export default class Server {
                             //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
 
 
-                            //var stringMSG = JSON.stringify(msg);
-                            //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
-                            availableClient.connection.send(JSON.stringify(msg));
-
                             this.timeouts[msg.id] = setTimeout(() => {
                                 this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
 
@@ -263,6 +259,10 @@ export default class Server {
                             }, this.configuration.clientTimeout * 1000);
 
                             this.waitingMessages[msg.id] = msg;
+
+                            //var stringMSG = JSON.stringify(msg);
+                            //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
+                            availableClient.connection.send(JSON.stringify(msg));
                             //this.logger.Write(`[Server] Sending msg ${msg.id}`);
                         }
                         else {
@@ -320,8 +320,8 @@ export default class Server {
 
         try {
             var clientelement = this.clientProcessing[client.id];
+            
             delete this.clientProcessing[client.id];
-
             this.clients[client.id] = client; //be available again
 
             var element = this.waitingMessages[message.id];
