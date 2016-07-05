@@ -71,17 +71,7 @@ if (cluster.isMaster) {
     ParseConfigAndLibs(clientWorkDir.path);
 
     //=========================================================== Client initialization
-    var clientId = uuid.v4();
-    var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
-    logger.Write(`[Client:${clientId}] conecting at ${serverUrl}`);
-
-    var localClient = new Client();
-    localClient.id = clientId;
-    localClient.logger = logger;
-
-    localClient.Setup(configuration, clientWorkDir);
-
-    ExecuteOperations(localClient);
+    ExecuteOperations();
 }
 //=========================================================================================== //======>
 //=========================================================================================== Functions
@@ -105,7 +95,17 @@ function formatBytes(bytes, decimals) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-function ExecuteOperations(clientLocal: Client) {
+function ExecuteOperations() {
+    var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
+    var clientId = uuid.v4();
+    var clientLocal = new Client();
+    clientLocal.id = clientId;
+    clientLocal.logger = logger;
+
+    clientLocal.Setup(configuration, clientWorkDir);
+
+
+
     let timeoutId;
     let promisedId;
 
@@ -118,30 +118,31 @@ function ExecuteOperations(clientLocal: Client) {
     let operationPromise: Promise<OperatorContext>;
 
     var ws = new WebSocket(serverUrl, 'echo-protocol'); //conect
+    logger.Write(`[Client:${clientId}] conecting at ${serverUrl}`);
 
     ws.addEventListener("close", (data) => {
-        logger.Write(`[runClient]Client ${localClient.id} clean temp data...`);
+        logger.Write(`[runClient]Client ${clientLocal.id} clean temp data...`);
 
         rmdir(clientLocal.TempDirectory.path, function (err, dirs, files) {
             //console.log(dirs);
             //console.log(files);
             //console.log('all files are removed');
-            logger.Write(`[runClient]Client ${localClient.id}   Temp data cleaned.`);
-            logger.Write(`[runClient]Client ${localClient.id} Done.`);
+            logger.Write(`[runClient]Client ${clientLocal.id}   Temp data cleaned.`);
+            logger.Write(`[runClient]Client ${clientLocal.id} Done.`);
             process.exit(0);
         });
 
     });
 
     ws.addEventListener("error", (data) => {
-        logger.Write(`[runClient]Client ${localClient.id} clean temp data...`);
+        logger.Write(`[runClient]Client ${clientLocal.id} clean temp data...`);
 
         rmdir(clientLocal.TempDirectory.path, function (err, dirs, files) {
             //console.log(dirs);
             //console.log(files);
             //console.log('all files are removed');
-            logger.Write(`[runClient]Client ${localClient.id}   Temp data cleaned.`);
-            logger.Write(`[runClient]Client ${localClient.id} Done.`);
+            logger.Write(`[runClient]Client ${clientLocal.id}   Temp data cleaned.`);
+            logger.Write(`[runClient]Client ${clientLocal.id} Done.`);
             process.exit(101010);
         });
 
