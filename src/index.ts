@@ -28,7 +28,7 @@ logger.Initialize(configuration);
 if (cluster.isMaster) {
     localServer.logger = logger;
     localServer.Setup(configuration);
-    setInterval(function () { localServer.ProcessQueue(); }, 5000); //1x per 3 second
+    setInterval(function () { localServer.ProcessQueue(); }, 2000); //1x per 3 second
     setInterval(function () { localServer.Status(); }, 60000);
 
     var optmizerWorker = cluster.fork(); //optmizer worker
