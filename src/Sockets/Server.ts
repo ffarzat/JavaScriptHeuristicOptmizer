@@ -232,6 +232,7 @@ export default class Server {
             this.processing = true;
 
             for (var clientIndex = 0; clientIndex < Object.keys(this.clients).length; clientIndex++) {
+
                 if (Object.keys(this.messages).length > 0) {
 
                     var availableClient = this.clients[Object.keys(this.clients)[0]];
@@ -240,37 +241,31 @@ export default class Server {
                     this.clientProcessing[availableClient.id] = availableClient;
 
                     var msg = this.messages[Object.keys(this.messages)[0]]; //get
-                    delete this.messages[msg.id]; //delete
 
-                    if (!msg.clientId) {
+                    if (availableClient.connection.readyState == availableClient.connection.OPEN) {
+                        //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
+                        
+                        delete this.messages[msg.id]; //delete
+                        msg.clientId = availableClient.id;
 
-                        if (availableClient.connection.readyState == availableClient.connection.OPEN) {
-                            //this.logger.Write(`[Server] Sending to client[${availableClient.id}]`);
+                        this.timeouts[msg.id] = setTimeout(() => {
+                            this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
 
-                            msg.clientId = availableClient.id;
-                            
-                            this.timeouts[msg.id] = setTimeout(() => {
-                                this.logger.Write(`[Server] ERROR! Timeout waiting message  ${msg.id}`);
+                            this.ExecuteMsgTimeout(msg); //ends the process
+                            this.RemoveClient(availableClient);
 
-                                this.ExecuteMsgTimeout(msg); //ends the process
-                                this.RemoveClient(availableClient);
+                        }, this.configuration.clientTimeout * 1000);
 
-                            }, this.configuration.clientTimeout * 1000);
+                        this.waitingMessages[msg.id] = msg;
 
-                            this.waitingMessages[msg.id] = msg;
-
-                            //var stringMSG = JSON.stringify(msg);
-                            //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
-                            availableClient.connection.send(JSON.stringify(msg));
-                            //this.logger.Write(`[Server] Sending msg ${msg.id}`);
-                        }
-                        else {
-                            this.logger.Write(`[Server] Client connection state error ${availableClient.id}`);
-                            this.ValidateRemove(availableClient);
-                        }
+                        //var stringMSG = JSON.stringify(msg);
+                        //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
+                        availableClient.connection.send(JSON.stringify(msg));
+                        //this.logger.Write(`[Server] Sending msg ${msg.id}`);
                     }
                     else {
-                        this.logger.Write(`[Server] ERROR: ${msg.id} already have a client: ${msg.clientId}`);
+                        this.logger.Write(`[Server] Client connection state error ${availableClient.id}`);
+                        this.ValidateRemove(availableClient);
                     }
                 }
                 else {
@@ -319,7 +314,7 @@ export default class Server {
 
         try {
             var clientelement = this.clientProcessing[client.id];
-            
+
             delete this.clientProcessing[client.id];
             this.clients[client.id] = client; //be available again
 
