@@ -63,7 +63,7 @@ export default class RD extends IHeuristic {
 
         this.operationsCounter = 0;
 
-        this.DoMutationsPerTime(0, [], (mutants) => {
+        this.DoMutationsPerTime(1, [], (mutants) => {
 
             time++;
 
