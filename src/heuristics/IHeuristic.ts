@@ -324,7 +324,6 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.id = uuid.v4();
         msg.cb = cb;
 
-
         msg.ActualGlobalTrial = this.ActualGlobalTrial;
         msg.ActualHeuristic = this.Name;
         msg.ActualInternalTrial = this.ActualInternalTrial;
