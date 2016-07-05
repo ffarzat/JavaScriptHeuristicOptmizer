@@ -220,7 +220,7 @@ export default class Server {
      */
     ProcessRetun() {
 
-        this.logger.Write(`[Server.ProcessReturn] ${Object.keys(this.concludedMessages).length} messages`)
+        //this.logger.Write(`[Server.ProcessReturn] ${Object.keys(this.concludedMessages).length} messages`)
 
         if (Object.keys(this.concludedMessages).length > 0) {
 
@@ -233,7 +233,7 @@ export default class Server {
                     var client = this.clientProcessing[msgProcessed.clientId];
 
                     this.Done(client, msgProcessed);
-                    this.totalReturnedMessages++;
+                    this.totalReturnedMessages += 1;
                     //this.logger.Write(`Left ${this.clients.length} client(s)`);
                 }
                 catch (err) {
@@ -289,7 +289,7 @@ export default class Server {
                         //var stringMSG = JSON.stringify(msg);
                         //console.log(`[Server] MSG Bytes ${this.getBytes(stringMSG)}`);
                         availableClient.connection.send(JSON.stringify(msg));
-                        this.totalSendMessages ++;
+                        this.totalSendMessages +=1;
                         //this.logger.Write(`[Server] Sending msg ${msg.id}`);
                     }
                     else {
