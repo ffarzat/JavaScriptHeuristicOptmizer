@@ -239,8 +239,8 @@ export default class Server {
                     //this.logger.Write(`Left ${this.clients.length} client(s)`);
                 }
                 catch (err) {
+                    this.logger.Write(`[Server.ProcessRetun] Error: ${err}`);
                     msgProcessed.cb(msgProcessed);
-                    this.logger.Write(`[Server] Error: ${err}`);
                 }
                 finally{
                     delete this.concludedMessages[key]; //delete
@@ -333,7 +333,7 @@ export default class Server {
     /**
      * Relases the callback magic
      */
-    Done(client: Client, message: Message) {
+   async Done(client: Client, message: Message) {
 
         try {
             var clientelement = this.clientProcessing[client.id];
