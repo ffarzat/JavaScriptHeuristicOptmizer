@@ -1,9 +1,6 @@
 #!/bin/bash
-#PBS -l select=1:ncpus=1:mem=1gb:mpiprocs=4
+#PBS -l select=1:ncpus=2:mem=4gb
 #PBS -N JavaScript
-#PBS -p 1023
-
-
 
 set -x	#screen output
 #cat - | node -v $@ | tee /mnt/scratch/user8/out.txt # test node

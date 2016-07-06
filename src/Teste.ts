@@ -1,5 +1,5 @@
 /// <reference path="./typings/tsd.d.ts" />
-//node --expose-gc build/src/teste.js
+//	node build/src/teste.js
 
 
 import IConfiguration from '../src/IConfiguration';
@@ -18,17 +18,15 @@ var lib = configuration.libraries[0];
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
-var astExplorer: ASTExplorer = new ASTExplorer();
 
-var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
-
-var population: Individual[] = [];
-logger.Write(`Lib: ${lib.name}`);
-for (var index = 0; index < 200; index++) {
-    population.push(individualOverTests.Clone());
-    logger.Write(index.toString());
-    //global.gc();
-    //logger.Write(`Manual GC ${process.memoryUsage().heapTotal}`);
+//Patch for execution over NACAD PBS 
+if (process.platform !== "win32") {
+    logger.Write(`tmpDirectory : ${configuration.tmpDirectory}`);
+    process.env['TMPDIR'] = configuration.tmpDirectory;
 }
 
+logger.Write(`process.platform : ${process.platform}`);
+logger.Write(`process.env['TMPDIR'] : ${}`);
+logger.Write(`PBS_O_WORKDIR : ${process.env['PBS_O_WORKDIR']}`);
+logger.Write(`ENV : ${JSON.stringify(process.env)}`);
 
