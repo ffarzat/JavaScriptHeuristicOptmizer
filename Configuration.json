@@ -30,8 +30,8 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 2,
-                "trials": 2,
+                "neighborsToProcess": 5,
+                "trials": 10,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 2, 
                 "generations": 2,

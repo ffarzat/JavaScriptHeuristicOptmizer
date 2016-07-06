@@ -43,10 +43,10 @@ abstract class IHeuristic extends events.EventEmitter {
     Tick: any;
     trialUuid: any;
 
-    ActualGlobalTrial: number
-    ActualInternalTrial: number
-    ActualLibrary: string;
-    CleanServer: boolean;
+    public ActualGlobalTrial: number
+    public ActualInternalTrial: number
+    public ActualLibrary: string;
+    public CleanServer: boolean;
 
     /**
      * Forces the Heuristic to validate config
@@ -323,7 +323,7 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.id = uuid.v4();
         msg.cb = cb;
 
-        this._logger.Write(`[IHeuristic] CleanServer: ${msg.CleanServer}`);
+        
 
         this.waitingMessages[msg.id] = msg;
 
@@ -336,10 +336,17 @@ abstract class IHeuristic extends events.EventEmitter {
         item.ActualInternalTrial = this.ActualInternalTrial;
         item.ActualLibrary = this.ActualLibrary;
         item.CleanServer = this.CleanServer;
+        
+        this._logger.Write(`[IHeuristic] CleanServer: ${this.CleanServer}`);
+        
 
-        if(this.CleanServer)
+
+        if(this.CleanServer == true)
+        {
             this.CleanServer = false;
-
+            this._logger.Write(`[IHeuristic] CleanServer change: ${this.CleanServer}`);
+        }
+            
         process.send(item);
     }
 

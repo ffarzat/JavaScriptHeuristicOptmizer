@@ -47,8 +47,8 @@ if (cluster.isMaster) {
         localServer.ActualInternalTrial = msg.ActualInternalTrial
         localServer.ActualLibrary = msg.ActualLibrary
 
-        if (msg.CleanServer) {
-            logger.Write(`[index] Cleanup the Server`);
+        if (msg.CleanServer == true) {
+            logger.Write(`[index] CleanServer:${msg.CleanServer}`);
             localServer.CleanUp();
         }
 

@@ -203,18 +203,19 @@ export default class Server {
      * Print the server status
      */
     Status(): void {
-        console.log(`=============`);
-        console.log(`Lib: ${this.ActualLibrary}`);
-        console.log(`Global Trial: ${this.ActualGlobalTrial}`);
-        console.log(`Heuristic: ${this.ActualHeuristic}`);
-        console.log(`Heuristic Trial: ${this.ActualInternalTrial}`);
-        console.log(`${Object.keys(this.messages).length} message(s) waiting free client(s)`);
-        console.log(`${Object.keys(this.waitingMessages).length} message(s) in process`);
-        console.log(`${Object.keys(this.clients).length} client(s) waiting task(s)`);
-        console.log(`${Object.keys(this.clientProcessing).length} client(s) working now`);
-        console.log(`${Object.keys(this.timeouts).length} timeouts(s) waiting`);
+        console.log(`=======================================`);
+        console.log(`Lib              :${this.ActualLibrary}`);
+        console.log(`Global Trial     :${this.ActualGlobalTrial}`);
+        console.log(`Heuristic        :${this.ActualHeuristic}`);
+        console.log(`Heuristic Trial  :${this.ActualInternalTrial}`);
+        console.log(`=================//====================`);
+        console.log(`Waiting          :${Object.keys(this.messages).length}`);
+        console.log(`Processing       :${Object.keys(this.waitingMessages).length}`);
+        console.log(`Free clients     :${Object.keys(this.clients).length} `);
+        console.log(`Working clients  :${Object.keys(this.clientProcessing).length}`);
+        console.log(`Possible timeouts:${Object.keys(this.timeouts).length}`);
         console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--`);
-        console.log(`=============`);
+        console.log(`=======================================`);
 
         for(var key in this.clientProcessing)
         {
@@ -341,6 +342,7 @@ export default class Server {
      * Cleanups the server for next trial
      */
     CleanUp() {
+
         for (var mKey in this.messages) {
             delete this.messages[mKey];
         }
