@@ -8,5 +8,6 @@ echo $PBS_O_WORKDIR
 cd $PBS_O_WORKDIR
 npm run PBS
 node --expose-gc --max-old-space-size=102400 build/src/index.js &
+sleep 1m
 node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js 
 exit 0
