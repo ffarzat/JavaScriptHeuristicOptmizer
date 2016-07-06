@@ -28,7 +28,7 @@ var rmdir = require('rmdir');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = configuration.clientsTotal; //(require('os').cpus().length);
+var numCPUs = (require('os').cpus().length);
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -37,10 +37,12 @@ logger.Initialize(configuration);
 if (process.platform !== "win32") {
     process.env['TMPDIR'] = configuration.tmpDirectory;
 }
-logger.Write(`CPUS Available on host: ${require('os').cpus().length}`);
-logger.Write(`tmpDirectory : ${configuration.tmpDirectory}`);
-logger.Write(`process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
+
 logger.Write(`process.platform : ${process.platform}`);
+logger.Write(`process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
+logger.Write(`CPUS Available on host: ${numCPUs}`);
+logger.Write(`Clients to launch: ${configuration.clientsTotal}`);
+
 
 
 
@@ -51,7 +53,7 @@ if (cluster.isMaster) {
     logger.Write(`[runClients] Operation Timeout: ${(configuration.clientTimeout)} secs`)
 
     var i = 0
-    for (i = 0; i < numCPUs; i++) {
+    for (i = 0; i < configuration.clientsTotal; i++) {
         cluster.fork();
         logger.Write(`Fork: ${i}`);
     }
