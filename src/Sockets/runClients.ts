@@ -65,6 +65,7 @@ if (cluster.isMaster) {
     //=========================================================================================== Slave
     process.stdin.resume();
 
+    logger.Write(`process.platform : ${process.platform}`);
     //Patch for execution over NACAD PBS 
     if (process.platform !== "win32") {
         logger.Write(`tmpDirectory : ${configuration.tmpDirectory}`);
