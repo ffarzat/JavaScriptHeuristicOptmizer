@@ -204,11 +204,11 @@ export default class Server {
      */
     Status(): void {
         console.log(`=======================================`);
-        console.log(`[${this.ActualLibrary}|${this.ActualHeuristic}|${this.ActualGlobalTrial}]`);
+        console.log(`[Lib/Heuristic/Trial]: ${this.ActualLibrary.toUpperCase()}/${this.ActualHeuristic.toLocaleUpperCase()}/${this.ActualGlobalTrial}`);
+        console.log(`Messages Status [-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--]`);
         console.log(`${Object.keys(this.clients).length} Free clients`);
         console.log(`${Object.keys(this.clientProcessing).length} Working clients`);
         console.log(`${Object.keys(this.timeouts).length} Timeouts`);
-        console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--`);
         console.log(`=======================================`);
 
         for(var key in this.clientProcessing)
