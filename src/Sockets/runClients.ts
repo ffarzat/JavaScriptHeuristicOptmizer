@@ -28,7 +28,13 @@ var rmdir = require('rmdir');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = (require('os').cpus().length) - 3;
+var numCPUs = (require('os').cpus().length);
+
+//Patch for execution over NACAD PBS 
+if (process.platform !== "win32") {
+    process.env['TMPDIR'] = configuration.tmpDirectory;
+}
+
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
