@@ -30,6 +30,16 @@ var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile
 var testOldDirectory: string = process.cwd();
 var numCPUs = (require('os').cpus().length);
 
+//Patch for execution over NACAD PBS 
+if (process.platform !== "win32") {
+    process.env['TMPDIR'] = configuration.tmpDirectory;
+}
+
+logger.Write(`tmpDirectory : ${configuration.tmpDirectory}`);
+logger.Write(`process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
+logger.Write(`process.platform : ${process.platform}`);
+
+
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -65,16 +75,10 @@ if (cluster.isMaster) {
     //=========================================================================================== Slave
     process.stdin.resume();
 
-    logger.Write(`process.platform : ${process.platform}`);
-    //Patch for execution over NACAD PBS 
-    if (process.platform !== "win32") {
-        logger.Write(`tmpDirectory : ${configuration.tmpDirectory}`);
-        process.env['TMPDIR'] = configuration.tmpDirectory;
-        logger.Write(`process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
-    }
-
-
     var clientWorkDir = new tmp.Dir();
+
+    logger.Write(`clientWorkDir : ${clientWorkDir}`);
+
     process.setMaxListeners(0);
 
     //=========================================================== Libs initialization
