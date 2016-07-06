@@ -399,19 +399,21 @@ export default class Server {
             this.clients[client.id] = client; //be available again
 
             var element = this.waitingMessages[message.id];
+            if(element)
+            {
+                delete this.waitingMessages[element.id];
+                clearTimeout(this.timeouts[element.id]);
+                delete this.timeouts[element.id];
 
-            delete this.waitingMessages[element.id];
-            clearTimeout(this.timeouts[element.id]);
-            delete this.timeouts[element.id];
-
-            setTimeout(function () {
-                element.cb(message); //do the callback!
-            }, 50);
+                setTimeout(function () {
+                    element.cb(message); //do the callback!
+                }, 50);
+            }
 
             //this.logger.Write(`[Server] Msg ${message.id} CB done`);
             //this.logger.Write(`${Object.keys(this.waitingMessages).length} message(s) left in waitingMessages`);
         } catch (error) {
-            this.logger.Write(`[Server] Msg ${message.id} ${error}`);
+            this.logger.Write(`[Server] Msg ${message.id} ${error} ${error.stack}`);
         }
     }
 
