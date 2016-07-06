@@ -43,13 +43,9 @@ logger.Write(`process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
 logger.Write(`CPUS Available on host: ${numCPUs}`);
 logger.Write(`Clients to launch: ${configuration.clientsTotal}`);
 
-
-
-
-
 //=========================================================================================== Cluster
 if (cluster.isMaster) {
-    logger.Write(`[runClients] Creating ${numCPUs} Clients`)
+    logger.Write(`[runClients] Creating ${configuration.clientsTotal} Clients`)
     logger.Write(`[runClients] Operation Timeout: ${(configuration.clientTimeout)} secs`)
 
     var i = 0
