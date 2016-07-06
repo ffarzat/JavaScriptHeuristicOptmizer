@@ -105,6 +105,8 @@ function ExecuteTrials(globalTrial: number) {
         }
     });
 
+    process.exit();
+
 }
 
 function executeHeuristicTrial(trial: number, config: IConfiguration, heuristicTrial: number, cb: (newHeuristicTrial: number) => void) {
