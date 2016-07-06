@@ -20,6 +20,11 @@ var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
 
+//Patch for execution over NACAD PBS 
+if (process.platform !== "win32") {
+    process.env['TMPDIR'] = configuration.tmpDirectory;
+}
+
 //=========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -164,6 +169,7 @@ function ParseConfigAndLibs() {
 function DisplayConfig() {
     var totalTrials = configuration.trials * configuration.trialsConfiguration.length * configuration.libraries.length * configuration.heuristics.length;
     logger.Write('=================================');
+    logger.Write(`Tmp Dir [Config File] ${configuration.tmpDirectory}`);
     logger.Write(`Fit type [mean|median]:  ${configuration.fitType}`);
     logger.Write(`Number of testing each individual:  ${configuration.testUntil}`);
     logger.Write(`Logfile:  ${configuration.logFilePath}`);

@@ -8,6 +8,7 @@
     "crossOverTrials": 5,
     "logFilePath": "build/optmization.log",
     "logCategory":"optmization",
+    "tmpDirectory": "/mnt/scratch/user8/tmp",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
     "trialResultsFile": "Results.csv",

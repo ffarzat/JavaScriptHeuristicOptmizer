@@ -67,4 +67,13 @@ describe('CsvOutWritterTest Tests', function () {
         expect(concrete).not.be.an('undefined');       
     });
     
+    it('Should Change TMP Dir', () => {
+        process.env['TMPDIR'] = "/tmp";
+        console.log(`TMP: ${tmp}`);
+
+        var tmp = process.env.TMPDIR;
+        expect(tmp).be('/tmp');
+        delete process.env['TMPDIR']; 
+    });
+
 })

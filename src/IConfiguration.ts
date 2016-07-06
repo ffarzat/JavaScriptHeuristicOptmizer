@@ -19,6 +19,11 @@ interface IConfiguration {
     resultsDirectory: string
 
     /**
+     * TO use inside SUSE PBS
+     */
+    tmpDirectory: string
+
+    /**
      * Filename for results.csv
      */
     trialResultsFile: string;

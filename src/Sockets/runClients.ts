@@ -2,7 +2,7 @@
  * Starts the client of Improvment Process based on configFile [Configuration.Json]
  * 
  * 
- * node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js
+ * node --expose-gc --max-old-space-size=2047 build/src/Sockets/runClients.js
  * 
  */
 import IConfiguration from '../IConfiguration';
