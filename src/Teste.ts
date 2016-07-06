@@ -26,7 +26,7 @@ if (process.platform !== "win32") {
 }
 
 logger.Write(`process.platform : ${process.platform}`);
-logger.Write(`process.env['TMPDIR'] : ${}`);
+logger.Write(`process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
 logger.Write(`PBS_O_WORKDIR : ${process.env['PBS_O_WORKDIR']}`);
 logger.Write(`ENV : ${JSON.stringify(process.env)}`);
 
