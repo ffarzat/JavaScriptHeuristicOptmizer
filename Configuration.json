@@ -3,7 +3,7 @@
     "trials":60,
     "startTrial": 0,
     "fitType":"mean",
-    "testUntil": 5,
+    "testUntil": 2,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/optmization.log",
@@ -15,25 +15,26 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD"],
+    "heuristics": ["HC", "RD", "GA"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":60,
     "clientsTotal": 3,
     "libraries" : [
         {"name":"uuid",    "path":"Libraries/uuid/",      "mainFilePath":"Libraries/uuid/lib/uuid.js" },
-        {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" }
+        {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
+        {"name":"minimist",    "path":"Libraries/minimist/",      "mainFilePath":"Libraries/minimist/index.js" }
     ],
     "trialsConfiguration":[
         {
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 3,
+                "neighborsToProcess": 2,
                 "trials": 2,
                 "nodesType": ["CallExpression", "IfStatement"], 
-                "individuals": 10, 
-                "generations": 5,
+                "individuals": 2, 
+                "generations": 2,
                 "crossoverProbability": 75,
                 "mutationProbability": 10,
                 "elitism": true,

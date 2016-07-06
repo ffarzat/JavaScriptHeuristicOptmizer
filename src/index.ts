@@ -28,7 +28,7 @@ if (process.platform !== "win32") {
 //=========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
-//process.setMaxListeners(0);
+process.setMaxListeners(0);
 //=========================================================================================== Server!
 if (cluster.isMaster) {
     localServer.logger = logger;

@@ -18,8 +18,6 @@ import fs = require('fs');
 var uuid = require('node-uuid');
 var exectimer = require('exectimer');
 
-
-
 /**
  * Generic interface for Heuristics 
  */
@@ -49,7 +47,6 @@ abstract class IHeuristic extends events.EventEmitter {
     ActualInternalTrial: number
     ActualLibrary: string;
 
-
     /**
      * Forces the Heuristic to validate config
      */
@@ -60,8 +57,15 @@ abstract class IHeuristic extends events.EventEmitter {
         events.EventEmitter.call(this);
         this.waitingMessages = {};
         this.trialUuid = uuid.v4();
+    }
 
-        process.once('message', (newMsg: Message) => {
+    /**
+     *
+     */
+    constructor() {
+        super();
+
+        process.on('message', (newMsg: Message) => {
             this.Done(newMsg);
         });
     }
@@ -324,6 +328,8 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ActualLibrary = this.ActualLibrary;
         msg.CleanServer = this.ActualInternalTrial == 0 ? true : false; //each time a Heuristic start do the clean
 
+        this._logger.Write(`[IHeuristic] CleanServer: ${msg.CleanServer}`);
+
         this.waitingMessages[msg.id] = msg;
 
         var item = new Message();
@@ -347,9 +353,9 @@ abstract class IHeuristic extends events.EventEmitter {
                     localmsg.ctx = this.Reload(message.ctx);
                     localmsg.cb(localmsg);
                 }
-                else{
-                    this._logger.Write(`[IHeuristic] Msg ${message.id} not founded. WaitingMessages : ${Object.keys(this.waitingMessages).length}`);        
-                }
+                //else {
+                    //this._logger.Write(`[IHeuristic] Msg ${message.id} not founded. WaitingMessages : ${Object.keys(this.waitingMessages).length}`);
+                //}
             }
 
         } catch (error) {
