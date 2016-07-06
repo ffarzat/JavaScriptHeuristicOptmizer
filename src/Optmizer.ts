@@ -167,7 +167,7 @@ export default class Optmizer {
             actualHeuristic.ActualInternalTrial = this.heuristicTrial;
             actualHeuristic.ActualLibrary = actualLibrary.name;
             actualHeuristic.CleanServer  = true;
-            this.logger.Write(`[Optmizer] Setting Status data for ${actualHeuristic.Name}`);
+            //this.logger.Write(`[Optmizer] Setting Status data for ${actualHeuristic.Name}`);
 
             actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
                 this.outter.WriteTrialResults(resultaForTrial);

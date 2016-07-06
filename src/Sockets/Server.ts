@@ -204,23 +204,17 @@ export default class Server {
      */
     Status(): void {
         console.log(`=======================================`);
-        console.log(`Lib              :${this.ActualLibrary}`);
-        console.log(`Global Trial     :${this.ActualGlobalTrial}`);
-        console.log(`Heuristic        :${this.ActualHeuristic}`);
-        console.log(`Heuristic Trial  :${this.ActualInternalTrial}`);
-        console.log(`=================//====================`);
-        console.log(`Waiting          :${Object.keys(this.messages).length}`);
-        console.log(`Processing       :${Object.keys(this.waitingMessages).length}`);
-        console.log(`Free clients     :${Object.keys(this.clients).length} `);
-        console.log(`Working clients  :${Object.keys(this.clientProcessing).length}`);
-        console.log(`Possible timeouts:${Object.keys(this.timeouts).length}`);
+        console.log(`[${this.ActualLibrary}|${this.ActualHeuristic}|${this.ActualGlobalTrial}]`);
+        console.log(`${Object.keys(this.clients).length} Free clients`);
+        console.log(`${Object.keys(this.clientProcessing).length} Working clients`);
+        console.log(`${Object.keys(this.timeouts).length} Timeouts`);
         console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--`);
         console.log(`=======================================`);
 
         for(var key in this.clientProcessing)
         {
             var clientPing: Client = this.clientProcessing[key];
-            clientPing.connection.ping();
+            clientPing.connection.ping("vivo?", null, false);
         }
     }
 

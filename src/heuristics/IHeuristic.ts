@@ -337,14 +337,14 @@ abstract class IHeuristic extends events.EventEmitter {
         item.ActualLibrary = this.ActualLibrary;
         item.CleanServer = this.CleanServer;
         
-        this._logger.Write(`[IHeuristic] CleanServer: ${this.CleanServer}`);
+        //this._logger.Write(`[IHeuristic] CleanServer: ${this.CleanServer}`);
         
 
 
         if(this.CleanServer == true)
         {
             this.CleanServer = false;
-            this._logger.Write(`[IHeuristic] CleanServer change: ${this.CleanServer}`);
+            //this._logger.Write(`[IHeuristic] CleanServer change: ${this.CleanServer}`);
         }
             
         process.send(item);
