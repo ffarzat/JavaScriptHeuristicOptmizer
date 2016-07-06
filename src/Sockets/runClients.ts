@@ -29,6 +29,9 @@ var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
 var numCPUs = (require('os').cpus().length);
+//========================================================================================== Logger
+var logger = new LogFactory().CreateByName(configuration.logWritter);
+logger.Initialize(configuration);
 
 //Patch for execution over NACAD PBS 
 if (process.platform !== "win32") {
@@ -40,9 +43,7 @@ logger.Write(`process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
 logger.Write(`process.platform : ${process.platform}`);
 
 
-//========================================================================================== Logger
-var logger = new LogFactory().CreateByName(configuration.logWritter);
-logger.Initialize(configuration);
+
 
 //=========================================================================================== Cluster
 if (cluster.isMaster) {
