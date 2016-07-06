@@ -67,7 +67,9 @@ if (cluster.isMaster) {
 
     //Patch for execution over NACAD PBS 
     if (process.platform !== "win32") {
+        logger.Write(`tmpDirectory : ${configuration.tmpDirectory}`);
         process.env['TMPDIR'] = configuration.tmpDirectory;
+        logger.Write(`process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
     }
 
 
