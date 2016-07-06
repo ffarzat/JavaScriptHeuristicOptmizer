@@ -31,7 +31,7 @@
             "especific": {
                 "neighborApproach":"FirstAscent", 
                 "neighborsToProcess": 50,
-                "trials": 5,
+                "trials": 2,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 10, 
                 "generations": 5,

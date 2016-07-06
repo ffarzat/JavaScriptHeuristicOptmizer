@@ -80,7 +80,7 @@ if (cluster.isMaster) {
 
     var clientWorkDir = new tmp.Dir();
 
-    logger.Write(`clientWorkDir : ${clientWorkDir}`);
+    logger.Write(`clientWorkDir : ${clientWorkDir.path}`);
 
     process.setMaxListeners(0);
 
