@@ -11,7 +11,7 @@ set -x	#screen output
 #cat - | node /mnt/scratch/user8/JavaScriptHeuristicOptmizer/build/src/Teste.js $@ | tee /mnt/scratch/user8/clients-log.txt
 
 cd /mnt/scratch/user8/JavaScriptHeuristicOptmizer
-node build/src/Teste.js
-#node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js 
+#node build/src/Teste.js
+node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js 
 
 exit 0
