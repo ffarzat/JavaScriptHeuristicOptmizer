@@ -98,14 +98,13 @@ function ExecuteTrials(globalTrial: number) {
 
         globalTrial++;
         if (globalTrial == configuration.trials) {
-            return;
+            //finishing executin
+            process.exit();
         }
         else {
             ExecuteTrials(globalTrial);//next
         }
     });
-
-    process.exit();
 
 }
 
