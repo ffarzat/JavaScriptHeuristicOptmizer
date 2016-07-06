@@ -28,7 +28,7 @@ var rmdir = require('rmdir');
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
-var numCPUs = (require('os').cpus().length);
+var numCPUs = configuration.clientsTotal; //(require('os').cpus().length);
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -37,7 +37,7 @@ logger.Initialize(configuration);
 if (process.platform !== "win32") {
     process.env['TMPDIR'] = configuration.tmpDirectory;
 }
-
+logger.Write(`CPUS Available on host: ${require('os').cpus().length}`);
 logger.Write(`tmpDirectory : ${configuration.tmpDirectory}`);
 logger.Write(`process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
 logger.Write(`process.platform : ${process.platform}`);

@@ -19,6 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":30,
+    "clientsTotal": 1,
     "libraries" : [
         {"name":"uuid",    "path":"Libraries/uuid/",      "mainFilePath":"Libraries/uuid/lib/uuid.js" },
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },

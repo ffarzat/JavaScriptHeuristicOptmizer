@@ -71,6 +71,11 @@ interface IConfiguration {
     trials: number;
 
     /**
+     * Total clients to launch
+     */
+    clientsTotal: number;
+
+    /**
      * #trial to restart a optmization
      */
     startTrial: number;
