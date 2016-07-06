@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -l select=1:ncpus=48:mem=4gb
 #PBS -l place=free
-#PBS -N JavaScript
+#PBS -N js-clients
 #PBS -o clients-log.txt
 #PBS -e clients-err.txt
 
@@ -13,8 +13,8 @@ set -x	#screen output
 echo $PBS_O_WORKDIR
 
 cd $PBS_O_WORKDIR
-cd JavaScriptHeuristicOptmizer
-node build/src/Teste.js
-#node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js 
 
+#node build/src/Teste.js
+npm run build
+node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js 
 exit 0
