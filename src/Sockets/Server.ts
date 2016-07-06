@@ -215,9 +215,8 @@ export default class Server {
         console.log(`${Object.keys(this.timeouts).length} timeouts(s) waiting`);
         console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--`);
         console.log(`=============`);
-        
-        if(Object.keys(this.timeouts).length == 0 && Object.keys(this.waitingMessages).length == 1)
-        {
+
+        if (Object.keys(this.timeouts).length == 0 && Object.keys(this.waitingMessages).length == 1) {
             //Maldito Bug do 49!!!
             var key = Object.keys(this.waitingMessages)[0];
             var msgFail: Message = this.waitingMessages[key];
@@ -392,22 +391,29 @@ export default class Server {
      */
     Done(client: Client, message: Message) {
 
+        if(client == undefined)
+            return;
+
         try {
-            var clientelement = this.clientProcessing[client.id];
 
-            delete this.clientProcessing[client.id];
-            this.clients[client.id] = client; //be available again
+            if (client != undefined) {
+                var clientelement = this.clientProcessing[client.id];
+                delete this.clientProcessing[client.id];
+                this.clients[client.id] = client; //be available again
+            }
 
-            var element = this.waitingMessages[message.id];
-            if(element)
-            {
-                delete this.waitingMessages[element.id];
-                clearTimeout(this.timeouts[element.id]);
-                delete this.timeouts[element.id];
+            if (message != undefined) {
+                var element = this.waitingMessages[message.id];
 
-                setTimeout(function () {
-                    element.cb(message); //do the callback!
-                }, 50);
+                if (element != undefined) {
+                    delete this.waitingMessages[element.id];
+                    clearTimeout(this.timeouts[element.id]);
+                    delete this.timeouts[element.id];
+
+                    setTimeout(function () {
+                        element.cb(message); //do the callback!
+                    }, 50);
+                }
             }
 
             //this.logger.Write(`[Server] Msg ${message.id} CB done`);

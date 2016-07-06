@@ -18,7 +18,7 @@
     "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":30,
+    "clientTimeout":10,
     "clientsTotal": 1,
     "libraries" : [
         {"name":"uuid",    "path":"Libraries/uuid/",      "mainFilePath":"Libraries/uuid/lib/uuid.js" },
