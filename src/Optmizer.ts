@@ -167,25 +167,19 @@ export default class Optmizer {
             actualHeuristic.ActualInternalTrial = this.heuristicTrial;
             actualHeuristic.ActualLibrary = actualLibrary.name;
 
-            try {
-                actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
-                    this.outter.WriteTrialResults(resultaForTrial);
-                    this.outter.Finish();
-                    this.Notify(resultaForTrial);
-                    this.logger.Write(`[Optmizer] Ending ${actualHeuristic.Name}`);
-                    this.logger.Write('=================================');
-                    cb();
-                });
-            }
-            catch (err)
-            {
-                this.logger.Write(`[Optmizer] ${actualHeuristic.Name} failed for ${actualLibrary.name}. ${err.stack}`);
-            }
-            
 
+            actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
+                this.outter.WriteTrialResults(resultaForTrial);
+                this.outter.Finish();
+                this.Notify(resultaForTrial);
+                this.logger.Write(`[Optmizer] Ending ${actualHeuristic.Name}`);
+                this.logger.Write('=================================');
+                cb();
+            });
         }
         catch (err) {
             this.logger.Write(`[Optmizer] Fatal Error: ${err.stack}`);
+            cb();
         }
     }
 
