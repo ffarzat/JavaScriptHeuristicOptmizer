@@ -216,12 +216,10 @@ export default class Server {
         console.log(`-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--`);
         console.log(`=============`);
 
-        if (Object.keys(this.timeouts).length == 0 && Object.keys(this.waitingMessages).length == 1) {
-            //Maldito Bug do 49!!!
-            var key = Object.keys(this.waitingMessages)[0];
-            var msgFail: Message = this.waitingMessages[key];
-            msgFail.cb(msgFail); //será???
-            this.logger.Write(`[Server.Status] Error49`);
+        for(var key in this.clientProcessing)
+        {
+            var clientPing: Client = this.clientProcessing[key];
+            clientPing.connection.ping();
         }
     }
 

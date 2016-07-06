@@ -166,6 +166,7 @@ export default class Optmizer {
             actualHeuristic.ActualGlobalTrial = this.trialIndex;
             actualHeuristic.ActualInternalTrial = this.heuristicTrial;
             actualHeuristic.ActualLibrary = actualLibrary.name;
+            actualHeuristic.CleanServer  = true;
 
 
             actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
