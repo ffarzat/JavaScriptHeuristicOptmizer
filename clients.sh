@@ -10,7 +10,8 @@ set -x	#screen output
 #cat - | env | grep PBS $@ | tee /mnt/scratch/user8/env-vars.txt
 #cat - | node /mnt/scratch/user8/JavaScriptHeuristicOptmizer/build/src/Teste.js $@ | tee /mnt/scratch/user8/clients-log.txt
 
-cd JavaScriptHeuristicOptmizer
-node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js 
+cd /mnt/scratch/user8/JavaScriptHeuristicOptmizer
+node build/src/Teste.js
+#node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js 
 
 exit 0
