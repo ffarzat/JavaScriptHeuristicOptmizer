@@ -203,6 +203,8 @@ export default class Server {
      * Print the server status
      */
     Status(): void {
+        if(this.ActualLibrary != undefined)
+        {
         console.log(`=======================================`);
         console.log(`[Lib/Heuristic/Trial]: ${this.ActualLibrary.toUpperCase()}/${this.ActualHeuristic.toLocaleUpperCase()}/${this.ActualGlobalTrial}`);
         console.log(`Messages Status [-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--]`);
@@ -210,11 +212,6 @@ export default class Server {
         console.log(`${Object.keys(this.clientProcessing).length} Working clients`);
         console.log(`${Object.keys(this.timeouts).length} Timeouts`);
         console.log(`=======================================`);
-
-        for(var key in this.clientProcessing)
-        {
-            var clientPing: Client = this.clientProcessing[key];
-            clientPing.connection.ping("vivo?", null, false);
         }
     }
 
