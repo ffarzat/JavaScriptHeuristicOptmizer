@@ -19,7 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":60,
-    "clientsTotal": 48,
+    "clientsTotal": 60,
     "libraries" : [
 	{"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
         {"name":"minimist",     "path":"Libraries/minimist/",       "mainFilePath":"Libraries/minimist/index.js"  },
