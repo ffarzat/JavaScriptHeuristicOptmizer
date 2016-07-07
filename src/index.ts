@@ -12,8 +12,8 @@ import cluster = require('cluster');
 import fs = require('fs');
 import path = require('path');
 import Shell = require('shelljs');
-
-var localServer = new Server();
+var optmizer: Optmizer = undefined;
+var localServer: Server = new Server();
 
 //=========================================================================================== Reads config
 var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
@@ -28,7 +28,7 @@ if (process.platform !== "win32") {
 //=========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
-process.setMaxListeners(0);
+//process.setMaxListeners(0);
 //=========================================================================================== Server!
 if (cluster.isMaster) {
     localServer.logger = logger;
@@ -74,6 +74,10 @@ if (cluster.isMaster) {
     logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
     logger.Write(`Preparing libs environment`);
 
+    process.on('message', (newMsg: Message) => {
+        Done(newMsg);
+    });
+
     //Here is the Optmizer in another work
     //=========================================================================================== Just prepare all libs
     ParseConfigAndLibs();
@@ -108,9 +112,15 @@ function ExecuteTrials(globalTrial: number) {
 
 }
 
+
+function Done(message: Message) {
+    optmizer.Done(message);
+}
+
 function executeHeuristicTrial(trial: number, config: IConfiguration, heuristicTrial: number, cb: (newHeuristicTrial: number) => void) {
 
-    var optmizer = new Optmizer();
+    optmizer = new Optmizer();
+
     optmizer.Setup(configuration, trial, heuristicTrial);
     optmizer.DoOptmization(() => {
 

@@ -10,6 +10,7 @@ import IOutWriterFactory from './IOutWriterFactory';
 import Library from './Library';
 import TrialResults from './Results/TrialResults';
 import Server from './Sockets/Server';
+import Message from './Sockets/Message';
 import fs = require('fs');
 
 import path = require('path');
@@ -35,6 +36,8 @@ export default class Optmizer {
     public trialIndex: number;
 
     public server: Server;
+
+    actualHeuristic: IHeuristic;
 
     /**
      * Initializes intire Setup chain
@@ -82,6 +85,10 @@ export default class Optmizer {
     private InitializeLogger() {
         this.logger = new LogFactory().CreateByName(this.configuration.logWritter);
         this.logger.Initialize(this.configuration);
+    }
+
+    Done(message: Message) {
+        this.actualHeuristic.Done(message);
     }
 
     /**
@@ -157,23 +164,24 @@ export default class Optmizer {
 
         try {
             var actualLibrary = this.configuration.libraries[libIndex];
-            var actualHeuristic = this.heuristics[heuristicIndex];
-            this.logger.Write(`[Optmizer] Executing global trial ${this.trialIndex} for ${actualLibrary.name} with ${actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);
+            this.actualHeuristic = this.heuristics[heuristicIndex];
+            this.logger.Write(`[Optmizer] Executing global trial ${this.trialIndex} for ${actualLibrary.name} with ${this.actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);
             this.logger.Write(`[Optmizer] Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
 
-            this.InitializeOutWritter(actualLibrary, actualHeuristic);
+            this.InitializeOutWritter(actualLibrary, this.actualHeuristic);
 
-            actualHeuristic.ActualGlobalTrial = this.trialIndex;
-            actualHeuristic.ActualInternalTrial = this.heuristicTrial;
-            actualHeuristic.ActualLibrary = actualLibrary.name;
-            actualHeuristic.CleanServer  = true;
+            this.actualHeuristic.ActualGlobalTrial = this.trialIndex;
+            this.actualHeuristic.ActualInternalTrial = this.heuristicTrial;
+            this.actualHeuristic.ActualLibrary = actualLibrary.name;
+            this.actualHeuristic.CleanServer = true;
+
             //this.logger.Write(`[Optmizer] Setting Status data for ${actualHeuristic.Name}`);
 
-            actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
+            this.actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
                 this.outter.WriteTrialResults(resultaForTrial);
                 this.outter.Finish();
                 this.Notify(resultaForTrial);
-                this.logger.Write(`[Optmizer] Ending ${actualHeuristic.Name}`);
+                this.logger.Write(`[Optmizer] Ending ${this.actualHeuristic.Name}`);
                 this.logger.Write('=================================');
                 cb();
             });

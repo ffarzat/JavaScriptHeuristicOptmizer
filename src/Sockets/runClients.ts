@@ -78,7 +78,7 @@ if (cluster.isMaster) {
 
     logger.Write(`clientWorkDir : ${clientWorkDir.path}`);
 
-    process.setMaxListeners(0);
+    //process.setMaxListeners(0);
 
     //=========================================================== Libs initialization
 

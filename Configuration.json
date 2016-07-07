@@ -21,9 +21,7 @@
     "clientTimeout":60,
     "clientsTotal": 3,
     "libraries" : [
-        {"name":"uuid",    "path":"Libraries/uuid/",      "mainFilePath":"Libraries/uuid/lib/uuid.js" },
-        {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
-        {"name":"minimist",    "path":"Libraries/minimist/",      "mainFilePath":"Libraries/minimist/index.js" }
+        {"name":"uuid",    "path":"Libraries/uuid/",      "mainFilePath":"Libraries/uuid/lib/uuid.js" }
     ],
     "trialsConfiguration":[
         {

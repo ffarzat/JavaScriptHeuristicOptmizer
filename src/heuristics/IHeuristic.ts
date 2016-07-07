@@ -29,6 +29,8 @@ abstract class IHeuristic extends events.EventEmitter {
     _astExplorer: ASTExplorer;
     _lib: Library;
 
+    _hasListener: boolean;
+
     public Name: string;
     public Trials: number;
     public bestFit: number;
@@ -58,17 +60,6 @@ abstract class IHeuristic extends events.EventEmitter {
         events.EventEmitter.call(this);
         this.waitingMessages = {};
         this.trialUuid = uuid.v4();
-    }
-
-    /**
-     *
-     */
-    constructor() {
-        super();
-
-        process.on('message', (newMsg: Message) => {
-            this.Done(newMsg);
-        });
     }
 
     public Start() {
@@ -323,7 +314,7 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.id = uuid.v4();
         msg.cb = cb;
 
-        
+
 
         this.waitingMessages[msg.id] = msg;
 
@@ -336,17 +327,16 @@ abstract class IHeuristic extends events.EventEmitter {
         item.ActualInternalTrial = this.ActualInternalTrial;
         item.ActualLibrary = this.ActualLibrary;
         item.CleanServer = this.CleanServer;
-        
+
         //this._logger.Write(`[IHeuristic] CleanServer: ${this.CleanServer}`);
-        
 
 
-        if(this.CleanServer == true)
-        {
+
+        if (this.CleanServer == true) {
             this.CleanServer = false;
             //this._logger.Write(`[IHeuristic] CleanServer change: ${this.CleanServer}`);
         }
-            
+
         process.send(item);
     }
 
@@ -366,7 +356,7 @@ abstract class IHeuristic extends events.EventEmitter {
                     localmsg.cb(localmsg);
                 }
                 //else {
-                    //this._logger.Write(`[IHeuristic] Msg ${message.id} not founded. WaitingMessages : ${Object.keys(this.waitingMessages).length}`);
+                //this._logger.Write(`[IHeuristic] Msg ${message.id} not founded. WaitingMessages : ${Object.keys(this.waitingMessages).length}`);
                 //}
             }
 
