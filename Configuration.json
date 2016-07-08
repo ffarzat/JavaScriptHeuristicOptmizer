@@ -27,7 +27,8 @@
         {"name":"Jade",         "path":"Libraries/Jade/",           "mainFilePath":"Libraries/Jade/lib/index.js"  },
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
         {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" },
-        {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" }
+        {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },
+        {"name":"jquery",       "path":"Libraries/jquery/",         "mainFilePath":"Libraries/jquery/dist/jquery.js" },
     ],
     "trialsConfiguration":[
         {
