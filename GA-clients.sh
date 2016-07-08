@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -k oe
-#PBS -l select=10:ncpus=48:mem=16gb
+#PBS -l select=10:ncpus=48:mpiprocs=48:mem=16gb
 #PBS -N GA-clients
 ### Request email when job begins and ends
 #PBS -m bea
@@ -22,7 +22,6 @@ echo "nodes: $NPROCS"
 echo "nodefile:"
 cat $PBS_NODEFILE
 NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
-echo "cores: $NO_OF_CORES"
 echo "----------------"
 
 
