@@ -21,19 +21,14 @@ echo "----------------"
 echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
-##echo "nodefile:"
-### cat $PBS_NODEFILE
+echo "nodefile:"
+cat $PBS_NODEFILE
 NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
 echo "----------------"
 
 
 ### run the program (on the nodes as provided by PBS):
-### npm run PBS - o server já executa esse comando
-### node -v
-### node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/GA-Clients.json
-### mpirun -np $NO_OF_CORES -machinefile node -v
-### mpirun node -v
-mpirun -np $NO_OF_CORES node -v
+mpirun -np $NO_OF_CORES node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/GA-Clients.json
 
 date
 

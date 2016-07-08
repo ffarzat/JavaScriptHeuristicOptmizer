@@ -19,7 +19,7 @@
     "port": 5000,
     "url": "ws://10.148.0.9",
     "clientTimeout":120,
-    "clientsTotal": 480,
+    "clientsTotal": 1,
     "libraries" : [
 	{"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
         {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },

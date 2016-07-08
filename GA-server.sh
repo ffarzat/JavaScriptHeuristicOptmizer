@@ -29,7 +29,6 @@ echo "----------------"
 ### run the program (on the nodes as provided by PBS):
 npm run PBS
 node --expose-gc --max-old-space-size=102400 build/src/index.js Configs/GA-Server.json
-
 date
 
 
