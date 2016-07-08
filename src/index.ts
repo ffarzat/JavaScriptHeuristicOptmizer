@@ -19,8 +19,6 @@ var localServer: Server = new Server();
 var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';  
 var configurationFile: string = path.join(process.cwd(), configFile);
 
-console.log (`[index]configurationFile: ${configurationFile}`);
-
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
 
@@ -35,6 +33,7 @@ logger.Initialize(configuration);
 //process.setMaxListeners(0);
 //=========================================================================================== Server!
 if (cluster.isMaster) {
+    console.log (`[index]configurationFile: ${configurationFile}`);
     localServer.logger = logger;
     localServer.Setup(configuration);
     setInterval(function () { localServer.ProcessQueue(); }, 100); //1x per 3 second
