@@ -62,19 +62,19 @@ export default class Optmizer {
     private DoValidation(config: IConfiguration) {
 
         if (config.libraries.length == 0) {
-            throw "[Optmizer] Needs some Lib to run Improvement Process";
+            throw " [Optmizer] Needs some Lib to run Improvement Process";
         }
 
         if (config.logWritter.length == 0) {
-            throw "[Optmizer] Needs LogWritter configuration";
+            throw " [Optmizer] Needs LogWritter configuration";
         }
 
         if (!config.trials && config.trials == 0) {
-            throw "[Optmizer] Needs Total Trials configuration";
+            throw " [Optmizer] Needs Total Trials configuration";
         }
 
         if (config.heuristics.length == 0) {
-            throw "[Optmizer] Needs some Heuristic to run Improvement Process";
+            throw " [Optmizer] Needs some Heuristic to run Improvement Process";
         }
 
     }
@@ -122,7 +122,7 @@ export default class Optmizer {
     private Notify(result: TrialResults) {
 
         var filepath = path.join(process.cwd(), result.file);
-        this.logger.Write(`[Optmizer] Async send Email to notify observers`);
+        this.logger.Write(` [Optmizer] Async send Email to notify observers`);
         //this.logger.Write(`File: ${filepath}`);
 
         var founded: boolean = result.bestIndividualAvgTime < result.originalIndividualAvgTime;
@@ -148,7 +148,7 @@ export default class Optmizer {
             if (error) {
                 this.logger.Write(error);
             } else {
-                this.logger.Write("[Optmizer] Message sent: " + response.message);
+                this.logger.Write(" [Optmizer] Message sent: " + response.message);
             }
 
             smtpTransport.close();
@@ -157,16 +157,29 @@ export default class Optmizer {
 
     }
 
+
+    doExecuteHeuristicOverLib() {
+
+    }
+
+
+
+
     /**
      * Apply all heuristics of an Lib
      */
-    private executeHeuristicOverLib(heuristicIndex, libIndex, cb: () => void) {
+    private executeHeuristicOverLib(libIndex, heuristicIndex, cb: () => void) {
 
         try {
+            //this.logger.Write(`   [Optmizer].executeHeuristicOverLib LIBS TOTAL: ${this.configuration.libraries.length}`);
+            //this.logger.Write(`   [Optmizer].executeHeuristicOverLib LIBS index: ${libIndex}`);
+
+
+
             var actualLibrary = this.configuration.libraries[libIndex];
             this.actualHeuristic = this.heuristics[heuristicIndex];
-            this.logger.Write(`[Optmizer] Executing global trial ${this.trialIndex} for ${actualLibrary.name} with ${this.actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);
-            this.logger.Write(`[Optmizer] Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
+            this.logger.Write(` [Optmizer] Executing global trial ${this.trialIndex} for ${actualLibrary.name} with ${this.actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);
+            this.logger.Write(` [Optmizer] Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
 
             this.InitializeOutWritter(actualLibrary, this.actualHeuristic);
 
@@ -175,19 +188,19 @@ export default class Optmizer {
             this.actualHeuristic.ActualLibrary = actualLibrary.name;
             this.actualHeuristic.CleanServer = true;
 
-            //this.logger.Write(`[Optmizer] Setting Status data for ${actualHeuristic.Name}`);
+            //this.logger.Write(`   [Optmizer] Setting Status data for ${actualHeuristic.Name}`);
 
             this.actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
                 this.outter.WriteTrialResults(resultaForTrial);
                 this.outter.Finish();
                 this.Notify(resultaForTrial);
-                this.logger.Write(`[Optmizer] Ending ${this.actualHeuristic.Name}`);
+                this.logger.Write(` [Optmizer] Ending ${this.actualHeuristic.Name}`);
                 this.logger.Write('=================================');
                 cb();
             });
         }
         catch (err) {
-            this.logger.Write(`[Optmizer] Fatal Error: ${err.stack}`);
+            this.logger.Write(` [Optmizer] Fatal Error: ${err.stack}`);
             cb();
         }
     }
@@ -196,39 +209,51 @@ export default class Optmizer {
     /**
      * Recursively run trial
      */
-    private runLibOverHeuristic(libIndex: number, heuristicIndex: number, cb: () => void) {
+    private runLibOverHeuristic(libIndex: number, cb: () => void) {
 
-        this.executeHeuristicOverLib(heuristicIndex, libIndex, () => {
-            heuristicIndex++;
+        var heuristicIndex = 0;
 
-            if (heuristicIndex == (this.heuristics.length)) {
-                cb();
-                return;
-            }
+        try {
+            this.executeHeuristicOverLib(libIndex, heuristicIndex, () => {
 
-            //this.logger.Write(`[Optmizer] heuristicIndex: ${heuristicIndex}`);
-            this.runLibOverHeuristic(libIndex, heuristicIndex, cb);
-        });
+                heuristicIndex++;
+
+                if (heuristicIndex == (this.heuristics.length)) {
+                    cb();
+                }
+                else {
+                    this.runLibOverHeuristic(libIndex, cb);
+                }
+            });
+        } catch (error) {
+            this.logger.Write(` [Optmizer] ${error.stack}`);
+            cb();
+        }
     }
 
 
     /**
      * Initializes intire Improvement Process for a single trial previously configured
      */
-    public DoOptmization(cb: () => void) {
-        var libIndex = 0;
-        this.runLibOverHeuristic(libIndex, 0, () => {
-            var libForDisplay = this.configuration.libraries[libIndex];
+    public DoOptmization(libIndex, DoOptmizationcb: () => void) {
 
-            this.logger.Write(`[Optmizer] Trial ${this.trialIndex} for Library ${libForDisplay.name} done.`);
-            libIndex++;
+        try {
+            
+            for (var index = 0; index < this.configuration.libraries.length; index++) {
 
-            if (libIndex == (this.configuration.libraries.length)) {
-                cb();
-                return;
+                var element = this.configuration.libraries[index];
+
+                this.runLibOverHeuristic(index, () => {
+                    this.logger.Write(` [Optmizer] Trial ${this.trialIndex} for Library ${element.name} done.`);
+                })
             }
 
-            this.runLibOverHeuristic(libIndex, 0, cb);
-        });
+        }
+        catch (err) {
+            this.logger.Write(` [Optmizer] Error inside Trial ${this.trialIndex}. ${err.stack} `);
+        }
+        finally {
+            DoOptmizationcb();
+        }
     }
 }

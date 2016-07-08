@@ -56,6 +56,10 @@ if (cluster.isMaster) {
             localServer.CleanUp();
         }
 
+        if (msg.Shutdown == true) {
+            process.exit();
+        }
+
         //logger.Write(`[index] Send to server. Msg : ${msg.id}`);
 
         localServer.DoAnOperation(msg, (newMsg) => {
@@ -106,7 +110,10 @@ function ExecuteTrials(globalTrial: number) {
 
         globalTrial++;
         if (globalTrial == configuration.trials) {
-            //finishing executin
+            logger.Write(`[index] All trials were executed`);
+            var shutdownMessage = new Message();
+            shutdownMessage.Shutdown = true;
+            process.send(shutdownMessage);
             process.exit();
         }
         else {
@@ -121,25 +128,14 @@ function Done(message: Message) {
     optmizer.Done(message);
 }
 
-function executeHeuristicTrial(trial: number, config: IConfiguration, heuristicTrial: number, cb: (newHeuristicTrial: number) => void) {
+function executeHeuristicTrial(globalTrial: number, config: IConfiguration, heuristicTrial: number, cb: () => void) {
 
     optmizer = new Optmizer();
 
-    optmizer.Setup(configuration, trial, heuristicTrial);
-    optmizer.DoOptmization(() => {
-
-        heuristicTrial++;
-
-        if (heuristicTrial == (configuration.trialsConfiguration.length)) {
-            cb(heuristicTrial);
-            return;
-
-        } else {
-            runGC();
-            executeHeuristicTrial(trial, config, heuristicTrial, cb);
-        }
+    optmizer.Setup(configuration, globalTrial, heuristicTrial);
+    optmizer.DoOptmization(0,() => {
+        cb();
     });
-
 }
 
 /**Executes forced GC */

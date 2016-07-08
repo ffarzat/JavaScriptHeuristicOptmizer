@@ -17,4 +17,5 @@ export default class Message{
     ActualInternalTrial: number
     ActualLibrary: string;
     CleanServer: boolean;
+    Shutdown: boolean;
 }

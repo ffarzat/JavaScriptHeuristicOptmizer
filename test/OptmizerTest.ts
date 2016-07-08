@@ -22,12 +22,12 @@ describe('Optmizer Tests', function () {
         var optmizer = new Optmizer();
         optmizer.Setup(configuration, 0, 0);
         expect(optmizer.trialIndex).to.be(0);
-        optmizer.DoOptmization(() => {
+        optmizer.DoOptmization(0, () => {
             expect(optmizer.trialIndex).to.be(0);
 
             optmizer.Setup(configuration, 1, 0);
             expect(optmizer.trialIndex).to.be(1);
-            optmizer.DoOptmization(() => {
+            optmizer.DoOptmization(0,() => {
                 expect(optmizer.trialIndex).to.be(1);
             });
 
