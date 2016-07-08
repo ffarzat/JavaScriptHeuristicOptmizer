@@ -1,14 +1,31 @@
 #!/bin/bash
-#PBS -l select=1:ncpus=2
+#PBS -l select=1:ncpus=2:mem=16gb
 #PBS -N js-server
+### Request email when job begins and ends
+#PBS -m bea
+### Specify email address to use for notification.
+#PBS -M ffarzat@cos.ufrj.br
 
-set -x	#screen output
-#cat - | node -v $@ | tee /mnt/scratch/user8/out.txt # test node
-#cat - | npm 	$@ | tee /mnt/scratch/user8/out.txt # test npm
-#cat - | git 	$@ | tee /mnt/scratch/user8/out.txt # test npm
+date
 
-echo $PBS_O_WORKDIR
+### cd to directory where the job was submitted:
 cd $PBS_O_WORKDIR
-npm run build
-node --expose-gc --max-old-space-size=102400 build/src/index.js
-exit 0
+echo $PBS_O_WORKDIR
+
+### determine the number of allocated processors:
+NPROCS=`wc -l < $PBS_NODEFILE`
+
+echo "----------------"
+echo "PBS job running on: `hostname`"
+echo "in directory:       `pwd`"
+echo "nodes: $NPROCS"
+echo "nodefile:"
+cat $PBS_NODEFILE
+echo "----------------"
+
+### run the program (on the nodes as provided by PBS):
+node --expose-gc --max-old-space-size=102400 build/src/index.js Configs/GA.json
+
+date
+
+

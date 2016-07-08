@@ -1,20 +1,32 @@
 #!/bin/bash
-#PBS -l select=1:ncpus=48:mem=4gb
-#PBS -l place=free
+#PBS -l select=4:ncpus=48:mem=16gb
 #PBS -N js-clients
-#PBS -o clients-log.txt
-#PBS -e clients-err.txt
+### Request email when job begins and ends
+#PBS -m bea
+### Specify email address to use for notification.
+#PBS -M ffarzat@cos.ufrj.br
 
-set -x	#screen output
+date
 
-#cat - | env | grep PBS $@ | tee /mnt/scratch/user8/env-vars.txt
-#cat - | node /mnt/scratch/user8/JavaScriptHeuristicOptmizer/build/src/Teste.js $@ | tee /mnt/scratch/user8/clients-log.txt
-
+### cd to directory where the job was submitted:
+cd $PBS_O_WORKDIR
 echo $PBS_O_WORKDIR
 
-cd $PBS_O_WORKDIR
+### determine the number of allocated processors:
+NPROCS=`wc -l < $PBS_NODEFILE`
 
-#node build/src/Teste.js
-npm run build
-node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js 
-exit 0
+echo "----------------"
+echo "PBS job running on: `hostname`"
+echo "in directory:       `pwd`"
+echo "nodes: $NPROCS"
+echo "nodefile:"
+cat $PBS_NODEFILE
+echo "----------------"
+
+### run the program (on the nodes as provided by PBS):
+node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/GA.json
+
+date
+
+
+
