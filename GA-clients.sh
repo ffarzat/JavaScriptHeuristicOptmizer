@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -k oe
-#PBS -l select=10:ncpus=48:mpiprocs=48:mem=16gb
+#PBS -l select=10:ncpus=48:mpiprocs=48
 #PBS -N GA-clients
 ### Request email when job begins and ends
 #PBS -m bea
