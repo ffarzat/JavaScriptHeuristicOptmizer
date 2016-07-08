@@ -80,10 +80,10 @@ export default class CommandTester implements ITester {
             
             var Tick = exectimer.Tick;
             
-            this.logger.Write(`Doing ${this.testUntil} evaluations for ${this.libDirectoryPath}`);
+            //this.logger.Write(`Doing ${this.testUntil} evaluations for ${this.libDirectoryPath}`);
             
             for (var index = 0; index < this.testUntil; index++) {
-                 this.logger.Write(`eval ${index}`);
+                //this.logger.Write(`eval ${index}`);
                 var testExecutionTimeTick = new Tick(testUuid);
                 testExecutionTimeTick.start();
                 var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('npm test', {silent:true}) as Shell.ExecOutputReturnValue);
@@ -140,8 +140,8 @@ export default class CommandTester implements ITester {
             individual.testResults = results;
         }
         
-        this.logger.Write(`All Tests: ${passedAllTests}`);
-        this.ShowConsoleResults(results);
+        //this.logger.Write(`All Tests: ${passedAllTests}`);
+        //this.ShowConsoleResults(results);
     }
 
     /**

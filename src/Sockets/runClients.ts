@@ -245,16 +245,16 @@ function ParseConfigAndLibs(workDir: string) {
                 var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec(`npm install`, { silent: true }) as Shell.ExecOutputReturnValue);
 
                 if (returnedOutput.code > 0) {
-                    logger.Write(`Library ${element.name} has error to execute npm install. It will be out of improvement process.`);
+                    logger.Write(`[runClient] Library ${element.name} has error to execute npm install. It will be out of improvement process.`);
                     configuration.libraries.splice(libIndex, 1);
                 }
                 else {
-                    logger.Write(`Library ${element.name} instaled successfully`);
+                    logger.Write(`[runClient] Library ${element.name} instaled successfully`);
                 }
             }
 
             if (!fs.existsSync(tempLibPath)) {
-                logger.Write(`Copying ${element.name} to ${tempLibPath}`);
+                logger.Write(`[runClient] Copying ${element.name} to ${tempLibPath}`);
                 fs.mkdirSync(tempLibPath);
                 fse.copySync(libDirectoryPath, tempLibPath, { "clobber": true, "filter": function () { return true; } });
                 //in order to test
