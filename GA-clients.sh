@@ -30,7 +30,7 @@ echo "----------------"
 ### npm run PBS - o server já executa esse comando
 #node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/GA-Clients.json
 
-mpirun -np $NO_OF_CORES -machinefile nodes node -v 
+mpirun -np $NO_OF_CORES -machinefile node -v 
 
 date
 
