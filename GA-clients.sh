@@ -1,4 +1,5 @@
 #!/bin/bash
+#PBS -k oe
 #PBS -l select=4:ncpus=48:mem=16gb
 #PBS -N GA-clients
 ### Request email when job begins and ends
