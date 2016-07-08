@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -l select=1:ncpus=2:mem=16gb
-#PBS -N js-server
+#PBS -N GA-server
 ### Request email when job begins and ends
 #PBS -m bea
 ### Specify email address to use for notification.
