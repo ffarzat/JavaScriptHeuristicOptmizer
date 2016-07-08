@@ -215,7 +215,6 @@ export default class Optmizer {
 
         try {
             this.executeHeuristicOverLib(libIndex, heuristicIndex, () => {
-
                 heuristicIndex++;
 
                 if (heuristicIndex == (this.heuristics.length)) {
@@ -238,21 +237,21 @@ export default class Optmizer {
     public DoOptmization(libIndex, DoOptmizationcb: () => void) {
 
         try {
-            
-            for (var index = 0; index < this.configuration.libraries.length; index++) {
+            this.runLibOverHeuristic(libIndex, () => {
+                var element = this.configuration.libraries[libIndex];
+                this.logger.Write(` [Optmizer] Trial ${this.trialIndex} for Library ${element.name} done.`);
+                libIndex++;
 
-                var element = this.configuration.libraries[index];
-
-                this.runLibOverHeuristic(index, () => {
-                    this.logger.Write(` [Optmizer] Trial ${this.trialIndex} for Library ${element.name} done.`);
-                })
-            }
-
+                if (this.configuration.libraries.length == libIndex) {
+                    DoOptmizationcb();
+                }
+                else {
+                    this.DoOptmization(libIndex, DoOptmizationcb);
+                }
+            });
         }
         catch (err) {
             this.logger.Write(` [Optmizer] Error inside Trial ${this.trialIndex}. ${err.stack} `);
-        }
-        finally {
             DoOptmizationcb();
         }
     }
