@@ -1,11 +1,13 @@
 #!/bin/bash
 #PBS -k oe
-#PBS -l select=1:ncpus=2:mem=16gb
+#PBS -l select=1:ncpus=2
 #PBS -N GA-server
 ### Request email when job begins and ends
 #PBS -m bea
 ### Specify email address to use for notification.
 #PBS -M ffarzat@cos.ufrj.br
+#output file
+#PBS -o my_mpi_test.out
 
 date
 
