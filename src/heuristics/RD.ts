@@ -43,15 +43,20 @@ export default class RD extends IHeuristic {
 
         this._logger.Write(`[RD] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
 
-        this.SetLibrary(library, () => {
-            this.Start();
-            this.executeCalculatedTimes(0, () => {
-                this.Stop();
-                this.runGC();
-                var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
-                cb(results);
-                return;
-            });
+        this.SetLibrary(library, (sucess: boolean) => {
+            if (sucess) {
+                this.Start();
+                this.executeCalculatedTimes(0, () => {
+                    this.Stop();
+                    this.runGC();
+                    var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+                    cb(results);
+                    return;
+                });
+            }
+            else {
+                cb(undefined);
+            }
         });
 
     }
@@ -126,7 +131,7 @@ export default class RD extends IHeuristic {
                     //this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
                 } catch (error) {
                     this._logger.Write(`[RD] Mutant error: ${error}`);
-                    
+
                     neighbors.push(this.bestIndividual);
                     this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
                 }

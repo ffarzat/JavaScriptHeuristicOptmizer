@@ -191,10 +191,15 @@ export default class Optmizer {
             //this.logger.Write(`   [Optmizer] Setting Status data for ${actualHeuristic.Name}`);
 
             this.actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
-                this.outter.WriteTrialResults(resultaForTrial);
-                this.outter.Finish();
-                this.Notify(resultaForTrial);
-                this.logger.Write(` [Optmizer] Ending ${this.actualHeuristic.Name}`);
+                if (resultaForTrial == undefined) {
+                    this.logger.Write(` [Optmizer] Fail to execute test for  ${actualLibrary.name} original code.`);
+                } else {
+                    this.outter.WriteTrialResults(resultaForTrial);
+                    this.outter.Finish();
+                    this.Notify(resultaForTrial);
+                    this.logger.Write(` [Optmizer] Ending ${this.actualHeuristic.Name}`);
+
+                }
                 this.logger.Write('=================================');
                 cb();
             });

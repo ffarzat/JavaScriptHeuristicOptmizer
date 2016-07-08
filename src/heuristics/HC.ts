@@ -48,23 +48,27 @@ export default class HC extends IHeuristic {
         this._logger.Write(`[HC] Using nodesType: ${this.nodesType}`);
 
 
-        this.SetLibrary(library, () => {
-            this.Start();
-            var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
-            var indexes: NodeIndex = nodesIndexList[0];
-            var totalTrials = this.trials;
-            this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
-            this._logger.Write(`[HC] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
-            this._logger.Write(`[HC] Initial index: ${indexes.Type}`);
+        this.SetLibrary(library, (sucess: boolean) => {
+            if (sucess) {
+                this.Start();
+                var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
+                var indexes: NodeIndex = nodesIndexList[0];
+                var totalTrials = this.trials;
+                this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
+                this._logger.Write(`[HC] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
+                this._logger.Write(`[HC] Initial index: ${indexes.Type}`);
 
-            this.executeCalculatedTimes(0, indexes, nodesIndexList, () => {
-                this.Stop();
-                this.runGC();
-                var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
-                cb(results);
-                return;
-            });
-
+                this.executeCalculatedTimes(0, indexes, nodesIndexList, () => {
+                    this.Stop();
+                    this.runGC();
+                    var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+                    cb(results);
+                    return;
+                });
+            }
+            else{
+                cb(undefined);
+            }
         });
     }
 
