@@ -25,9 +25,8 @@ var tmp = require('temporary');
 var fse = require('fs-extra');
 var rmdir = require('rmdir');
 //=========================================================================================== Read Configuration values
-var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';  
+var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';
 var configurationFile: string = path.join(process.cwd(), configFile);
-console.log (`[index]configurationFile: ${configurationFile}`);
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 
 var testOldDirectory: string = process.cwd();
@@ -41,15 +40,17 @@ if (process.platform !== "win32") {
     process.env['TMPDIR'] = configuration.tmpDirectory;
 }
 
-logger.Write(`process.platform : ${process.platform}`);
-logger.Write(`process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
-logger.Write(`CPUS Available on host: ${numCPUs}`);
-logger.Write(`Clients to launch: ${configuration.clientsTotal}`);
 
 //=========================================================================================== Cluster
 if (cluster.isMaster) {
-    logger.Write(`[runClients] Creating ${configuration.clientsTotal} Clients`)
+    logger.Write(`[runClients] process.platform : ${process.platform}`);
+    logger.Write(`[runClients] configurationFile: ${configurationFile}`);
+    logger.Write(`[runClients] process.env['TMPDIR'] : ${process.env['TMPDIR']}`);
+    logger.Write(`[runClients] CPUS Available on host: ${numCPUs}`);
+    logger.Write(`[runClients] Clients to launch: ${configuration.clientsTotal}`);
     logger.Write(`[runClients] Operation Timeout: ${(configuration.clientTimeout)} secs`)
+    //logger.Write(`[runClients] Creating ${configuration.clientsTotal} Clients`)
+    
 
     var i = 0
     for (i = 0; i < configuration.clientsTotal; i++) {
