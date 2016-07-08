@@ -25,7 +25,7 @@ cat $PBS_NODEFILE
 echo "----------------"
 
 ### run the program (on the nodes as provided by PBS):
-npm run PBS
+### npm run PBS - o server já executa esse comando
 node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/GA-Clients.json
 
 date
