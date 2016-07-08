@@ -266,7 +266,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Defines library and test original code
      */
-    SetLibrary(library: Library, cb: (sucess:boolean) => void) {
+    SetLibrary(library: Library, cb: (sucess: boolean) => void) {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
@@ -278,7 +278,7 @@ abstract class IHeuristic extends events.EventEmitter {
             //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
 
             if (!this.Original.testResults || !this.Original.testResults.passedAllTests) {
-                this._logger.Write(`Failed to execute tests for ${library.name}`);
+                this._logger.Write(`[IHeuristic] Failed to execute tests for ${library.name}`);
                 cb(false);
             }
             else {
@@ -286,7 +286,7 @@ abstract class IHeuristic extends events.EventEmitter {
                 this.bestFit = this.Original.testResults.fit;
                 this.bestIndividual = this.Original;
 
-                this._logger.Write(`Original Fit ${this.bestFit}`);
+                this._logger.Write(`[IHeuristic] Original Fit ${this.bestFit}`);
                 this._logger.Write('=================================');
                 cb(true);
             }
