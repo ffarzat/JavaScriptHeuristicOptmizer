@@ -30,7 +30,8 @@ echo "----------------"
 ### run the program (on the nodes as provided by PBS):
 ### mpirun -np $NO_OF_CORES node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/GA-Clients.json
 
-cd Libraries/lodash | npm test
+cd Libraries/lodash 
+npm test
 
 date
 
