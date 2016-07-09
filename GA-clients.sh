@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -k oe
-#PBS -l select=10:ncpus=48:mpiprocs=48
+#PBS -l select=1:ncpus=48:mpiprocs=48
 #PBS -N GA-clients
 ### Request email when job begins and ends
 #PBS -m bea
@@ -32,8 +32,9 @@ echo "----------------"
 ### mpirun -np $NO_OF_CORES node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/GA-Clients.json
 
 ### mpirun -np 400 --hostfile $PBS_NODEFILE node --expose-gc --max-old-space-size=102400 build/src/Teste.js 
-mpirun node --expose-gc --max-old-space-size=102400 build/src/Teste.js
-### node --expose-gc --max-old-space-size=102400 build/src/Teste.js
+### mpirun node --expose-gc --max-old-space-size=102400 build/src/Teste.js
+
+node --max-old-space-size=102400 build/src/Teste.js
 
 date
 

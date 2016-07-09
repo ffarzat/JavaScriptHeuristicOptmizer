@@ -56,7 +56,7 @@ msg.ctx = context;
 
 
 //========================================================================================== Clients Pool
-var Pool = new pool(__dirname + '/Child.js', null, null, { size: configuration.clientsTotal, log: false, timeout: configuration.clientTimeout * 1000 });
+var Pool = new pool(__dirname + '/Child.js', null, null, { size: numCPUs - 1, log: false, timeout: configuration.clientTimeout * 1000 });
 
 var messagesToProcess = [];
 
