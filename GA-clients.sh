@@ -31,7 +31,7 @@ echo "----------------"
 ### mpirun -np $NO_OF_CORES node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/GA-Clients.json
 
 cd Libraries/lodash 
-npm test
+mpirun -np 2 npm test
 
 date
 
