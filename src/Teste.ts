@@ -27,6 +27,12 @@ var lib = configuration.libraries[0];
 var libFile: string = lib.mainFilePath;
 var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
 
+//Patch for execution over NACAD PBS 
+if (process.platform !== "win32") {
+    process.env['TMPDIR'] = configuration.tmpDirectory;
+}
+
+
 console.log(`LIB: ${lib.name}`);
 
 
