@@ -17,6 +17,7 @@ import events = require('events');
 import fs = require('fs');
 var uuid = require('node-uuid');
 var exectimer = require('exectimer');
+var async = require('async');
 
 /**
  * Generic interface for Heuristics 
@@ -50,6 +51,8 @@ abstract class IHeuristic extends events.EventEmitter {
     public ActualLibrary: string;
     public CleanServer: boolean;
 
+    Pool: any;
+
     /**
      * Forces the Heuristic to validate config
      */
@@ -60,6 +63,10 @@ abstract class IHeuristic extends events.EventEmitter {
         events.EventEmitter.call(this);
         this.waitingMessages = {};
         this.trialUuid = uuid.v4();
+
+        var pool = require('fork-pool');
+        this.Pool = new pool(__dirname + '/Child.js', null, null, { size: this._globalConfig.clientsTotal, log: false, timeout: this._globalConfig.clientTimeout * 1000 });
+
     }
 
     public Start() {
@@ -328,18 +335,33 @@ abstract class IHeuristic extends events.EventEmitter {
         item.ActualHeuristic = this.Name;
         item.ActualInternalTrial = this.ActualInternalTrial;
         item.ActualLibrary = this.ActualLibrary;
-        item.CleanServer = this.CleanServer;
 
-        //this._logger.Write(`[IHeuristic] CleanServer: ${this.CleanServer}`);
+        //============================================ For now
+        var messagesToProcess = [];
 
+        var instance = (callback) => {
+            this.Pool.enqueue(JSON.stringify(item), callback);
+        };
 
+        messagesToProcess.push(instance);
 
-        if (this.CleanServer == true) {
-            this.CleanServer = false;
-            //this._logger.Write(`[IHeuristic] CleanServer change: ${this.CleanServer}`);
-        }
+        async.parallel(messagesToProcess,
+            (err, results) => {
+                if (err)
+                {
+                    this._logger.Write(`[IHeuristic] err: ${err.stack}`);
+                }
 
-        process.send(item);
+                //this._logger.Write(`[IHeuristic] results: ${JSON.stringify(results[0])}`);
+                var processedMessage = results[0].stdout;
+
+                msg.ctx = this.Reload(processedMessage.ctx);
+                cb(msg);
+            }
+        );
+
+        //============================================ ends
+
     }
 
     /**

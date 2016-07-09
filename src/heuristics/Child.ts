@@ -1,10 +1,10 @@
 
 //Child fork test
-import Message from './Sockets/Message';
-import Client from './Sockets/Client';
-import OperatorContext from './OperatorContext';
-import IConfiguration from './IConfiguration';
-import LogFactory from './LogFactory';
+import Message from '../Sockets/Message';
+import Client from '../Sockets/Client';
+import OperatorContext from '../OperatorContext';
+import IConfiguration from '../IConfiguration';
+import LogFactory from '../LogFactory';
 
 import fs = require('fs');
 import path = require('path');
@@ -76,7 +76,8 @@ process.on('message', function (message) {
 
         var msgProcessada = JSON.stringify(msg);
         logger.Write(`[runClients] Msg ${msg.id} done.`);
-        process.send(msgProcessada);
+        process.send(msg);
+        //process.send(msgProcessada);
     //}
     //catch (err) {
         //logger.Write(`[runClient]Client error: ${err}`);

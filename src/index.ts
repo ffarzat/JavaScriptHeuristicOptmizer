@@ -32,14 +32,17 @@ var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 //process.setMaxListeners(0);
 //=========================================================================================== Server!
+
+
+/*
 if (cluster.isMaster) {
     console.log (`[index]configurationFile: ${configurationFile}`);
     localServer.logger = logger;
     localServer.Setup(configuration);
-    setInterval(function () { localServer.ProcessQueue(); }, 100); //1x per 3 second
+    //setInterval(function () { localServer.ProcessQueue(); }, 100); //1x per 3 second
     //setInterval(function () { localServer.ProcessRetun(); }, 100); //1x per 3 second
 
-    setInterval(function () { localServer.Status(); }, 10000);
+    //setInterval(function () { localServer.Status(); }, 10000);
 
     var optmizerWorker = cluster.fork(); //optmizer worker
 
@@ -49,6 +52,7 @@ if (cluster.isMaster) {
         localServer.ActualGlobalTrial = msg.ActualGlobalTrial
         localServer.ActualInternalTrial = msg.ActualInternalTrial
         localServer.ActualLibrary = msg.ActualLibrary
+
 
         if (msg.CleanServer == true) {
             logger.Write(`[index] CleanServer:${msg.CleanServer}`);
@@ -70,14 +74,16 @@ if (cluster.isMaster) {
         });
     });
 
-    /*
+ 
     setInterval(function () {
         logger.Write(`[index.Master] workers: ${cluster.listeners.length}`);
     }, 1000);
-    */
+
 
 
 } else {
+
+    */
     logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
     logger.Write(`Preparing libs environment`);
 
@@ -97,7 +103,7 @@ if (cluster.isMaster) {
     ExecuteTrials(configuration.startTrial);
 
 
-}
+//}
 //=========================================================================================== Functions
 function ExecuteTrials(globalTrial: number) {
     logger.Write(`============================= Optmizer Global trial: ${globalTrial}`);

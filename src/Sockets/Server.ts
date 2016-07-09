@@ -43,23 +43,28 @@ export default class Server {
     totalReturnedMessages = 0;
     totalReturnedMessagesDone = 0;
 
+    
+
     /**
      * Configs the server to execute
      */
     Setup(configuration: IConfiguration): void {
 
-        this.configuration = configuration;
+        //this.configuration = configuration;
 
-        this.port = configuration.port;
-        this.url = configuration.url;
+        //this.port = configuration.port;
+        //this.url = configuration.url;
+        
+        
 
-        var app = express();
-        this.configure(app);
-        this.server = app.listen(this.port);
-
-        this.wsServer = new WebSocketServer.Server({ server: this.server });
-        this.HandleServer();
-        this.logger.Write(`[Server]Listening at ${this.url}:${this.port}`);
+        //var app = express();
+        //this.configure(app);
+        //this.server = app.listen(this.port);
+        /*
+                this.wsServer = new WebSocketServer.Server({ server: this.server });
+                this.HandleServer();
+                this.logger.Write(`[Server]Listening at ${this.url}:${this.port}`);
+        */
     }
 
     /**
@@ -203,15 +208,14 @@ export default class Server {
      * Print the server status
      */
     Status(): void {
-        if(this.ActualLibrary != undefined)
-        {
-        console.log(`=======================================`);
-        console.log(`[Lib/Heuristic/Trial]: ${this.ActualLibrary.toUpperCase()}/${this.ActualHeuristic.toLocaleUpperCase()}/${this.ActualGlobalTrial}`);
-        console.log(`Messages Status [-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--]`);
-        console.log(`${Object.keys(this.clients).length} Free clients`);
-        console.log(`${Object.keys(this.clientProcessing).length} Working clients`);
-        console.log(`${Object.keys(this.timeouts).length} Timeouts`);
-        console.log(`=======================================`);
+        if (this.ActualLibrary != undefined) {
+            console.log(`=======================================`);
+            console.log(`[Lib/Heuristic/Trial]: ${this.ActualLibrary.toUpperCase()}/${this.ActualHeuristic.toLocaleUpperCase()}/${this.ActualGlobalTrial}`);
+            console.log(`Messages Status [-> ${this.totalSendMessages} | ${this.totalReturnedMessages}/${this.totalReturnedMessagesDone} <--]`);
+            console.log(`${Object.keys(this.clients).length} Free clients`);
+            console.log(`${Object.keys(this.clientProcessing).length} Working clients`);
+            console.log(`${Object.keys(this.timeouts).length} Timeouts`);
+            console.log(`=======================================`);
         }
     }
 
@@ -220,12 +224,7 @@ export default class Server {
      * Send a request for any available client to o a mutation over OperatorContext
     */
     DoAnOperation(msg: Message, cb: (ctx: Message) => void) {
-        var item = new Message();
-        item.id = msg.id;
-        item.ctx = msg.ctx;
-        item.cb = cb;
-        this.messages[item.id] = item;
-        //this.logger.Write(`Saving msg...`);
+
     }
 
     /**
@@ -382,7 +381,7 @@ export default class Server {
      */
     Done(client: Client, message: Message) {
 
-        if(client == undefined)
+        if (client == undefined)
             return;
 
         try {
