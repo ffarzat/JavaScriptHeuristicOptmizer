@@ -109,8 +109,8 @@ function ParseConfigAndLibs(workDir: string) {
             }
 
             if (!fs.existsSync(tempLibPath)) {
-                logger.Write(`[runClient] Copying ${element.name} to ${tempLibPath}`);
-                //logger.Write(`[runClient] Copying ${element.name}`);
+                //logger.Write(`[runClient] Copying ${element.name} to ${tempLibPath}`);
+                logger.Write(`[runClient] Copying ${element.name}`);
                 fs.mkdirSync(tempLibPath);
                 fse.copySync(libDirectoryPath, tempLibPath, { "clobber": true, "filter": function () { return true; } });
                 //in order to test
