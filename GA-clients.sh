@@ -32,7 +32,7 @@ echo "----------------"
 ### mpirun -np $NO_OF_CORES node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/GA-Clients.json
 
 ### mpirun -np 400 --hostfile $PBS_NODEFILE node --expose-gc --max-old-space-size=102400 build/src/Teste.js 
-mpirun -np node --expose-gc --max-old-space-size=102400 build/src/Teste.js
+mpirun node --expose-gc --max-old-space-size=102400 build/src/Teste.js
 ### node --expose-gc --max-old-space-size=102400 build/src/Teste.js
 
 date
