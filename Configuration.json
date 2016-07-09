@@ -3,7 +3,7 @@
     "trials":60,
     "startTrial": 0,
     "fitType":"mean",
-    "testUntil": 5,
+    "testUntil": 1,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/optmization.log",

@@ -45,7 +45,7 @@ var messageId = uuid.v4();
 
 var msg: Message = new Message();
 var context = new OperatorContext();
-context.Operation = "Test";
+context.Operation = "Mutation";
 context.First = generatedIndividual;
 context.Original = generatedIndividual; //is usual to be the original
 context.LibrarieOverTest = lib;
@@ -63,7 +63,7 @@ var messagesToProcess = [];
 for (var i = 0; i < 5000; i++) {
 
     var instance = function (callback) {
-        msg.id = i.toString();
+        msg.id = JSON.stringify(i);
         Pool.enqueue(JSON.stringify(msg), callback);
     };
 
