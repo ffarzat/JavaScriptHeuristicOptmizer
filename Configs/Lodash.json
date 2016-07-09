@@ -1,16 +1,16 @@
 {
-    "file": "Configuration.json",
+    "file": "Lodash.json",
     "trials":60,
     "startTrial": 0,
     "fitType":"mean",
     "testUntil": 5,
     "mutationTrials": 1,
     "crossOverTrials": 1,
-    "logFilePath": "/mnt/scratch/user8/GA-group1.log",
+    "logFilePath": "/mnt/scratch/user8/Lodash.log",
     "tmpDirectory": "/mnt/scratch/user8/tmp",
     "logCategory":"optmization",
     "logFileClearing": false,
-    "resultsDirectory": "/mnt/scratch/user8/GA-Group1-results",
+    "resultsDirectory": "/mnt/scratch/user8/Lodash-results",
     "trialResultsFile": "Results.csv",
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
@@ -19,15 +19,9 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":60,
-    "clientsTotal": 0,
+    "clientsTotal": 1,
     "libraries" : [
-	{"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
-        {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },
-        {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
-        {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" },
-        {"name":"Jade",         "path":"Libraries/Jade/",           "mainFilePath":"Libraries/Jade/lib/index.js"  },
-        {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
-        {"name":"minimist",     "path":"Libraries/minimist/",       "mainFilePath":"Libraries/minimist/index.js"  }
+        {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" }
     ],
     "trialsConfiguration":[
         {
