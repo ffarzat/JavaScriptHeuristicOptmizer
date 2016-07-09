@@ -45,7 +45,7 @@ var messageId = uuid.v4();
 
 var msg: Message = new Message();
 var context = new OperatorContext();
-context.Operation = "Mutation";
+context.Operation = "Test";
 context.First = generatedIndividual;
 context.Original = generatedIndividual; //is usual to be the original
 context.LibrarieOverTest = lib;
@@ -60,7 +60,7 @@ var Pool = new pool(__dirname + '/Child.js', null, null, { size: configuration.c
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 5000; i++) {
+for (var i = 0; i < 3; i++) {
 
     var instance = function (callback) {
         msg.id = JSON.stringify(i);

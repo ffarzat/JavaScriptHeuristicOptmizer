@@ -1,7 +1,6 @@
 #!/bin/bash
 #PBS -k oe
-#PBS -l select=1:ncpus=48:mpiprocs=48:arch=linux
-#PBS -l place=group=r1i0n1
+#PBS -l select=2:ncpus=48:mpiprocs=48:arch=linux
 #PBS -N GA-clients
 ### Request email when job begins and ends
 #PBS -m bea
@@ -22,8 +21,8 @@ echo "----------------"
 echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
-### echo "nodefile:"
-### cat $PBS_NODEFILE
+echo "nodefile:"
+cat $PBS_NODEFILE
 #NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
 echo "----------------"
 
