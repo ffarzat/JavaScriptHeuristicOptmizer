@@ -22,8 +22,8 @@ echo "----------------"
 echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
-echo "nodefile:"
-cat $PBS_NODEFILE
+### echo "nodefile:"
+### cat $PBS_NODEFILE
 echo "----------------"
 
 ### run the program (on the nodes as provided by PBS):
