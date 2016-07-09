@@ -60,7 +60,7 @@ var Pool = new pool(__dirname + '/Child.js', null, null, { size: configuration.c
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 1; i++) {
+for (var i = 0; i < 8; i++) {
 
     var instance = function (callback) {
         msg.id = JSON.stringify(i);
