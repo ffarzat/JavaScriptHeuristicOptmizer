@@ -28,7 +28,7 @@ echo "----------------"
 
 ### run the program (on the nodes as provided by PBS):
 npm run PBS
-node --expose-gc --max-old-space-size=102400 build/src/index.js Configs/Lodash.json
+node --expose-gc --max-old-space-size=102400 build/src/index.js Configs/Lodash.json &
 mpirun -np 142 node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/Lodash.json
 date
 
