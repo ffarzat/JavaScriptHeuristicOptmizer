@@ -21,7 +21,7 @@
     "clientTimeout":60,
     "clientsTotal": 1,
     "libraries" : [
-        {"name":"Moment",       "path":"Libraries/Moment/",         "mainFilePath":"Libraries/Moment/global.js" }
+        {"name":"Moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" }
     ],
     "trialsConfiguration":[
         {
