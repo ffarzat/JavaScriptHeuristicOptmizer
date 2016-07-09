@@ -141,7 +141,7 @@ export default class CommandTester implements ITester {
         }
         
         //this.logger.Write(`All Tests: ${passedAllTests}`);
-        //this.ShowConsoleResults(results);
+        this.ShowConsoleResults(results);
     }
 
     /**
