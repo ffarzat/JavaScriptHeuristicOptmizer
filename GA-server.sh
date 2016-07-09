@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -k oe
-#PBS -l select=1:ncpus=2
+#PBS -l select=1:ncpus=48:mpiprocs=48:arch=linux
 #PBS -N GA-server
 ### Request email when job begins and ends
 #PBS -m bea
@@ -27,8 +27,8 @@ cat $PBS_NODEFILE
 echo "----------------"
 
 ### run the program (on the nodes as provided by PBS):
-npm run PBS
-node --expose-gc --max-old-space-size=102400 build/src/index.js Configs/GA-Server.json
+npm run build
+### node --expose-gc --max-old-space-size=102400 build/src/index.js Configs/GA-Server.json
 date
 
 

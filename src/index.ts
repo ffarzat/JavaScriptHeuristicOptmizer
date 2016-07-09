@@ -116,9 +116,9 @@ function ExecuteTrials(globalTrial: number) {
         globalTrial++;
         if (globalTrial == configuration.trials) {
             logger.Write(`[index] All trials were executed`);
-            var shutdownMessage = new Message();
-            shutdownMessage.Shutdown = true;
-            process.send(shutdownMessage);
+            //var shutdownMessage = new Message();
+            //shutdownMessage.Shutdown = true;
+            //process.send(shutdownMessage);
             process.exit();
         }
         else {
@@ -185,6 +185,7 @@ function ParseConfigAndLibs() {
 function DisplayConfig() {
     var totalTrials = configuration.trials * configuration.trialsConfiguration.length * configuration.libraries.length * configuration.heuristics.length;
     logger.Write('=================================');
+    logger.Write(`Clients total ${configuration.clientsTotal}`);
     logger.Write(`Tmp Dir [Config File] ${configuration.tmpDirectory}`);
     logger.Write(`Fit type [mean|median]:  ${configuration.fitType}`);
     logger.Write(`Number of testing each individual:  ${configuration.testUntil}`);
