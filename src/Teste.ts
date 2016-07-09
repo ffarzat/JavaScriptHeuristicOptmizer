@@ -15,6 +15,7 @@ var uuid = require('node-uuid');
 var pool = require('fork-pool');
 var async = require('async');
 
+var numCPUs = (require('os').cpus().length);
 
 
 /**
@@ -33,7 +34,9 @@ if (process.platform !== "win32") {
 }
 
 
+logger.Write(`CPUS Available: ${numCPUs}`);
 console.log(`LIB: ${lib.name}`);
+
 
 
 //var indexes: number[] = astExplorer.IndexNodes(generatedIndividual);
