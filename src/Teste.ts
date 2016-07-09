@@ -34,7 +34,7 @@ if (process.platform !== "win32") {
 }
 
 
-logger.Write(`CPUS Available: ${numCPUs}`);
+console.log(`CPUS Available: ${numCPUs}`);
 console.log(`LIB: ${lib.name}`);
 
 
