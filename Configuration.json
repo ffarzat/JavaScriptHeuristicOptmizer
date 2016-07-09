@@ -22,12 +22,10 @@
     "clientsTotal": 48,
     "libraries" : [
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
-        {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },
-        {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
-        {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" },
-        {"name":"Jade",         "path":"Libraries/Jade/",           "mainFilePath":"Libraries/Jade/lib/index.js"  },
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
-        {"name":"minimist",     "path":"Libraries/minimist/",       "mainFilePath":"Libraries/minimist/index.js"  }
+        {"name":"minimist",     "path":"Libraries/minimist/",       "mainFilePath":"Libraries/minimist/index.js"  },
+        {"name":"Jade",         "path":"Libraries/Jade/",           "mainFilePath":"Libraries/Jade/lib/index.js"  },
+        {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" }
     ],
     "trialsConfiguration":[
         {
