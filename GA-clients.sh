@@ -23,15 +23,15 @@ echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
 ### echo "nodefile:"
 ### cat $PBS_NODEFILE
-NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
+#NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
 echo "----------------"
 
 
 ### run the program (on the nodes as provided by PBS):
+### node --expose-gc --max-old-space-size=102400 build/src/index.js Configs/GA-Server.json 
 ### mpirun -np $NO_OF_CORES node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/GA-Clients.json
 
-cd Libraries/lodash 
-mpirun -np 5 npm test
+node --expose-gc --max-old-space-size=102400 build/src/Teste.js 
 
 date
 

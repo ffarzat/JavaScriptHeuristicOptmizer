@@ -19,7 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":60,
-    "clientsTotal": 50,
+    "clientsTotal": 400,
     "libraries" : [
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }
     ],
@@ -28,7 +28,7 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 50,
+                "neighborsToProcess": 250,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
