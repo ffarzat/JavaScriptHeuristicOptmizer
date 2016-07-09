@@ -3,7 +3,7 @@
     "trials":60,
     "startTrial": 0,
     "fitType":"mean",
-    "testUntil": 1,
+    "testUntil": 5,
     "mutationTrials": 100,
     "crossOverTrials": 5,
     "logFilePath": "build/optmization.log",
@@ -18,8 +18,8 @@
     "heuristics": ["GA", "RD", "HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":120,
-    "clientsTotal": 1,
+    "clientTimeout":1,
+    "clientsTotal": 3,
     "libraries" : [
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }

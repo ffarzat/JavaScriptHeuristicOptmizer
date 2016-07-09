@@ -42,7 +42,7 @@ export default class Client {
      *  Releases a Mutation over context 
      */
     Mutate(context: OperatorContext): OperatorContext {
-        this.logger.Write(`[Client:${this.id}]Processing new Mutant`);
+        this.logger.Write(`[Client]Processing new Mutant`);
         
         var ctx = new OperatorContext();
         
@@ -50,24 +50,24 @@ export default class Client {
             var newIndividual = this._astExplorer.Mutate(context);
 
             if ((newIndividual.ToCode() != context.Original.ToCode())) {
-                this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+                this.logger.Write(`[Client]  Testing new mutant`);
                 this.InitializeTester(context);
                 this._tester.Test(newIndividual);
-                this.logger.Write(`[Client:${this.id}]  Tests done.`);
+                this.logger.Write(`[Client]  Tests done.`);
             } else {
                 newIndividual = context.Original;
-                this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
+                this.logger.Write(`[Client]  New mutant Fail`);
             }
             
             ctx.First = newIndividual;
 
         } catch (err) {
-            this.logger.Write(`[Client:${this.id}]Error: ${err}`);
+            this.logger.Write(`[Client]Error: ${err}`);
             newIndividual = context.Original;
             ctx.First = newIndividual;
         }
 
-        this.logger.Write(`[Client:${this.id}]Mutant done.`);
+        this.logger.Write(`[Client]Mutant done.`);
         return ctx;
     }
 
@@ -75,7 +75,7 @@ export default class Client {
     * Releases a mutation over an AST  by nodetype and index
     */
     MutateBy(context: OperatorContext): OperatorContext {
-        this.logger.Write(`[Client:${this.id}]Processing new Mutant [Index]`);
+        this.logger.Write(`[Client]Processing new Mutant [Index]`);
         
         var ctx = new OperatorContext();
         
@@ -84,13 +84,13 @@ export default class Client {
             var newIndividual = this._astExplorer.MutateBy(context);
 
             if ((newIndividual.ToCode() != context.Original.ToCode())) {
-                this.logger.Write(`[Client:${this.id}]  Testing new mutant`);
+                this.logger.Write(`[Client]  Testing new mutant`);
                 this.InitializeTester(context);
                 this._tester.Test(newIndividual);
-                this.logger.Write(`[Client:${this.id}]  Tests done.`);
+                this.logger.Write(`[Client]  Tests done.`);
             } else {
                 newIndividual = context.Original;
-                this.logger.Write(`[Client:${this.id}]  New mutant Fail`);
+                this.logger.Write(`[Client]  New mutant Fail`);
             }
 
             
@@ -98,12 +98,12 @@ export default class Client {
 
         }
         catch (err) {
-            this.logger.Write(`[Client:${this.id}]Error: ${err}`);
+            this.logger.Write(`[Client]Error: ${err}`);
             newIndividual = context.Original;
             ctx.First = newIndividual;
         }
 
-        this.logger.Write(`[Client:${this.id}]Mutant done.`);
+        this.logger.Write(`[Client]Mutant done.`);
         return ctx;
     }
 
@@ -111,7 +111,7 @@ export default class Client {
      *  Releases a Crossover operation 
      */
     CrossOver(context: OperatorContext): OperatorContext {
-        this.logger.Write(`[Client:${this.id}]Processing new CrossOver`);
+        this.logger.Write(`[Client]Processing new CrossOver`);
         var ctx = new OperatorContext();
         
         try {
@@ -119,23 +119,23 @@ export default class Client {
 
 
             if ((news[0].ToCode() != context.Original.ToCode())) {
-                this.logger.Write(`[Client:${this.id}]  Testing First son`);
+                this.logger.Write(`[Client]  Testing First son`);
                 this.InitializeTester(context);
                 this._tester.Test(news[0]);
-                this.logger.Write(`[Client:${this.id}]  Tests done.`);
+                this.logger.Write(`[Client]  Tests done.`);
             } else {
                 news[0] = context.Original;
-                this.logger.Write(`[Client:${this.id}]  First Fail`);
+                this.logger.Write(`[Client]  First Fail`);
             }
 
             if (!(news[1].ToCode() === context.Original.ToCode())) {
-                this.logger.Write(`[Client:${this.id}]  Testing Second son`);
+                this.logger.Write(`[Client]  Testing Second son`);
                 this.InitializeTester(context);
                 this._tester.Test(news[1]);
-                this.logger.Write(`[Client:${this.id}]  Tests done.`);
+                this.logger.Write(`[Client]  Tests done.`);
             } else {
                 news[1] = context.Original;
-                this.logger.Write(`[Client:${this.id}]  Second Fail`);
+                this.logger.Write(`[Client]  Second Fail`);
             }
 
 
@@ -143,13 +143,13 @@ export default class Client {
             ctx.Second = news[1];
         }
         catch (err) {
-            this.logger.Write(`[Client:${this.id}]Error: ${err}`);
+            this.logger.Write(`[Client]Error: ${err}`);
 
             ctx.First = context.Original.Clone();
             ctx.Second = context.Original.Clone();
         }
 
-        this.logger.Write(`[Client:${this.id}]CrossOver done.`);
+        this.logger.Write(`[Client]CrossOver done.`);
         return ctx;
     }
 
@@ -157,7 +157,7 @@ export default class Client {
      * Global distributed Test execution
      */
     Test(context: OperatorContext): OperatorContext {
-        this.logger.Write(`[Client:${this.id}]Executing Tests for ${context.LibrarieOverTest.name}`);
+        this.logger.Write(`[Client]Executing Tests for ${context.LibrarieOverTest.name}`);
 
         var ctx = new OperatorContext();
 
@@ -168,11 +168,11 @@ export default class Client {
             ctx.First = context.First;    
         }
         catch (err) {
-            this.logger.Write(`[Client:${this.id}]${err}`);
+            this.logger.Write(`[Client]${err}`);
             ctx.First = context.Original;
         }
         
-        this.logger.Write(`[Client:${this.id}]Test done.`);
+        this.logger.Write(`[Client]Test done.`);
         return ctx;
     }
 
@@ -186,9 +186,9 @@ export default class Client {
         this._config.libraries.forEach(element => {
             if (element.name === context.LibrarieOverTest.name) {
                 context.LibrarieOverTest = element;
-                //this.logger.Write(`[Client:${this.id}]${context.LibrarieOverTest.name}`)
-                //this.logger.Write(`[Client:${this.id}]${context.LibrarieOverTest.mainFilePath}`)
-                //this.logger.Write(`[Client:${this.id}]${context.LibrarieOverTest.path}`)
+                //this.logger.Write(`[Client]${context.LibrarieOverTest.name}`)
+                //this.logger.Write(`[Client]${context.LibrarieOverTest.mainFilePath}`)
+                //this.logger.Write(`[Client]${context.LibrarieOverTest.path}`)
             }
 
         });

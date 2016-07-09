@@ -15,19 +15,13 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":180,
-    "clientsTotal": 48,
+    "clientTimeout":60,
+    "clientsTotal": 50,
     "libraries" : [
-        {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" },
-        {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },
-	    {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
-        {"name":"minimist",     "path":"Libraries/minimist/",       "mainFilePath":"Libraries/minimist/index.js"  },
-        {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
-        {"name":"Jade",         "path":"Libraries/Jade/",           "mainFilePath":"Libraries/Jade/lib/index.js"  },
-        {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" }
+        {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }
     ],
     "trialsConfiguration":[
         {
