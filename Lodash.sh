@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=3:ncpus=48:mpiprocs=48
-#PBS -N GA-server
+#PBS -N Lodash
 ### Request email when job begins and ends
 #PBS -m bea
 ### Specify email address to use for notification.
