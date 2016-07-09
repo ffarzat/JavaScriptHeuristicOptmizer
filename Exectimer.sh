@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=3:ncpus=48:mpiprocs=48
-#PBS -N Lodash
+#PBS -N Exectimer
 ### Request email when job begins and ends
 #PBS -m bea
 ### Specify email address to use for notification.
@@ -29,7 +29,7 @@ echo "----------------"
 ### run the program (on the nodes as provided by PBS):
 npm run PBS
 node --expose-gc --max-old-space-size=102400 build/src/index.js Configs/Exectimer.json &
-mpirun -np 142 node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Exectimer/Lodash.json
+mpirun -np 142 node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js Configs/Exectimer.json
 date
 
 
