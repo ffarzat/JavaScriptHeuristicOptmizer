@@ -86,7 +86,7 @@ export default class CommandTester implements ITester {
                 //this.logger.Write(`eval ${index}`);
                 var testExecutionTimeTick = new Tick(testUuid);
                 testExecutionTimeTick.start();
-                var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('mpirun -np 5 npm test', {silent:false}) as Shell.ExecOutputReturnValue);
+                var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('npm test', {silent:false}) as Shell.ExecOutputReturnValue);
                 testExecutionTimeTick.stop();    
                 
                 //TODO: Log the returnedOutput.output for debug
