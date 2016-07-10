@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -k oe
-#PBS -l select=1:ncpus=48:mpiprocs=48:arch=linux
+#PBS -l select=2:ncpus=48:mpiprocs=48:arch=linux
 #PBS -N uuid
 ### Request email when job begins and ends
 #PBS -m bea

@@ -87,6 +87,7 @@ export default class CommandTester implements ITester {
                 var testExecutionTimeTick = new Tick(testUuid);
                 testExecutionTimeTick.start();
                 var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('mpirun -np 1 npm test', {silent:true}) as Shell.ExecOutputReturnValue);
+                //https://software.intel.com/en-us/articles/controlling-process-placement-with-the-intel-mpi-library
                 testExecutionTimeTick.stop();    
                 
                 //TODO: Log the returnedOutput.output for debug
