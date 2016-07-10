@@ -1,0 +1,43 @@
+{
+    "file": "gulp-cccr.json",
+    "trials":60,
+    "startTrial": 0,
+    "fitType":"mean",
+    "testUntil": 5,
+    "mutationTrials": 1,
+    "crossOverTrials": 1,
+    "logFilePath": "build/gulp-cccr.log",
+    "tmpDirectory": "/mnt/scratch/user8/temporaryfiles",
+    "logCategory":"optmization",
+    "logFileClearing": false,
+    "resultsDirectory": "build/results",
+    "trialResultsFile": "Results.csv",
+    "logWritter": "ConcreteLogger",
+    "tester": "CommandTester",
+    "outWriter": "CsvResultsOutWriter",
+    "heuristics": ["RD", "GA", "HC"],
+    "port": 5000,
+    "url": "ws://localhost",
+    "clientTimeout":60,
+    "clientsTotal": 48,
+    "libraries" : [
+        {"name":"gulp-cccr",       "path":"Libraries/gulp-ccr-browserify/",         "mainFilePath":"Libraries/gulp-ccr-browserify/index.js" }
+    ],
+    "trialsConfiguration":[
+        {
+            "nodesSelectionApproach":"Global", 
+            "especific": {
+                "neighborApproach":"FirstAscent", 
+                "neighborsToProcess": 50,
+                "trials": 5000,
+                "nodesType": ["CallExpression", "IfStatement"], 
+                "individuals": 100, 
+                "generations": 50,
+                "crossoverProbability": 75,
+                "mutationProbability": 10,
+                "elitism": true,
+                "elitismPercentual": 30
+            }
+        }  
+    ]
+}
