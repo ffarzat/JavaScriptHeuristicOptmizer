@@ -342,17 +342,19 @@ abstract class IHeuristic extends events.EventEmitter {
         messagesToProcess.push(instance);
 
         async.parallel(messagesToProcess,
+
             (err, results) => {
-                if (err)
-                {
+                if (err) {
                     this._logger.Write(`[IHeuristic] err: ${err.stack}`);
+                    cb(item);
                 }
+                else {
+                    //this._logger.Write(`[IHeuristic] results: ${JSON.stringify(results[0])}`);
+                    var processedMessage = results[0].stdout;
 
-                //this._logger.Write(`[IHeuristic] results: ${JSON.stringify(results[0])}`);
-                var processedMessage = results[0].stdout;
-
-                msg.ctx = this.Reload(processedMessage.ctx);
-                cb(msg);
+                    msg.ctx = this.Reload(processedMessage.ctx);
+                    cb(msg);
+                }
             }
         );
 
