@@ -30,7 +30,10 @@ if (process.platform !== "win32") {
 //=========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
-//process.setMaxListeners(0);
+
+var pool = require('fork-pool');
+var uniquePool = new pool(__dirname + '/Child.js', null, null, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.clientTimeout * 1000 });
+
 //=========================================================================================== Server!
 
 
@@ -106,11 +109,13 @@ if (cluster.isMaster) {
 //}
 //=========================================================================================== Functions
 function ExecuteTrials(globalTrial: number) {
+    
+    
     logger.Write(`============================= Optmizer Global trial: ${globalTrial}`);
     //var msg = new Message();
     //process.send(msg); //clean Server
 
-    executeHeuristicTrial(globalTrial, configuration, 0, () => {
+    executeHeuristicTrial(globalTrial, configuration, 0, uniquePool, () => {
         logger.Write(`============================= Optmizer Global trial: ${globalTrial} Done!`);
 
         globalTrial++;
@@ -133,11 +138,11 @@ function Done(message: Message) {
     optmizer.Done(message);
 }
 
-function executeHeuristicTrial(globalTrial: number, config: IConfiguration, heuristicTrial: number, cb: () => void) {
+function executeHeuristicTrial(globalTrial: number, config: IConfiguration, heuristicTrial: number, ClientsPool: any, cb: () => void) {
 
     optmizer = new Optmizer();
 
-    optmizer.Setup(configuration, globalTrial, heuristicTrial);
+    optmizer.Setup(configuration, globalTrial, heuristicTrial, ClientsPool);
     optmizer.DoOptmization(0,() => {
         cb();
     });

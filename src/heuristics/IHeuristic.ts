@@ -63,10 +63,6 @@ abstract class IHeuristic extends events.EventEmitter {
         events.EventEmitter.call(this);
         this.waitingMessages = {};
         this.trialUuid = uuid.v4();
-
-        var pool = require('fork-pool');
-        this.Pool = new pool(__dirname + '/Child.js', null, null, { size: this._globalConfig.clientsTotal, log: false, timeout: this._globalConfig.clientTimeout * 1000 });
-
     }
 
     public Start() {

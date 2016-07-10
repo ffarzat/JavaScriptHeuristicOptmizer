@@ -1,10 +1,10 @@
 
 //Child fork test
-import Message from '../Sockets/Message';
-import Client from '../Sockets/Client';
-import OperatorContext from '../OperatorContext';
-import IConfiguration from '../IConfiguration';
-import LogFactory from '../LogFactory';
+import Message from './Sockets/Message';
+import Client from './Sockets/Client';
+import OperatorContext from './OperatorContext';
+import IConfiguration from './IConfiguration';
+import LogFactory from './LogFactory';
 
 import fs = require('fs');
 import path = require('path');
