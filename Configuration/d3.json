@@ -18,7 +18,7 @@
     "heuristics": ["RD", "GA", "HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":1200,
+    "clientTimeout":60,
     "clientsTotal": 48,
     "libraries" : [
         {"name":"d3",       "path":"Libraries/d3/",         "mainFilePath":"Libraries/d3/build/d3.node.js" }
