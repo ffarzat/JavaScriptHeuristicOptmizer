@@ -2,7 +2,7 @@
 echo "----------------"
 ./FakeJob.sh
 sleep 2
-./D3.sh
+### ./D3.sh
 ./exectimer.sh
 ./Express-ifttt-webhook.sh
 ./Jade.sh
@@ -12,7 +12,7 @@ sleep 2
 ./minimist.sh
 ./Moment.sh
 ./Plivo-node.sh
-./React.sh
+### ./React.sh
 ./Tleaf.sh
 ./Underscore.sh
 ./uuid.sh
