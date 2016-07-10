@@ -1,5 +1,5 @@
 {
-    "file": "Configuration.json",
+    "file": "Jade.json",
     "trials":60,
     "startTrial": 0,
     "fitType":"mean",

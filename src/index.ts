@@ -19,6 +19,9 @@ var localServer: Server = new Server();
 var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';  
 var configurationFile: string = path.join(process.cwd(), configFile);
 
+console.log (`[index]configurationFile: ${configurationFile}`);
+
+
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
 
@@ -32,7 +35,7 @@ var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
 var pool = require('fork-pool');
-var uniquePool = new pool(__dirname + '/Child.js', null, null, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.clientTimeout * 1000 });
+var uniquePool = new pool(__dirname + '/Child.js', [configFile] , null, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.clientTimeout * 1000 });
 
 //=========================================================================================== Server!
 
