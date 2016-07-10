@@ -28,8 +28,7 @@ echo "----------------"
 
 
 ### run the program (on the nodes as provided by PBS):
-node --expose-gc --max-old-space-size=102400 build/src/index.js  
-node --expose-gc --max-old-space-size=102400 build/src/Sockets/runClients.js 
+node --expose-gc --max-old-space-size=102400 build/src/index.js  Configuration/jade.json
 
 ### mpirun -np 400 --hostfile $PBS_NODEFILE node --expose-gc --max-old-space-size=102400 build/src/Teste.js 
 ### mpirun node --expose-gc --max-old-space-size=102400 build/src/Teste.js
