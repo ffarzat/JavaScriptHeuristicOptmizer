@@ -123,7 +123,7 @@ function ParseConfigAndLibs(workDir: string) {
             }
 
         } catch (error) {
-            logger.Write(`-->${error}`);
+            logger.Write(`-->${error.stack}`);
         }
         finally {
             process.chdir(testOldDirectory);
