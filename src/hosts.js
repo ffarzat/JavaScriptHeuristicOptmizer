@@ -14,7 +14,7 @@ console.log(`hostfile: ${hostfile}`);
 
 
 
-for (var index = 0; index < 40; index++) {
+for (var index = 0; index < 400; index++) {
 
     var uuid = require('node-uuid');
     var istring = uuid.v4();
