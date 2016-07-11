@@ -55,7 +55,7 @@ console.log(`hostfile: ${hostfile}`);
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 48; i++) {
+for (var i = 0; i < 19; i++) {
 
     var istring = JSON.stringify(i);
 
@@ -83,7 +83,7 @@ for (var i = 0; i < 48; i++) {
     messagesToProcess.push(instance);
 }
 
-parallelLimit(messagesToProcess, 48, function (err, results) {
+parallelLimit(messagesToProcess, 5000, function (err, results) {
 
     if (err)
         console.log(`err: ${err.stack}`);
