@@ -92,4 +92,3 @@ async.eachLimit(messagesToProcess, 500, function (err, results) {
 
     console.log(`results: ${results.length}`);
 });
-*/
