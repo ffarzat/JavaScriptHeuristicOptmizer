@@ -21,7 +21,6 @@ workerProcess.on('exit', function (code) {
     //console.log('       MPN exit code ' + code);
     //console.log(`       Tests ${process.argv[2]} executed inside host: ${os.hostname()}`);
     //console.log(`{id: ${process.argv[2]}, sucess: ${code === 0}, host: ${os.hostname()}, duration: ${clock(start)}}`);
-    console.log(`{id: ${process.argv[2]}, sucess: false, host: ${os.hostname()}, duration: ${clock(start)}}`);
 });
 
 /**

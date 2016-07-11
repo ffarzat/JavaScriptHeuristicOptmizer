@@ -51,7 +51,8 @@ for (var i = 0; i < clientsTotal; i++) {
             });
 
         workerProcess.on('exit', function (code) {
-            console.log(console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:999`););
+            if(code !== 0)
+                console.log(console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:999`);
         });
 
     };
