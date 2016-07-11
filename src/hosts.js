@@ -18,7 +18,7 @@ console.log(`No host: ${cpusString[95]}`);
 //Sync
 
 
-for (var index = 0; index < 1; index++) {
+for (var index = 0; index < 5; index++) {
 
     var uuid = require('node-uuid');
     var istring = uuid.v4();
