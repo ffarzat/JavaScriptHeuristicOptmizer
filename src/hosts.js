@@ -17,7 +17,7 @@ console.log(`Test Host #1: ${cpusString[48]}`);
 console.log(`Test Host #2: ${cpusString[96]}`);
 console.log(`Test Host #3: ${cpusString[144]}`);
 
-var clientsTotal = 28;
+var clientsTotal = 25;
 
 
 //Sync
