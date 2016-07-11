@@ -2,7 +2,7 @@ var os = require("os");
 const child_process = require('child_process');
 var start = process.hrtime();
 
-var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
+var workerProcess = child_process.exec(`cd Libraries/moment && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
     if (error) {
         console.log(error.stack);
         //console.log('MPN Error code: ' + error.code);
