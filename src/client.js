@@ -5,12 +5,12 @@ const child_process = require('child_process');
 child_process.exec(``);
 child_process.exec(``);
 
-var workerProcess = child_process.exec(`
-            export node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node  && 
-            export npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm        &&
-            export PATH=$PATH:$node                                             &&
-            export PATH=$PATH:$npm                                              &&
-            echo $PATH                                                          && 
+var workerProcess = child_process.exec(
+//            export node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node  && 
+//            export npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm        &&
+//            export PATH=$PATH:$node                                             &&
+//            export PATH=$PATH:$npm                                              &&
+            `echo $PATH                                                          && 
             cd Libraries/uuid                                                   && 
             npm test`,
     { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
