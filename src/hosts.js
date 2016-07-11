@@ -40,7 +40,7 @@ console.log(`Ncpus: ${Ncpus}`);
 console.log(`hostfile: ${hostfile}`);
 
 
-var workerProcess = child_process.exec(`mpirun -np ${Ncpus} --hostfile ${hostfile} /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 client.js`,
+var workerProcess = child_process.exec(`mpirun -np ${Ncpus} --hostfile ${hostfile} /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/client.js`,
 
     function (error, stdout, stderr) {
         if (error) {
