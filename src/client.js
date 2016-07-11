@@ -20,7 +20,7 @@ workerProcess.on('exit', function (code) {
 });
 
 /**
- * Milisecs
+ * Milisecs F
  */
 function clock(startTime) {
     if ( !startTime ) return process.hrtime();
