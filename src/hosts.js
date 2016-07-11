@@ -49,10 +49,6 @@ for (var index = 0; index < 96; index++) {
 
 var async = require('async');
 
-
-var queue = async.queue(upload_file, 96);
-
-
 var messagesToProcess = [];
 
 for (var i = 0; i < 96; i++) {
