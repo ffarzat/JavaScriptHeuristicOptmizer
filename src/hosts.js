@@ -65,8 +65,8 @@ for (var i = 0; i < clientsTotal; i++) {
 
 async.parallel(messagesToProcess, function (err, results) {
 
-    if (err)
-        console.log(`err: ${err.stack}`);
+    //if (err)
+        //console.log(`err: ${err.stack}`);
 
     console.log(`results: ${results.length}`);
 });
