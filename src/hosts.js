@@ -76,7 +76,7 @@ async.parallel(messagesToProcess, function (err, results) {
     if (err)
         console.log(`err: ${err.stack}`);
 
-    //console.log(`results: ${results.length}`);
+    console.log(`results: ${results.length}`);
 }
 );
 
