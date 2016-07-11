@@ -15,9 +15,8 @@ var cpusString = fs.readFileSync(hostfile).toString().split("\n");
 console.log(`Ncpus == ${cpusString.length}`);
 console.log(`Test Host #1: ${cpusString[48]}`);
 console.log(`Test Host #2: ${cpusString[96]}`);
-console.log(`Test Host #3: ${cpusString[144]}`);
 
-var clientsTotal = 25;
+var clientsTotal = 18;
 
 
 //Sync
@@ -50,12 +49,6 @@ for (var i = 0; i < clientsTotal; i++) {
     {
         actualHost = cpusString[96];
     }
-
-    if( i > 18)
-    {
-        actualHost = cpusString[144];
-    }
-
 
     var instance = function (callback) {
 
