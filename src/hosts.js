@@ -39,15 +39,19 @@ var hostfile = process.argv[3];
 console.log(`Ncpus: ${Ncpus}`);
 console.log(`hostfile: ${hostfile}`);
 
-
+/*
 for (var index = 0; index < 96; index++) {
     var returnedOutput = Shell.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js`, {silent:false});
 }
+*/
 
 
 
-/*
 var async = require('async');
+
+
+var queue = async.queue(upload_file, 96);
+
 
 var messagesToProcess = [];
 
@@ -75,13 +79,13 @@ for (var i = 0; i < 96; i++) {
             console.log('Child process exited with exit code ' + code);
         });
         
-        
+        */
     };
 
     messagesToProcess.push(instance);
 }
 
-async.parallel(messagesToProcess, function (err, results) {
+async.parallelLimit(messagesToProcess, 96, function (err, results) {
 
     if (err)
         console.log(`err: ${err.stack}`);
