@@ -1,16 +1,30 @@
-/*
-var Shell = require('shelljs');
-
 var os = require("os");
-
+var Shell = require('shelljs');
 var async = require('async');
+var parallelLimit = require('run-parallel-limit')
+const child_process = require('child_process');
 
+var Ncpus = process.argv[2];
+var hostfile = process.argv[3];
+
+console.log(`Ncpus: ${Ncpus}`);
+console.log(`hostfile: ${hostfile}`);
+
+//Sync
+
+for (var index = 0; index < 47; index++) {
+    var returnedOutput = Shell.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js`, {silent:false});
+}
+
+//Async
+
+/*
 var messagesToProcess = [];
 
-for (var i = 0; i < 4; i++) {
+for (var i = 0; i < 47; i++) {
 
     var instance = function (callback) {
-        var os = require("os");
+
         var returnedOutput = Shell.exec('cd Libraries/uuid && npm test', {silent:false});
         console.log(`Hostname: ${os.hostname()} - Tests done `);
     };
@@ -31,27 +45,10 @@ async.parallel(messagesToProcess, function (err, results) {
 */
 
 
+
+//Parallel.Limit
+
 /*
- var returnedOutput = Shell.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400  src/client.js`, {silent:false});
-
-for (var index = 0; index < 96; index++) {
-    var returnedOutput = Shell.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js`, {silent:false});
-}
-*/
-
-
-
-var parallelLimit = require('run-parallel-limit')
-const child_process = require('child_process');
-
-var Ncpus = process.argv[2];
-var hostfile = process.argv[3];
-
-console.log(`Ncpus: ${Ncpus}`);
-console.log(`hostfile: ${hostfile}`);
-
-
-
 
 var messagesToProcess = [];
 
@@ -93,3 +90,5 @@ parallelLimit(messagesToProcess, 5000, function (err, results) {
 
     console.log(`results: ${results.length}`);
 });
+
+*/
