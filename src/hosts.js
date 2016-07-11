@@ -35,7 +35,7 @@ for (var index = 0; index < 5; index++) {
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 9; i++) {
+for (var i = 0; i < 10; i++) {
 
     var uuid = require('node-uuid');
 
