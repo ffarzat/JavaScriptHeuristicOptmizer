@@ -4,7 +4,7 @@ var os = require("os");
 console.log(`Hostname: ${os.hostname()}`);
 
 var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('cd Libraries/uuid && npm test', {silent:false}) as Shell.ExecOutputReturnValue);
-
+console.log(`Tests done`);
 
 
 /*
