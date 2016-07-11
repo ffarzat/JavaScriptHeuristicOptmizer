@@ -1,6 +1,9 @@
 var os = require("os");
 const child_process = require('child_process');
 
+console.log(`Tests ${process.argv[2]} executed inside host: ${os.hostname()}`);
+
+/*
 var workerProcess = child_process.exec(`cd Libraries/moment && npm test`, {maxBuffer: 1024 * 5000}, function (error, stdout, stderr) {
     if (error) {
         console.log(error.stack);
@@ -14,5 +17,5 @@ var workerProcess = child_process.exec(`cd Libraries/moment && npm test`, {maxBu
 workerProcess.on('exit', function (code) {
     console.log('MPN process exited with exit code ' + code);
 });
+*/
 
-console.log(`Tests ${process.argv[2]} executed inside host: ${os.hostname()}`);
