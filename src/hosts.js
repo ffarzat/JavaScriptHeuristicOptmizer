@@ -55,7 +55,7 @@ console.log(`hostfile: ${hostfile}`);
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 2; i++) {
+for (var i = 0; i < 47; i++) {
 
     var uuid = require('node-uuid');
     var istring = uuid.v4();
