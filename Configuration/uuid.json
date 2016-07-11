@@ -1,7 +1,7 @@
 {
     "file": "uuid.json",
     "trials":60,
-    "startTrial": 0,
+    "startTrial": 4,
     "fitType":"mean",
     "testUntil": 5,
     "mutationTrials": 1,
@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["GA"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":60,
