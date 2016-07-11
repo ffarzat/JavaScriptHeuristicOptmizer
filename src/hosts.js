@@ -39,8 +39,6 @@ var hostfile = process.argv[3];
 console.log(`Ncpus: ${Ncpus}`);
 console.log(`hostfile: ${hostfile}`);
 
-
-
 var async = require('async');
 
 var messagesToProcess = [];
