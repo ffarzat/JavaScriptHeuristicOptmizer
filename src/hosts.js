@@ -32,24 +32,18 @@ for (var i = 0; i < clientsTotal; i++) {
 
     var instance = function (callback) {
         var msgId = uuid.v4();
-        var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000},
+        var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000 },
             function (error, stdout, stderr) {
-                if (error) {
-                    //console.log(error.stack);
-                    //console.log('Error code: ' + error.code);
-                    //console.log('Signal received: ' + error.signal);
-                    //stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:999}`;
+                if (error || stderr) {
+                    stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:999}`;
                     error = null;
                 }
-                //console.log('stdout: ' + stdout);
-                //console.log('id:12345678' );
-                //console.log('stderr: ' + stderr);
+                else {
 
-                if (stdout.length == 0 || stdout.indexOf("mpirun") > -1) {
-                    stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:998}`;
+                    if (stdout.length == 0 || stdout.indexOf("mpirun") > -1) {
+                        stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:998}`;
+                    }
                 }
-
-                console.log(stdout);
 
                 callback(error, stdout);
             });
@@ -68,6 +62,11 @@ async.parallel(messagesToProcess, function (err, results) {
 
     if (err)
         console.log(`async.parallel err: ${err.stack}`);
+
+    for (var result  in results) {
+        console.log(result);
+    }
+
 
     console.log(`results: ${results.length}`);
 });
