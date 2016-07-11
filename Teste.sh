@@ -27,7 +27,7 @@ echo "----------------"
 
 
 ### run the program (on the nodes as provided by PBS):
-mpirun -np 96 --hostfile $PBS_NODEFILE /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js 
+mpirun -np 48 --hostfile $PBS_NODEFILE /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js 
 
 date
 
