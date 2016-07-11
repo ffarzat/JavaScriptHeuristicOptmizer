@@ -40,20 +40,43 @@ console.log(`Ncpus: ${Ncpus}`);
 console.log(`hostfile: ${hostfile}`);
 
 
-var workerProcess = child_process.exec(`mpirun -np ${Ncpus} --hostfile ${hostfile} /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/client.js`,
 
-    function (error, stdout, stderr) {
-        if (error) {
-            console.log(error.stack);
-            console.log('Error code: ' + error.code);
-            console.log('Signal received: ' + error.signal);
-        }
-        console.log('stdout: ' + stdout);
-        console.log('stderr: ' + stderr);
-    });
+var async = require('async');
 
-workerProcess.on('exit', function (code) {
-    console.log('Child process exited with exit code ' + code);
+var messagesToProcess = [];
+
+for (var i = 0; i < 96; i++) {
+
+    var instance = function (callback) {
+        var workerProcess = child_process.exec(`mpirun -np 1 --hostfile ${hostfile} /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/client.js`,
+
+            function (error, stdout, stderr) {
+                if (error) {
+                    console.log(error.stack);
+                    console.log('Error code: ' + error.code);
+                    console.log('Signal received: ' + error.signal);
+                }
+                console.log('stdout: ' + stdout);
+                console.log('stderr: ' + stderr);
+            });
+
+        workerProcess.on('exit', function (code) {
+            console.log('Child process exited with exit code ' + code);
+        });
+    };
+
+    messagesToProcess.push(instance);
+}
+
+async.parallel(messagesToProcess, function (err, results) {
+
+    if (err)
+        console.log(`err: ${err.stack}`);
+
+    console.log(`results: ${results.length}`);
 });
+
+
+
 
 
