@@ -55,7 +55,7 @@ console.log(`hostfile: ${hostfile}`);
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 19; i++) {
+for (var i = 0; i < 5; i++) {
 
     var istring = JSON.stringify(i);
 
@@ -66,11 +66,11 @@ for (var i = 0; i < 19; i++) {
             function (error, stdout, stderr) {
                 if (error) {
                     console.log(error.stack);
-                    console.log('Error code: ' + error.code);
-                    console.log('Signal received: ' + error.signal);
+                    //console.log('Error code: ' + error.code);
+                    //console.log('Signal received: ' + error.signal);
                 }
                 console.log('stdout: ' + stdout);
-                console.log('stderr: ' + stderr);
+                //console.log('stderr: ' + stderr);
 
                 callback(stdout);
             });
@@ -85,7 +85,7 @@ for (var i = 0; i < 19; i++) {
 
 parallelLimit(messagesToProcess, 5000, function (err, results) {
 
-    if (err)
+    if (err != undefined)
         console.log(`err: ${err.stack}`);
 
     console.log(`results: ${results.length}`);
