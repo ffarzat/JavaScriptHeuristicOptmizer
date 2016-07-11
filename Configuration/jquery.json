@@ -18,7 +18,7 @@
     "heuristics": ["RD", "GA", "HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":600,
+    "clientTimeout":1200,
     "clientsTotal": 48,
     "libraries" : [
         {"name":"jquery",       "path":"Libraries/jquery/",         "mainFilePath":"Libraries/jquery/dist/jquery.js" }

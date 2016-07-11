@@ -1,20 +1,15 @@
-#!/bin/bash
-echo "----------------"
-./FakeJob.sh
-sleep 2
-### ./D3.sh
-./exectimer.sh
-./Express-ifttt-webhook.sh
-./Jade.sh
-./shGulp.sh
-./Jquery.sh
-./Lodash.sh
-./minimist.sh
-./Moment.sh
-./Plivo-node.sh
-### ./React.sh
-./Tleaf.sh
-./Underscore.sh
-./uuid.sh
+qsub FakeJob.sh
+qsub exectimer.sh
+qsub Express-ifttt-webhook.sh
+qsub Jade.sh
+qsub shGulp.sh
+qsub Jquery.sh
+qsub Lodash.sh
+qsub minimist.sh
+qsub Moment.sh
+qsub Plivo-node.sh
+qsub Tleaf.sh
+qsub Underscore.sh
+qsub uuid.sh
 
 
