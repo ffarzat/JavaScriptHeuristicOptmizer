@@ -4,7 +4,7 @@ var start = process.hrtime();
 
 var timeoutId = setTimeout(function() {
     process.kill();
-}, 2000);
+}, 3000);
 
 
 var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
