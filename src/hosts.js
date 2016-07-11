@@ -48,7 +48,7 @@ for (var i = 0; i < 1; i++) {
     var istring = JSON.stringify(i);
     var instance = function (callback) {
         
-        var workerProcess = child_process.exec(`mpirun -path /mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm -np 200 --hostfile ${hostfile} /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${istring}`, {maxBuffer: 1024 * 5000},
+        var workerProcess = child_process.exec(`mpirun -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm -np 200 --hostfile ${hostfile} /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${istring}`, {maxBuffer: 1024 * 5000},
 
             function (error, stdout, stderr) {
                 if (error) {
