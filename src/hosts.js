@@ -43,7 +43,7 @@ for (var i = 0; i < 9; i++) {
 
         
 
-        var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${uuid.v4()}`, { maxBuffer: 1024 * 5000 },
+        var workerProcess = child_process.exec(`sleep 10 && mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${uuid.v4()}`, { maxBuffer: 1024 * 5000 },
             function (error, stdout, stderr) {
                 if (error) {
                     console.log(error.stack);
