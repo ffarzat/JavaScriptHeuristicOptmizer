@@ -10,6 +10,7 @@ var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, { maxBuf
     }
     //console.log('MPN stdout: ' + stdout);
     //console.log('MPNstderr: ' + stderr);
+    process.exit();
 });
 
 workerProcess.on('exit', function (code) {
