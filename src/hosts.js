@@ -2,7 +2,7 @@ var async = require('async');
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 95; i++) {
+for (var i = 0; i < 1; i++) {
 
     var instance = function (callback) {
         var os = require("os");

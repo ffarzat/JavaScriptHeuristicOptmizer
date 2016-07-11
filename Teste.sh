@@ -27,7 +27,7 @@ echo "----------------"
 
 
 ### run the program (on the nodes as provided by PBS):
-node --expose-gc --max-old-space-size=102400 src/hosts.js 
+mpirun -np 96 node --expose-gc --max-old-space-size=102400 src/hosts.js 
 
 ### mpirun -np 400 --hostfile $PBS_NODEFILE node --expose-gc --max-old-space-size=102400 build/src/Teste.js 
 ### mpirun node --expose-gc --max-old-space-size=102400 build/src/Teste.js
