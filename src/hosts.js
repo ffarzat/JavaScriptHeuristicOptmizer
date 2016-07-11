@@ -10,16 +10,20 @@ var hostfile = process.argv[3];
 console.log(`Ncpus: ${Ncpus}`);
 console.log(`hostfile: ${hostfile}`);
 
+var cpusString = fs.readFileSync(hostfile).toString().split("\n");
+console.log(`Ncpus == ${cpusString.length}`);
+console.log(`No host: ${cpusString[48]}`);
+console.log(`No host: ${cpusString[95]}`);
+
 //Sync
 
 
-
-for (var index = 0; index < 400; index++) {
+for (var index = 0; index < 1; index++) {
 
     var uuid = require('node-uuid');
     var istring = uuid.v4();
 
-    var returnedOutput = Shell.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${istring}`, {silent:false});
+    var returnedOutput = Shell.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${istring}`, { silent: false });
 }
 
 
