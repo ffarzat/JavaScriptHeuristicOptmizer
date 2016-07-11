@@ -55,7 +55,7 @@ console.log(`hostfile: ${hostfile}`);
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 1; i++) {
+for (var i = 0; i < 2; i++) {
 
     var istring = JSON.stringify(i);
 
