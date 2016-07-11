@@ -25,13 +25,19 @@ echo "nodes: $NPROCS"
 #NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
 echo "----------------"
 
+/mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js $NPROCS $PBS_NODEFILE
+
+
+
+### mpirun -np 96 --hostfile $PBS_NODEFILE /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js
+
 
 ### run the program (on the nodes as provided by PBS):
 
-for i in {1..96}
-do
-    mpirun -np 1 --hostfile $PBS_NODEFILE /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js &
-done
+### for i in {1..96}
+### do
+    ### mpirun -np 1 --hostfile $PBS_NODEFILE /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js 
+### done
 
 date
 
