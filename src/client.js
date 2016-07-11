@@ -1,8 +1,9 @@
 var os = require("os");
 const child_process = require('child_process');
 
-console.log(`Tests ${process.argv[2]} executed inside host: ${os.hostname()}`);
 
+child_process.exec(`PATH=$PATH:/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node`);
+child_process.exec(`PATH=$PATH:/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm`);
 
 var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, {maxBuffer: 1024 * 5000}, function (error, stdout, stderr) {
     if (error) {
@@ -16,6 +17,7 @@ var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, {maxBuff
 
 workerProcess.on('exit', function (code) {
     console.log('MPN process exited with exit code ' + code);
+    console.log(`Tests ${process.argv[2]} executed inside host: ${os.hostname()}`);
 });
 
 

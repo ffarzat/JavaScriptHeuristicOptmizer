@@ -24,10 +24,6 @@ echo "nodes: $NPROCS"
 ### cat $PBS_NODEFILE
 #NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
 echo "----------------"
-PATH=$PATH:/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node
-PATH=$PATH:/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm
-
-
 
 node --expose-gc --max-old-space-size=102400 src/hosts.js $NPROCS $PBS_NODEFILE
 

@@ -41,6 +41,9 @@ console.log(`hostfile: ${hostfile}`);
 
 var async = require('async');
 
+child_process.exec(`PATH=$PATH:/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node`);
+child_process.exec(`PATH=$PATH:/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm`);
+
 var messagesToProcess = [];
 
 for (var i = 0; i < 1; i++) {
