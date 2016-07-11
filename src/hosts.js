@@ -36,12 +36,12 @@ for (var i = 0; i < clientsTotal; i++) {
             function (error, stdout, stderr) {
                 if (error) {
                     console.log(error.stack);
-                    //console.log('Error code: ' + error.code);
-                    //console.log('Signal received: ' + error.signal);
+                    console.log('Error code: ' + error.code);
+                    console.log('Signal received: ' + error.signal);
                 }
                 //console.log('stdout: ' + stdout);
                 //console.log('id:12345678' );
-                //console.log('stderr: ' + stderr);
+                console.log('stderr: ' + stderr);
                 console.log(stdout);
 
                 //Erro de qualquer espécie! Pega o original e devolve
