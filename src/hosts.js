@@ -45,10 +45,12 @@ var async = require('async');
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 96; i++) {
+for (var i = 0; i < 48; i++) {
 
+    var istring = JSON.stringify(i);
     var instance = function (callback) {
-        var workerProcess = child_process.exec(`mpirun -np 1 --hostfile ${hostfile} /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/client.js ${i}`,
+        
+        var workerProcess = child_process.exec(`mpirun -np 5 --hostfile ${hostfile} /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/client.js ${istring}`,
 
             function (error, stdout, stderr) {
                 if (error) {
