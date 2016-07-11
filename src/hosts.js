@@ -28,31 +28,34 @@ var actualHost = cpusString[48];
 
 for (var i = 0; i < clientsTotal; i++) {
 
-    
+
 
     var instance = function (callback) {
         var msgId = uuid.v4();
-        var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000, timeout: 1000},
+        var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000, timeout: 1000 },
             function (error, stdout, stderr) {
                 if (error) {
-                    console.log(error.stack);
-                    console.log('Error code: ' + error.code);
-                    console.log('Signal received: ' + error.signal);
+                    //console.log(error.stack);
+                    //console.log('Error code: ' + error.code);
+                    //console.log('Signal received: ' + error.signal);
+                    console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:999`);
                 }
                 //console.log('stdout: ' + stdout);
                 //console.log('id:12345678' );
-                console.log('stderr: ' + stderr);
-                console.log(stdout);
+                //console.log('stderr: ' + stderr);
 
-                //Erro de qualquer espécie! Pega o original e devolve
+                if (stdout.length == 0) {
+                    stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:999}`;
+                }
 
+                console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:999`);
 
                 callback(error, stdout);
             });
 
         workerProcess.on('exit', function (code) {
-            if(code !== 0)
-                console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:999`);
+            //if(code !== 0)
+            //console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:999`);
         });
 
     };
