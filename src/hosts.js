@@ -1,3 +1,4 @@
+var fs = require("fs");
 var os = require("os");
 var Shell = require('shelljs');
 var async = require('async');
