@@ -12,6 +12,8 @@ console.log(`hostfile: ${hostfile}`);
 
 //Sync
 
+/*
+
 for (var index = 0; index < 47; index++) {
 
     var uuid = require('node-uuid');
@@ -20,9 +22,11 @@ for (var index = 0; index < 47; index++) {
     var returnedOutput = Shell.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${istring}`, {silent:false});
 }
 
+*/
+
 //Async
 
-/*
+
 var messagesToProcess = [];
 
 for (var i = 0; i < 47; i++) {
@@ -32,8 +36,7 @@ for (var i = 0; i < 47; i++) {
 
     var instance = function (callback) {
 
-        var returnedOutput = Shell.exec('cd Libraries/uuid && npm test', {silent:false});
-        console.log(`Hostname: ${os.hostname()} - Tests done `);
+        var returnedOutput = Shell.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${istring}`, {silent:false}););
     };
 
     messagesToProcess.push(instance);
@@ -44,12 +47,10 @@ async.parallel(messagesToProcess, function (err, results) {
         if (err)
             console.log(`err: ${err.stack}`);
 
-        console.log(`results: ${results.length}`);
-        process.exit();
-
+        //console.log(`results: ${results.length}`);
     }
 );
-*/
+
 
 
 
