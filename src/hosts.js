@@ -38,7 +38,7 @@ for (var i = 0; i < clientsTotal; i++) {
                     //console.log(error.stack);
                     //console.log('Error code: ' + error.code);
                     //console.log('Signal received: ' + error.signal);
-                    stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:999}`;
+                    //stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:999}`;
                     error = null;
                 }
                 //console.log('stdout: ' + stdout);
