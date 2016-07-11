@@ -55,7 +55,7 @@ console.log(`hostfile: ${hostfile}`);
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 5; i++) {
+for (var i = 0; i < 1; i++) {
 
     var istring = JSON.stringify(i);
 
@@ -69,7 +69,7 @@ for (var i = 0; i < 5; i++) {
                     //console.log('Error code: ' + error.code);
                     //console.log('Signal received: ' + error.signal);
                 }
-                //console.log('stdout: ' + stdout);
+                console.log('stdout: ' + stdout);
                 //console.log('stderr: ' + stderr);
 
                 callback(error, stdout);
