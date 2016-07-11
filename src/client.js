@@ -22,8 +22,8 @@ workerProcess.on('exit', function (code) {
 /**
  * Milisecs
  */
-function clock(start) {
-    if ( !start ) return process.hrtime();
-    var end = process.hrtime(start);
+function clock(startTime) {
+    if ( !startTime ) return process.hrtime();
+    var end = process.hrtime(startTime);
     return Math.round((end[0]*1000) + (end[1]/1000000));
 }
