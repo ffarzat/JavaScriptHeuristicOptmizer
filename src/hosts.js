@@ -1,4 +1,4 @@
-import Shell = require('shelljs');
+var Shell = require('shelljs');
 
 var os = require("os");
 console.log(`Hostname: ${os.hostname()}`);
