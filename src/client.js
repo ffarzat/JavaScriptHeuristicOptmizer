@@ -2,10 +2,10 @@ var os = require("os");
 const child_process = require('child_process');
 
 
-child_process.exec(`PATH=$PATH:/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node`);
-child_process.exec(`PATH=$PATH:/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm`);
+child_process.exec(``);
+child_process.exec(``);
 
-var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, {maxBuffer: 1024 * 5000}, function (error, stdout, stderr) {
+var workerProcess = child_process.exec(`PATH=$PATH:/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node && PATH=$PATH:/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm && cd Libraries/uuid && npm test`, {maxBuffer: 1024 * 5000}, function (error, stdout, stderr) {
     if (error) {
         console.log(error.stack);
         //console.log('MPN Error code: ' + error.code);
