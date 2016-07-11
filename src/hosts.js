@@ -13,7 +13,8 @@ console.log(`hostfile: ${hostfile}`);
 
 var cpusString = fs.readFileSync(hostfile).toString().split("\n");
 console.log(`Ncpus == ${cpusString.length}`);
-console.log(`No host: ${cpusString[48]}`);
+console.log(`Test Host #1: ${cpusString[48]}`);
+console.log(`Test Host #2: ${cpusString[96]}`);
 
 //Sync
 
@@ -34,10 +35,15 @@ for (var index = 0; index < 5; index++) {
 
 
 var messagesToProcess = [];
+var actualHost = cpusString[48];
 
-for (var i = 0; i < 9; i++) {
+
+for (var i = 0; i < 18; i++) {
 
     var uuid = require('node-uuid');
+
+    if( i > 9)
+        actualHost = cpusString[96];
 
     var instance = function (callback) {
 
