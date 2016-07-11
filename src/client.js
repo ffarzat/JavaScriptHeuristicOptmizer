@@ -1,10 +1,6 @@
 var os = require("os");
 const child_process = require('child_process');
 
-
-child_process.exec(``);
-child_process.exec(``);
-
 var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
     if (error) {
         console.log(error.stack);

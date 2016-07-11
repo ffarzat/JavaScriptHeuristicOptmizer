@@ -29,15 +29,7 @@ async.parallel(messagesToProcess, function (err, results) {
     }
 );
 */
-var Shell = require('shelljs');
-const fs = require('fs');
-const child_process = require('child_process');
 
-var Ncpus = process.argv[2];
-var hostfile = process.argv[3];
-
-console.log(`Ncpus: ${Ncpus}`);
-console.log(`hostfile: ${hostfile}`);
 
 /*
  var returnedOutput = Shell.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400  src/client.js`, {silent:false});
@@ -49,21 +41,27 @@ for (var index = 0; index < 96; index++) {
 
 
 
+var parallelLimit = require('run-parallel-limit')
+const child_process = require('child_process');
 
-var async = require('async');
+var Ncpus = process.argv[2];
+var hostfile = process.argv[3];
+
+console.log(`Ncpus: ${Ncpus}`);
+console.log(`hostfile: ${hostfile}`);
+
+
+
 
 var messagesToProcess = [];
 
 for (var i = 0; i < 500; i++) {
 
     var istring = JSON.stringify(i);
+
     var instance = function (callback) {
-        
-        /*
-        var returnedOutput = Shell.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${istring}`, {silent:false});
-        */
-        
-        var workerProcess = child_process.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${istring}`, {maxBuffer: 1024 * 5000},
+
+        var workerProcess = child_process.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc  --max-old-space-size=102400 src/client.js ${istring}`, { maxBuffer: 1024 * 5000 },
 
             function (error, stdout, stderr) {
                 if (error) {
@@ -73,19 +71,19 @@ for (var i = 0; i < 500; i++) {
                 }
                 console.log('stdout: ' + stdout);
                 console.log('stderr: ' + stderr);
+
+                callback(stdout);
             });
 
         workerProcess.on('exit', function (code) {
             console.log('Child process exited with exit code ' + code);
         });
-        
-        
     };
 
     messagesToProcess.push(instance);
 }
 
-async.eachLimit(messagesToProcess, 500, function (err, results) {
+parallelLimit(messagesToProcess, 500, function (err, results) {
 
     if (err)
         console.log(`err: ${err.stack}`);
