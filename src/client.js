@@ -12,8 +12,9 @@ var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, { maxBuf
 });
 
 workerProcess.on('exit', function (code) {
-    console.log('       MPN process exited with exit code ' + code);
-    console.log(`       Tests ${process.argv[2]} executed inside host: ${os.hostname()}`);
+    console.log(`       Child Host: ${os.hostname()}`);
+    console.log('       MPN exit code ' + code);
+    //console.log(`       Tests ${process.argv[2]} executed inside host: ${os.hostname()}`);
 });
 
 
