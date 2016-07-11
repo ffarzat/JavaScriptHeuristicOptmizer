@@ -57,9 +57,11 @@ var messagesToProcess = [];
 
 for (var i = 0; i < 5; i++) {
 
-    var istring = JSON.stringify(i);
+    var uuid = require('node-uuid');
+    var istring = uuid.v4();
 
     var instance = function (callback) {
+        
 
         var workerProcess = child_process.exec(`mpirun -np 5 --hostfile ${hostfile} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc  --max-old-space-size=102400 src/client.js ${istring}`, { maxBuffer: 1024 * 5000 },
 
@@ -70,8 +72,9 @@ for (var i = 0; i < 5; i++) {
                     //console.log('Signal received: ' + error.signal);
                 }
                 console.log('stdout: ' + stdout);
+                //console.log('id:12345678' );
                 //console.log('stderr: ' + stderr);
-
+                
                 callback(error, stdout);
             });
 
