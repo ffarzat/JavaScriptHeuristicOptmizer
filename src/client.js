@@ -13,6 +13,6 @@ var workerProcess = child_process.exec(`cd Libraries/moment && npm test`, functi
 
 workerProcess.on('exit', function (code) {
     console.log('MPN process exited with exit code ' + code);
-}););
+});
 
 console.log(`Tests ${process.argv[2]} executed inside host: ${os.hostname()}`);
