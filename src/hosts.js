@@ -43,7 +43,7 @@ var async = require('async');
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 48; i++) {
+for (var i = 0; i < 1; i++) {
 
     var istring = JSON.stringify(i);
     var instance = function (callback) {
