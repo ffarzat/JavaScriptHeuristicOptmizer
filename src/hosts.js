@@ -51,7 +51,7 @@ var async = require('async');
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 96; i++) {
+for (var i = 0; i < 500; i++) {
 
     var istring = JSON.stringify(i);
     var instance = function (callback) {
@@ -81,7 +81,7 @@ for (var i = 0; i < 96; i++) {
     messagesToProcess.push(instance);
 }
 
-async.parallelLimit(messagesToProcess, 96, function (err, results) {
+async.parallelLimit(messagesToProcess, 500, function (err, results) {
 
     if (err)
         console.log(`err: ${err.stack}`);
