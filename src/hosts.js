@@ -92,6 +92,3 @@ async.parallelLimit(messagesToProcess, 96, function (err, results) {
 
     console.log(`results: ${results.length}`);
 });
-
-
-*/
