@@ -38,7 +38,8 @@ for (var i = 0; i < clientsTotal; i++) {
                     //console.log(error.stack);
                     //console.log('Error code: ' + error.code);
                     //console.log('Signal received: ' + error.signal);
-                    console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:999`);
+                    console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:999}`);
+                    error = null;
                 }
                 //console.log('stdout: ' + stdout);
                 //console.log('id:12345678' );
@@ -65,8 +66,8 @@ for (var i = 0; i < clientsTotal; i++) {
 
 async.parallel(messagesToProcess, function (err, results) {
 
-    //if (err)
-        //console.log(`err: ${err.stack}`);
+    if (err)
+        console.log(`async.parallel err: ${err.stack}`);
 
     console.log(`results: ${results.length}`);
 });
