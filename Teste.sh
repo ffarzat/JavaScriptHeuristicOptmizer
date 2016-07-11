@@ -27,7 +27,11 @@ echo "----------------"
 
 
 ### run the program (on the nodes as provided by PBS):
-mpirun -np 96 --hostfile $PBS_NODEFILE /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js 
+
+for i in {1..96}
+do
+    mpirun -np 1 --hostfile $PBS_NODEFILE /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js
+done
 
 date
 
