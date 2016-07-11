@@ -16,7 +16,7 @@ workerProcess.on('exit', function (code) {
     //console.log(`       Child Host: ${os.hostname()}`);
     //console.log('       MPN exit code ' + code);
     //console.log(`       Tests ${process.argv[2]} executed inside host: ${os.hostname()}`);
-    console.log(`{id: ${process.argv[2]}, code: ${code}, host: ${os.hostname(), duration: clock(start)} }`);
+    console.log(`{id: ${process.argv[2]}, code: ${code}, host: ${os.hostname(), duration: clock(start)}`);
 });
 
 /**
