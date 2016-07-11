@@ -27,12 +27,7 @@ echo "----------------"
 
 
 ### run the program (on the nodes as provided by PBS):
-### WORKS! mpirun -np 96 --hostfile $PBS_NODEFILE /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js 
-
-mpirun -np 1 --hostfile $PBS_NODEFILE /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js
-
-### mpirun -np 400 --hostfile $PBS_NODEFILE node --expose-gc --max-old-space-size=102400 build/src/Teste.js 
-### mpirun node --expose-gc --max-old-space-size=102400 build/src/Teste.js
+mpirun -np 96 --hostfile $PBS_NODEFILE /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/hosts.js 
 
 date
 
