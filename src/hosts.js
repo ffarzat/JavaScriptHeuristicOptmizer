@@ -48,7 +48,7 @@ var messagesToProcess = [];
 for (var i = 0; i < 96; i++) {
 
     var instance = function (callback) {
-        var workerProcess = child_process.exec(`mpirun -np 1 --hostfile ${hostfile} /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/client.js`,
+        var workerProcess = child_process.exec(`mpirun -np 1 --hostfile ${hostfile} /mnt/scratch/user8/nodev4/node --expose-gc --max-old-space-size=102400 src/client.js ${i}`,
 
             function (error, stdout, stderr) {
                 if (error) {
