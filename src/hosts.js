@@ -45,8 +45,8 @@ for (var i = 0; i < clientsTotal; i++) {
                 //console.log('id:12345678' );
                 //console.log('stderr: ' + stderr);
 
-                if (stdout.length == 0) {
-                    stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:999}`;
+                if (stdout.length == 0 || stdout.indexOf("mpirun") > -1) {
+                    stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:998}`;
                 }
 
                 console.log(stdout);
@@ -56,7 +56,7 @@ for (var i = 0; i < clientsTotal; i++) {
 
         workerProcess.on('exit', function (code) {
             //if(code !== 0)
-            //console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:999`);
+            //console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:997`);
         });
 
     };
