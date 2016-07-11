@@ -21,7 +21,7 @@
     "clientTimeout":1200,
     "clientsTotal": 48,
     "libraries" : [
-        {"name":"tleaf",       "path":"Libraries/tleaf/",         "mainFilePath":"Libraries/tleaf/index.js" }
+        {"name":"tleaf",       "path":"Libraries/tleaf/",         "mainFilePath":"Libraries/tleaf/src/parse.js" }
     ],
     "trialsConfiguration":[
         {
