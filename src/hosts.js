@@ -3,7 +3,9 @@ var os = require("os");
 var Shell = require('shelljs');
 var async = require('async');
 var parallelLimit = require('run-parallel-limit')
+var uuid = require('node-uuid');
 const child_process = require('child_process');
+
 
 var Ncpus = process.argv[2];
 var hostfile = process.argv[3];
@@ -26,11 +28,11 @@ var actualHost = cpusString[48];
 
 for (var i = 0; i < clientsTotal; i++) {
 
-    var uuid = require('node-uuid');
+    
 
     var instance = function (callback) {
-
-        var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${uuid.v4()}`, { maxBuffer: 1024 * 5000, timeout: 1000},
+        var msgId = uuid.v4();
+        var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000, timeout: 1000},
             function (error, stdout, stderr) {
                 if (error) {
                     console.log(error.stack);
@@ -49,7 +51,7 @@ for (var i = 0; i < clientsTotal; i++) {
             });
 
         workerProcess.on('exit', function (code) {
-            //console.log('Child process exited with exit code ' + code);
+            console.log(console.log(`{id: ${msgId}, sucess: false, host: no-one, duration:999`););
         });
 
     };
