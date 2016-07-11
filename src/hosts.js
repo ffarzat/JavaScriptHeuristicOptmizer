@@ -32,7 +32,7 @@ for (var i = 0; i < clientsTotal; i++) {
 
     var instance = function (callback) {
         var msgId = uuid.v4();
-        var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000, timeout: 3000 },
+        var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000},
             function (error, stdout, stderr) {
                 if (error) {
                     //console.log(error.stack);
@@ -63,10 +63,48 @@ for (var i = 0; i < clientsTotal; i++) {
     messagesToProcess.push(instance);
 }
 
-async.parallel(messagesToProcess, function (err, results) {
+parallel({timeoutMS: 2000}, messagesToProcess, function (err, results) {
 
     if (err)
         console.log(`err: ${err.stack}`);
 
     console.log(`results: ${results.length}`);
 });
+
+
+
+
+
+/**
+ * Async parallel Wrapper
+ */
+
+// async.parallel with optional timeout (options.timeoutMS)
+function parallel(options, tasks, cb) {
+  //  sanity checks
+  options = options || {};
+
+  // no timeout wrapper; passthrough to async.parallel
+  if(typeof options.timeoutMS != 'number') return async.parallel(tasks, cb);
+
+  var timeout = setTimeout(function(){
+    // remove timeout, so we'll know we already erred out
+    timeout = null;
+
+    // error out
+    cb('async.parallel timed out out after ' + options.timeoutMS + 'ms.', null);
+  }, options.timeoutMS);
+
+  async.parallel(tasks, function(err, result){
+    // after all tasks are complete
+
+    // noop if timeout was called and annulled
+    if(!timeout) return;
+
+    // cancel timeout (if timeout was set longer, and all parallel tasks finished sooner)
+    clearTimeout(timeout);
+
+    // passthrough the data to the cb
+    cb(err, result);
+  });
+}
