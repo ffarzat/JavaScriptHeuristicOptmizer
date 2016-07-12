@@ -137,6 +137,7 @@ export default class CommandTester implements ITester {
             min = Math.min.apply(null, numbers);
             avg = this.mean(numbers);
             median = this.median(numbers);
+            passedAllTests = list[0].sucess;
 
             //console.log(`Min: ${ToSecs(min)}`);
             //console.log(`Max: ${ToSecs(max)}`);
