@@ -100,9 +100,20 @@ export default class RD extends IHeuristic {
         if (counter == this._config.neighborsToProcess) {
             this._logger.Write(`[RD] Done requests. Just waiting`);
 
-            this.RegisterForConclusion( ()=>{
-                cb(neighbors);
-            });
+            //this._logger.Write(`[RD] ${this.intervalId == undefined}`);
+            if (this.intervalId == undefined) {
+                var start = new Date();
+
+                this.intervalId = setInterval(() => {
+                    this._logger.Write(`[RD] Mutations total: ${neighbors.length}/${this.operationsCounter}`);
+
+                    if (neighbors.length == this.operationsCounter) {
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
+                        cb(neighbors);
+                    }
+                }, 1 * 1000);
+            }
 
 
             return;

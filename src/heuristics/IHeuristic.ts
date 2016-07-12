@@ -53,6 +53,8 @@ abstract class IHeuristic extends events.EventEmitter {
 
     Pool: any;
 
+    Operations = [];
+
     /**
      * Forces the Heuristic to validate config
      */
@@ -322,33 +324,35 @@ abstract class IHeuristic extends events.EventEmitter {
 
         msg.ActualLibrary = this._lib.name;
 
-        //this._logger.Write(`${JSON.stringify(msg)}`);
-        
+//============================================ For now
+        var messagesToProcess = [];
 
-        //============================================ For now
+        var instance = (callback) => {
+            this.Pool.enqueue(JSON.stringify(item), callback);
+        };
 
-        this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
-            if (err != undefined) {
-                this._logger.Write(`[IHeuristic] err: ${err.stack}`);
+        messagesToProcess.push(instance);
+
+        async.parallel(messagesToProcess,
+
+            (err, results) => {
+                if (err) {
+                    this._logger.Write(`[IHeuristic] err: ${err.stack}`);
+                    cb(item);
+                }
+                else {
+                    //this._logger.Write(`[IHeuristic] results: ${JSON.stringify(results[0])}`);
+                    var processedMessage = results[0].stdout;
+
+                    msg.ctx = this.Reload(processedMessage.ctx);
+                    cb(msg);
+                }
             }
-            else {
-                //this._logger.Write(`${JSON.stringify(obj)}`);
-
-                msg.ctx = this.Reload(obj.stdout.ctx);
-            }
-
-            cb(msg); //always call back!
-        });
+        );
 
         //============================================ ends
     }
 
-    RegisterForConclusion(cb: () => void) {
-        this.Pool.drain((err) => {
-            this._logger.Write(`===============================> [Pool done]`);
-            cb();
-        });
-    }
 }
 
 
