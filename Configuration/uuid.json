@@ -2,7 +2,7 @@
     "file": "uuid.json",
     "trials":60,
     "startTrial": 1,
-    "fitType":"mean",
+    "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
     "crossOverTrials": 1,
