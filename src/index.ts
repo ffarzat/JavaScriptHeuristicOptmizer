@@ -49,43 +49,15 @@ logger.Write(`Preparing libs environment`);
 
 ParseConfigAndLibs();
 DisplayConfig();
-ExecuteTrials(configuration.startTrial);
-
-//=========================================================================================== Functions
-function ExecuteTrials(globalTrial: number) {
-
-
-    logger.Write(`============================= Optmizer Global trial: ${globalTrial}`);
-    //var msg = new Message();
-    //process.send(msg); //clean Server
-
-    executeHeuristicTrial(globalTrial, configuration, 0, uniquePool, () => {
-        logger.Write(`============================= Optmizer Global trial: ${globalTrial} Done!`);
-
-        globalTrial++;
-        if (globalTrial == configuration.trials) {
-            logger.Write(`[index] All trials were executed`);
-            //var shutdownMessage = new Message();
-            //shutdownMessage.Shutdown = true;
-            //process.send(shutdownMessage);
-            process.exit();
-        }
-        else {
-            ExecuteTrials(globalTrial);//next
-        }
-    });
-
+//=========================================================================================== For all trials
+for (var trial = 0; trial < configuration.trials; trial++) {
+    for (var heuristicTrial = 0; heuristicTrial < configuration.trialsConfiguration.length ; heuristicTrial++) {
+        var optmizer = new Optmizer();
+        optmizer.Setup(configuration, trial, heuristicTrial);
+        optmizer.DoOptmization();    
+    }
 }
 
-function executeHeuristicTrial(globalTrial: number, config: IConfiguration, heuristicTrial: number, ClientsPool: any, cb: () => void) {
-
-    optmizer = new Optmizer();
-
-    optmizer.Setup(configuration, globalTrial, heuristicTrial, ClientsPool);
-    optmizer.DoOptmization(0, () => {
-        cb();
-    });
-}
 
 function ParseConfigAndLibs() {
     for (var libIndex = 0; libIndex < configuration.libraries.length; libIndex++) {
