@@ -25,7 +25,7 @@ echo "nodes: $NPROCS"
 echo "----------------"
 
 ### run the program (on the nodes as provided by PBS):
-node --expose-gc --max-old-space-size=102400 build/src/index.js  Configuration/uuid.json $NPROCS $PBS_NODEFILE
+node --expose-gc --max-old-space-size=512000 build/src/index.js  Configuration/uuid.json $NPROCS $PBS_NODEFILE
 
 date
 
