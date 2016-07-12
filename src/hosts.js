@@ -34,18 +34,24 @@ for (var i = 0; i < clientsTotal; i++) {
         var msgId = uuid.v4();
         var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000 },
             function (error, stdout, stderr) {
-               
+                 var errorString = `{id: ${msgId}, sucess: false, host: no-one, duration:999}\n{id: ${msgId}, sucess: false, host: no-one, duration:999}\n{id: ${msgId}, sucess: false, host: no-one, duration:999}\n{id: ${msgId}, sucess: false, host: no-one, duration:999}\n{id: ${msgId}, sucess: false, host: no-one, duration:999}` 
+
+
                 if (error) {
-                    stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:999}`;
+                    stdout = errorString;
                     error = null;
                 }
-                else {
 
-                    if (stdout.length == 0 || stdout.indexOf("mpirun") > -1) {
-                        stdout = `{id: ${msgId}, sucess: false, host: no-one, duration:998}`;
-                    }
+                if (stderr) {
+                    stdout = errorString;
+                    error = null;
                 }
 
+                if (stdout.length == 0 || stdout.indexOf("mpirun") > -1) {
+                    stdout = errorString;
+                }
+
+                console.log(stdout);
                 callback(error, stdout);
             });
 
@@ -63,9 +69,6 @@ async.parallel(messagesToProcess, function (err, results) {
 
     if (err)
         console.log(`async.parallel err: ${err.stack}`);
-
-    console.log(JSON.stringify(result[0]));
-
 
     console.log(`results: ${results.length}`);
 });
