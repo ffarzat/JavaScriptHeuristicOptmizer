@@ -188,7 +188,7 @@ export default class CommandTester implements ITester {
             individual.testResults = results;
         }
 
-        this.ShowConsoleResults(results);
+        //this.ShowConsoleResults(results);
     }
 
     /**
