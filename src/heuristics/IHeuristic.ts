@@ -325,7 +325,7 @@ abstract class IHeuristic extends events.EventEmitter {
         var idTimeout = setTimeout(()=> {
             this._logger.Write(`[IHeuristic] timeout for ${msg.id}`);
             cb(msg);
-        }, this._globalConfig.clientTimeout * 1000);
+        }, (this._globalConfig.clientTimeout * 5)  * 1000);
 
         this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
             
