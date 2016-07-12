@@ -339,8 +339,15 @@ abstract class IHeuristic extends events.EventEmitter {
         });
 
         //============================================ ends
-
     }
+
+    RegisterForConclusion(cb: () => void {
+        Pool.drain((err) => {
+            this._logger.Write(`===============================> [Pool done]`);
+            cb();
+        });
+    });
+
 }
 
 
