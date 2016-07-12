@@ -64,9 +64,7 @@ async.parallel(messagesToProcess, function (err, results) {
     if (err)
         console.log(`async.parallel err: ${err.stack}`);
 
-    for (var result  in results) {
-        console.log(JSON.stringify(result));
-    }
+    console.log(JSON.stringify(result[0]));
 
 
     console.log(`results: ${results.length}`);
