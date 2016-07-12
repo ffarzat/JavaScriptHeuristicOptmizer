@@ -41,6 +41,8 @@ export default class Optmizer {
 
     Pool: any;
 
+    libCurrentIndex: number;
+
     /**
      * Initializes intire Setup chain
      */
@@ -48,6 +50,7 @@ export default class Optmizer {
         this.DoValidation(Config)
         this.configuration = Config;
         this.Pool = ClientsPool;
+        this.libIndex = 0;
 
         this.trialIndex = TrialIndex;
         this.heuristicTrial = HeuristicTrial;
@@ -235,7 +238,7 @@ export default class Optmizer {
                 var element = this.configuration.libraries[libIndex];
                 this.logger.Write(` [Optmizer] Trial ${this.trialIndex} for Library ${element.name} done.`);
                 
-                libIndex++;
+                this.libIndex +=1;
 
                 if (this.configuration.libraries.length == libIndex) {
                     DoOptmizationcb();
