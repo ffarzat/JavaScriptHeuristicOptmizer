@@ -53,8 +53,6 @@ abstract class IHeuristic extends events.EventEmitter {
 
     Pool: any;
 
-    Operations = [];
-
     /**
      * Forces the Heuristic to validate config
      */
@@ -323,7 +321,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         msg.ActualLibrary = this._lib.name;
 
-//============================================ For now
+        //============================================ For now
         var messagesToProcess = [];
 
         var instance = (callback) => {
