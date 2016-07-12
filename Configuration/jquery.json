@@ -19,7 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":150,
-    "copyFileTimeout": 1800,
+    "copyFileTimeout": 14400,
     "clientsTotal": 48,
     "libraries" : [
         {"name":"jquery",       "path":"Libraries/jquery/",         "mainFilePath":"Libraries/jquery/dist/jquery.js" }

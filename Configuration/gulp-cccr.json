@@ -19,7 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":1200,
-    "copyFileTimeout": 1200,
+    "copyFileTimeout": 14400,
     "clientsTotal": 48,
     "libraries" : [
         {"name":"gulp-cccr",       "path":"Libraries/gulp-ccr-browserify/",         "mainFilePath":"Libraries/gulp-ccr-browserify/index.js" }
