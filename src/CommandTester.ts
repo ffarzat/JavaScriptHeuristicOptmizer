@@ -104,9 +104,9 @@ export default class CommandTester implements ITester {
             var libPath = this.libDirectoryPath;
             var timeoutMS = this.testTimeout;
             var testUntil = this.testUntil;
-            console.log(`libPath: ${id}`);
-            console.log(`timeoutMS: ${libPath}`);
-            console.log(`testUntil: ${timeoutMS}`);
+            console.log(`libPath: ${libPath}`);
+            console.log(`timeoutMS: ${timeoutMS}`);
+            console.log(`testUntil: ${testUntil}`);
 
 
 
