@@ -323,7 +323,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         //============================================ For now
 
-        Pool.enqueue(JSON.stringify(msg), (err, obj) => {
+        this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
             if (err) {
                 this._logger.Write(`[IHeuristic] err: ${err.stack}`);
                 cb(msg);
