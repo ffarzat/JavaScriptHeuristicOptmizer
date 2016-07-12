@@ -153,8 +153,15 @@ export default class Optmizer {
 
             smtpTransport.close();
         });
+    }
 
-
+    /**
+     * Initializes configurated Tester class
+     */
+    private InitializeTester(LibrarieOverTest: Library) {
+        this.tester = new TesterFactory().CreateByName(this.configuration.tester);
+        this.tester.Setup(this.configuration.testUntil, LibrarieOverTest, this.configuration.fitType, 1, undefined, this.configuration.clientTimeout * 1000 );
+        this.tester.SetLogger(this.logger);
     }
 
     /**
@@ -169,7 +176,6 @@ export default class Optmizer {
                 this.logger.Write(`Using nodesSelectionApproach: ${this.nodesSelectionApproach}`);
 
                 this.InitializeOutWritter(actualLibrary, actualHeuristic);
-
                 this.InitializeTester(actualLibrary);
 
                 actualHeuristic._tester = this.tester;
@@ -182,6 +188,4 @@ export default class Optmizer {
             });
         });
     }
-
-
 }

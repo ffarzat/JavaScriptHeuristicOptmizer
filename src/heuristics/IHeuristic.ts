@@ -80,7 +80,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Especific Run for each Heuristic
      */
-    abstract RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void);
+    abstract RunTrial(trialIndex: number);
 
     /**
      *  Releases a Mutation over context 
@@ -270,32 +270,23 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Defines library and test original code
      */
-    SetLibrary(library: Library, cb: (sucess: boolean) => void) {
+    SetLibrary(library: Library) {
+
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
+        this.Test(this.Original);
+        
+        if (!this.Original.testResults || !this.Original.testResults.passedAllTests) {
+                throw new Error (`[IHeuristic] Failed to execute tests for ${library.name}`);
+        }
+        
+        //Force Best
+        this.bestFit = this._tester.RetrieveConfiguratedFitFor(this.Original);
         this.bestIndividual = this.Original;
 
-        this.Test(this.Original, (testedOriginal) => {
-            this.Original = testedOriginal;
-
-            //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
-
-            if (!this.Original.testResults || !this.Original.testResults.passedAllTests) {
-                this._logger.Write(`[IHeuristic] Failed to execute tests for ${library.name}`);
-                cb(false);
-            }
-            else {
-                //Force Best
-                this.bestFit = this.Original.testResults.fit;
-                this.bestIndividual = this.Original;
-
-                this._logger.Write(`[IHeuristic] Original Fit ${this.bestFit}`);
-                this._logger.Write('=================================');
-                cb(true);
-            }
-        });
-
+        this._logger.Write(`Original Fit ${this.bestFit}`);
+        this._logger.Write('=================================');
     }
 
 

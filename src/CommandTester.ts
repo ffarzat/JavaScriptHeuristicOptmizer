@@ -111,7 +111,7 @@ export default class CommandTester implements ITester {
             var msgId = uuid.v4();
             var bufferOption = { maxBuffer: 1024 * 5000 }
 
-            if (this.hostfile === "") {
+            if (this.hostfile === "" || this.hostfile == undefined) {
                 testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
                 bufferOption = {maxBuffer: 200*1024};
             }
