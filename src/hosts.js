@@ -33,7 +33,7 @@ try {
 
     var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
     stringList = stringList.substring(0, stringList.length - 1);
-    console.log(`[${stringList}]`);
+    //console.log(`[${stringList}]`);
     
     var list = JSON.parse(`[${stringList}]`);
     var numbers = [];
