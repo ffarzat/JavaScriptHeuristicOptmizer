@@ -150,7 +150,7 @@ export default class CommandTester implements ITester {
             /* FOR MPIRUN using */
 
         } catch (error) {
-            //this.logger.Write(error);
+            this.logger.Write(error);
             this.logger.Write(`[CommandTester] Tests Failed.`);
             passedAllTests = false;
         }
