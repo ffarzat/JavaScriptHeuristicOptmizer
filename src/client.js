@@ -23,7 +23,7 @@ var workerProcess = child_process.exec(`cd Libraries/${libPath} && npm test`, { 
     }
     //console.log('MPN stdout: ' + stdout);
     //console.log('MPNstderr: ' + stderr);
-    console.log(`{"id":"${id}", "sucess":"true", "host:"${os.hostname()}", "duration":"${clock(start)}"}`);
+    console.log(`{"id":"${id}", "sucess":"true", "host":"${os.hostname()}", "duration":"${clock(start)}"}`);
     process.exit();
 });
 
