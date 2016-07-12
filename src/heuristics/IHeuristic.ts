@@ -320,7 +320,6 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
         msg.id = uuid.v4();
-        msg.cb = cb;
 
         msg.ActualLibrary = this._lib.name;
 
@@ -328,7 +327,7 @@ abstract class IHeuristic extends events.EventEmitter {
         var messagesToProcess = [];
 
         var instance = (callback) => {
-            this.Pool.enqueue(JSON.stringify(item), callback);
+            this.Pool.enqueue(JSON.stringify(msg), callback);
         };
 
         messagesToProcess.push(instance);
@@ -338,7 +337,7 @@ abstract class IHeuristic extends events.EventEmitter {
             (err, results) => {
                 if (err) {
                     this._logger.Write(`[IHeuristic] err: ${err.stack}`);
-                    cb(item);
+                    cb(msg);
                 }
                 else {
                     //this._logger.Write(`[IHeuristic] results: ${JSON.stringify(results[0])}`);
