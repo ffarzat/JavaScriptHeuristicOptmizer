@@ -322,7 +322,7 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ActualLibrary = this._lib.name;
 
         //============================================ For now
-        var idTimeout = setTimeout(function() {
+        var idTimeout = setTimeout(()=> {
             this._logger.Write(`[IHeuristic] timeout for ${msg.id}`);
             cb(msg);
         }, this._globalConfig.clientTimeout * 1000);
