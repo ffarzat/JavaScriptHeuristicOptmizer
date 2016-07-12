@@ -38,8 +38,8 @@ try {
     var list = JSON.parse(`[${stringList}]`);
     
     for (var index = 0; index < list.length; index++) {
-        
-        var element = array[index];
+        var element = list[index];
+        console.log(element.sucess);
         console.log(element.duration);
     }
     
