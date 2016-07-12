@@ -2,14 +2,14 @@ var os = require("os");
 const child_process = require('child_process');
 var start = process.hrtime();
 
-var timeoutId = setTimeout(function() {
-     process.exit(1);
+var timeoutId = setTimeout(function () {
+    process.exit(1);
 }, 3000);
 
 
 var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
     clearTimeout(timeoutId);
-    
+
     if (error) {
         //console.log(error.stack);
         //console.log('MPN Error code: ' + error.code);
@@ -34,7 +34,7 @@ workerProcess.on('exit', function (code) {
  * Milisecs F
  */
 function clock(startTime) {
-    if ( !startTime ) return process.hrtime();
+    if (!startTime) return process.hrtime();
     var end = process.hrtime(startTime);
-    return Math.round((end[0]*1000) + (end[1]/1000000));
+    return Math.round((end[0] * 1000) + (end[1] / 1000000));
 }

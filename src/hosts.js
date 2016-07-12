@@ -25,16 +25,26 @@ var clientsTotal = 9;
 var messagesToProcess = [];
 var actualHost = cpusString[48];
 
+try {
+    var stdout = child_process.execSync(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000 });
+
+    console.log(stdout);
+
+} catch (error) {
+    console.log(error.stack);
+}
+
+
+/*
+
 
 for (var i = 0; i < clientsTotal; i++) {
 
-
-
     var instance = function (callback) {
         var msgId = uuid.v4();
-        var workerProcess = child_process.exec(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000 },
+        var workerProcess = child_process.execSync(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId}`, { maxBuffer: 1024 * 5000 },
             function (error, stdout, stderr) {
-                 var errorString = `{id: ${msgId}, sucess: false, host: no-one, duration:999}\n{id: ${msgId}, sucess: false, host: no-one, duration:999}\n{id: ${msgId}, sucess: false, host: no-one, duration:999}\n{id: ${msgId}, sucess: false, host: no-one, duration:999}\n{id: ${msgId}, sucess: false, host: no-one, duration:999}` 
+                var msgResult: Message = { id: msgId, sucess: false, min: 0, max: 0, mean: 0, median: 0, duration: 0 };
 
 
                 if (error) {
@@ -72,3 +82,5 @@ async.parallel(messagesToProcess, function (err, results) {
 
     console.log(`results: ${results.length}`);
 });
+
+*/
