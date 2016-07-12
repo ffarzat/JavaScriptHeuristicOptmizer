@@ -162,17 +162,17 @@ abstract class IHeuristic extends events.EventEmitter {
         results.originalIndividualLOC = originalCode.split(/\r\n|\r|\n/).length;
 
         var trialTimer = exectimer.timers[this.trialUuid];
-        results.time = this.ToNanosecondsToMinutes(trialTimer.duration());
+        results.time = this.ToNanosecondsToSeconds(trialTimer.duration());
         results.better = bestCode != originalCode
 
         return results;
     }
 
     /**
-     * Transform nano secs in minutes
+     * Transform nano secs in secs
      */
-    ToNanosecondsToMinutes(nanovalue: number): number {
-        return parseFloat((parseFloat((nanovalue / 1000000000.0).toFixed(1)) / 60).toFixed(1));
+    private ToNanosecondsToSeconds(nanovalue: number): number {
+        return parseFloat((nanovalue / 1000000000.0).toFixed(1));
     }
 
     /**
