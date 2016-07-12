@@ -8,10 +8,10 @@ var start = process.hrtime();
 
 var timeoutId = setTimeout(function () {
     process.exit(1);
-}, timeoutMS);
+}, 300);
 
 
-var workerProcess = child_process.exec(`cd Libraries/${libPath} && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
+var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
     clearTimeout(timeoutId);
 
     if (error) {
