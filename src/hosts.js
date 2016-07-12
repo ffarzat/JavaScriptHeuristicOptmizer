@@ -19,7 +19,7 @@ console.log(`Test Host #1: ${cpusString[48]}`);
 
 //var clientsTotal = 9;
 var libname = "lodash";
-var timeoutMS = 3000;
+var timeoutMS = 15000;
 
 //Async
 
@@ -29,7 +29,7 @@ var actualHost = cpusString[48];
 
 try {
     var msgId = uuid.v4();
-    var stdout = child_process.execSync(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js`, { maxBuffer: 1024 * 5000 }).toString();
+    var stdout = child_process.execSync(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libname} ${timeoutMS}`, { maxBuffer: 1024 * 5000 }).toString();
 
     console.log(stdout);
 
