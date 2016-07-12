@@ -168,6 +168,7 @@ export default class Client {
         var ctx = new OperatorContext();
 
         try {
+            this._config.clientTimeout = this._config.clientTimeout * 1000;
             this.InitializeTester(context);
             this._tester.Test(context.First); //First is subject
             //this._tester.Test(context.Second); //Second is the original!!!!
@@ -179,7 +180,7 @@ export default class Client {
         }
 
 
-        this._tester.SetTmeout(ctx.First.testResults.fit); //Original time is now the timeout for everyone else (already in MS)
+        this._config.clientTimeout = ctx.First.testResults.fit; //Original time is now the timeout for everyone else (already in MS)
         this.logger.Write(`[Client]Test done.`);
         return ctx;
     }
@@ -189,27 +190,19 @@ export default class Client {
     */
     private InitializeTester(context: OperatorContext) {
 
-        this.logger.Write(`[Client] tester: ${this._tester.LibOverTests().name} == ${context.LibrarieOverTest.name}`);
+        this._tester = null; //ensure GC can pass
 
-        if (this._tester == undefined || this._tester.LibOverTests().name !== context.LibrarieOverTest.name)
-        {
-            this.logger.Write(`[Client] Restarting Testes for new lib environment: ${context.LibrarieOverTest.name}`)
-            this._tester = null; //ensure GC can pass
+        //change lib path for clientWorkDir!
+        this._config.libraries.forEach(element => {
+            if (element.name === context.LibrarieOverTest.name) {
+                context.LibrarieOverTest = element;
+                context.LibrarieOverTest.path = `${this.TempDirectory.path}/${context.LibrarieOverTest.name}`;
+            }
+        });
 
-            //change lib path!
-            this._config.libraries.forEach(element => {
-                if (element.name === context.LibrarieOverTest.name) {
-                    context.LibrarieOverTest = element;
-                    context.LibrarieOverTest.path = `${this.TempDirectory.path}/${context.LibrarieOverTest.name}`;
-                    //this.logger.Write(`[Client]${context.LibrarieOverTest.name}`)
-                    //this.logger.Write(`[Client]${context.LibrarieOverTest.mainFilePath}`)
-                    //this.logger.Write(`[Client]${context.LibrarieOverTest.path}`)
-                }
-            });
-
-            this._tester = new TesterFactory().CreateByName(this._config.tester);
-            this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType, this.Ncpus, this.hostfile, this._config.clientTimeout * 1000);
-            this._tester.SetLogger(this.logger);
-        }
+        this.logger.Write(`[Client] Test lib environment: ${context.LibrarieOverTest.name}`)
+        this._tester = new TesterFactory().CreateByName(this._config.tester);
+        this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType, this.Ncpus, this.hostfile, this._config.clientTimeout);
+        this._tester.SetLogger(this.logger);
     }
 }

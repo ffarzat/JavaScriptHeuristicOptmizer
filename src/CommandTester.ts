@@ -40,7 +40,7 @@ export default class CommandTester implements ITester {
     hostfile: string;
     testTimeout: number;
 
-    LibrarieOverTest: Library;
+    LibName: string;
 
 
     /**
@@ -61,18 +61,11 @@ export default class CommandTester implements ITester {
         this.Ncpus = cpus;
         this.hostfile = hostfile;
 
-        this.LibrarieOverTest = LibrarieOverTest;
+        this.LibName = LibrarieOverTest.name;
 
         if (!fse.existsSync(this.oldLibFilePath))
             fse.copySync(this.libMainFilePath, this.oldLibFilePath, { "clobber": true });
 
-    }
-
-    /**
-     * Returns actual Libs
-     */
-    LibOverTests(): Library {
-        return this.LibrarieOverTest;
     }
 
     /**
@@ -240,10 +233,6 @@ export default class CommandTester implements ITester {
     private WriteCodeToFile(individual: Individual) {
         //this.logger.Write(`Saving over file ${this.libMainFilePath}`);
         fs.writeFileSync(this.libMainFilePath, individual.ToCode());
-    }
-
-    SetTmeout(ms: number) {
-        this.testTimeout = ms;
     }
 
     /**

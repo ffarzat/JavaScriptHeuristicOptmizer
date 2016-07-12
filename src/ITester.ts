@@ -17,10 +17,6 @@ interface ITester{
     RetrieveConfiguratedFitFor(individual: Individual): number;
     
     SetLogger(logger: ILogger);
-
-    SetTmeout(ms:number);
-
-    LibOverTests():Library;
 }
 
 export default ITester;
