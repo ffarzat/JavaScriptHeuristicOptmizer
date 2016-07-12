@@ -1,13 +1,17 @@
 var os = require("os");
 const child_process = require('child_process');
+var id = process.argv[2];
+var libPath = process.argv[3];
+var timeoutMS = process.argv[4];
+
 var start = process.hrtime();
 
 var timeoutId = setTimeout(function () {
     process.exit(1);
-}, 3000);
+}, timeoutMS);
 
 
-var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
+var workerProcess = child_process.exec(`cd Libraries/${libPath} && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
     clearTimeout(timeoutId);
 
     if (error) {
