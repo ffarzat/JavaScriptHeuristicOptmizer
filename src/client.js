@@ -29,7 +29,7 @@ var workerProcess = child_process.exec(`cd ${libPath} && npm test`, { maxBuffer:
     //console.log('MPN stdout: ' + stdout);
     //console.log('MPNstderr: ' + stderr);
     console.log(`{"id":"${id}", "sucess":"true", "host":"${os.hostname()}", "duration":"${clock(start)}"}`);
-    process.exit();
+    //process.exit();
 });
 
 workerProcess.on('exit', function (code) {

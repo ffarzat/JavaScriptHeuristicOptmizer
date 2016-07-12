@@ -92,21 +92,21 @@ export default class CommandTester implements ITester {
             var os = require("os");
             const child_process = require('child_process');
 
-            console.log(`Ncpus: ${this.Ncpus}`);
-            console.log(`hostfile: ${this.hostfile}`);
+            //console.log(`Ncpus: ${this.Ncpus}`);
+            //console.log(`hostfile: ${this.hostfile}`);
 
             var cpusString = fs.readFileSync(this.hostfile).toString().split("\n");
-            console.log(`Ncpus == ${cpusString.length}`);
-            console.log(`Test Host #1: ${cpusString[48]}`);
+            //console.log(`Ncpus == ${cpusString.length}`);
+            //console.log(`Test Host #1: ${cpusString[48]}`);
 
 
             //var clientsTotal = 9;
             var libPath = this.libDirectoryPath;
             var timeoutMS = this.testTimeout;
             var testUntil = this.testUntil;
-            console.log(`libPath: ${libPath}`);
-            console.log(`timeoutMS: ${timeoutMS}`);
-            console.log(`testUntil: ${testUntil}`);
+            //console.log(`libPath: ${libPath}`);
+            //console.log(`timeoutMS: ${timeoutMS}`);
+            //console.log(`testUntil: ${testUntil}`);
 
 
 
