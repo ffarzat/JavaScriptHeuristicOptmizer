@@ -172,7 +172,7 @@ abstract class IHeuristic extends events.EventEmitter {
      * Transform nano secs in secs
      */
     private ToNanosecondsToSeconds(nanovalue: number): number {
-        return parseFloat((nanovalue / 1000000000.0).toFixed(1));
+        return parseFloat((nanovalue / 1000000000.0).toFixed(3));
     }
 
     /**
@@ -198,7 +198,7 @@ abstract class IHeuristic extends events.EventEmitter {
     UpdateBest(newBest: Individual): boolean {
         var found: boolean = false;
         try {
-            if (newBest.testResults && newBest.testResults.passedAllTests && (parseInt(newBest.testResults.fit.toString()) < parseInt(this.bestFit.toString() )) && (newBest.ToCode() != this.bestIndividual.ToCode())) {
+            if (newBest.testResults && newBest.testResults.passedAllTests && (parseInt(newBest.testResults.fit.toString()) < parseInt(this.bestFit.toString())) && (newBest.ToCode() != this.bestIndividual.ToCode())) {
                 this._logger.Write('=================================');
                 this._logger.Write(`Older Fit ${this.bestFit}`);
                 this.bestFit = newBest.testResults.fit;
@@ -320,94 +320,27 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.id = uuid.v4();
         msg.cb = cb;
 
-
-
-        this.waitingMessages[msg.id] = msg;
-
-        var item = new Message();
-        item.id = msg.id;
-        item.ctx = msg.ctx;
-
-        item.ActualGlobalTrial = this.ActualGlobalTrial;
-        item.ActualHeuristic = this.Name;
-        item.ActualInternalTrial = this.ActualInternalTrial;
-        item.ActualLibrary = this.ActualLibrary;
+        msg.ActualGlobalTrial = this.ActualGlobalTrial;
+        msg.ActualHeuristic = this.Name;
+        msg.ActualInternalTrial = this.ActualInternalTrial;
+        msg.ActualLibrary = this.ActualLibrary;
 
         //============================================ For now
-        var messagesToProcess = [];
 
-        var instance = (callback) => {
-            this.Pool.enqueue(JSON.stringify(item), callback);
-        };
-
-        messagesToProcess.push(instance);
-
-        async.parallel(messagesToProcess,
-
-            (err, results) => {
-                if (err) {
-                    this._logger.Write(`[IHeuristic] err: ${err.stack}`);
-                    cb(item);
-                }
-                else {
-                    //this._logger.Write(`[IHeuristic] results: ${JSON.stringify(results[0])}`);
-                    var processedMessage = results[0].stdout;
-
-                    msg.ctx = this.Reload(processedMessage.ctx);
-                    cb(msg);
-                }
+        Pool.enqueue(JSON.stringify(msg), (err, obj) => {
+            if (err != undefined) {
+                this._logger.Write(`[IHeuristic] err: ${err.stack}`);
             }
-        );
+            else {
+                msg.ctx = this.Reload(obj.ctx);
+            }
+
+            cb(msg); //always call back!
+        });
 
         //============================================ ends
 
     }
-
-    /**
-     * Relases the callback magic
-     */
-    Done(message: Message) {
-        try {
-            if (message != undefined) {
-                var localmsg = this.waitingMessages[message.id];
-                if (localmsg != undefined) {
-                    clearTimeout(localmsg.tmeoutId);
-                    localmsg.tmeoutId = undefined;
-                    delete this.waitingMessages[message.id];
-
-                    localmsg.ctx = this.Reload(message.ctx);
-                    localmsg.cb(localmsg);
-                }
-                //else {
-                //this._logger.Write(`[IHeuristic] Msg ${message.id} not founded. WaitingMessages : ${Object.keys(this.waitingMessages).length}`);
-                //}
-            }
-
-        } catch (error) {
-            this._logger.Write(`${error.stack}`);
-        }
-    }
-
-    runGC() {
-        if (typeof global.gc != "undefined") {
-            //this._logger.Write(`Mem Usage Pre-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
-            //global.gc();
-            //this._logger.Write(`Mem Usage Post-GC ${this.formatBytes(process.memoryUsage().heapTotal, 2)}`);
-        }
-    }
-
-    /**
-     * Format for especific size
-     */
-    formatBytes(bytes, decimals) {
-        if (bytes == 0) return '0 Byte';
-        var k = 1000;
-        var dm = decimals + 1 || 3;
-        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        var i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-    }
-
 }
 
 

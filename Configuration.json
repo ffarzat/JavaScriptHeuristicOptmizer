@@ -3,7 +3,7 @@
     "trials":60,
     "startTrial": 0,
     "fitType":"mean",
-    "testUntil": 5,
+    "testUntil": 1,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/optmization.log",
@@ -15,16 +15,14 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD", "GA", "HC"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":60,
-    "clientsTotal": 48,
+    "clientsTotal": 2,
     "copyFileTimeout": 60,
     "libraries" : [
-        {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
-        {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },
-        {"name":"minimist",     "path":"Libraries/minimist/",       "mainFilePath":"Libraries/minimist/index.js"  }
+        {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }
     ],
     "trialsConfiguration":[
         {
