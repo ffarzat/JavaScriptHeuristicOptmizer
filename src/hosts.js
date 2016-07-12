@@ -31,7 +31,15 @@ try {
     var msgId = uuid.v4();
     var stdout = child_process.execSync(`mpirun -np 5 -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libname} ${timeoutMS}`, { maxBuffer: 1024 * 5000 }).toString();
 
-    console.log(stdout);
+    //console.log(stdout);
+    var list = JSON.parse(stdout);
+    
+    for (var index = 0; index < list.length; index++) {
+        
+        var element = array[index];
+        console.log(element.duration);
+        
+    }
 
 } catch (error) {
     console.log(error.stack);
