@@ -48,11 +48,11 @@ try {
     var avg = mean(numbers);
     var median = median(numbers);
 
-    console.log(`Min: ${min}`);
-    console.log(`Max: ${max}`);
-    console.log(`Mean: ${avg}`);
-    console.log(`Median: ${median}`);
-    console.log(`Duration: ${max}`); // Now is Max
+    console.log(`Min: ${ToSecs(min)}`);
+    console.log(`Max: ${ToSecs(max)}`);
+    console.log(`Mean: ${ToSecs(avg)}`);
+    console.log(`Median: ${ToSecs(median)}`);
+    console.log(`Duration: ${ToSecs(max)}`); // Now is Max
 
 
 } catch (error) {
@@ -73,12 +73,16 @@ function median(values) {
 }
 
 function mean(numbers) {
-    var total = 0,
-        i;
-    for (i = 0; i < numbers.length; i += 1) {
+    var total = 0, i;
+    for (i = 0; i < numbers.length; i++ ) {
         total += numbers[i];
     }
     return total / numbers.length;
+}
+
+function ToSecs(number)
+{
+    return = (number/1000) % 60;   
 }
 
 /*
