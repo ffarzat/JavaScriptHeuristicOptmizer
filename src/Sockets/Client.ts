@@ -168,7 +168,7 @@ export default class Client {
         var ctx = new OperatorContext();
 
         try {
-            this._config.clientTimeout = this._config.clientTimeout * 1000;
+            this._config.clientTimeout = this._config.clientTimeout;
             this.InitializeTester(context);
             this._tester.Test(context.First); //First is subject
             //this._tester.Test(context.Second); //Second is the original!!!!
