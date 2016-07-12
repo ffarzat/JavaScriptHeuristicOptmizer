@@ -18,8 +18,8 @@ console.log(`Ncpus == ${cpusString.length}`);
 console.log(`Test Host #1: ${cpusString[48]}`);
 
 //var clientsTotal = 9;
-var libname = "jquery";
-var timeoutMS = 180000;
+var libname = "unserscore";
+var timeoutMS = 10000;
 
 //Async
 
@@ -37,23 +37,21 @@ try {
     
     var list = JSON.parse(`[${stringList}]`);
     var numbers = [];
-    var totalDuration = 0;
     for (var index = 0; index < list.length; index++) {
         var element = list[index];
         numbers.push(element.duration);
-        totalDuration += element.duration;
     }
     
     var max = Math.max.apply(null, numbers);
     var min = Math.min.apply(null, numbers);
-    var avg = totalDuration/numbers.length;
+    var avg = mean(numbers);
     var median = median(numbers);
 
     console.log(`Min: ${min}`);
     console.log(`Max: ${max}`);
     console.log(`Mean: ${avg}`);
     console.log(`Median: ${median}`);
-    console.log(`Duration: ${max}`);
+    console.log(`Duration: ${max}`); // Now is Max
 
 
 } catch (error) {
@@ -71,6 +69,15 @@ function median(values) {
         return values[half];
     else
         return (values[half-1] + values[half]) / 2.0;
+}
+
+function mean(numbers) {
+    var total = 0,
+        i;
+    for (i = 0; i < numbers.length; i += 1) {
+        total += numbers[i];
+    }
+    return total / numbers.length;
 }
 
 /*
