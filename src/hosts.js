@@ -82,7 +82,7 @@ function mean(numbers) {
 
 function ToSecs(number)
 {
-    return = (number/1000) % 60;   
+    return (number/1000) % 60;   
 }
 
 /*
