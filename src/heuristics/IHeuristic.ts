@@ -200,6 +200,7 @@ abstract class IHeuristic extends events.EventEmitter {
         try {
             if (newBest.testResults && newBest.testResults.passedAllTests && newBest.testResults.fit < this.bestFit && (newBest.ToCode() != this.bestIndividual.ToCode())) {
                 this._logger.Write('=================================');
+                this._logger.Write(`Older Fit ${this.bestFit}`);
                 this.bestFit = newBest.testResults.fit;
                 this.bestIndividual = newBest;
                 this._logger.Write(`New Best Fit ${this.bestFit}`);
