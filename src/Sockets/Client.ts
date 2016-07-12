@@ -179,7 +179,7 @@ Test(context: OperatorContext): OperatorContext {
     }
 
 
-    this._tester.SetTmeout(ctx.First.testResults.fit); //Original time is now the timeout for everyone else
+    this._tester.SetTmeout(ctx.First.testResults.fit); //Original time is now the timeout for everyone else (already in MS)
     this.logger.Write(`[Client]Test done.`);
     return ctx;
 }
@@ -202,7 +202,7 @@ Test(context: OperatorContext): OperatorContext {
     });
 
     this._tester = new TesterFactory().CreateByName(this._config.tester);
-    this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType, this.Ncpus, this.hostfile, this._config.clientTimeout);
+    this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType, this.Ncpus, this.hostfile, this._config.clientTimeout * 1000);
     this._tester.SetLogger(this.logger);
 }
 }

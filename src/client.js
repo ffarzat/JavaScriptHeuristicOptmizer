@@ -13,7 +13,7 @@ var start = process.hrtime();
 
 var timeoutId = setTimeout(function () {
     process.exit(1);
-}, timeoutMS * 1000 );
+}, timeoutMS );
 
 
 var workerProcess = child_process.exec(`cd ${libPath} && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
