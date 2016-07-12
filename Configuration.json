@@ -20,6 +20,7 @@
     "url": "ws://localhost",
     "clientTimeout":60,
     "clientsTotal": 48,
+    "copyFileTimeout": 60,
     "libraries" : [
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" },

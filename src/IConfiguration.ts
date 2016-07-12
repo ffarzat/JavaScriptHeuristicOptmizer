@@ -126,6 +126,11 @@ interface IConfiguration {
     url: string;
 
     /**
+     * Libs environment initial copy
+     */
+    copyFileTimeout: number;
+
+    /**
      * Clients timeout in seconds
      */
     clientTimeout: number;

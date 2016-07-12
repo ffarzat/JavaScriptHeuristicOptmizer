@@ -20,6 +20,7 @@
     "url": "ws://localhost",
     "clientTimeout":1,
     "clientsTotal": 3,
+    "copyFileTimeout": 60,
     "libraries" : [
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }

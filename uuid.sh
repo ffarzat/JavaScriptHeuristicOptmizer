@@ -7,7 +7,6 @@
 ### Specify email address to use for notification.
 #PBS -M ffarzat@cos.ufrj.br
 
-
 date
 
 ### cd to directory where the job was submitted:
@@ -25,14 +24,8 @@ echo "nodes: $NPROCS"
 #NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
 echo "----------------"
 
-
 ### run the program (on the nodes as provided by PBS):
 node --expose-gc --max-old-space-size=102400 build/src/index.js  Configuration/uuid.json $NPROCS $PBS_NODEFILE
-
-### mpirun -np 400 --hostfile $PBS_NODEFILE node --expose-gc --max-old-space-size=102400 build/src/Teste.js 
-### mpirun node --expose-gc --max-old-space-size=102400 build/src/Teste.js
-
-##node --max-old-space-size=102400 build/src/Teste.js
 
 date
 

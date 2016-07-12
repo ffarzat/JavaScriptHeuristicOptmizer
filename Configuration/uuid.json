@@ -1,7 +1,7 @@
 {
     "file": "uuid.json",
     "trials":60,
-    "startTrial": 1,
+    "startTrial": 0,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
@@ -18,7 +18,8 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":60,
+    "clientTimeout":2,
+    "copyFileTimeout": 1200,
     "clientsTotal": 9,
     "libraries" : [
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }

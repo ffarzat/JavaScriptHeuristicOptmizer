@@ -19,6 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":60,
+    "copyFileTimeout": 1200,
     "clientsTotal": 40,
     "libraries" : [
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" }

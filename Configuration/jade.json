@@ -19,6 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":1200,
+    "copyFileTimeout": 1200,
     "clientsTotal": 48,
     "libraries" : [
         {"name":"Jade",         "path":"Libraries/Jade/",           "mainFilePath":"Libraries/Jade/lib/index.js"  }
