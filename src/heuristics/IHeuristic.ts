@@ -322,30 +322,20 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ActualLibrary = this._lib.name;
 
         //============================================ For now
-        var messagesToProcess = [];
 
-        var instance = (callback) => {
-            this.Pool.enqueue(JSON.stringify(msg), callback);
-        };
-
-        messagesToProcess.push(instance);
-
-        async.parallel(messagesToProcess,
-
-            (err, results) => {
-                if (err) {
-                    this._logger.Write(`[IHeuristic] err: ${err.stack}`);
-                    cb(msg);
-                }
-                else {
-                    //this._logger.Write(`[IHeuristic] results: ${JSON.stringify(results[0])}`);
-                    var processedMessage = results[0].stdout;
-
-                    msg.ctx = this.Reload(processedMessage.ctx);
-                    cb(msg);
-                }
+        Pool.enqueue(JSON.stringify(msg), (err, obj) => {
+            if (err) {
+                this._logger.Write(`[IHeuristic] err: ${err.stack}`);
+                cb(msg);
             }
-        );
+            else {
+                //this._logger.Write(`[IHeuristic] results: ${JSON.stringify(results[0])}`);
+                var processedMessage = obj.stdout;
+
+                msg.ctx = this.Reload(processedMessage.ctx);
+                cb(msg);
+            }
+        });
 
         //============================================ ends
     }
