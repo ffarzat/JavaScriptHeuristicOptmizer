@@ -29,7 +29,7 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 50,
+                "neighborsToProcess": 5,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
