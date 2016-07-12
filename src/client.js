@@ -8,22 +8,22 @@ var start = process.hrtime();
 
 var timeoutId = setTimeout(function () {
     process.exit(1);
-}, 3000);
+}, timeoutMS);
 
 
-var workerProcess = child_process.exec(`cd Libraries/uuid && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
+var workerProcess = child_process.exec(`cd Libraries/${libPath} && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
     clearTimeout(timeoutId);
 
     if (error) {
         //console.log(error.stack);
         //console.log('MPN Error code: ' + error.code);
         //console.log('MPNSignal received: ' + error.signal);
-        console.log(`{id: ${process.argv[2]}, sucess: false, host: ${os.hostname()}, duration: ${clock(start)}}`);
+        console.log(`{id: ${id}, sucess: false, host: ${os.hostname()}, duration: ${clock(start)}}`);
         process.exit(error.code);
     }
     //console.log('MPN stdout: ' + stdout);
     //console.log('MPNstderr: ' + stderr);
-    console.log(`{id: ${process.argv[2]}, sucess: true, host: ${os.hostname()}, duration: ${clock(start)}}`);
+    console.log(`{id: ${id}, sucess: true, host: ${os.hostname()}, duration: ${clock(start)}}`);
     process.exit();
 });
 
