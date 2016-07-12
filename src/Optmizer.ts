@@ -234,17 +234,17 @@ export default class Optmizer {
     public DoOptmization(libIndex, DoOptmizationcb: () => void) {
 
         try {
-            this.runLibOverHeuristic(libIndex, 0, () => {
-                var element = this.configuration.libraries[libIndex];
+            this.runLibOverHeuristic(this.libCurrentIndex, 0, () => {
+                var element = this.configuration.libraries[this.libCurrentIndex];
                 this.logger.Write(` [Optmizer] Trial ${this.trialIndex} for Library ${element.name} done.`);
                 
-                this.libIndex +=1;
+                this.libCurrentIndex +=1;
 
-                if (this.configuration.libraries.length == libIndex) {
+                if (this.configuration.libraries.length == this.libCurrentIndex) {
                     DoOptmizationcb();
                 }
                 else {
-                    this.DoOptmization(libIndex, DoOptmizationcb);
+                    this.DoOptmization(this.libCurrentIndex, DoOptmizationcb);
                 }
             });
         }
