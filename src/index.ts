@@ -13,20 +13,14 @@ import fs = require('fs');
 import path = require('path');
 import Shell = require('shelljs');
 var optmizer: Optmizer = undefined;
-var localServer: Server = new Server();
 
 //=========================================================================================== Reads config
 var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';
 var configurationFile: string = path.join(process.cwd(), configFile);
 
-console.log(`[index]configurationFile: ${configurationFile}`);
-
 var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
 var clientOptions = '--max-old-space-size=512000';
-
-console.log(`Ncpus: ${Ncpus}`);
-console.log(`hostfile: ${hostfile}`);
 
 
 if (hostfile == undefined) {
@@ -126,6 +120,9 @@ function ParseConfigAndLibs() {
 function DisplayConfig() {
     var totalTrials = configuration.trials * configuration.trialsConfiguration.length * configuration.libraries.length * configuration.heuristics.length;
     logger.Write('=================================');
+    logger.Write(`Configuration: ${configurationFile}`);
+    logger.Write(`Ncpus: ${Ncpus}`);
+    logger.Write(`hostfile: ${hostfile}`);
     logger.Write(`Clients total ${configuration.clientsTotal}`);
     logger.Write(`Tmp Dir [Config File] ${configuration.tmpDirectory}`);
     logger.Write(`Client timeout ${configuration.clientTimeout}`);
