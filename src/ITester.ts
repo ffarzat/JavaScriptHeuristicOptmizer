@@ -8,7 +8,7 @@ import ILogger from './ILogger';
 
 interface ITester{
     
-    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string);
+    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string, cpus: number, hostfile: string, testTimeout: number);
     
     Test(individual:Individual);
     
@@ -17,6 +17,8 @@ interface ITester{
     RetrieveConfiguratedFitFor(individual: Individual): number;
     
     SetLogger(logger: ILogger);
+
+    SetTmeout(ms:number);
 }
 
 export default ITester;

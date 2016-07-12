@@ -22,6 +22,9 @@ var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile
 
 var testOldDirectory: string = process.cwd();
 
+var Ncpus = parseInt(process.argv[2]);
+var hostfile = process.argv[3];
+
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -39,7 +42,7 @@ var localClient = new Client();
 localClient.id = clientId;
 localClient.logger = logger;
 
-localClient.Setup(configuration, clientWorkDir);
+localClient.Setup(configuration, clientWorkDir, Ncpus, hostfile);
 
 ParseConfigAndLibs(clientWorkDir.path);
 
@@ -49,40 +52,34 @@ logger.Write(`[Client:${clientId}] ready`);
 process.on('message', function (message) {
 
     //try {
-        var msg: Message = JSON.parse(message);
-        msg.ctx = localClient.Reload(msg.ctx);
-        //logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
-        
+    var msg: Message = JSON.parse(message);
+    msg.ctx = localClient.Reload(msg.ctx);
+    //logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
 
-        if (msg.ctx.Operation == "Mutation") {
-            logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant`);
-            msg.ctx =localClient.Mutate(msg.ctx);
-        }
 
-        if (msg.ctx.Operation == "MutationByIndex") {
-            logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant by node index`);
-            msg.ctx =localClient.MutateBy(msg.ctx);
-        }
+    if (msg.ctx.Operation == "Mutation") {
+        logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant`);
+        msg.ctx = localClient.Mutate(msg.ctx);
+    }
 
-        if (msg.ctx.Operation == "CrossOver") {
-            logger.Write(`[runClient]processing ${msg.ActualLibrary} new crossover`);
-            msg.ctx =localClient.CrossOver(msg.ctx);
-        }
+    if (msg.ctx.Operation == "MutationByIndex") {
+        logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant by node index`);
+        msg.ctx = localClient.MutateBy(msg.ctx);
+    }
 
-        if (msg.ctx.Operation == "Test") {
-            logger.Write(`[runClient]processing ${msg.ActualLibrary} tests`);
-            msg.ctx =localClient.Test(msg.ctx);
-        }
+    if (msg.ctx.Operation == "CrossOver") {
+        logger.Write(`[runClient]processing ${msg.ActualLibrary} new crossover`);
+        msg.ctx = localClient.CrossOver(msg.ctx);
+    }
 
-        var msgProcessada = JSON.stringify(msg);
-        logger.Write(`[runClients] Msg ${msg.id} done.`);
-        process.send(msg);
-        //process.send(msgProcessada);
-    //}
-    //catch (err) {
-        //logger.Write(`[runClient]Client error: ${err}`);
-        //process.exit(111111);
-    //}
+    if (msg.ctx.Operation == "Test") {
+        logger.Write(`[runClient]processing ${msg.ActualLibrary} tests`);
+        msg.ctx = localClient.Test(msg.ctx);
+    }
+
+    var msgProcessada = JSON.stringify(msg);
+    logger.Write(`[runClients] Msg ${msg.id} done.`);
+    process.send(msg);
 });
 
 

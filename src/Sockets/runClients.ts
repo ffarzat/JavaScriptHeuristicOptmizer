@@ -97,7 +97,7 @@ if (cluster.isMaster) {
     localClient.id = clientId;
     localClient.logger = logger;
 
-    localClient.Setup(configuration, clientWorkDir);
+    localClient.Setup(configuration, clientWorkDir, 1, "");
 
     ExecuteOperations(localClient);
 }

@@ -72,7 +72,7 @@ describe('Client Tests', function () {
         var localClient = new Client();
         localClient.id = clientId;
         localClient.logger = logger;
-        localClient.Setup(configuration, undefined);
+        localClient.Setup(configuration, undefined, 1, "");
 
         var newCtx = localClient.Test(msg.ctx);
 

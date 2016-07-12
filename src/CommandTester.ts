@@ -28,21 +28,26 @@ export default class CommandTester implements ITester {
     //Directory to run NPM Test command
     libDirectoryPath: string;
     //Actual dir
-    testOldDirectory:string;
+    testOldDirectory: string;
     //Attr for Fit evaluation
     fitType: string;
-    
+
     logger: ILogger;
-    
+
     oldLibFilePath: string;
-    
+
+    Ncpus: number;
+    hostfile: string;
+    testTimeout: number;
+
 
     /**
      * Initializes NPM packages if necessary
      */
-    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string) {
+    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string, cpus: number, hostfile: string, testTimeout: number) {
 
         this.testUntil = testUntil;
+        this.testTimeout = testTimeout;
 
         //Setup tests with Lib context
         this.libMainFilePath = LibrarieOverTest.mainFilePath;
@@ -50,86 +55,118 @@ export default class CommandTester implements ITester {
         this.testOldDirectory = process.cwd();
         this.fitType = fitType;
         this.oldLibFilePath = path.join(this.libDirectoryPath, 'old.js');
-        
-        if(!fse.existsSync(this.oldLibFilePath))
-            fse.copySync(this.libMainFilePath, this.oldLibFilePath, {"clobber": true});
-        
+
+        this.Ncpus = cpus;
+        this.hostfile = hostfile;
+
+        if (!fse.existsSync(this.oldLibFilePath))
+            fse.copySync(this.libMainFilePath, this.oldLibFilePath, { "clobber": true });
+
     }
 
     /**
      * Knows what attribute uses for Fit evaluation
      */
-    RetrieveConfiguratedFitFor(individual: Individual): number{
+    RetrieveConfiguratedFitFor(individual: Individual): number {
         return individual.testResults[this.fitType];
     }
 
     /**
      * Do the test for an individual
      */
-    Test(individual: Individual)  {
-        
+    Test(individual: Individual) {
+
         var outputsFromCmd: string[] = [];
         var passedAllTests = true;
-        var testUuid = uuid.v4();
         
+        var max;
+        var min;
+        var avg;
+        var median;
+
         try {
             //output new code over main file js
             this.WriteCodeToFile(individual);
-        
-            process.chdir(this.libDirectoryPath);
-            
-            var Tick = exectimer.Tick;
-            
-            //this.logger.Write(`Doing ${this.testUntil} evaluations for ${this.libDirectoryPath}`);
-            
-            for (var index = 0; index < this.testUntil; index++) {
-                //this.logger.Write(`eval ${index}`);
-                var testExecutionTimeTick = new Tick(testUuid);
-                testExecutionTimeTick.start();
-                var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec('mpirun -np 1 npm test', {silent:true}) as Shell.ExecOutputReturnValue);
-                //https://software.intel.com/en-us/articles/controlling-process-placement-with-the-intel-mpi-library
-                testExecutionTimeTick.stop();    
-                
-                //TODO: Log the returnedOutput.output for debug
-                //outputsFromCmd.push(returnedOutput.output); out of memory
-                
-                if (returnedOutput.code > 0)
-                {
-                    passedAllTests = false;
-                    break;
-                }        
-            }    
+
+            /* FOR MPIRUN using */
+            var os = require("os");
+            const child_process = require('child_process');
+
+            console.log(`Ncpus: ${this.Ncpus}`);
+            console.log(`hostfile: ${this.hostfile}`);
+
+            var cpusString = fs.readFileSync(this.hostfile).toString().split("\n");
+            console.log(`Ncpus == ${cpusString.length}`);
+            console.log(`Test Host #1: ${cpusString[48]}`);
+
+            //var clientsTotal = 9;
+            var libPath = this.libDirectoryPath;
+            var timeoutMS = this.testTimeout;
+            var testUntil = this.testUntil;
+
+            var messagesToProcess = [];
+            var actualHost = cpusString[48];
+
+            var msgId = uuid.v4();
+            var testCMD = `mpirun -np ${testUntil} -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
+
+            if(this.hostfile === "")
+            {
+                testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
+            }
+
+            var stdout = child_process.execSync(testCMD, { maxBuffer: 1024 * 5000 }).toString();
+
+            var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
+            stringList = stringList.substring(0, stringList.length - 1);
+            //console.log(`[${stringList}]`);
+
+            var list = JSON.parse(`[${stringList}]`);
+            var numbers = [];
+            for (var index = 0; index < list.length; index++) {
+                var element = list[index];
+                numbers.push(element.duration);
+            }
+
+            max = Math.max.apply(null, numbers);
+            min = Math.min.apply(null, numbers);
+            avg = this.mean(numbers);
+            median = this.median(numbers);
+
+            //console.log(`Min: ${ToSecs(min)}`);
+            //console.log(`Max: ${ToSecs(max)}`);
+            //console.log(`Mean: ${ToSecs(avg)}`);
+            //console.log(`Median: ${ToSecs(median)}`);
+            //console.log(`Duration: ${ToSecs(max)}`); // Now is Max
+
+            /* FOR MPIRUN using */
+
         } catch (error) {
             this.logger.Write(error);
             passedAllTests = false;
         }
-        finally{
-            process.chdir(this.testOldDirectory);    
-            fse.copySync(this.oldLibFilePath, this.libMainFilePath, {"clobber": true});
+        finally {
+            fse.copySync(this.oldLibFilePath, this.libMainFilePath, { "clobber": true });
         }
-                
-        var unitTestsTimer = exectimer.timers[testUuid];
-        
-        if(passedAllTests)
-        {
-            var results:TestResults = new TestResults();
+
+        if (passedAllTests) {
+            var results: TestResults = new TestResults();
             results.rounds = this.testUntil;
-            results.min = this.ToNanosecondsToSeconds(unitTestsTimer.min());
-            results.max = this.ToNanosecondsToSeconds(unitTestsTimer.max());
-            results.mean = this.ToNanosecondsToSeconds(unitTestsTimer.mean());
-            results.median = this.ToNanosecondsToSeconds(unitTestsTimer.median());
-            results.duration = this.ToNanosecondsToSeconds(unitTestsTimer.duration());
+            results.min = min;
+            results.max = max;
+            results.mean = avg;
+            results.median = median;
+            results.duration = max;
             results.outputs = outputsFromCmd;
             results.passedAllTests = passedAllTests
-            
+
             individual.testResults = results;
             results.fit = this.RetrieveConfiguratedFitFor(individual);
         }
-        else
-        {
-            var results:TestResults = new TestResults();
+        else {
+            var results: TestResults = new TestResults();
             results.rounds = this.testUntil;
-            
+
             results.min = 0;
             results.max = 0;
             results.mean = 0;
@@ -140,8 +177,7 @@ export default class CommandTester implements ITester {
             results.passedAllTests = passedAllTests
             individual.testResults = results;
         }
-        
-        //this.logger.Write(`All Tests: ${passedAllTests}`);
+
         this.ShowConsoleResults(results);
     }
 
@@ -151,26 +187,33 @@ export default class CommandTester implements ITester {
     Clone(): ITester {
         var tester = new CommandTester();
         tester.testUntil = this.testUntil;
+        tester.testTimeout = this.testTimeout;
 
         //Setup tests with Lib context
         tester.libMainFilePath = this.libMainFilePath;
         tester.libDirectoryPath = this.libDirectoryPath;
         tester.testOldDirectory = this.testOldDirectory;
-        
+
+        tester.fitType = this.fitType;
+        tester.oldLibFilePath = this.oldLibFilePath;
+
+        tester.Ncpus = this.Ncpus;
+        tester.hostfile = this.hostfile;
+
         return tester;
     }
 
     /**
      * Just for Debug
      */
-    private ShowConsoleResults(result:TestResults){
+    private ShowConsoleResults(result: TestResults) {
         this.logger.Write('Results:');
         this.logger.Write('total duration:' + result.duration); // total duration of all ticks
-        this.logger.Write('min:'            + result.min);      // minimal tick duration
-        this.logger.Write('max:'            + result.max);      // maximal tick duration
-        this.logger.Write('mean:'           + result.mean);     // mean tick duration
-        this.logger.Write('median:'         + result.median);   // median tick duration
-        this.logger.Write('FIT:'            + result.fit);      // configurated calculated FIT 
+        this.logger.Write('min:' + result.min);      // minimal tick duration
+        this.logger.Write('max:' + result.max);      // maximal tick duration
+        this.logger.Write('mean:' + result.mean);     // mean tick duration
+        this.logger.Write('median:' + result.median);   // median tick duration
+        this.logger.Write('FIT:' + result.fit);      // configurated calculated FIT 
     }
 
     /**
@@ -181,18 +224,56 @@ export default class CommandTester implements ITester {
         fs.writeFileSync(this.libMainFilePath, individual.ToCode());
     }
 
+    SetTmeout(ms:number){
+        this.testTimeout = ms;
+    }
+
+    /**
+     * simple median
+     */
+    private median(values) {
+
+        values.sort(function (a, b) { return a - b; });
+
+        var half = Math.floor(values.length / 2);
+
+        if (values.length % 2)
+            return values[half];
+        else
+            return (values[half - 1] + values[half]) / 2.0;
+    }
+
+    /**
+     * simple mean
+     */
+    private mean(numbers) {
+        var total = 0, i;
+        for (i = 0; i < numbers.length; i++) {
+            total += numbers[i];
+        }
+        return total / numbers.length;
+    }
+
+    /**
+     * From ms to sec
+     */
+    private ToSecs(number) {
+        return (number / 1000) % 60;
+    }
+
+
     /**
      * Updating logger
-     *  */    
-    SetLogger(logger: ILogger){
+     *  */
+    SetLogger(logger: ILogger) {
         this.logger = logger;
     }
-    
+
     /**
      * Transform nano secs in secs
      */
-    private ToNanosecondsToSeconds(nanovalue: number): number{
-        return parseFloat((nanovalue /1000000000.0).toFixed(1));
+    private ToNanosecondsToSeconds(nanovalue: number): number {
+        return parseFloat((nanovalue / 1000000000.0).toFixed(1));
     }
 
 }

@@ -21,6 +21,10 @@ var configurationFile: string = path.join(process.cwd(), configFile);
 
 console.log (`[index]configurationFile: ${configurationFile}`);
 
+var Ncpus = process.argv[3];
+var hostfile = process.argv[4];
+
+
 
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
@@ -35,7 +39,7 @@ var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
 var pool = require('fork-pool');
-var uniquePool = new pool(__dirname + '/Child.js', [configFile] , null, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.clientTimeout * 1000 });
+var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile] , null, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.clientTimeout * 1000 });
 
 //=========================================================================================== Server!
 
