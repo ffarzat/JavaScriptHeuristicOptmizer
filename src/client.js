@@ -3,6 +3,8 @@ const child_process = require('child_process');
 var id = process.argv[2];
 var libPath = process.argv[3];
 var timeoutMS = process.argv[4];
+var bufferOption = { maxBuffer: 200 * 1024 };
+
 
 
 //console.log(`Id: ${id}`);
@@ -13,10 +15,10 @@ var start = process.hrtime();
 
 var timeoutId = setTimeout(function () {
     process.exit(1);
-}, timeoutMS );
+}, timeoutMS);
 
 
-var workerProcess = child_process.exec(`cd ${libPath} && npm test`, { maxBuffer: 1024 * 5000 }, function (error, stdout, stderr) {
+var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption, function (error, stdout, stderr) {
     clearTimeout(timeoutId);
 
     if (error) {

@@ -99,11 +99,7 @@ export default class CommandTester implements ITester {
             //console.log(`Ncpus: ${this.Ncpus}`);
             //console.log(`hostfile: ${this.hostfile}`);
 
-            var cpusString = fs.readFileSync(this.hostfile).toString().split("\n");
-            //console.log(`Ncpus == ${cpusString.length}`);
-            //console.log(`Test Host #1: ${cpusString[48]}`);
-
-
+          
             //var clientsTotal = 9;
             var libPath = this.libDirectoryPath;
             var timeoutMS = this.testTimeout;
@@ -112,19 +108,21 @@ export default class CommandTester implements ITester {
             console.log(`[CommandTester] Client.timeoutMS: ${timeoutMS}`);
             //console.log(`testUntil: ${testUntil}`);
 
-
-
-            var messagesToProcess = [];
-            var actualHost = cpusString[48];
-
             var msgId = uuid.v4();
-            var testCMD = `mpirun -np ${testUntil} -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
+            var bufferOption = { maxBuffer: 1024 * 5000 }
 
             if (this.hostfile === "") {
                 testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
+                bufferOption = {maxBuffer: 200*1024};
+            }
+            else {
+                //NACAD environment
+                var cpusString = fs.readFileSync(this.hostfile).toString().split("\n");
+                var actualHost = cpusString[48];
+                var testCMD = `mpirun -np ${testUntil} -host ${actualHost} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
             }
 
-            var stdout = child_process.execSync(testCMD, { maxBuffer: 1024 * 5000 }).toString();
+            var stdout = child_process.execSync(testCMD, bufferOption).toString();
 
             var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
             stringList = stringList.substring(0, stringList.length - 1);
@@ -152,7 +150,7 @@ export default class CommandTester implements ITester {
             /* FOR MPIRUN using */
 
         } catch (error) {
-            //this.logger.Write(error);
+            this.logger.Write(error);
             this.logger.Write(`[CommandTester] Tests Failed.`);
             passedAllTests = false;
         }
