@@ -36,18 +36,42 @@ try {
     console.log(`[${stringList}]`);
     
     var list = JSON.parse(`[${stringList}]`);
-    
+    var numbers = [];
+    var totalDuration = 0;
     for (var index = 0; index < list.length; index++) {
         var element = list[index];
-        console.log(element.sucess);
-        console.log(element.duration);
+        numbers.push(element.duration);
+        totalDuration += element.duration;
     }
     
+    var max = Math.max.apply(null, numbers);
+    var min = Math.min.apply(null, numbers);
+    var avg = totalDuration/numbers.length;
+    var median = median(numbers);
+
+    console.log(`Min: ${min}`);
+    console.log(`Max: ${max}`);
+    console.log(`Mean: ${avg}`);
+    console.log(`Median: ${median}`);
+    console.log(`Duration: ${max}`);
+
 
 } catch (error) {
     console.log(error.stack);
 }
 
+
+function median(values) {
+
+    values.sort( function(a,b) {return a - b;} );
+
+    var half = Math.floor(values.length/2);
+
+    if(values.length % 2)
+        return values[half];
+    else
+        return (values[half-1] + values[half]) / 2.0;
+}
 
 /*
 
