@@ -57,7 +57,6 @@ export default class GA extends IHeuristic {
                     this.executeStack(1, population, () => {
                         this.Stop();
                         cb(this.ProcessResult(trialIndex, this.Original, this.bestIndividual));
-                        this.runGC();
                         return;
                     });
                 });

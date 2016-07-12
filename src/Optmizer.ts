@@ -90,10 +90,6 @@ export default class Optmizer {
         this.logger.Initialize(this.configuration);
     }
 
-    Done(message: Message) {
-        this.actualHeuristic.Done(message);
-    }
-
     /**
      * Initializes configurated Results Writter
      * 

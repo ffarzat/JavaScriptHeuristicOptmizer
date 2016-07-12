@@ -16,10 +16,10 @@ var optmizer: Optmizer = undefined;
 var localServer: Server = new Server();
 
 //=========================================================================================== Reads config
-var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';  
+var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';
 var configurationFile: string = path.join(process.cwd(), configFile);
 
-console.log (`[index]configurationFile: ${configurationFile}`);
+console.log(`[index]configurationFile: ${configurationFile}`);
 
 var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
@@ -39,85 +39,21 @@ var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
 var pool = require('fork-pool');
-var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile] , {execArgv: ['--expose-gc','--max-old-space-size=512000'] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
+var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile], { execArgv: ['--expose-gc', '--max-old-space-size=512000'] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
 //=========================================================================================== Server!
 
+logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
+logger.Write(`Preparing libs environment`);
 
-/*
-if (cluster.isMaster) {
-    console.log (`[index]configurationFile: ${configurationFile}`);
-    localServer.logger = logger;
-    localServer.Setup(configuration);
-    //setInterval(function () { localServer.ProcessQueue(); }, 100); //1x per 3 second
-    //setInterval(function () { localServer.ProcessRetun(); }, 100); //1x per 3 second
+ParseConfigAndLibs();
+DisplayConfig();
+ExecuteTrials(configuration.startTrial);
 
-    //setInterval(function () { localServer.Status(); }, 10000);
-
-    var optmizerWorker = cluster.fork(); //optmizer worker
-
-    optmizerWorker.on('message', (msg: Message) => {
-
-        localServer.ActualHeuristic = msg.ActualHeuristic
-        localServer.ActualGlobalTrial = msg.ActualGlobalTrial
-        localServer.ActualInternalTrial = msg.ActualInternalTrial
-        localServer.ActualLibrary = msg.ActualLibrary
-
-
-        if (msg.CleanServer == true) {
-            logger.Write(`[index] CleanServer:${msg.CleanServer}`);
-            localServer.CleanUp();
-        }
-
-        if (msg.Shutdown == true) {
-            process.exit();
-        }
-
-        //logger.Write(`[index] Send to server. Msg : ${msg.id}`);
-
-        localServer.DoAnOperation(msg, (newMsg) => {
-
-            //logger.Write(`[index] Server done msg : ${msg.id}`);
-            //logger.Write(`[index] ${msg.id} == ${newMsg.id} : ${msg.id === newMsg.id}`);
-
-            optmizerWorker.send(newMsg);
-        });
-    });
-
- 
-    setInterval(function () {
-        logger.Write(`[index.Master] workers: ${cluster.listeners.length}`);
-    }, 1000);
-
-
-
-} else {
-
-    */
-    logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
-    logger.Write(`Preparing libs environment`);
-
-    process.on('message', (newMsg: Message) => {
-        Done(newMsg);
-    });
-
-    //Here is the Optmizer in another work
-    //=========================================================================================== Just prepare all libs
-    ParseConfigAndLibs();
-
-    //=========================================================================================== Just for know
-
-    DisplayConfig();
-
-    //=========================================================================================== For all trials
-    ExecuteTrials(configuration.startTrial);
-
-
-//}
 //=========================================================================================== Functions
 function ExecuteTrials(globalTrial: number) {
-    
-    
+
+
     logger.Write(`============================= Optmizer Global trial: ${globalTrial}`);
     //var msg = new Message();
     //process.send(msg); //clean Server
@@ -140,28 +76,14 @@ function ExecuteTrials(globalTrial: number) {
 
 }
 
-
-function Done(message: Message) {
-    optmizer.Done(message);
-}
-
 function executeHeuristicTrial(globalTrial: number, config: IConfiguration, heuristicTrial: number, ClientsPool: any, cb: () => void) {
 
     optmizer = new Optmizer();
 
     optmizer.Setup(configuration, globalTrial, heuristicTrial, ClientsPool);
-    optmizer.DoOptmization(0,() => {
+    optmizer.DoOptmization(0, () => {
         cb();
     });
-}
-
-/**Executes forced GC */
-function runGC() {
-    if (typeof global.gc != "undefined") {
-        logger.Write(`Mem Usage Pre-GC ` + process.memoryUsage());
-        global.gc();
-        logger.Write(`Mem Usage Post-GC ` + process.memoryUsage());
-    }
 }
 
 function ParseConfigAndLibs() {
@@ -199,6 +121,8 @@ function DisplayConfig() {
     logger.Write('=================================');
     logger.Write(`Clients total ${configuration.clientsTotal}`);
     logger.Write(`Tmp Dir [Config File] ${configuration.tmpDirectory}`);
+    logger.Write(`Client timeout ${configuration.clientTimeout}`);
+    logger.Write(`Client Files Timeout ${configuration.copyFileTimeout}`);
     logger.Write(`Fit type [mean|median]:  ${configuration.fitType}`);
     logger.Write(`Number of testing each individual:  ${configuration.testUntil}`);
     logger.Write(`Logfile:  ${configuration.logFilePath}`);
