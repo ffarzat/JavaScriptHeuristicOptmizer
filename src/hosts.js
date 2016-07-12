@@ -18,7 +18,7 @@ console.log(`Ncpus == ${cpusString.length}`);
 console.log(`Test Host #1: ${cpusString[48]}`);
 
 //var clientsTotal = 9;
-var libname = "unserscore";
+var libname = "underscore";
 var timeoutMS = 10000;
 
 //Async
