@@ -338,14 +338,14 @@ abstract class IHeuristic extends events.EventEmitter {
             clearTimeout(idTimeout);
             try {
                 if (err) {
-                    this._logger.Write(`[IHeuristic] err: ${err.stack}`);
+                    this._logger.Write(`[IHeuristic] Pool err: ${err.stack}`);
                 }
                 else {
                     var processedMessage = obj.stdout;
                     msg.ctx = this.Reload(processedMessage.ctx);
                 }
             } catch (error) {
-                this._logger.Write(`[IHeuristic] ${error.stack}`);
+                this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
             }
             finally {
                 cb(msg);
