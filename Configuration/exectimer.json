@@ -15,12 +15,12 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":60,
+    "clientTimeout":1,
     "copyFileTimeout": 14400,
-    "clientsTotal": 40,
+    "clientsTotal": 9,
     "libraries" : [
         {"name":"exectimer",    "path":"Libraries/exectimer/",      "mainFilePath":"Libraries/exectimer/index.js" }
     ],
