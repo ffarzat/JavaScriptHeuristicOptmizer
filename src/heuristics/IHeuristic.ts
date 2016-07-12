@@ -163,7 +163,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         var trialTimer = exectimer.timers[this.trialUuid];
         results.time = this.ToNanosecondsToSeconds(trialTimer.duration());
-        results.better = bestCode != originalCode
+        results.better = bestCode != originalCode;
 
         return results;
     }
