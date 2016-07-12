@@ -189,7 +189,7 @@ export default class Client {
     */
     private InitializeTester(context: OperatorContext) {
 
-        if (this._tester.LibOverTests().name !=== context.LibrarieOverTest.name)
+        if (this._tester.LibOverTests().name !== context.LibrarieOverTest.name)
         {
             this.logger.Write(`[Client] Restarting Testes for new lib environment: ${context.LibrarieOverTest.name}`)
             this._tester = null; //ensure GC can pass
