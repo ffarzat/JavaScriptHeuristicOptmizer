@@ -194,7 +194,7 @@ Test(context: OperatorContext): OperatorContext {
     this._config.libraries.forEach(element => {
         if (element.name === context.LibrarieOverTest.name) {
             context.LibrarieOverTest = element;
-            context.LibrarieOverTest.path = `${this.TempDirectory}/${context.LibrarieOverTest.name}`;
+            context.LibrarieOverTest.path = `${this.TempDirectory.path}/${context.LibrarieOverTest.name}`;
             //this.logger.Write(`[Client]${context.LibrarieOverTest.name}`)
             //this.logger.Write(`[Client]${context.LibrarieOverTest.mainFilePath}`)
             //this.logger.Write(`[Client]${context.LibrarieOverTest.path}`)
