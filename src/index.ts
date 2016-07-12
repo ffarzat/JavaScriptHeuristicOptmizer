@@ -39,7 +39,7 @@ var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
 var pool = require('fork-pool');
-var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile] , {execArgv: ['--expose-gc --max-old-space-size=102400'] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.clientTimeout * 1000 });
+var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile] , {execArgv: ['--expose-gc','--max-old-space-size=102400'] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.clientTimeout * 1000 });
 
 //=========================================================================================== Server!
 
