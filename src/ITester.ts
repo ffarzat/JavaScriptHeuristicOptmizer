@@ -19,6 +19,8 @@ interface ITester{
     SetLogger(logger: ILogger);
 
     SetTmeout(ms:number);
+
+    LibOverTests():Library;
 }
 
 export default ITester;

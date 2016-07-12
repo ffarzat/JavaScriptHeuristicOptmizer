@@ -40,6 +40,8 @@ export default class CommandTester implements ITester {
     hostfile: string;
     testTimeout: number;
 
+    LibrarieOverTest: Library;
+
 
     /**
      * Initializes NPM packages if necessary
@@ -59,9 +61,18 @@ export default class CommandTester implements ITester {
         this.Ncpus = cpus;
         this.hostfile = hostfile;
 
+        this.LibrarieOverTest = LibrarieOverTest;
+
         if (!fse.existsSync(this.oldLibFilePath))
             fse.copySync(this.libMainFilePath, this.oldLibFilePath, { "clobber": true });
 
+    }
+
+    /**
+     * Returns actual Libs
+     */
+    LibOverTests(): Library {
+        return this.LibrarieOverTest;
     }
 
     /**
