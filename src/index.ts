@@ -25,6 +25,10 @@ var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
 var clientOptions = '--max-old-space-size=512000';
 
+console.log(`Ncpus: ${Ncpus}`);
+console.log(`hostfile: ${hostfile}`);
+
+
 if (hostfile == undefined) {
     clientOptions = '--max-old-space-size=2047';
 }
@@ -42,7 +46,7 @@ var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
 var pool = require('fork-pool');
-var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile], { execArgv: ['--max-old-space-size=512000'] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
+var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
 //=========================================================================================== Server!
 
