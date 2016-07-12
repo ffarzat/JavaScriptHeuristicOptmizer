@@ -129,6 +129,7 @@ abstract class IHeuristic extends events.EventEmitter {
         context.Original = this.bestIndividual; //is usual to be the original
         context.LibrarieOverTest = this._lib;
 
+        msg.FirstOne = true;
         msg.ctx = context;
 
         this.getResponse(msg, (newMsg) => {
@@ -318,29 +319,37 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
         msg.id = uuid.v4();
-
         msg.ActualLibrary = this._lib.name;
+        var timeForTimeout = this._globalConfig.clientTimeout * 1000;
+
+        if (msg.FirstOne !== undefined && msg.FirstOne == true) {
+            //In this case can be a file Long Copy
+            timeForTimeout = this._globalConfig.copyFileTimeout * 1000;
+            this._logger.Write(`[IHeuristic] File Copy Timeout ${timeForTimeout}`);
+        }
 
         //============================================ For now
-        var idTimeout = setTimeout(()=> {
+        var idTimeout = setTimeout(() => {
             this._logger.Write(`[IHeuristic] timeout for ${msg.id}`);
             cb(msg);
-        }, (this._globalConfig.clientTimeout * 5)  * 1000);
+        }, timeForTimeout);
 
         this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
-            
             clearTimeout(idTimeout);
-
-            if (err) {
-                this._logger.Write(`[IHeuristic] err: ${err.stack}`);
+            try {
+                if (err) {
+                    this._logger.Write(`[IHeuristic] err: ${err.stack}`);
+                }
+                else {
+                    var processedMessage = obj.stdout;
+                    msg.ctx = this.Reload(processedMessage.ctx);
+                }
+            } catch (error) {
+                this._logger.Write(`[IHeuristic] ${error.stack}`);
             }
-            else {
-                //this._logger.Write(`[IHeuristic] results: ${JSON.stringify(results[0])}`);
-                var processedMessage = obj.stdout;
-                msg.ctx = this.Reload(processedMessage.ctx);
-             }
-            
-            cb(msg);
+            finally {
+                cb(msg);
+            }
         });
 
         //============================================ ends
