@@ -4,6 +4,11 @@ var id = process.argv[2];
 var libPath = process.argv[3];
 var timeoutMS = process.argv[4];
 
+
+console.log(`Id: ${id}`);
+console.log(`libPath: ${libPath}`);
+console.log(`timeoutMS: ${timeoutMS}`);
+
 var start = process.hrtime();
 
 var timeoutId = setTimeout(function () {

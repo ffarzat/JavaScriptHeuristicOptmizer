@@ -78,7 +78,7 @@ export default class CommandTester implements ITester {
 
         var outputsFromCmd: string[] = [];
         var passedAllTests = true;
-        
+
         var max;
         var min;
         var avg;
@@ -99,10 +99,16 @@ export default class CommandTester implements ITester {
             console.log(`Ncpus == ${cpusString.length}`);
             console.log(`Test Host #1: ${cpusString[48]}`);
 
+
             //var clientsTotal = 9;
             var libPath = this.libDirectoryPath;
             var timeoutMS = this.testTimeout;
             var testUntil = this.testUntil;
+            console.log(`libPath: ${id}`);
+            console.log(`timeoutMS: ${libPath}`);
+            console.log(`testUntil: ${timeoutMS}`);
+
+
 
             var messagesToProcess = [];
             var actualHost = cpusString[48];
@@ -110,8 +116,7 @@ export default class CommandTester implements ITester {
             var msgId = uuid.v4();
             var testCMD = `mpirun -np ${testUntil} -host ${cpusString[48]} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
 
-            if(this.hostfile === "")
-            {
+            if (this.hostfile === "") {
                 testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
             }
 
@@ -224,7 +229,7 @@ export default class CommandTester implements ITester {
         fs.writeFileSync(this.libMainFilePath, individual.ToCode());
     }
 
-    SetTmeout(ms:number){
+    SetTmeout(ms: number) {
         this.testTimeout = ms;
     }
 
