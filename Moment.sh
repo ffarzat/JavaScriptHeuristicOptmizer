@@ -27,7 +27,7 @@ echo "----------------"
 
 
 ### run the program (on the nodes as provided by PBS):
-node --expose-gc --max-old-space-size=102400 build/src/index.js  Configuration/moment.json
+node --expose-gc --max-old-space-size=102400 build/src/index.js  Configuration/moment.json $NPROCS $PBS_NODEFILE
 
 ### mpirun -np 400 --hostfile $PBS_NODEFILE node --expose-gc --max-old-space-size=102400 build/src/Teste.js 
 ### mpirun node --expose-gc --max-old-space-size=102400 build/src/Teste.js
