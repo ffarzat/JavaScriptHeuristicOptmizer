@@ -65,7 +65,7 @@ export default class HC extends IHeuristic {
                     return;
                 });
             }
-            else{
+            else {
                 cb(undefined);
             }
         });
@@ -162,16 +162,16 @@ export default class HC extends IHeuristic {
         //Waiting to be done!
         if (!this.intervalId) {
 
-            this.RegisterForConclusion( ()=>{
-                f (this.typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
-                        clearInterval(this.intervalId);
-                        this.intervalId = undefined;
-                        cb(neighbors, indexes, true);
-                    }
-                    else {
-                        //Não acabou?
-                        cb(neighbors, indexes, false);
-                    }
+            this.RegisterForConclusion(() => {
+                if(this.typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = undefined;
+                    cb(neighbors, indexes, true);
+                }
+                else {
+                    //Não acabou?
+                    cb(neighbors, indexes, false);
+                }
             });
 
         }
