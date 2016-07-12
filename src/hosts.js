@@ -18,7 +18,7 @@ console.log(`Ncpus == ${cpusString.length}`);
 console.log(`Test Host #1: ${cpusString[48]}`);
 
 //var clientsTotal = 9;
-var libname = "lodash";
+var libname = "jquery";
 var timeoutMS = 15000;
 
 //Async
