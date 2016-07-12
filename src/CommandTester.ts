@@ -105,7 +105,7 @@ export default class CommandTester implements ITester {
             var timeoutMS = this.testTimeout;
             var testUntil = this.testUntil;
             //console.log(`libPath: ${libPath}`);
-            //console.log(`timeoutMS: ${timeoutMS}`);
+            console.log(`[CommandTester] Client.timeoutMS: ${timeoutMS}`);
             //console.log(`testUntil: ${testUntil}`);
 
 
