@@ -2,7 +2,7 @@
     "file": "underscore.json",
     "trials":60,
     "startTrial": 19,
-    "fitType":"mean",
+    "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
     "crossOverTrials": 1,

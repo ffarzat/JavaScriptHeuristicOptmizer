@@ -2,7 +2,7 @@
     "file": "moment.json",
     "trials":60,
     "startTrial": 0,
-    "fitType":"mean",
+    "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
     "crossOverTrials": 1,
