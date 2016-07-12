@@ -235,6 +235,10 @@ export default class CommandTester implements ITester {
         fs.writeFileSync(this.libMainFilePath, individual.ToCode());
     }
 
+    SetTmeout(ms: number) {
+        this.testTimeout = ms;
+    }
+
     /**
      * simple median
      */

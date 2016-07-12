@@ -17,6 +17,8 @@ interface ITester{
     RetrieveConfiguratedFitFor(individual: Individual): number;
     
     SetLogger(logger: ILogger);
+
+    SetTmeout(ms:number);
 }
 
 export default ITester;
