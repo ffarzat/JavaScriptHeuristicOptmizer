@@ -79,7 +79,7 @@ export default class HC extends IHeuristic {
         this.operationsCount = 0;
 
         this.DoMutationsPerTime(0, [], indexes, nodesIndexList, (mutants, updatedIndexes, finish) => {
-            //this._logger.Write(`[HC]How Many: ${time}`);
+            this._logger.Write(`[HC]How Many: ${time}`);
             var foundNewBest = false;
 
             time++;
