@@ -258,9 +258,9 @@ export default class CommandTester implements ITester {
      * simple mean
      */
     private mean(numbers) {
-        var total = 0, i;
-        for (i = 0; i < numbers.length; i++) {
-            total += numbers[i];
+        var total = 0
+        for (var i = 0; i < numbers.length; i++) {
+            total = total + numbers[i];
         }
         return total / numbers.length;
     }
