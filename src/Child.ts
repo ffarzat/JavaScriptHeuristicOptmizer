@@ -22,8 +22,8 @@ var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile
 
 var testOldDirectory: string = process.cwd();
 
-var Ncpus = parseInt(process.argv[2]);
-var hostfile = process.argv[3];
+var Ncpus = parseInt(process.argv[3]);
+var hostfile = process.argv[4];
 
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
