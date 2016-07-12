@@ -19,7 +19,7 @@ console.log(`Test Host #1: ${cpusString[48]}`);
 
 //var clientsTotal = 9;
 var libname = "jquery";
-var timeoutMS = 15000;
+var timeoutMS = 180000;
 
 //Async
 
