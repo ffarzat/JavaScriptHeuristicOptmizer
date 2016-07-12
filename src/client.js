@@ -3,7 +3,7 @@ const child_process = require('child_process');
 var start = process.hrtime();
 
 var timeoutId = setTimeout(function() {
-    process.kill();
+     process.exit(1);
 }, 2000);
 
 
