@@ -320,10 +320,10 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.id = uuid.v4();
         msg.cb = cb;
 
-        msg.ActualGlobalTrial = this.ActualGlobalTrial;
-        msg.ActualHeuristic = this.Name;
-        msg.ActualInternalTrial = this.ActualInternalTrial;
-        msg.ActualLibrary = this.ActualLibrary;
+        msg.ActualLibrary = this._lib.name;
+
+        //this._logger.Write(`${JSON.stringify(msg)}`);
+        
 
         //============================================ For now
 
@@ -332,7 +332,9 @@ abstract class IHeuristic extends events.EventEmitter {
                 this._logger.Write(`[IHeuristic] err: ${err.stack}`);
             }
             else {
-                msg.ctx = this.Reload(obj.ctx);
+                //this._logger.Write(`${JSON.stringify(obj)}`);
+
+                msg.ctx = this.Reload(obj.stdout.ctx);
             }
 
             cb(msg); //always call back!
@@ -341,13 +343,12 @@ abstract class IHeuristic extends events.EventEmitter {
         //============================================ ends
     }
 
-    RegisterForConclusion(cb: () => void {
-        Pool.drain((err) => {
+    RegisterForConclusion(cb: () => void) {
+        this.Pool.drain((err) => {
             this._logger.Write(`===============================> [Pool done]`);
             cb();
         });
-    });
-
+    }
 }
 
 

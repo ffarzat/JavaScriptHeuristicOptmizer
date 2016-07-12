@@ -105,13 +105,13 @@ export default class CommandTester implements ITester {
             var timeoutMS = this.testTimeout;
             var testUntil = this.testUntil;
             //console.log(`libPath: ${libPath}`);
-            console.log(`[CommandTester] Client.timeoutMS: ${timeoutMS}`);
+            //console.log(`[CommandTester] Client.timeoutMS: ${timeoutMS}`);
             //console.log(`testUntil: ${testUntil}`);
 
             var msgId = uuid.v4();
             var bufferOption = { maxBuffer: 1024 * 5000 }
 
-            if (this.hostfile === "") {
+            if (this.hostfile == undefined || this.hostfile == "undefined" || this.hostfile == "") {
                 testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
                 bufferOption = {maxBuffer: 200*1024};
             }
@@ -122,8 +122,9 @@ export default class CommandTester implements ITester {
                 var testCMD = `mpirun -np ${testUntil} -host ${actualHost} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
             }
 
+            //console.log(`[CommandTester] Before`);
             var stdout = child_process.execSync(testCMD, bufferOption).toString();
-
+            //console.log(`[CommandTester] After`);
             var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
             stringList = stringList.substring(0, stringList.length - 1);
             //console.log(`[${stringList}]`);
@@ -150,7 +151,7 @@ export default class CommandTester implements ITester {
             /* FOR MPIRUN using */
 
         } catch (error) {
-            this.logger.Write(error);
+            //this.logger.Write(error);
             this.logger.Write(`[CommandTester] Tests Failed.`);
             passedAllTests = false;
         }
