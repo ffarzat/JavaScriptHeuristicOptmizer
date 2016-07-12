@@ -50,7 +50,6 @@ export default class Optmizer {
         this.DoValidation(Config)
         this.configuration = Config;
         this.Pool = ClientsPool;
-        this.libIndex = 0;
 
         this.trialIndex = TrialIndex;
         this.heuristicTrial = HeuristicTrial;
@@ -233,18 +232,20 @@ export default class Optmizer {
      */
     public DoOptmization(libIndex, DoOptmizationcb: () => void) {
 
+        this.libCurrentIndex = libIndex;
+
         try {
-            this.runLibOverHeuristic(this.libCurrentIndex, 0, () => {
-                var element = this.configuration.libraries[this.libCurrentIndex];
+            this.runLibOverHeuristic(libIndex, 0, () => {
+                var element = this.configuration.libraries[libIndex];
                 this.logger.Write(` [Optmizer] Trial ${this.trialIndex} for Library ${element.name} done.`);
                 
-                this.libCurrentIndex +=1;
+                libIndex++;
 
-                if (this.configuration.libraries.length == this.libCurrentIndex) {
+                if (this.configuration.libraries.length == libIndex) {
                     DoOptmizationcb();
                 }
                 else {
-                    this.DoOptmization(this.libCurrentIndex, DoOptmizationcb);
+                    this.DoOptmization(libIndex, DoOptmizationcb);
                 }
             });
         }
