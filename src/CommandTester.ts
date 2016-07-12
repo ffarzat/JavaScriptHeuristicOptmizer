@@ -139,7 +139,7 @@ export default class CommandTester implements ITester {
             min = Math.min.apply(null, numbers);
             avg = this.mean(numbers);
             median = this.median(numbers);
-            passedAllTests = list[0].sucess;
+            passedAllTests =  (list[0].sucess === "true");
 
             //console.log(`Min: ${ToSecs(min)}`);
             //console.log(`Max: ${ToSecs(max)}`);
@@ -150,7 +150,7 @@ export default class CommandTester implements ITester {
             /* FOR MPIRUN using */
 
         } catch (error) {
-            this.logger.Write(error);
+            //this.logger.Write(error);
             this.logger.Write(`[CommandTester] Tests Failed.`);
             passedAllTests = false;
         }
