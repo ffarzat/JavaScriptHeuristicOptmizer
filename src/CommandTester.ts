@@ -142,7 +142,7 @@ export default class CommandTester implements ITester {
             for (var index = 0; index < list.length; index++) {
                 var element = list[index];
                 numbers.push(element.duration);
-                console.log(`[Executado no host: ${element.host}]`);
+                console.log(`[Executado no host: ${element.host}:${element.duration}]`);
             }
 
             max = Math.max.apply(null, numbers);
