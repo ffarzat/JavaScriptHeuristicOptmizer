@@ -55,7 +55,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
     nextId: number;
 
-    cbs: Array<any>;
+    cbs: any;
 
     /**
      * Forces the Heuristic to validate config
@@ -68,7 +68,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this.waitingMessages = {};
         this.trialUuid = uuid.v4();
         this.nextId = 0;
-        this.cbs = [];
+        this.cbs = {};
     }
 
     public Start() {
@@ -336,9 +336,8 @@ abstract class IHeuristic extends events.EventEmitter {
      * To resolve a single comunication with server trougth cluster comunication
      */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
-        msg.id = this.nextId;
-        this.nextId ++;
-        this.cbs.push(cb);
+        msg.id = this.nextId++;
+        this.cbs[msg.id] = cb;
         this._logger.Write(`[IHeuristic] Message ${msg.id} arrived`);
 
         msg.ActualLibrary = this._lib.name;
@@ -353,10 +352,9 @@ abstract class IHeuristic extends events.EventEmitter {
 
         var idTimeout = setTimeout(() => {
             this._logger.Write(`[IHeuristic] timeout for Message ${msg.id}`);
-            var callback = this.cbs[msg.id];
-            this.cbs.splice(msg.id, 1);
+            this.cbs[msg.id](undefined); //default fail    
+            delete this.cbs[msg.id];
             this._logger.Write(`[IHeuristic] timeout for Message ${msg.id} done`);
-            callback(undefined);
         }, timeForTimeout);
         //============================================ Pool -> clients
 
@@ -371,11 +369,9 @@ abstract class IHeuristic extends events.EventEmitter {
                     processedMessage.ctx = this.Reload(processedMessage.ctx);
                     
                     if (this.cbs[msg.id] != undefined) {
-                        var callback = this.cbs[msg.id];
-                        this.cbs.splice(msg.id, 1);
-                        this._logger.Write(`[IHeuristic] Message ${msg.id} completed`);
-                        callback(processedMessage);
-                        return;
+                        this.cbs[msg.id](processedMessage);
+                        delete this.cbs[msg.id];
+                        this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
                     }
                     else{
                         this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
@@ -384,6 +380,7 @@ abstract class IHeuristic extends events.EventEmitter {
             } catch (error) {
                 this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
             }
+
         });
 
         //============================================ Done
