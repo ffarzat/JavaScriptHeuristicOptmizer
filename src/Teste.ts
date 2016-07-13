@@ -39,9 +39,9 @@ allHostsList.forEach(element => {
 
 allHosts.splice(0, 1); //removing actual host
 
-logger.Write(`Hosts available:`);
+console.log(`Hosts available:`);
 allHosts.forEach(element => {
-    logger.Write(`-> ${element}`);
+    console.log(`-> ${element}`);
 });
 
 
