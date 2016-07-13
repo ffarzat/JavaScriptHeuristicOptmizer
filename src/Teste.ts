@@ -66,7 +66,7 @@ uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj)=> {
 function doBegin() {
     var messagesToProcess = [];
 
-    for (var i = 0; i < configuration.clientsTotal +1; i++) {
+    for (var i = 0; i < configuration.clientsTotal; i++) {
 
         var msg: Message = new Message();
         var context = new OperatorContext();
