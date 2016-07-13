@@ -372,7 +372,7 @@ abstract class IHeuristic extends events.EventEmitter {
                     if (this.cbs[msg.id] != undefined) {
                         this.cbs[msg.id](processedMessage);
                         this.cbs.splice(msg.id, 1);
-                        this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
+                        this._logger.Write(`[IHeuristic] Message ${msg.id} completed`);
                     }
                     else{
                         this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
