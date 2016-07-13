@@ -41,7 +41,7 @@ if (hostfile == undefined) {
     var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
 
     allHostsList.forEach(element => {
-        if(allHosts.indexOf(element) == -1)
+        if(allHosts.indexOf(element) == -1 && element != "")
         {
             allHosts.push(element);
         }
