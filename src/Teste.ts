@@ -57,21 +57,22 @@ FirstMsg.ctx = context;
 //========================================================================================== Clients Pool
 var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
-uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj)=> {
-    doBegin();
-});
+//uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj)=> {
+//    doBegin();
+//});
 
+doBegin();
 
 function doBegin() {
     var messagesToProcess = [];
 
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 1; i++) {
         
         var msg: Message = new Message();
         var context = new OperatorContext();
         context.Operation = "Test";
         context.First = generatedIndividual;
-        context.Original = generatedIndividual; //is usual to be the original
+        context.Original = generatedIndividual; 
         context.LibrarieOverTest = lib;
 
         msg.ActualLibrary = lib.name;
@@ -85,10 +86,8 @@ function doBegin() {
         messagesToProcess.push(instance);
     }
 
-    async.parallel(messagesToProcess, // optional callback
+    async.parallel(messagesToProcess, 
         function (err, results) {
-            // the results array will equal ['one','two'] even though
-            // the second function had a shorter timeout.
             if (err)
                 console.log(`err: ${err.stack}`);
 
