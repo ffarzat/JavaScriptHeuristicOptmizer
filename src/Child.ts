@@ -54,7 +54,7 @@ process.on('message', function (message) {
     var exectimer = require('exectimer');
     var Tick = new exectimer.Tick(msg.id);
     Tick.start();
-    console.log(`[Child] Hosts: ${this.AvailableHosts.length}`);
+
     localClient.SetHosts(msg.Hosts);
 
     msg.ctx = localClient.Reload(msg.ctx);
