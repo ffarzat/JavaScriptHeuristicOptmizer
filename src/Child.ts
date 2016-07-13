@@ -61,6 +61,7 @@ process.on('message', function (message) {
 
     logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
 
+    /*
     if (message.id == 5) {
         throw new Error("Just for test");
     }
@@ -69,6 +70,7 @@ process.on('message', function (message) {
         RecursivaInfinita();
         return;
     }
+    */
 
 
     if (msg.ctx.Operation == "Mutation") {

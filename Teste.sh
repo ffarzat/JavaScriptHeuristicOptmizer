@@ -25,7 +25,7 @@ echo "nodes: $NPROCS"
 #NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
 echo "----------------"
 
-node --expose-gc --max-old-space-size=512000 build/src/index.js Configuration.json $NPROCS $PBS_NODEFILE
+node --expose-gc --max-old-space-size=512000 build/src/Teste.js Configuration.json $NPROCS $PBS_NODEFILE
 
 
 ### mpirun -np 5 --map-by node --hostfile $PBS_NODEFILE echo $HOSTNAME && sleep 5 

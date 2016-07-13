@@ -28,7 +28,21 @@ var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
 var clientOptions = '--max-old-space-size=512000';
 var allHosts: Array<string>;
-allHosts = fs.readFileSync(hostfile).toString().split("\n");
+var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
+
+allHostsList.forEach(element => {
+
+    if (allHosts.indexOf(element) == -1 && element != "") {
+        allHosts.push(element);
+    }
+});
+
+allHosts.splice(0, 1); //removing actual host
+
+logger.Write(`Hosts available:`);
+allHosts.forEach(element => {
+    logger.Write(`-> ${element}`);
+});
 
 
 var astExplorer: ASTExplorer = new ASTExplorer();
@@ -57,6 +71,7 @@ context.LibrarieOverTest = lib;
 
 FirstMsg.ActualLibrary = lib.name;
 FirstMsg.ctx = context;
+
 //========================================================================================== Clients Pool
 var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
@@ -80,6 +95,7 @@ function doBegin() {
         context.Original = generatedIndividual;
         context.LibrarieOverTest = lib;
 
+        msg.Hosts = allHosts;
         msg.ActualLibrary = lib.name;
         msg.ctx = context;
         msg.id = i;
