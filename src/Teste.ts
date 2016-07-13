@@ -27,13 +27,8 @@ var configurationFile: string = path.join(process.cwd(), configFile);
 var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
 var clientOptions = '--max-old-space-size=512000';
-var allHosts;
-
-if (hostfile == undefined) {
-    clientOptions = '--max-old-space-size=2047';
-}else{
-    allHosts = fs.readFileSync(hostfile).toString().split("\n");
-}
+var allHosts: Array<string>;
+allHosts = fs.readFileSync(hostfile).toString().split("\n");
 
 
 var astExplorer: ASTExplorer = new ASTExplorer();
@@ -65,12 +60,12 @@ FirstMsg.ctx = context;
 //========================================================================================== Clients Pool
 var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
-uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj)=> {
+uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj) => {
     doBegin();
 });
 
 
-var messageList =[];
+var messageList = [];
 
 
 function doBegin() {
@@ -109,11 +104,11 @@ function doBegin() {
                 console.log(`err: ${err.stack}`);
 
             console.log(`results: ${results.length}`);
-            
+
             Tick.stop();
             var trialTimer = exectimer.timers[1];
             console.log(`Tempo: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
-             
+
             process.exit();
 
         }
@@ -126,3 +121,5 @@ function doBegin() {
 function ToNanosecondsToSeconds(nanovalue: number): number {
     return parseFloat((nanovalue / 1000000000.0).toFixed(3));
 }
+
+

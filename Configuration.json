@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials":5,
+    "trials":1,
     "startTrial": 0,
     "fitType":"mean",
     "testUntil": 1,
@@ -29,8 +29,8 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 50,
-                "trials": 5000,
+                "neighborsToProcess": 1,
+                "trials": 1,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
                 "generations": 50,
