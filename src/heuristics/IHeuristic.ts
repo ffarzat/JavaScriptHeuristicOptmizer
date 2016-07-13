@@ -125,7 +125,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         this.getResponse(msg, (newMsg) => {
             if (newMsg == undefined) {
-                cb( [this.bestIndividual, this.bestIndividual]);
+                cb([this.bestIndividual, this.bestIndividual]);
                 return;
             }
             cb([newMsg.ctx.First, newMsg.ctx.Second]);
@@ -342,7 +342,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         msg.ActualLibrary = this._lib.name;
         //============================================ Timeout
-        var timeForTimeout = (this._globalConfig.clientTimeout * 1000) + 1000;
+        var timeForTimeout = (this._globalConfig.clientTimeout * 1000);
 
         if (msg.FirstOne !== undefined && msg.FirstOne == true) {
             //In this case can be a file Long Copy
@@ -367,9 +367,15 @@ abstract class IHeuristic extends events.EventEmitter {
                 else {
                     var processedMessage = obj.stdout;
                     processedMessage.ctx = this.Reload(processedMessage.ctx);
-                    this.cbs[msg.id](processedMessage);
-                    delete this.cbs[msg.id];
-                    this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
+                    
+                    if (!this.cbs[msg.id]) {
+                        this.cbs[msg.id](processedMessage);
+                        delete this.cbs[msg.id];
+                        this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
+                    }
+                    else{
+                        this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${msg.ctx.First.testResults.fit}]`);
+                    }
                 }
             } catch (error) {
                 this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
