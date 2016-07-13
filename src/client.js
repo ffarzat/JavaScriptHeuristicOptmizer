@@ -25,7 +25,7 @@ var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption
         //console.log(error.stack);
         //console.log('MPN Error code: ' + error.code);
         //console.log('MPNSignal received: ' + error.signal);
-        console.log(`{"id":"${id}", "sucess":"false", "host":"${os.hostname()}", "duration":"${clock(start)}"}`);
+        console.log(`{"id":"${id}", "sucess":"false", "host":"${os.hostname()}", "duration":"${clock(start)}" "error": "${error.stack}"}`);
         process.exit(error.code);
     }
     //console.log('MPN stdout: ' + stdout);
