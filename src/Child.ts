@@ -99,9 +99,6 @@ process.on('message', function (message) {
     msg.ProcessedTime = ToNanosecondsToSeconds(trialTimer.duration());;
 
     var msgProcessada = JSON.stringify(msg);
-    
-
-    
 
     logger.Write(`[runClients] Msg ${msg.id} sent back.`);
     process.send(msg);
