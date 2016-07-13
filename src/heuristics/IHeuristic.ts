@@ -374,7 +374,7 @@ abstract class IHeuristic extends events.EventEmitter {
                         this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
                     }
                     else{
-                        this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${msg.ctx.First.testResults.fit}]`);
+                        this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
                     }
                 }
             } catch (error) {
