@@ -341,7 +341,7 @@ abstract class IHeuristic extends events.EventEmitter {
      * Control the list of available Hosts
      */
     private DetermineNextHosts(): Array<string> {
-        return this.Hosts;
+        return this.Hosts.slice();
     }
 
     /**
