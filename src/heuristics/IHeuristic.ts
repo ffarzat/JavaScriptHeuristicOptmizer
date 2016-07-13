@@ -53,7 +53,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
     Pool: any;
 
-    nextId:number;
+    nextId: number;
 
     cbs: any;
 
@@ -100,6 +100,9 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ctx = context;
 
         this.getResponse(msg, (newMsg) => {
+            if (newMsg == undefined) {
+                cb(this.bestIndividual);
+            }
             cb(newMsg.ctx.First);
         });
     }
@@ -120,6 +123,9 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ctx = context;
 
         this.getResponse(msg, (newMsg) => {
+            if (newMsg == undefined) {
+                cb(this.bestIndividual, this.bestIndividual);
+            }
             cb([newMsg.ctx.First, newMsg.ctx.Second]);
         });
     }
@@ -255,6 +261,9 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ctx = ctx;
 
         this.getResponse(msg, (newMsg) => {
+            if (newMsg == undefined) {
+                cb(this.bestIndividual);
+            }
             cb(newMsg.ctx.First);
         });
 
@@ -288,7 +297,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
             //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
 
-            if (!this.Original ||  !this.Original.testResults || !this.Original.testResults.passedAllTests) {
+            if (!this.Original || !this.Original.testResults || !this.Original.testResults.passedAllTests) {
                 this._logger.Write(`[IHeuristic] Failed to execute tests for ${library.name}`);
                 cb(false);
             }
@@ -324,7 +333,7 @@ abstract class IHeuristic extends events.EventEmitter {
      * To resolve a single comunication with server trougth cluster comunication
      */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
-        msg.id = this.nextId ++;
+        msg.id = this.nextId++;
         this.cbs[msg.id] = cb;
         this._logger.Write(`[IHeuristic] Message ${msg.id} arrived`);
 
@@ -337,10 +346,10 @@ abstract class IHeuristic extends events.EventEmitter {
             timeForTimeout = this._globalConfig.copyFileTimeout * 1000;
             this._logger.Write(`[IHeuristic] File Copy Timeout ${timeForTimeout}`);
         }
-        
+
         var idTimeout = setTimeout(() => {
             this._logger.Write(`[IHeuristic] timeout for Message ${msg.id}`);
-            this.cbs[msg.id](this.Original); //default fail    
+            this.cbs[msg.id](undefined); //default fail    
             delete this.cbs[msg.id];
             this._logger.Write(`[IHeuristic] timeout for Message ${msg.id} done`);
         }, timeForTimeout);
@@ -355,14 +364,14 @@ abstract class IHeuristic extends events.EventEmitter {
                 else {
                     var processedMessage = obj.stdout;
                     processedMessage.ctx = this.Reload(processedMessage.ctx);
-                    this.cbs[msg.id](processedMessage);    
+                    this.cbs[msg.id](processedMessage);
                     delete this.cbs[msg.id];
                     this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
                 }
             } catch (error) {
                 this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
             }
-            
+
         });
 
         //============================================ Done
