@@ -118,7 +118,7 @@ export default class CommandTester implements ITester {
                 //NACAD environment
                 var hosts: string = ``;
                 this.AvailableHosts.forEach(host => {
-                    hosts += ` ${host},`;
+                    hosts += `${host},`;
                 });                
                 
                 hosts = hosts.substring(0, hosts.length - 1);
