@@ -86,7 +86,7 @@ var messageList = [];
 function doBegin() {
     var messagesToProcess = [];
 
-    for (var i = 0; i < configuration.clientsTotal; i++) {
+    for (var i = 0; i < configuration.trialsConfiguration[0].especific.neighborsToProcess ; i++) {
 
         var msg: Message = new Message();
         var context = new OperatorContext();
