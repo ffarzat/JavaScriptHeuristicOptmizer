@@ -47,11 +47,11 @@ if (hostfile == undefined) {
         }
     });
 
-    allHosts.pop(); //Removing first
+    allHosts.slice(0,1); //removing actual host
 
     logger.Write(`Hosts available:`);
     allHosts.forEach(element => {
-        logger.Write(`  ->${element}`);
+        logger.Write(`-> ${element}`);
     });
     
 }
