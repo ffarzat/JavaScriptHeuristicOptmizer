@@ -45,16 +45,6 @@ console.log(`LIB: ${lib.name}`);
 
 //var indexes: number[] = astExplorer.IndexNodes(generatedIndividual);
 
-var msg: Message = new Message();
-var context = new OperatorContext();
-context.Operation = "Test";
-context.First = generatedIndividual;
-context.Original = generatedIndividual; //is usual to be the original
-context.LibrarieOverTest = lib;
-
-msg.ActualLibrary = lib.name;
-msg.ctx = context;
-
 var FirstMsg: Message = new Message();
 var context = new OperatorContext();
 context.Operation = "StartClients";
@@ -76,6 +66,16 @@ function doBegin() {
     var messagesToProcess = [];
 
     for (var i = 0; i < 20; i++) {
+        
+        var msg: Message = new Message();
+        var context = new OperatorContext();
+        context.Operation = "Test";
+        context.First = generatedIndividual;
+        context.Original = generatedIndividual; //is usual to be the original
+        context.LibrarieOverTest = lib;
+
+        msg.ActualLibrary = lib.name;
+        msg.ctx = context;
         msg.id = i;
 
         var instance = function (callback) {
