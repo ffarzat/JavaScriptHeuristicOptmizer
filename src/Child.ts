@@ -59,7 +59,8 @@ process.on('message', function (message) {
 
     msg.ctx = localClient.Reload(msg.ctx);
 
-    logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
+    //logger.Write(`[runClient]   Client ${localClient.id} processing message ${msg.id}`);
+    logger.Write(`[runClient]   Processing message ${msg.id}`);
 
     /*
     if (message.id == 5) {
@@ -74,22 +75,22 @@ process.on('message', function (message) {
 
 
     if (msg.ctx.Operation == "Mutation") {
-        logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant`);
+        //logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant`);
         msg.ctx = localClient.Mutate(msg.ctx);
     }
 
     if (msg.ctx.Operation == "MutationByIndex") {
-        logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant by node index`);
+        //logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant by node index`);
         msg.ctx = localClient.MutateBy(msg.ctx);
     }
 
     if (msg.ctx.Operation == "CrossOver") {
-        logger.Write(`[runClient]processing ${msg.ActualLibrary} new crossover`);
+        //logger.Write(`[runClient]processing ${msg.ActualLibrary} new crossover`);
         msg.ctx = localClient.CrossOver(msg.ctx);
     }
 
     if (msg.ctx.Operation == "Test") {
-        logger.Write(`[runClient]processing ${msg.ActualLibrary} tests`);
+        //logger.Write(`[runClient]processing ${msg.ActualLibrary} tests`);
         msg.ctx = localClient.Test(msg.ctx);
     }
 
