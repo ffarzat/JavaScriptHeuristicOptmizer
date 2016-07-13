@@ -353,9 +353,10 @@ abstract class IHeuristic extends events.EventEmitter {
 
         var idTimeout = setTimeout(() => {
             this._logger.Write(`[IHeuristic] timeout for Message ${msg.id}`);
-            this.cbs[msg.id](undefined); //default fail    
+            var callback = this.cbs[msg.id];
             this.cbs.splice(msg.id, 1);
             this._logger.Write(`[IHeuristic] timeout for Message ${msg.id} done`);
+            callback(undefined);
         }, timeForTimeout);
         //============================================ Pool -> clients
 
@@ -370,9 +371,11 @@ abstract class IHeuristic extends events.EventEmitter {
                     processedMessage.ctx = this.Reload(processedMessage.ctx);
                     
                     if (this.cbs[msg.id] != undefined) {
-                        this.cbs[msg.id](processedMessage);
+                        var callback = this.cbs[msg.id];
                         this.cbs.splice(msg.id, 1);
                         this._logger.Write(`[IHeuristic] Message ${msg.id} completed`);
+                        callback(processedMessage);
+                        return;
                     }
                     else{
                         this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
