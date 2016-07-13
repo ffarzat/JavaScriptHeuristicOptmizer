@@ -330,7 +330,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         msg.ActualLibrary = this._lib.name;
         //============================================ Timeout
-        var timeForTimeout = this._globalConfig.clientTimeout * 1000;
+        var timeForTimeout = (this._globalConfig.clientTimeout * 1000) * 2;
 
         if (msg.FirstOne !== undefined && msg.FirstOne == true) {
             //In this case can be a file Long Copy
