@@ -21,7 +21,7 @@ var configurationFile: string = path.join(process.cwd(), configFile);
 var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
 var clientOptions = '--max-old-space-size=512000';
-var allHosts = "";
+var allHosts: Array<string>;
 
 if (hostfile == undefined) {
     clientOptions = '--max-old-space-size=2047';
