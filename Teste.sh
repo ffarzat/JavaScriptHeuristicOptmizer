@@ -28,7 +28,7 @@ echo "----------------"
 ### node --expose-gc --max-old-space-size=512000 build/src/index.js Configuration.json $NPROCS $PBS_NODEFILE
 
 
-mpirun -n 5 --map-by --hostfile $PBS_NODEFILE node echo $HOSTNAME 
+mpirun -np 5 --map-by node --hostfile $PBS_NODEFILE node echo $HOSTNAME 
 
 
 ### mpirun -np 48 --hostfile $PBS_NODEFILE node --expose-gc --max-old-space-size=102400 src/hosts.js $NPROCS $PBS_NODEFILE
