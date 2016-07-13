@@ -98,7 +98,7 @@ function ExecuteTrials(globalTrial: number) {
 }
 
 function executeHeuristicTrial(globalTrial: number, config: IConfiguration, heuristicTrial: number, ClientsPool: any, cb: () => void) {
-
+    optmizer = undefined;
     optmizer = new Optmizer();
 
     optmizer.Setup(configuration, globalTrial, heuristicTrial, ClientsPool, allHosts);
