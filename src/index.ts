@@ -21,10 +21,12 @@ var configurationFile: string = path.join(process.cwd(), configFile);
 var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
 var clientOptions = '--max-old-space-size=512000';
-
+var allHosts = "";
 
 if (hostfile == undefined) {
     clientOptions = '--max-old-space-size=2047';
+}else{
+    allHosts = fs.readFileSync(hostfile).toString().split("\n");
 }
 
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
@@ -39,7 +41,7 @@ if (process.platform !== "win32") {
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
-var allHosts = fs.readFileSync(hostfile).toString().split("\n");
+
 
 var pool = require('fork-pool');
 var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
