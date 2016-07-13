@@ -15,12 +15,12 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":1200,
+    "clientTimeout":15,
     "copyFileTimeout": 14400,
-    "clientsTotal": 48,
+    "clientsTotal": 40,
     "libraries" : [
         {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" }
     ],
@@ -29,7 +29,7 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 50,
+                "neighborsToProcess": 5000,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 

@@ -20,7 +20,7 @@
     "url": "ws://localhost",
     "clientTimeout":1200,
     "copyFileTimeout": 14400,
-    "clientsTotal": 48,
+    "clientsTotal": 40,
     "libraries" : [
         {"name":"react",       "path":"Libraries/react/",         "mainFilePath":"Libraries/react/build/react.js" }
     ],
@@ -29,7 +29,7 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 50,
+                "neighborsToProcess": 5000,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 

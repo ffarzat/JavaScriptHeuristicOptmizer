@@ -15,12 +15,12 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["GA"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":1200,
+    "clientTimeout":3,
     "copyFileTimeout": 14400,
-    "clientsTotal": 48,
+    "clientsTotal": 40,
     "libraries" : [
         {"name":"minimist",     "path":"Libraries/minimist/",       "mainFilePath":"Libraries/minimist/index.js"  }
     ],
