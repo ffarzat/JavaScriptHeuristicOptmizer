@@ -102,6 +102,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this.getResponse(msg, (newMsg) => {
             if (newMsg == undefined) {
                 cb(this.bestIndividual);
+                return;
             }
             cb(newMsg.ctx.First);
         });
@@ -125,6 +126,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this.getResponse(msg, (newMsg) => {
             if (newMsg == undefined) {
                 cb( [this.bestIndividual, this.bestIndividual]);
+                return;
             }
             cb([newMsg.ctx.First, newMsg.ctx.Second]);
         });
@@ -263,6 +265,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this.getResponse(msg, (newMsg) => {
             if (newMsg == undefined) {
                 cb(this.bestIndividual);
+                return;
             }
             cb(newMsg.ctx.First);
         });
