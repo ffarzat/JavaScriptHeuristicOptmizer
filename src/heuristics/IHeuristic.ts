@@ -53,6 +53,10 @@ abstract class IHeuristic extends events.EventEmitter {
 
     Pool: any;
 
+    nextId:number;
+
+    cbs: any;
+
     /**
      * Forces the Heuristic to validate config
      */
@@ -63,6 +67,8 @@ abstract class IHeuristic extends events.EventEmitter {
         events.EventEmitter.call(this);
         this.waitingMessages = {};
         this.trialUuid = uuid.v4();
+        this.nextId = 0;
+        this.cbs = {};
     }
 
     public Start() {
@@ -318,8 +324,12 @@ abstract class IHeuristic extends events.EventEmitter {
      * To resolve a single comunication with server trougth cluster comunication
      */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
-        msg.id = uuid.v4();
+        msg.id = this.nextId ++;
+        this.cbs[msg.id] = cb;
+        this._logger.Write(`[IHeuristic] Message ${msg.id} arrived`);
+
         msg.ActualLibrary = this._lib.name;
+        //============================================ Timeout
         var timeForTimeout = this._globalConfig.clientTimeout * 1000;
 
         if (msg.FirstOne !== undefined && msg.FirstOne == true) {
@@ -327,12 +337,14 @@ abstract class IHeuristic extends events.EventEmitter {
             timeForTimeout = this._globalConfig.copyFileTimeout * 1000;
             this._logger.Write(`[IHeuristic] File Copy Timeout ${timeForTimeout}`);
         }
-
-        //============================================ For now
+        
         var idTimeout = setTimeout(() => {
             this._logger.Write(`[IHeuristic] timeout for ${msg.id}`);
-            cb(msg);
+            this.cbs[msg.id](undefined);    
+            delete this.cbs[msg.id];
+            this._logger.Write(`[IHeuristic] timeout for ${msg.id} done`);
         }, timeForTimeout);
+        //============================================ Pool -> clients
 
         this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
             clearTimeout(idTimeout);
@@ -342,17 +354,18 @@ abstract class IHeuristic extends events.EventEmitter {
                 }
                 else {
                     var processedMessage = obj.stdout;
-                    msg.ctx = this.Reload(processedMessage.ctx);
+                    processedMessage.ctx = this.Reload(processedMessage.ctx);
+                    this.cbs[msg.id](processedMessage);    
+                    delete this.cbs[msg.id];
+                    this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
                 }
             } catch (error) {
                 this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
             }
-            finally {
-                cb(msg);
-            }
+            
         });
 
-        //============================================ ends
+        //============================================ Done
     }
 
 }

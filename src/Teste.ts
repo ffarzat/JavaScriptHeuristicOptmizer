@@ -63,7 +63,7 @@ var messagesToProcess = [];
 for (var i = 0; i < 8; i++) {
 
     var instance = function (callback) {
-        msg.id = JSON.stringify(i);
+        msg.id = i;
         Pool.enqueue(JSON.stringify(msg), callback);
     };
 
