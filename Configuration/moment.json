@@ -20,7 +20,7 @@
     "url": "ws://localhost",
     "clientTimeout":10,
     "copyFileTimeout": 14400,
-    "clientsTotal": 40,
+    "clientsTotal": 10,
     "libraries" : [
         {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" }
     ],
@@ -29,7 +29,7 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 5000,
+                "neighborsToProcess": 20,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
