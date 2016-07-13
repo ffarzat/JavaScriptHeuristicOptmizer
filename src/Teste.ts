@@ -67,12 +67,12 @@ function doBegin() {
     var messagesToProcess = [];
 
     for (var i = 0; i < 1; i++) {
-        
+
         var msg: Message = new Message();
         var context = new OperatorContext();
         context.Operation = "Test";
         context.First = generatedIndividual;
-        context.Original = generatedIndividual; 
+        context.Original = generatedIndividual;
         context.LibrarieOverTest = lib;
 
         msg.ActualLibrary = lib.name;
@@ -86,14 +86,31 @@ function doBegin() {
         messagesToProcess.push(instance);
     }
 
-    async.parallel(messagesToProcess, 
+
+    var exectimer = require('exectimer');
+    var Tick = new exectimer.Tick(1);
+    Tick.start();
+
+    async.parallel(messagesToProcess,
         function (err, results) {
             if (err)
                 console.log(`err: ${err.stack}`);
 
             console.log(`results: ${results.length}`);
+            
+            Tick.stop();
+            var trialTimer = exectimer.timers[1];
+            console.log(ToNanosecondsToSeconds(trialTimer.duration()));
+             
             process.exit();
 
         }
     );
+}
+
+/**
+ * Transform nano secs in secs
+ */
+function ToNanosecondsToSeconds(nanovalue: number): number {
+    return parseFloat((nanovalue / 1000000000.0).toFixed(3));
 }
