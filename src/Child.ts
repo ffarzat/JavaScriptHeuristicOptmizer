@@ -53,8 +53,23 @@ process.on('message', function (message) {
 
     //try {
     var msg: Message = JSON.parse(message);
+
+    var exectimer = require('exectimer');
+    var Tick = new exectimer.Tick(msg.id);
+    Tick.start();
+
     msg.ctx = localClient.Reload(msg.ctx);
-    //logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
+
+    logger.Write(`[runClient]Client ${localClient.id} processing message ${msg.id}`);
+
+    if (message.id == 5) {
+        throw new Error("Just for test");
+    }
+
+    if (message.id == 20) {
+        RecursivaInfinita();
+        return;
+    }
 
 
     if (msg.ctx.Operation == "Mutation") {
@@ -77,11 +92,28 @@ process.on('message', function (message) {
         msg.ctx = localClient.Test(msg.ctx);
     }
 
+    Tick.stop();
+    msg.ProcessedTime = ToNanosecondsToSeconds(Tick.duration());;
+
     var msgProcessada = JSON.stringify(msg);
+    
+
+    
+
     logger.Write(`[runClients] Msg ${msg.id} sent back.`);
     process.send(msg);
 });
 
+function RecursivaInfinita() {
+    RecursivaInfinita();
+}
+
+/**
+ * Transform nano secs in secs
+ */
+function ToNanosecondsToSeconds(nanovalue: number): number {
+    return parseFloat((nanovalue / 1000000000.0).toFixed(3));
+}
 
 /**
  * Copia e instala, se for o caso, a lib localmente

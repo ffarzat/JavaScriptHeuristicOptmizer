@@ -14,6 +14,8 @@ export default class Message {
 
     FirstOne: boolean;
 
+    ProcessedTime: number;
+
     ActualHeuristic: string;
     ActualGlobalTrial: number
     ActualInternalTrial: number

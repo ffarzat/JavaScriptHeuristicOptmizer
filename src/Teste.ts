@@ -21,8 +21,14 @@ var numCPUs = (require('os').cpus().length);
 /**
  * Just for test messages
  */
+var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';
+var configurationFile: string = path.join(process.cwd(), configFile);
+
+var Ncpus = process.argv[3];
+var hostfile = process.argv[4];
+var clientOptions = '--max-old-space-size=512000';
+
 var astExplorer: ASTExplorer = new ASTExplorer();
-var configurationFile: string = path.join(process.cwd(), 'Configuration.json');
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var lib = configuration.libraries[0];
 var libFile: string = lib.mainFilePath;
@@ -34,14 +40,10 @@ if (process.platform !== "win32") {
 }
 
 
-console.log(`CPUS Available: ${numCPUs}`);
+//console.log(`CPUS Available: ${numCPUs}`);
 console.log(`LIB: ${lib.name}`);
 
-
-
 //var indexes: number[] = astExplorer.IndexNodes(generatedIndividual);
-
-var messageId = uuid.v4();
 
 var msg: Message = new Message();
 var context = new OperatorContext();
@@ -50,21 +52,20 @@ context.First = generatedIndividual;
 context.Original = generatedIndividual; //is usual to be the original
 context.LibrarieOverTest = lib;
 
-msg.id = messageId;
 msg.ActualLibrary = lib.name;
 msg.ctx = context;
 
 
 //========================================================================================== Clients Pool
-var Pool = new pool(__dirname + '/Child.js', null, null, { size: configuration.clientsTotal, log: false, timeout: configuration.clientTimeout * 1000 });
+var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
 var messagesToProcess = [];
 
-for (var i = 0; i < 8; i++) {
+for (var i = 0; i < 20; i++) {
+    msg.id = i;
 
     var instance = function (callback) {
-        msg.id = i;
-        Pool.enqueue(JSON.stringify(msg), callback);
+        uniquePool.enqueue(JSON.stringify(msg), callback);
     };
 
     messagesToProcess.push(instance);
