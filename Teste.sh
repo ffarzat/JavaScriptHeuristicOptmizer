@@ -20,8 +20,8 @@ echo "----------------"
 echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
-### echo "nodefile:"
-### cat $PBS_NODEFILE
+echo "nodefile:"
+cat $PBS_NODEFILE
 #NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
 echo "----------------"
 
