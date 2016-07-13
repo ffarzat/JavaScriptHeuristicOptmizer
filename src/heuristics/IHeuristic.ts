@@ -124,7 +124,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         this.getResponse(msg, (newMsg) => {
             if (newMsg == undefined) {
-                cb(this.bestIndividual, this.bestIndividual);
+                cb( [this.bestIndividual, this.bestIndividual]);
             }
             cb([newMsg.ctx.First, newMsg.ctx.Second]);
         });
