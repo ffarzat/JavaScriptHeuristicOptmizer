@@ -116,7 +116,8 @@ export default class CommandTester implements ITester {
             }
             else {
                 //NACAD environment
-                var hosts: string = ``;
+                var hosts: string = "";
+
                 this.AvailableHosts.forEach(host => {
                     hosts += `${host},`;
                 });                
@@ -126,7 +127,7 @@ export default class CommandTester implements ITester {
                 testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
 
 
-                //console.log(`[CommandTester] Hosts: ${hosts}`);
+                console.log(`[CommandTester] Hosts count: ${this.AvailableHosts.length}`);
                 console.log(`[CommandTester] cmd: ${testCMD}`);                
             }
 
