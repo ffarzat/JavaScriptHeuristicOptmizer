@@ -93,7 +93,8 @@ process.on('message', function (message) {
     }
 
     Tick.stop();
-    msg.ProcessedTime = ToNanosecondsToSeconds(Tick.duration());;
+    var trialTimer = exectimer.timers[msg.id];
+    msg.ProcessedTime = ToNanosecondsToSeconds(trialTimer.duration());;
 
     var msgProcessada = JSON.stringify(msg);
     
