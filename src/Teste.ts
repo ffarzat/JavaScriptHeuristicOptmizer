@@ -67,7 +67,7 @@ FirstMsg.ctx = context;
 //========================================================================================== Clients Pool
 var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
-uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj) {
+uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj)=> {
     doBegin();
 });
 
