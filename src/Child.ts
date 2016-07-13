@@ -78,7 +78,7 @@ process.on('message', function (message) {
     }
 
     var msgProcessada = JSON.stringify(msg);
-    logger.Write(`[runClients] Msg ${msg.id} done.`);
+    logger.Write(`[runClients] Msg ${msg.id} sent back.`);
     process.send(msg);
 });
 
