@@ -27,7 +27,7 @@ var configurationFile: string = path.join(process.cwd(), configFile);
 var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
 var clientOptions = '--max-old-space-size=512000';
-var allHosts: Array<string>;
+var allHosts: Array<string> = [];
 var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
 
 allHostsList.forEach(element => {
