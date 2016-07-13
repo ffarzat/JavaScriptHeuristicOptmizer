@@ -21,7 +21,7 @@ var configurationFile: string = path.join(process.cwd(), configFile);
 var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
 var clientOptions = '--max-old-space-size=512000';
-var allHosts: Array<string> =[];
+var allHosts: Array<string> = [];
 
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
@@ -37,24 +37,23 @@ logger.Initialize(configuration);
 
 if (hostfile == undefined) {
     clientOptions = '--max-old-space-size=2047';
-}else{
+} else {
     var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
 
     allHostsList.forEach(element => {
-        if(allHosts.indexOf(element) == -1 && element != "")
-        {
+
+        if (allHosts.indexOf(element) == -1 && element != "") {
             allHosts.push(element);
         }
     });
 
-    allHosts.slice(0,1); //removing actual host
-    allHosts.slice(0,1); //removing actual host
+    allHosts = allHosts.slice(0, 1); //removing actual host
 
     logger.Write(`Hosts available:`);
     allHosts.forEach(element => {
         logger.Write(`-> ${element}`);
     });
-    
+
 }
 
 
