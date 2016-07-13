@@ -18,7 +18,7 @@
     "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":2,
+    "clientTimeout":3,
     "copyFileTimeout": 14400,
     "clientsTotal": 10,
     "libraries" : [
