@@ -340,7 +340,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Control the list of available Hosts
      */
-    private DetermineNextHosts(numberOfHosts: number): Array<string> {
+    private DetermineNextHosts(): Array<string> {
         return this.Hosts;
     }
 
@@ -394,7 +394,7 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     SaveMessage(messageToSave: Message, cb:any) {
         messageToSave.id = this.nextId++;
-        messageToSave.Hosts = this.DetermineNextHosts(5); //TODO How can I descovery how much use?
+        messageToSave.Hosts = this.DetermineNextHosts();
         messageToSave.ActualLibrary = this._lib.name;
 
         this.cbs[messageToSave.id] = cb;
