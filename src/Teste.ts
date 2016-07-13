@@ -55,33 +55,46 @@ context.LibrarieOverTest = lib;
 msg.ActualLibrary = lib.name;
 msg.ctx = context;
 
+var FirstMsg: Message = new Message();
+var context = new OperatorContext();
+context.Operation = "StartClients";
+context.First = generatedIndividual;
+context.Original = generatedIndividual; //is usual to be the original
+context.LibrarieOverTest = lib;
 
+FirstMsg.ActualLibrary = lib.name;
+FirstMsg.ctx = context;
 //========================================================================================== Clients Pool
 var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
-var messagesToProcess = [];
+uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj) {
+    doBegin();
+});
 
-for (var i = 0; i < 20; i++) {
-    msg.id = i;
 
-    var instance = function (callback) {
-        uniquePool.enqueue(JSON.stringify(msg), callback);
-    };
+function doBegin() {
+    var messagesToProcess = [];
 
-    messagesToProcess.push(instance);
-}
+    for (var i = 0; i < 20; i++) {
+        msg.id = i;
 
-async.parallel(messagesToProcess, // optional callback
-    function (err, results) {
-        // the results array will equal ['one','two'] even though
-        // the second function had a shorter timeout.
-        if (err)
-            console.log(`err: ${err.stack}`);
+        var instance = function (callback) {
+            uniquePool.enqueue(JSON.stringify(msg), callback);
+        };
 
-        console.log(`results: ${results.length}`);
-        process.exit();
-
+        messagesToProcess.push(instance);
     }
-);
 
+    async.parallel(messagesToProcess, // optional callback
+        function (err, results) {
+            // the results array will equal ['one','two'] even though
+            // the second function had a shorter timeout.
+            if (err)
+                console.log(`err: ${err.stack}`);
 
+            console.log(`results: ${results.length}`);
+            process.exit();
+
+        }
+    );
+}
