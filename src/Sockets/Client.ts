@@ -42,7 +42,6 @@ export default class Client {
 
     SetHosts(hosts:Array<string>){
         this.HostsAvailable = hosts;
-        console.log(`[Client] Hosts: ${this.HostsAvailable.length}`);
     }
 
     /**

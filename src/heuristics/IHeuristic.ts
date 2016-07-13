@@ -379,11 +379,6 @@ abstract class IHeuristic extends events.EventEmitter {
      * Terminate a message Life cycle
      */
     FinishMessage(idForCB: number, messageDone: Message) {
-        var hosts: Array<string> = <Array<string>>this.Messages[idForCB].Hosts;
-        hosts.forEach(element => {
-            this.Hosts.push(element);
-        });
-
         this.cbs[idForCB](messageDone);
         delete this.cbs[idForCB];
         delete this.Messages[idForCB];
