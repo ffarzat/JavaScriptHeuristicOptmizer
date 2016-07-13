@@ -39,8 +39,10 @@ if (process.platform !== "win32") {
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
+var allHosts = fs.readFileSync(hostfile).toString().split("\n");
+
 var pool = require('fork-pool');
-var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
+var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
 //=========================================================================================== Server!
 
@@ -81,7 +83,7 @@ function executeHeuristicTrial(globalTrial: number, config: IConfiguration, heur
 
     optmizer = new Optmizer();
 
-    optmizer.Setup(configuration, globalTrial, heuristicTrial, ClientsPool);
+    optmizer.Setup(configuration, globalTrial, heuristicTrial, ClientsPool, allHosts);
     optmizer.DoOptmization(0, () => {
         cb();
     });
@@ -121,6 +123,7 @@ function DisplayConfig() {
     var totalTrials = configuration.trials * configuration.trialsConfiguration.length * configuration.libraries.length * configuration.heuristics.length;
     logger.Write('=================================');
     logger.Write(`Configuration: ${configurationFile}`);
+    logger.Write(`Hosts cpus total: ${allHosts.length}`);
     logger.Write(`Ncpus: ${Ncpus}`);
     logger.Write(`hostfile: ${hostfile}`);
     logger.Write(`Clients total ${configuration.clientsTotal}`);

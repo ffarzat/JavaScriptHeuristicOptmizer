@@ -22,7 +22,7 @@ describe('IHeuristic Tests', () => {
         var rdInstance = new HeuristicFactory().CreateByName(configuration.heuristics[1]);
         var especific = configuration.trialsConfiguration[0].especific;
         
-        rdInstance.Setup(especific, configuration);
+        rdInstance.Setup(especific, configuration, undefined);
         
         expect(rdInstance).not.be.an('undefined');
         expect(rdInstance._config).not.be.an('undefined');
@@ -34,7 +34,7 @@ describe('IHeuristic Tests', () => {
         //console.log(`Creating an instance of ${configuration.heuristics[2]}`);
         var hcInstance: HC  = new HeuristicFactory().CreateByName(configuration.heuristics[2]) as HC;
         var especific = configuration.trialsConfiguration[0].especific;
-        hcInstance.Setup(especific, configuration);
+        hcInstance.Setup(especific, configuration, undefined);
         //console.log(JSON.stringify(hcInstance));
         
         expect(hcInstance).not.be.an('undefined');

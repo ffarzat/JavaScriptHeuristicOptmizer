@@ -57,10 +57,13 @@ abstract class IHeuristic extends events.EventEmitter {
 
     cbs: any;
 
+    Hosts: Array<string>;
+    Messages: any;
+
     /**
      * Forces the Heuristic to validate config
      */
-    Setup(config: TrialEspecificConfiguration, globalConfig: IConfiguration): void {
+    Setup(config: TrialEspecificConfiguration, globalConfig: IConfiguration, allHosts: Array<string>): void {
         this._config = config;
         this._globalConfig = globalConfig;
         this._astExplorer = new ASTExplorer();
@@ -69,6 +72,8 @@ abstract class IHeuristic extends events.EventEmitter {
         this.trialUuid = uuid.v4();
         this.nextId = 0;
         this.cbs = {};
+        this.Hosts = allHosts;
+        this.Messages = {};
     }
 
     public Start() {
@@ -333,33 +338,26 @@ abstract class IHeuristic extends events.EventEmitter {
     }
 
     /**
+     * Control the list of available Hosts
+     */
+    private DetermineNextHosts(numberOfHosts: number): Array<string> {
+        var LastHosts: Array<string> = [];
+
+        for (var index = 0; index < numberOfHosts; index++) {
+            LastHosts.push(this.Hosts.pop());
+        }
+
+        return LastHosts;
+    }
+
+    /**
      * To resolve a single comunication with server trougth cluster comunication
      */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
-        msg.id = this.nextId++;
-        this.cbs[msg.id] = cb;
         this._logger.Write(`[IHeuristic] Message ${msg.id} arrived`);
-
-        msg.ActualLibrary = this._lib.name;
-        //============================================ Timeout
-        var timeForTimeout = (this._globalConfig.clientTimeout * 1000);
-
-        if (msg.FirstOne !== undefined && msg.FirstOne == true) {
-            //In this case can be a file Long Copy
-            timeForTimeout = this._globalConfig.copyFileTimeout * 1000;
-            this._logger.Write(`[IHeuristic] File Copy Timeout ${timeForTimeout}`);
-        }
-
-        var idTimeout = setTimeout(() => {
-            this._logger.Write(`[IHeuristic] timeout for Message ${msg.id}`);
-            this.cbs[msg.id](undefined); //default fail    
-            delete this.cbs[msg.id];
-            this._logger.Write(`[IHeuristic] timeout for Message ${msg.id} done`);
-        }, timeForTimeout);
+        this.SaveMessage(msg, cb);
         //============================================ Pool -> clients
-
         this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
-            clearTimeout(idTimeout);
             try {
                 if (err) {
                     this._logger.Write(`[IHeuristic] Pool err: ${err.stack}`);
@@ -367,26 +365,72 @@ abstract class IHeuristic extends events.EventEmitter {
                 else {
                     var processedMessage = obj.stdout;
                     processedMessage.ctx = this.Reload(processedMessage.ctx);
-                    
+
                     if (this.cbs[msg.id] != undefined) {
-                        this.cbs[msg.id](processedMessage);
-                        delete this.cbs[msg.id];
+                        this.FinishMessage(msg.id, processedMessage);
                         this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
                     }
-                    else{
+                    else {
                         this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
                     }
                 }
             } catch (error) {
                 this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
             }
-
         });
-
         //============================================ Done
     }
 
-}
+    /**
+     * Terminate a message Life cycle
+     */
+    FinishMessage(idForCB: number, messageDone: Message) {
+        var hosts: Array<string> = <Array<string>>this.Messages[idForCB].Hosts;
+        hosts.forEach(element => {
+            this.Hosts.push(element);
+        });
 
+        this.cbs[idForCB](messageDone);
+        delete this.cbs[idForCB];
+        delete this.Messages[idForCB];
+    }
+
+    /**
+     * Store a Message
+     */
+    SaveMessage(messageToSave: Message, cb:any) {
+        messageToSave.id = this.nextId++;
+        messageToSave.Hosts = this.DetermineNextHosts(5); //TODO How can I descovery how much use?
+        messageToSave.ActualLibrary = this._lib.name;
+
+        this.cbs[messageToSave.id] = cb;
+        this.Messages[messageToSave.id] = messageToSave;
+    }
+
+    /**
+     * Calculates Message Tmeout
+     */
+    DetermineMessageTimeout(messageToWait: Message) {
+        var timeForTimeout = (this._globalConfig.clientTimeout * 1000);
+
+        if (messageToWait.FirstOne !== undefined && messageToWait.FirstOne == true) {
+            //In this case can be a file Long Copy
+            timeForTimeout = this._globalConfig.copyFileTimeout * 1000;
+            this._logger.Write(`[IHeuristic] File Copy Timeout ${timeForTimeout}`);
+        }
+
+        setTimeout(() => {
+            var messageTimeouted = this.Messages[messageToWait.id];
+            
+            if (messageTimeouted) {
+                this._logger.Write(`[IHeuristic] timeout for Message ${messageToWait.id}`);
+                this.FinishMessage(messageToWait.id, undefined);
+                this._logger.Write(`[IHeuristic] timeout for Message ${messageToWait.id} done`);
+            }
+
+        }, timeForTimeout);
+    }
+
+}
 
 export default IHeuristic;

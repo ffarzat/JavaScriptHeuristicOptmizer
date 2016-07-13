@@ -14,6 +14,9 @@ export default class Message {
 
     FirstOne: boolean;
 
+    Hosts: Array<string>;
+
+
     ProcessedTime: number;
 
     ActualHeuristic: string;

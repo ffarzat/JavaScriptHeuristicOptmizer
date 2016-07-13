@@ -24,8 +24,8 @@ export default class RD extends IHeuristic {
     /**
      * Especific Setup
      */
-    Setup(config: TrialEspecificConfiguration, globalConfig: IConfiguration): void {
-        super.Setup(config, globalConfig);
+    Setup(config: TrialEspecificConfiguration, globalConfig: IConfiguration, allHosts: Array<string>): void {
+        super.Setup(config, globalConfig, allHosts);
 
         this.trials = config.trials;
     }

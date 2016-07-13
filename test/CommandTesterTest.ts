@@ -32,7 +32,7 @@ describe('CommandTester Tests', function () {
 
         //Setup
         var commandTester = new CommandTester();
-        commandTester.Setup(configuration.testUntil, lib, configuration.fitType, 1, "", configuration.clientTimeout * 1000);
+        commandTester.Setup(configuration.testUntil, lib, configuration.fitType, configuration.clientTimeout * 1000, undefined);
         commandTester.SetLogger(logger);
 
         //Exec the test

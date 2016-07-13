@@ -26,15 +26,11 @@ export default class Client {
 
     TempDirectory: any;
 
-    Ncpus: number;
-    hostfile: string;
+    HostsAvailable: Array<string>;
 
-    Setup(config: IConfiguration, directory: any, cpus: number, hostfile: string): void {
+    Setup(config: IConfiguration, directory: any): void {
         this._config = config;
         this.TempDirectory = directory;
-
-        this.Ncpus = cpus;
-        this.hostfile = hostfile;
     }
 
     /**
@@ -42,6 +38,10 @@ export default class Client {
      */
     Reload(context: OperatorContext): OperatorContext {
         return this._astExplorer.Reload(context);
+    }
+
+    SetHosts(hosts:Array<string>){
+        this.HostsAvailable = hosts;
     }
 
     /**
@@ -202,7 +202,7 @@ export default class Client {
 
         this.logger.Write(`[Client] Test lib environment: ${context.LibrarieOverTest.name}`)
         this._tester = new TesterFactory().CreateByName(this._config.tester);
-        this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType, this.Ncpus, this.hostfile, this._config.clientTimeout * 1000);
+        this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType, this._config.clientTimeout * 1000, this.HostsAvailable);
         this._tester.SetLogger(this.logger);
     }
 }

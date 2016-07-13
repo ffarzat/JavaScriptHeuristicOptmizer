@@ -36,20 +36,21 @@ export default class CommandTester implements ITester {
 
     oldLibFilePath: string;
 
-    Ncpus: number;
-    hostfile: string;
     testTimeout: number;
 
     LibName: string;
-
+    
+    AvailableHosts: Array<string>
 
     /**
      * Initializes NPM packages if necessary
      */
-    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string, cpus: number, hostfile: string, testTimeout: number) {
+    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string, testTimeout: number, Hosts: Array<string>) {
 
         this.testUntil = testUntil;
         this.testTimeout = testTimeout;
+        this.AvailableHosts = Hosts;
+
 
         //Setup tests with Lib context
         this.libMainFilePath = LibrarieOverTest.mainFilePath;
@@ -57,9 +58,6 @@ export default class CommandTester implements ITester {
         this.testOldDirectory = process.cwd();
         this.fitType = fitType;
         this.oldLibFilePath = path.join(this.libDirectoryPath, 'old.js');
-
-        this.Ncpus = cpus;
-        this.hostfile = hostfile;
 
         this.LibName = LibrarieOverTest.name;
 
@@ -111,15 +109,20 @@ export default class CommandTester implements ITester {
             var msgId = uuid.v4();
             var bufferOption = { maxBuffer: 1024 * 5000 }
 
-            if (this.hostfile == undefined || this.hostfile == "undefined" || this.hostfile == "") {
+            if (this.AvailableHosts == undefined || this.AvailableHosts.length == 0) {
                 testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
                 bufferOption = {maxBuffer: 200*1024};
             }
             else {
                 //NACAD environment
-                var cpusString = fs.readFileSync(this.hostfile).toString().split("\n");
-                var actualHost = cpusString[48];
-                var testCMD = `mpirun -np ${testUntil} -host ${actualHost} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
+                var hosts: string = `-host`;
+                this.AvailableHosts.forEach(host => {
+                    hosts += ` ${host}, `;
+                });                
+                
+                hosts = hosts.substring(0, hosts.length - 1);
+
+                var testCMD = `mpirun -np ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
             }
 
             //console.log(`[CommandTester] Before`);
@@ -207,9 +210,6 @@ export default class CommandTester implements ITester {
 
         tester.fitType = this.fitType;
         tester.oldLibFilePath = this.oldLibFilePath;
-
-        tester.Ncpus = this.Ncpus;
-        tester.hostfile = this.hostfile;
 
         return tester;
     }

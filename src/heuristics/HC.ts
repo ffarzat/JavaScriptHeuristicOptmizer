@@ -29,9 +29,9 @@ export default class HC extends IHeuristic {
     /**
      * Especific Setup
      */
-    Setup(config: TrialEspecificConfiguration, globalConfig: IConfiguration): void {
+    Setup(config: TrialEspecificConfiguration, globalConfig: IConfiguration, allHosts: Array<string>): void {
 
-        super.Setup(config, globalConfig);
+        super.Setup(config, globalConfig, allHosts);
 
         this.neighborApproach = config.neighborApproach;
         this.trials = config.trials;

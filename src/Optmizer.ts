@@ -41,16 +41,18 @@ export default class Optmizer {
 
     Pool: any;
 
+    Hosts: Array<string>;
+
     libCurrentIndex: number;
 
     /**
      * Initializes intire Setup chain
      */
-    Setup(Config: IConfiguration, TrialIndex: number, HeuristicTrial: number, ClientsPool: any) {
+    Setup(Config: IConfiguration, TrialIndex: number, HeuristicTrial: number, ClientsPool: any, allHosts: Array<string>) {
         this.DoValidation(Config)
         this.configuration = Config;
         this.Pool = ClientsPool;
-
+        this.Hosts = allHosts;
         this.trialIndex = TrialIndex;
         this.heuristicTrial = HeuristicTrial;
 
@@ -110,7 +112,7 @@ export default class Optmizer {
         this.configuration.heuristics.forEach(element => {
             var heuristic = factory.CreateByName(element);
             heuristic.Name = element;
-            heuristic.Setup(this.configuration.trialsConfiguration[this.heuristicTrial].especific, this.configuration);
+            heuristic.Setup(this.configuration.trialsConfiguration[this.heuristicTrial].especific, this.configuration, this.Hosts);
             heuristic.Trials = this.configuration.trials;
             heuristic._logger = this.logger;
             heuristic.Pool = this.Pool;

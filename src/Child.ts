@@ -22,9 +22,6 @@ var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile
 
 var testOldDirectory: string = process.cwd();
 
-var Ncpus = parseInt(process.argv[3]);
-var hostfile = process.argv[4];
-
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
@@ -42,7 +39,7 @@ var localClient = new Client();
 localClient.id = clientId;
 localClient.logger = logger;
 
-localClient.Setup(configuration, clientWorkDir, Ncpus, hostfile);
+localClient.Setup(configuration, clientWorkDir);
 
 ParseConfigAndLibs(clientWorkDir.path);
 
@@ -57,6 +54,8 @@ process.on('message', function (message) {
     var exectimer = require('exectimer');
     var Tick = new exectimer.Tick(msg.id);
     Tick.start();
+
+    localClient.SetHosts(msg.Hosts);
 
     msg.ctx = localClient.Reload(msg.ctx);
 
