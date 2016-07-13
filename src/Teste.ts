@@ -62,6 +62,8 @@ uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj)=> {
 });
 
 
+var messageList =[];
+
 
 function doBegin() {
     var messagesToProcess = [];
@@ -79,8 +81,10 @@ function doBegin() {
         msg.ctx = context;
         msg.id = i;
 
+        messageList.push(msg);
+
         var instance = function (callback) {
-            uniquePool.enqueue(JSON.stringify(msg), callback);
+            uniquePool.enqueue(JSON.stringify(messageList.pop()), callback);
         };
 
         messagesToProcess.push(instance);
