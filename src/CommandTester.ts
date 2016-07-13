@@ -127,7 +127,7 @@ export default class CommandTester implements ITester {
 
 
                 //console.log(`[CommandTester] Hosts: ${hosts}`);
-                //console.log(`[CommandTester] cmd: ${testCMD}`);                
+                console.log(`[CommandTester] cmd: ${testCMD}`);                
             }
 
             //console.log(`[CommandTester] Before`);
