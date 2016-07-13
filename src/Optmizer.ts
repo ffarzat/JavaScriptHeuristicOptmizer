@@ -236,6 +236,7 @@ export default class Optmizer {
 
         try {
             this.runLibOverHeuristic(libIndex, 0, () => {
+                this.logger.Write(` [Optmizer] libIndex ${libIndex}`);
                 var element = this.configuration.libraries[libIndex];
                 this.logger.Write(` [Optmizer] Trial ${this.trialIndex} for Library ${element.name} done.`);
                 
