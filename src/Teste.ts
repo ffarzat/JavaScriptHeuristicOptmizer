@@ -57,11 +57,11 @@ FirstMsg.ctx = context;
 //========================================================================================== Clients Pool
 var uniquePool = new pool(__dirname + '/Child.js', [configFile, Ncpus, hostfile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
-//uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj)=> {
-//    doBegin();
-//});
+uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj)=> {
+    doBegin();
+});
 
-doBegin();
+
 
 function doBegin() {
     var messagesToProcess = [];
@@ -100,7 +100,7 @@ function doBegin() {
             
             Tick.stop();
             var trialTimer = exectimer.timers[1];
-            console.log(ToNanosecondsToSeconds(trialTimer.duration()));
+            console.log(`Tempo: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
              
             process.exit();
 
