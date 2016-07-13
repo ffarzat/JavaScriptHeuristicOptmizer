@@ -339,10 +339,10 @@ abstract class IHeuristic extends events.EventEmitter {
         }
         
         var idTimeout = setTimeout(() => {
-            this._logger.Write(`[IHeuristic] timeout for ${msg.id}`);
-            this.cbs[msg.id](undefined);    
+            this._logger.Write(`[IHeuristic] timeout for Message ${msg.id}`);
+            this.cbs[msg.id](this.Original); //default fail    
             delete this.cbs[msg.id];
-            this._logger.Write(`[IHeuristic] timeout for ${msg.id} done`);
+            this._logger.Write(`[IHeuristic] timeout for Message ${msg.id} done`);
         }, timeForTimeout);
         //============================================ Pool -> clients
 
