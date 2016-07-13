@@ -55,7 +55,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
     nextId: number;
 
-    cbs: any;
+    cbs: Array<any>;
 
     /**
      * Forces the Heuristic to validate config
@@ -68,7 +68,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this.waitingMessages = {};
         this.trialUuid = uuid.v4();
         this.nextId = 0;
-        this.cbs = {};
+        this.cbs = [];
     }
 
     public Start() {
@@ -336,8 +336,9 @@ abstract class IHeuristic extends events.EventEmitter {
      * To resolve a single comunication with server trougth cluster comunication
      */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
-        msg.id = this.nextId++;
-        this.cbs[msg.id] = cb;
+        msg.id = this.nextId;
+        this.nextId ++;
+        this.cbs.push(cb);
         this._logger.Write(`[IHeuristic] Message ${msg.id} arrived`);
 
         msg.ActualLibrary = this._lib.name;
@@ -370,7 +371,7 @@ abstract class IHeuristic extends events.EventEmitter {
                     
                     if (this.cbs[msg.id] != undefined) {
                         this.cbs[msg.id](processedMessage);
-                        delete this.cbs[msg.id];
+                        this.cbs.splice(msg.id, 1);
                         this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
                     }
                     else{
@@ -380,7 +381,6 @@ abstract class IHeuristic extends events.EventEmitter {
             } catch (error) {
                 this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
             }
-
         });
 
         //============================================ Done
