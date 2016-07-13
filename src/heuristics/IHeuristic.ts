@@ -288,7 +288,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
             //this._logger.Write(`Orginal results: ${this.Original.testResults}`);
 
-            if (!this.Original.testResults || !this.Original.testResults.passedAllTests) {
+            if (!this.Original ||  !this.Original.testResults || !this.Original.testResults.passedAllTests) {
                 this._logger.Write(`[IHeuristic] Failed to execute tests for ${library.name}`);
                 cb(false);
             }
