@@ -25,8 +25,10 @@ cat $PBS_NODEFILE
 #NO_OF_CORES=`cat $PBS_NODEFILE | egrep -v '^#'\|'^$' | wc -l | awk '{print $1}'`
 echo "----------------"
 
-node --expose-gc --max-old-space-size=512000 build/src/index.js Configuration.json $NPROCS $PBS_NODEFILE
+### node --expose-gc --max-old-space-size=512000 build/src/index.js Configuration.json $NPROCS $PBS_NODEFILE
 
+
+mpirun -n 5 --map-by --hostfile $PBS_NODEFILE node echo $HOSTNAME 
 
 
 ### mpirun -np 48 --hostfile $PBS_NODEFILE node --expose-gc --max-old-space-size=102400 src/hosts.js $NPROCS $PBS_NODEFILE
