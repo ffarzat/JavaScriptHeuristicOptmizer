@@ -51,7 +51,7 @@ export default class CommandTester implements ITester {
         this.testTimeout = testTimeout;
         this.AvailableHosts = Hosts;
         
-        if(AvailableHosts)
+        if(this.AvailableHosts)
             console.log(`[CommandTester] Hosts: ${this.AvailableHosts.length}`);
         
         //Setup tests with Lib context
