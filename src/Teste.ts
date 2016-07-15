@@ -137,11 +137,21 @@ messageList.forEach(element => {
             Tick.stop();
             var trialTimer = exectimer.timers[5000];
             logger.Write(`Total time: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
+
+            uniquePool.drain(function (err) {
+                if (err)
+                    logger.Write(`err: ${err.stack}`);
+
+                process.exit();
+            });
+
         }
     });
 });
 
 logger.Write(`All messages were sent.`);
+
+
 
 
 /*
