@@ -99,9 +99,8 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         var directoryToTest = configuration.tmpDirectory + `/${slotFree}/` + contextMutante.LibrarieOverTest.name
         //logger.Write(`Testing... ${directoryToTest}`);
 
-        Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, directoryToTest, timeoutMS, allHosts);
+        Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, directoryToTest, timeoutMS, allHosts, callback);
         ReturnSlots(1);
-        callback();
     }
 
     messagesToProcess.push(instance);
@@ -110,7 +109,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
 console.log(`messagesToProcess: ${messagesToProcess.length}`);
 var start = process.hrtime();
 
-async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, results)=> {
+async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, results) => {
     console.log(error);
     console.log(results.length);
 
@@ -118,8 +117,8 @@ async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, resul
 });
 //==================================================================================================================//>
 
-function ReturnSlots(quant: number){
-    totalSlots +=quant;
+function ReturnSlots(quant: number) {
+    totalSlots += quant;
 }
 
 function GetFreeSlot(): number {
@@ -136,7 +135,7 @@ function clock(startTime: any): number {
     return Math.round((end[0] * 1000) + (end[1] / 1000000));
 }
 
-function Testar(libMainFilePath: string, mutant: Individual, npmCmdDir: string, timeout: number, allHosts: any) {
+function Testar(libMainFilePath: string, mutant: Individual, npmCmdDir: string, timeout: number, allHosts: any, cb: () => void) {
     var hosts: string = "";
     var testCMD = "";
 
@@ -163,15 +162,23 @@ function Testar(libMainFilePath: string, mutant: Individual, npmCmdDir: string, 
         bufferOption = { maxBuffer: 200 * 1024 };
     }
 
-    try {
+    WriteCodeToFile(mutant, libMainFilePath);
 
-        WriteCodeToFile(mutant, libMainFilePath);
+    var workerProcess = child_process.exec(testCMD, bufferOption, (error, stdout, stderr) => {
 
-        var stdout = child_process.execSync(testCMD, bufferOption).toString();
-        //console.log(`[CommandTester] After`);
+        if (error || stderr) {
+            logger.Write(`${error.stack}`);
+            logger.Write(`${stderr}`);
+
+            max = 0;
+            min = 0;
+            avg = 0;
+            median = 0;
+            passedAllTests = false;
+        }
+
         var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
         stringList = stringList.substring(0, stringList.length - 1);
-        //console.log(`[${stringList}]`);
 
         var list = JSON.parse(`[${stringList}]`);
         var numbers = [];
@@ -188,23 +195,8 @@ function Testar(libMainFilePath: string, mutant: Individual, npmCmdDir: string, 
         median = CalculateMedian(numbers);
         passedAllTests = (list[0].sucess === "true");
 
-    } catch (error) {
-        logger.Write(`${error.stack}`);
-
-        max = 0;
-        min = 0;
-        avg = 0;
-        median = 0;
-        passedAllTests = false;
-    }
-
-
-
-    //console.log(`Min: ${ToSecs(min)}`);
-    //console.log(`Max: ${ToSecs(max)}`);
-    //console.log(`Mean: ${ToSecs(avg)}`);
-    //console.log(`Median: ${ToSecs(median)}`);
-    //console.log(`Duration: ${ToSecs(max)}`); // Now is Max
+        cb();
+    });
 }
 
 /**
