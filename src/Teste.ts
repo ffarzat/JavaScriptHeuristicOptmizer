@@ -190,11 +190,14 @@ function ToNanosecondsToSeconds(nanovalue: number): number {
 
 */
 
+// create a new queue
+const Queue = require('Queue.src.js');
+var queue = new Queue();
 
 const child_process = require('child_process');
 var bufferOption = { maxBuffer: 5000 * 1024 };
 
-var workerProcess = child_process.exec(`mpirun -n 5 -host r2i4n10.ib0.smc-default.americas.sgi.com -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js 78057587-0639-4827-bbaa-405e42f45944 /mnt/scratch/user8/temporaryfiles/1468599750279.2861/uuid 10000`, bufferOption, function (error, stdout, stderr) {
+var workerProcess = child_process.exec(`mpirun -n 5 -host r2i4n10.ib0.smc-default.americas.sgi.com -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/MPI/client.js 78057587-0639-4827-bbaa-405e42f45944 /mnt/scratch/user8/temporaryfiles/1468599750279.2861/uuid 10000`, bufferOption, function (error, stdout, stderr) {
 
     if (error) {
         console.log(error.stack);
