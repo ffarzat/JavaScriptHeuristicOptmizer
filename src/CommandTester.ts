@@ -111,11 +111,11 @@ export default class CommandTester implements ITester {
             //console.log(`testUntil: ${testUntil}`);
 
             var msgId = uuid.v4();
-            var bufferOption = { maxBuffer: 1024 * 5000 }
+            var bufferOption = { maxBuffer: 1024 * 5000, stdio:[0,1,2] };
 
             if (this.AvailableHosts == undefined || this.AvailableHosts.length == 0) {
                 testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
-                bufferOption = {maxBuffer: 200*1024};
+                bufferOption = {maxBuffer: 200*1024, , stdio:[0,1,2] };
             }
             else {
                 //NACAD environment
@@ -129,7 +129,7 @@ export default class CommandTester implements ITester {
 
                 //testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
 
-                testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm cd ${libPath} && npm test && echo 'será?'`;
+                testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm cd ${libPath} && npm test`;
 
                 //console.log(`[CommandTester] Hosts count: ${this.AvailableHosts.length}`);
                 //console.log(`[CommandTester] cmd: ${testCMD}`);                
