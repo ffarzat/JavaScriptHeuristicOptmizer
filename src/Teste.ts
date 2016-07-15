@@ -10,6 +10,7 @@ import ASTExplorer from './ASTExplorer';
 import Individual from './Individual';
 import OperatorContext from './OperatorContext';
 import Message from './Sockets/Message';
+import LogFactory from './LogFactory';
 
 var uuid = require('node-uuid');
 var pool = require('fork-pool');

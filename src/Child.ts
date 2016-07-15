@@ -46,7 +46,7 @@ ParseConfigAndLibs(clientWorkDir.path);
 logger.Write(`[Client:${clientId}] ready`);
 
 //========================================================================================== fork-poll handling
-process.on('message', function (message) {
+process.on('message', (message)=> {
 
     //try {
     var msg: Message = JSON.parse(message);
