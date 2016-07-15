@@ -334,5 +334,5 @@ function CalculateMean(numbers):number {
     for (var i = 0; i < numbers.length; i++) {
         total = total + numbers[i];
     }
-    return total / numbers.length;
+    return parseFloat((total / numbers.length).toFixed(3));
 }
