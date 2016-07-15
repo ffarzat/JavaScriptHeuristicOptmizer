@@ -200,7 +200,7 @@ export default class Client {
             }
         });
 
-        this.logger.Write(`[Client] Test lib environment: ${context.LibrarieOverTest.name}`)
+        //this.logger.Write(`[Client] Test lib environment: ${context.LibrarieOverTest.name}`)
         this._tester = new TesterFactory().CreateByName(this._config.tester);
         this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType, this._config.clientTimeout * 1000, this.HostsAvailable);
         this._tester.SetLogger(this.logger);
