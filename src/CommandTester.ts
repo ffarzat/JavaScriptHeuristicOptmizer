@@ -166,6 +166,7 @@ export default class CommandTester implements ITester {
 
         } catch (error) {
             //this.logger.Write(error);
+            this.logger.Write(stdout);
             this.logger.Write(`[CommandTester] Tests Failed.`);
             passedAllTests = false;
         }
