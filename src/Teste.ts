@@ -99,7 +99,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         //logger.Write(`Testing... ${directoryToTest}`);
 
         Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, directoryToTest, timeoutMS, allHosts);
-        callback(true);
+        callback();
     }
 
     messagesToProcess.push(instance);
@@ -110,7 +110,7 @@ var start = process.hrtime();
 
 async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, results)=> {
     console.log(error);
-    console.log(results);
+    console.log(results.length);
     console.log(`Total Duration: ${clock(start)}`);
 });
 //==================================================================================================================//>
