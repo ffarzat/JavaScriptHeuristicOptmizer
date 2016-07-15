@@ -195,13 +195,13 @@ import IConfiguration from './IConfiguration';
 import Individual from './Individual';
 import OperatorContext from './OperatorContext';
 import LogFactory from './LogFactory';
-const Queue = require('./MPI/Queue');
+import Queue = from './MPI/Queue';
 const child_process = require('child_process');
 import path = require('path');
 import fs = require('fs');
 
 // create a new queue
-var queue = new Queue();
+var fila = new Queue();
 
 //Reads the config
 var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';
