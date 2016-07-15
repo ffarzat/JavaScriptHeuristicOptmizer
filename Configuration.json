@@ -19,17 +19,17 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":10,
-    "clientsTotal": 2,
+    "clientsTotal": 10,
     "copyFileTimeout": 30,
     "libraries" : [
-        {"name":"uuid",       "path":"Libraries/uuid/",         "mainFilePath":"Libraries/uuid/lib/uuid.js" }
+        {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" }
     ],
     "trialsConfiguration":[
         {
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 2,
+                "neighborsToProcess": 1,
                 "trials": 10,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 5, 
