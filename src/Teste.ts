@@ -86,7 +86,7 @@ var messageList = [];
 function doBegin() {
     var messagesToProcess = [];
 
-    for (var i = 0; i < configuration.trialsConfiguration[0].especific.neighborsToProcess ; i++) {
+    for (var i = 0; i < configuration.trialsConfiguration[0].especific.neighborsToProcess; i++) {
 
         var msg: Message = new Message();
         var context = new OperatorContext();
@@ -102,11 +102,13 @@ function doBegin() {
 
         messageList.push(msg);
 
+        /*
         var instance = function (callback) {
             uniquePool.enqueue(JSON.stringify(messageList.pop()), callback);
         };
 
         messagesToProcess.push(instance);
+        */
     }
 
 
@@ -114,6 +116,30 @@ function doBegin() {
     var Tick = new exectimer.Tick(1);
     Tick.start();
 
+    messageList.forEach(element => {
+        uniquePool.enqueue(JSON.stringify(element), (err, obj: Message) => {
+
+            if (err)
+                console.log(`err: ${err.stack}`);
+
+            console.log(`msg ${obj.id} done.`);
+
+            if (obj.id == configuration.trialsConfiguration[0].especific.neighborsToProcess - 1) {
+                Tick.stop();
+                var trialTimer = exectimer.timers[1];
+                console.log(`Tempo: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
+            }
+        });
+    });
+
+
+
+    Tick.stop();
+    var trialTimer = exectimer.timers[1];
+    console.log(`Tempo: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
+
+
+    /*
     async.parallel(messagesToProcess,
         function (err, results) {
             if (err)
@@ -129,6 +155,7 @@ function doBegin() {
 
         }
     );
+    */
 }
 
 /**
