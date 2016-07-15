@@ -195,7 +195,7 @@ import IConfiguration from './IConfiguration';
 import Individual from './Individual';
 import OperatorContext from './OperatorContext';
 import LogFactory from './LogFactory';
-import Queue = from './MPI/Queue';
+import Queue from './MPI/Queue';
 const child_process = require('child_process');
 import path = require('path');
 import fs = require('fs');
