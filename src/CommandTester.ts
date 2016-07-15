@@ -146,7 +146,7 @@ export default class CommandTester implements ITester {
                 var element = list[index];
                 numbers.push(element.duration);
                 //this.logger.Write(`${stdout}`)
-                console.log(`${element.host}    ${element.sucess} ${element.duration}]`);
+                console.log(`${element.host}    ${element.id}    ${element.sucess} ${element.duration}]`);
             }
 
             max = Math.max.apply(null, numbers);
