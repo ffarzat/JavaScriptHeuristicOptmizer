@@ -133,13 +133,11 @@ function doBegin() {
     });
 
 
-
+    /*
     Tick.stop();
     var trialTimer = exectimer.timers[1];
     console.log(`Tempo: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
 
-
-    /*
     async.parallel(messagesToProcess,
         function (err, results) {
             if (err)
