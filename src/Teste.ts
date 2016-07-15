@@ -1,6 +1,6 @@
 /// <reference path="./typings/tsd.d.ts" />
 //	node build/src/teste.js
-
+/*
 import fs = require('fs');
 import path = require('path');
 import expect = require('expect.js');
@@ -21,7 +21,7 @@ var numCPUs = (require('os').cpus().length);
 
 /**
  * Just for test messages
- */
+ 
 var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';
 var configurationFile: string = path.join(process.cwd(), configFile);
 
@@ -83,7 +83,7 @@ var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [cl
 uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj) => {
     doBegin();
 });
-*/
+
 
 var messageList: Array<Message> = [];
 
@@ -113,7 +113,7 @@ for (var i = 0; i < configuration.trialsConfiguration[0].especific.neighborsToPr
     };
 
     messagesToProcess.push(instance);
-    */
+    
 }
 
 logger.Write(`Total clients ${configuration.clientsTotal}`);
@@ -183,9 +183,29 @@ async.parallel(messagesToProcess,
 
 /**
  * Transform nano secs in secs
- */
+ 
 function ToNanosecondsToSeconds(nanovalue: number): number {
     return parseFloat((nanovalue / 1000000000.0).toFixed(3));
 }
 
+*/
+
+
+const child_process = require('child_process');
+var bufferOption = { maxBuffer: 5000 * 1024 };
+
+var workerProcess = child_process.exec(`mpirun -n 5 -host r2i4n10.ib0.smc-default.americas.sgi.com -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js 78057587-0639-4827-bbaa-405e42f45944 /mnt/scratch/user8/temporaryfiles/1468599750279.2861/uuid 10000`, bufferOption, function (error, stdout, stderr) {
+
+    if (error) {
+        console.log(error.stack);
+        console.log('MPN Error code: ' + error.code);
+        console.log('MPNSignal received: ' + error.signal);
+        //console.log(`{"id":"${id}", "sucess":"false", "host":"${os.hostname()}", "duration":"${clock(start)}"}`);
+        process.exit(error.code);
+    }
+    console.log('MPN stdout: ' + stdout);
+    console.log('MPNstderr: ' + stderr);
+    //console.log(`{"id":"${id}", "sucess":"true", "host":"${os.hostname()}", "duration":"${clock(start)}"}`);
+    process.exit();
+});
 
