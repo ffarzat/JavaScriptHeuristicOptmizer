@@ -99,7 +99,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         logger.Write(`Testing... ${directoryToTest}`);
         
         Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, directoryToTest, timeoutMS, allHosts);
-        callback();
+        callback(true);
     }
 
     messagesToProcess.push(instance);
@@ -164,7 +164,7 @@ function Testar(libMainFilePath: string, mutant: Individual, npmCmdDir: string, 
             var element = list[index];
             numbers.push(element.duration);
             //this.logger.Write(`${stdout}`)
-            console.log(`{${element.host}:${element.duration}:${element.sucess}`);
+            console.log(`{${element.host}:${element.duration}:${element.sucess}}`);
         }
 
         max = Math.max.apply(null, numbers);
