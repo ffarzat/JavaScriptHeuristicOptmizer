@@ -95,6 +95,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         contextMutante.LibrarieOverTest = lib;
 
         var slotFree = GetFreeSlot();
+
         var directoryToTest = configuration.tmpDirectory + `/${slotFree}/` + contextMutante.LibrarieOverTest.name
         //logger.Write(`Testing... ${directoryToTest}`);
 
@@ -105,7 +106,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
     messagesToProcess.push(instance);
 }
 
-
+console.log(`messagesToProcess: ${messagesToProcess.length}`);
 var start = process.hrtime();
 
 async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, results)=> {
