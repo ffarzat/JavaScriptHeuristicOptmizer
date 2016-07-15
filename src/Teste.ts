@@ -94,13 +94,18 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         contextMutante.Original = generatedIndividual; //is usual to be the original
         contextMutante.LibrarieOverTest = lib;
 
-        var slotFree = GetFreeSlot();
+        GetFreeSlot( (slotFree)=>{
+            var directoryToTest = configuration.tmpDirectory + `/${slotFree}/` + contextMutante.LibrarieOverTest.name
+            logger.Write(`Testing... ${directoryToTest}`);
 
-        var directoryToTest = configuration.tmpDirectory + `/${slotFree}/` + contextMutante.LibrarieOverTest.name
-        logger.Write(`Testing... ${directoryToTest}`);
+            Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, directoryToTest, timeoutMS, allHosts, () => {
+                ReturnSlots(1);
+                callback();
+            });
+            
+        });
 
-        Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, directoryToTest, timeoutMS, allHosts, callback);
-        ReturnSlots(1);
+        
     }
 
     messagesToProcess.push(instance);
@@ -121,10 +126,10 @@ function ReturnSlots(quant: number) {
     totalSlots += quant;
 }
 
-function GetFreeSlot(): number {
+function GetFreeSlot(cb:(freeSolt: number)=> void) {
     var actual = totalSlots;
     totalSlots--;
-    return actual;
+    cb(actual);
 }
 
 /**
