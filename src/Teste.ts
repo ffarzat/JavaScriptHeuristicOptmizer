@@ -96,7 +96,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
 
         var slotFree = GetFreeSlot();
         var directoryToTest = configuration.tmpDirectory + `/${slotFree}/` + contextMutante.LibrarieOverTest.name
-        logger.Write(`Testing... ${directoryToTest}`);
+        //logger.Write(`Testing... ${directoryToTest}`);
 
         Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, directoryToTest, timeoutMS, allHosts);
         callback(true);
@@ -108,7 +108,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
 
 var start = process.hrtime();
 
-async.parallelLimit(messagesToProcess, configuration.clientsTotal, function (error, results) {
+async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, results)=> {
     console.log(error);
     console.log(results);
     console.log(`Total Duration: ${clock(start)}`);
@@ -193,11 +193,11 @@ function Testar(libMainFilePath: string, mutant: Individual, npmCmdDir: string, 
 
 
 
-    console.log(`Min: ${ToSecs(min)}`);
-    console.log(`Max: ${ToSecs(max)}`);
-    console.log(`Mean: ${ToSecs(avg)}`);
-    console.log(`Median: ${ToSecs(median)}`);
-    console.log(`Duration: ${ToSecs(max)}`); // Now is Max
+    //console.log(`Min: ${ToSecs(min)}`);
+    //console.log(`Max: ${ToSecs(max)}`);
+    //console.log(`Mean: ${ToSecs(avg)}`);
+    //console.log(`Median: ${ToSecs(median)}`);
+    //console.log(`Duration: ${ToSecs(max)}`); // Now is Max
 }
 
 /**
