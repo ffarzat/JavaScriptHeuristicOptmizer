@@ -16,7 +16,7 @@ var async = require("async");
 
 // create a new queue
 //var Mensagens = new Queue();
-var totalSlots = configuration.clientsTotal;
+
 var messagesToProcess = [];
 
 //Reads the config
@@ -29,6 +29,7 @@ var clientOptions = '--max-old-space-size=512000';
 var bufferOption = { maxBuffer: 5000 * 1024 };
 var allHosts: Array<string> = [];
 var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
+var totalSlots = configuration.clientsTotal;
 
 allHostsList.forEach(element => {
     if (allHosts.indexOf(element) == -1 && element != "") {
