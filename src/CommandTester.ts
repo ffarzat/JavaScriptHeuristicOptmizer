@@ -126,8 +126,9 @@ export default class CommandTester implements ITester {
                 
                 hosts = hosts.substring(0, hosts.length - 1);
 
-                testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
+                //testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
 
+                testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm  cd ${libPath} && npm test`;
 
                 //console.log(`[CommandTester] Hosts count: ${this.AvailableHosts.length}`);
                 //console.log(`[CommandTester] cmd: ${testCMD}`);                
