@@ -291,8 +291,8 @@ for (var index = 0; index < list.length; index++) {
 
 max = Math.max.apply(null, numbers);
 min = Math.min.apply(null, numbers);
-avg = mean(numbers);
-median = median(numbers);
+avg = CalculateMean(numbers);
+median = CalculateMedian(numbers);
 passedAllTests = (list[0].sucess === "true");
 
 console.log(`Min: ${ToSecs(min)}`);
@@ -314,7 +314,7 @@ function ToSecs(number) {
 /**
  * simple median
  */
-function median(values) {
+function CalculateMedian(values):number {
 
     values.sort(function (a, b) { return a - b; });
 
@@ -329,7 +329,7 @@ function median(values) {
 /**
  * simple mean
  */
-function mean(numbers) {
+function CalculateMean(numbers):number {
     var total = 0
     for (var i = 0; i < numbers.length; i++) {
         total = total + numbers[i];
