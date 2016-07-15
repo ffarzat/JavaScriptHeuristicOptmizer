@@ -191,7 +191,7 @@ function ToNanosecondsToSeconds(nanovalue: number): number {
 */
 
 // create a new queue
-const Queue = require('Queue.src.js');
+const Queue = require('src/MPI/Queue.src.js');
 var queue = new Queue();
 
 const child_process = require('child_process');
