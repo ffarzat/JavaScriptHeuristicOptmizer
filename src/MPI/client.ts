@@ -4,12 +4,8 @@ var libPath = process.argv[2];
 var timeoutMS = process.argv[3];
 var bufferOption = { maxBuffer: 5000 * 1024 };
 
-
-
-//console.log(`Id: ${id}`);
 //console.log(`libPath: ${libPath}`);
 //console.log(`timeoutMS: ${timeoutMS}`);
-
 var start = process.hrtime();
 
 var timeoutId = setTimeout(function () {
@@ -33,18 +29,10 @@ var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption
     process.exit();
 });
 
-workerProcess.on('exit', function (code) {
-    //console.log(`       Child Host: ${os.hostname()}`);
-    //console.log('       MPN exit code ' + code);
-    //console.log(`       Tests ${process.argv[2]} executed inside host: ${os.hostname()}`);
-    //console.log(`{id: ${process.argv[2]}, sucess: ${code === 0}, host: ${os.hostname()}, duration: ${clock(start)}}`);
-});
-
 /**
  * Milisecs F
  */
-function clock(startTime) {
-    if (!startTime) return process.hrtime();
+function clock(startTime:any):number {
     var end = process.hrtime(startTime);
     return Math.round((end[0] * 1000) + (end[1] / 1000000));
 }
