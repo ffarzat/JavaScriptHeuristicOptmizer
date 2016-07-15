@@ -119,7 +119,7 @@ for (var i = 0; i < configuration.trialsConfiguration[0].especific.neighborsToPr
 logger.Write(`Total clients ${configuration.clientsTotal}`);
 logger.Write(`Total messages ${messageList.length}`);
 
-
+var totalProcessedMsgs = 0;
 var exectimer = require('exectimer');
 var Tick = new exectimer.Tick(5000);
 Tick.start();
@@ -128,13 +128,16 @@ messageList.forEach(element => {
     logger.Write(`Sending message ${element.id}`);
 
     uniquePool.enqueue(JSON.stringify(element), (err, obj) => {
-
+        totalProcessedMsgs++;
+        
         if (err)
             logger.Write(`err: ${err.stack}`);
 
-        logger.Write(`msg ${obj.stdout.id} done.`);
 
-        if (obj.stdout.id == configuration.trialsConfiguration[0].especific.neighborsToProcess - 1) {
+        var processedMessage = obj.stdout;
+        logger.Write(`msg ${processedMessage.id} done.`);
+
+        if (totalProcessedMsgs == configuration.trialsConfiguration[0].especific.neighborsToProcess) {
             Tick.stop();
             var trialTimer = exectimer.timers[5000];
             logger.Write(`Total time: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
