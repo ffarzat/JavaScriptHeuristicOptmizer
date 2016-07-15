@@ -29,7 +29,7 @@ var clientOptions = '--max-old-space-size=512000';
 var bufferOption = { maxBuffer: 5000 * 1024 };
 var allHosts: Array<string> = [];
 var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
-var totalSlots = configuration.clientsTotal;
+
 
 allHostsList.forEach(element => {
     if (allHosts.indexOf(element) == -1 && element != "") {
@@ -50,7 +50,7 @@ var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile
 var lib = configuration.libraries[0];
 var libFile: string = lib.mainFilePath;
 var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
-
+var totalSlots = configuration.clientsTotal;
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
