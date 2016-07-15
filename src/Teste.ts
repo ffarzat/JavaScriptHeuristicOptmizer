@@ -257,7 +257,7 @@ var timeoutMS = configuration.clientTimeout * 1000;
 var libPath = "Libraries/uuid";
 
 var hosts: string = "";
-this.AvailableHosts.forEach(host => {
+AvailableHosts.forEach(host => {
     hosts += `${host},`;
 });
 
