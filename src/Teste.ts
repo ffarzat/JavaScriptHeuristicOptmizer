@@ -50,6 +50,9 @@ var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile
 var lib = configuration.libraries[0];
 var libFile: string = lib.mainFilePath;
 var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
+var logger = new LogFactory().CreateByName(configuration.logWritter);
+logger.Initialize(configuration);
+
 
 //Patch for execution over NACAD PBS 
 if (process.platform !== "win32") {
@@ -112,8 +115,8 @@ for (var i = 0; i < configuration.trialsConfiguration[0].especific.neighborsToPr
     */
 }
 
-console.log(`Total clients ${configuration.clientsTotal}`);
-console.log(`Total messages ${messageList.length}`);
+logger.Write(`Total clients ${configuration.clientsTotal}`);
+logger.Write(`Total messages ${messageList.length}`);
 
 
 var exectimer = require('exectimer');
@@ -121,24 +124,24 @@ var Tick = new exectimer.Tick(5000);
 Tick.start();
 
 messageList.forEach(element => {
-    console.log(`Sending message ${element.id}`);
+    logger.Write(`Sending message ${element.id}`);
 
     uniquePool.enqueue(JSON.stringify(element), (err, obj: Message) => {
 
         if (err)
-            console.log(`err: ${err.stack}`);
+            logger.Write(`err: ${err.stack}`);
 
-        console.log(`msg ${obj.id} done.`);
+        logger.Write(`msg ${obj.id} done.`);
 
         if (obj.id == configuration.trialsConfiguration[0].especific.neighborsToProcess - 1) {
             Tick.stop();
             var trialTimer = exectimer.timers[5000];
-            console.log(`Total time: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
+            logger.Write(`Total time: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
         }
     });
 });
 
-console.log(`All messages were sent.`);
+logger.Write(`All messages were sent.`);
 
 
 /*
