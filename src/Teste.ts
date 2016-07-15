@@ -127,14 +127,14 @@ Tick.start();
 messageList.forEach(element => {
     logger.Write(`Sending message ${element.id}`);
 
-    uniquePool.enqueue(JSON.stringify(element), (err, obj: Message) => {
+    uniquePool.enqueue(JSON.stringify(element), (err, obj) => {
 
         if (err)
             logger.Write(`err: ${err.stack}`);
 
-        logger.Write(`msg ${obj.id} done.`);
+        logger.Write(`msg ${obj.stdout.id} done.`);
 
-        if (obj.id == configuration.trialsConfiguration[0].especific.neighborsToProcess - 1) {
+        if (obj.stdout.id == configuration.trialsConfiguration[0].especific.neighborsToProcess - 1) {
             Tick.stop();
             var trialTimer = exectimer.timers[5000];
             logger.Write(`Total time: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
