@@ -172,7 +172,7 @@ function Testar(libMainFilePath: string, mutant: Individual, npmCmdDir: string, 
     var workerProcess = child_process.exec(testCMD, bufferOption, (error, stdout, stderr) => {
 
         if (error || stderr) {
-            logger.Write(`${error.stack}`);
+            logger.Write(`${error}`);
             logger.Write(`${stderr}`);
 
             max = 0;
