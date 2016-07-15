@@ -97,7 +97,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         var slotFree = GetFreeSlot();
         var directoryToTest = configuration.tmpDirectory + `/${slotFree}/` + contextMutante.LibrarieOverTest.name
         logger.Write(`Testing... ${directoryToTest}`);
-        
+
         Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, directoryToTest, timeoutMS, allHosts);
         callback(true);
     }
@@ -106,20 +106,28 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
 }
 
 
+var start = process.hrtime();
 
-
-async.parallelLimit(messagesToProcess, configuration.clientsTotal, function(error, results) {
-  console.log(error);
-  console.log(results);
+async.parallelLimit(messagesToProcess, configuration.clientsTotal, function (error, results) {
+    console.log(error);
+    console.log(results);
+    console.log(`Total Duration: ${clock(start)}`);
 });
 //==================================================================================================================//>
 
-function GetFreeSlot(): number{
+function GetFreeSlot(): number {
     var actual = totalSlots;
     totalSlots--;
     return actual;
 }
 
+/**
+ * Milisecs F
+ */
+function clock(startTime: any): number {
+    var end = process.hrtime(startTime);
+    return Math.round((end[0] * 1000) + (end[1] / 1000000));
+}
 
 function Testar(libMainFilePath: string, mutant: Individual, npmCmdDir: string, timeout: number, allHosts: any) {
     var hosts: string = "";
