@@ -95,7 +95,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         contextMutante.LibrarieOverTest = lib;
 
         var slotFree = GetFreeSlot();
-        var directoryToTest = configuration.tmpDirectory + `/${slotFree}` + contextMutante.LibrarieOverTest.name
+        var directoryToTest = configuration.tmpDirectory + `/${slotFree}/` + contextMutante.LibrarieOverTest.name
         logger.Write(`Testing... ${directoryToTest}`);
         
         Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, directoryToTest, timeoutMS, allHosts);
