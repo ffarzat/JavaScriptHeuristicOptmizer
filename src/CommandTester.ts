@@ -129,8 +129,8 @@ export default class CommandTester implements ITester {
                 testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
 
 
-                console.log(`[CommandTester] Hosts count: ${this.AvailableHosts.length}`);
-                console.log(`[CommandTester] cmd: ${testCMD}`);                
+                //console.log(`[CommandTester] Hosts count: ${this.AvailableHosts.length}`);
+                //console.log(`[CommandTester] cmd: ${testCMD}`);                
             }
 
             //console.log(`[CommandTester] Before`);
@@ -146,7 +146,7 @@ export default class CommandTester implements ITester {
                 var element = list[index];
                 numbers.push(element.duration);
                 //this.logger.Write(`${stdout}`)
-                console.log(`[Executado no host: ${element.host}:${element.duration}/${element.sucess}]`);
+                console.log(`${element.host}    ${element.sucess} ${element.duration}]`);
             }
 
             max = Math.max.apply(null, numbers);

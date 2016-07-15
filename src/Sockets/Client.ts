@@ -163,7 +163,7 @@ export default class Client {
      * Global distributed Test execution
      */
     Test(context: OperatorContext): OperatorContext {
-        this.logger.Write(`[Client]Executing Tests for ${context.LibrarieOverTest.name}`);
+        //this.logger.Write(`[Client]Executing Tests for ${context.LibrarieOverTest.name}`);
 
         var ctx = new OperatorContext();
 
@@ -181,7 +181,7 @@ export default class Client {
 
 
         //Original time is now the timeout for everyone else (already in MS)
-        this.logger.Write(`[Client]Test done.`);
+        //this.logger.Write(`[Client]Test done.`);
         return ctx;
     }
 
