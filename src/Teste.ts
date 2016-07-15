@@ -114,12 +114,23 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
 console.log(`messagesToProcess: ${messagesToProcess.length}`);
 var start = process.hrtime();
 
+for (var index = 0; index < messagesToProcess.length; index++) {
+    var element = messagesToProcess[index];
+
+    element( () => {
+        console.log("Done.");    
+    });
+    
+}
+
+/*
 async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, results) => {
     console.log(error);
     console.log(results.length);
 
     console.log(`Total Duration: ${clock(start)}`);
 });
+*/
 //==================================================================================================================//>
 
 function ReturnSlots(quant: number) {
