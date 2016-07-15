@@ -86,6 +86,9 @@ var median;
 for (var index = 0; index < configuration.trialsConfiguration[0].especific.neighborsToProcess; index++) {
 
     var instance = function (callback) {
+
+        var contextMutante = context;
+        /*
         var mutante = astExplorer.Mutate(context);
 
         var contextMutante = new OperatorContext();
@@ -93,8 +96,9 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         contextMutante.First = mutante;
         contextMutante.Original = generatedIndividual; //is usual to be the original
         contextMutante.LibrarieOverTest = lib;
+        */
 
-        GetFreeSlot( (slotFree)=>{
+        GetFreeSlot((slotFree) => {
             var directoryToTest = configuration.tmpDirectory + `/${slotFree}/` + contextMutante.LibrarieOverTest.name
             logger.Write(`Testing... ${directoryToTest}`);
 
@@ -102,10 +106,10 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
                 ReturnSlots(1);
                 callback();
             });
-            
+
         });
 
-        
+
     }
 
     messagesToProcess.push(instance);
@@ -126,7 +130,7 @@ function ReturnSlots(quant: number) {
     totalSlots += quant;
 }
 
-function GetFreeSlot(cb:(freeSolt: number)=> void) {
+function GetFreeSlot(cb: (freeSolt: number) => void) {
     var actual = totalSlots;
     totalSlots--;
     cb(actual);
