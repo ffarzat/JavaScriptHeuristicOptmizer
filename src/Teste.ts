@@ -190,25 +190,122 @@ function ToNanosecondsToSeconds(nanovalue: number): number {
 
 */
 
-// create a new queue
+import ASTExplorer from './ASTExplorer';
+import IConfiguration from './IConfiguration';
+import Individual from './Individual';
+import OperatorContext from './OperatorContext';
+import LogFactory from './LogFactory';
 const Queue = require('src/MPI/Queue.src.js');
+const child_process = require('child_process');
+import path = require('path');
+import fs = require('fs');
+
+// create a new queue
 var queue = new Queue();
 
-const child_process = require('child_process');
+//Reads the config
+var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';
+var configurationFile: string = path.join(process.cwd(), configFile);
+
+var Ncpus = process.argv[3];
+var hostfile = process.argv[4];
+var clientOptions = '--max-old-space-size=512000';
 var bufferOption = { maxBuffer: 5000 * 1024 };
+var allHosts: Array<string> = [];
+var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
 
-var workerProcess = child_process.exec(`mpirun -n 5 -host r2i4n10.ib0.smc-default.americas.sgi.com -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/MPI/client.js 78057587-0639-4827-bbaa-405e42f45944 /mnt/scratch/user8/temporaryfiles/1468599750279.2861/uuid 10000`, bufferOption, function (error, stdout, stderr) {
-
-    if (error) {
-        console.log(error.stack);
-        //console.log('MPN Error code: ' + error.code);
-        //console.log('MPNSignal received: ' + error.signal);
-        //console.log(`{"id":"${id}", "sucess":"false", "host":"${os.hostname()}", "duration":"${clock(start)}"}`);
-        process.exit(error.code);
+allHostsList.forEach(element => {
+    if (allHosts.indexOf(element) == -1 && element != "") {
+        allHosts.push(element);
     }
-    console.log('MPN stdout: \n' + stdout);
-    //console.log('MPNstderr: ' + stderr);
-    //console.log(`{"id":"${id}", "sucess":"true", "host":"${os.hostname()}", "duration":"${clock(start)}"}`);
-    process.exit();
 });
 
+allHosts.splice(0, 1); //removing actual host
+
+console.log(`Hosts available:`);
+allHosts.forEach(element => {
+    console.log(`-> ${element}`);
+});
+
+//First Individual testing
+var astExplorer: ASTExplorer = new ASTExplorer();
+var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+var lib = configuration.libraries[0];
+var libFile: string = lib.mainFilePath;
+var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
+
+var logger = new LogFactory().CreateByName(configuration.logWritter);
+logger.Initialize(configuration);
+
+//Patch for execution over NACAD PBS 
+if (process.platform !== "win32") {
+    process.env['TMPDIR'] = configuration.tmpDirectory;
+}
+
+//console.log(`CPUS Available: ${numCPUs}`);
+console.log(`LIB: ${lib.name}`);
+
+
+var context = new OperatorContext();
+context.Operation = "StartClients";
+context.First = generatedIndividual;
+context.Original = generatedIndividual; //is usual to be the original
+context.LibrarieOverTest = lib;
+
+var testUntil = 5;
+var timeoutMS = configuration.clientTimeout * 1000;
+var libPath = "Libraries/uuid";
+
+var hosts: string = "";
+this.AvailableHosts.forEach(host => {
+    hosts += `${host},`;
+});
+
+hosts = hosts.substring(0, hosts.length - 1);
+
+var testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${libPath} ${timeoutMS}`;
+
+
+var passedAllTests = true;
+var max;
+var min;
+var avg;
+var median;
+
+
+
+var stdout = child_process.execSync(testCMD, bufferOption).toString();
+//console.log(`[CommandTester] After`);
+var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
+stringList = stringList.substring(0, stringList.length - 1);
+//console.log(`[${stringList}]`);
+
+var list = JSON.parse(`[${stringList}]`);
+var numbers = [];
+for (var index = 0; index < list.length; index++) {
+    var element = list[index];
+    numbers.push(element.duration);
+    //this.logger.Write(`${stdout}`)
+    console.log(`[Executado no host: ${element.host}:${element.duration}/${element.sucess}]`);
+}
+
+max = Math.max.apply(null, numbers);
+min = Math.min.apply(null, numbers);
+avg = this.mean(numbers);
+median = this.median(numbers);
+passedAllTests = (list[0].sucess === "true");
+
+console.log(`Min: ${ToSecs(min)}`);
+console.log(`Max: ${ToSecs(max)}`);
+console.log(`Mean: ${ToSecs(avg)}`);
+console.log(`Median: ${ToSecs(median)}`);
+console.log(`Duration: ${ToSecs(max)}`); // Now is Max
+console.log(`passedAllTests: ${passedAllTests}`); // Now is Max
+
+
+/**
+ * From ms to sec
+ */
+function ToSecs(number) {
+    return (number / 1000) % 60;
+}
