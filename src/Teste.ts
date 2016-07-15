@@ -100,6 +100,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         //logger.Write(`Testing... ${directoryToTest}`);
 
         Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, directoryToTest, timeoutMS, allHosts);
+        ReturnSlots(1);
         callback();
     }
 
@@ -112,9 +113,14 @@ var start = process.hrtime();
 async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, results)=> {
     console.log(error);
     console.log(results.length);
+
     console.log(`Total Duration: ${clock(start)}`);
 });
 //==================================================================================================================//>
+
+function ReturnSlots(quant: number){
+    totalSlots +=quant;
+}
 
 function GetFreeSlot(): number {
     var actual = totalSlots;
