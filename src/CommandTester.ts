@@ -87,6 +87,7 @@ export default class CommandTester implements ITester {
         var min;
         var avg;
         var median;
+        var stdout = "";
 
         try {
             //output new code over main file js
@@ -135,7 +136,7 @@ export default class CommandTester implements ITester {
             }
 
             //console.log(`[CommandTester] Before`);
-            var stdout = child_process.execSync(testCMD, bufferOption).toString();
+            stdout = child_process.execSync(testCMD, bufferOption).toString();
             //console.log(`[CommandTester] After`);
             var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
             stringList = stringList.substring(0, stringList.length - 1);
