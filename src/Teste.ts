@@ -75,86 +75,94 @@ FirstMsg.ctx = context;
 //========================================================================================== Clients Pool
 var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
+/*
 uniquePool.enqueue(JSON.stringify(FirstMsg), (err, obj) => {
     doBegin();
 });
+*/
+
+var messageList: Array<Message> = [];
 
 
-var messageList = [];
+//function doBegin() {
+var messagesToProcess = [];
 
+for (var i = 0; i < configuration.trialsConfiguration[0].especific.neighborsToProcess; i++) {
 
-function doBegin() {
-    var messagesToProcess = [];
+    var msg: Message = new Message();
+    var context = new OperatorContext();
+    context.Operation = "Test";
+    context.First = generatedIndividual;
+    context.Original = generatedIndividual;
+    context.LibrarieOverTest = lib;
 
-    for (var i = 0; i < configuration.trialsConfiguration[0].especific.neighborsToProcess; i++) {
+    msg.Hosts = allHosts;
+    msg.ActualLibrary = lib.name;
+    msg.ctx = context;
+    msg.id = i;
 
-        var msg: Message = new Message();
-        var context = new OperatorContext();
-        context.Operation = "Test";
-        context.First = generatedIndividual;
-        context.Original = generatedIndividual;
-        context.LibrarieOverTest = lib;
-
-        msg.Hosts = allHosts;
-        msg.ActualLibrary = lib.name;
-        msg.ctx = context;
-        msg.id = i;
-
-        messageList.push(msg);
-
-        /*
-        var instance = function (callback) {
-            uniquePool.enqueue(JSON.stringify(messageList.pop()), callback);
-        };
-
-        messagesToProcess.push(instance);
-        */
-    }
-
-
-    var exectimer = require('exectimer');
-    var Tick = new exectimer.Tick(1);
-    Tick.start();
-
-    messageList.forEach(element => {
-        uniquePool.enqueue(JSON.stringify(element), (err, obj: Message) => {
-
-            if (err)
-                console.log(`err: ${err.stack}`);
-
-            console.log(`msg ${obj.id} done.`);
-
-            if (obj.id == configuration.trialsConfiguration[0].especific.neighborsToProcess - 1) {
-                Tick.stop();
-                var trialTimer = exectimer.timers[1];
-                console.log(`Tempo: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
-            }
-        });
-    });
-
+    messageList.push(msg);
 
     /*
-    Tick.stop();
-    var trialTimer = exectimer.timers[1];
-    console.log(`Tempo: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
+    var instance = function (callback) {
+        uniquePool.enqueue(JSON.stringify(messageList.pop()), callback);
+    };
 
-    async.parallel(messagesToProcess,
-        function (err, results) {
-            if (err)
-                console.log(`err: ${err.stack}`);
-
-            console.log(`results: ${results.length}`);
-
-            Tick.stop();
-            var trialTimer = exectimer.timers[1];
-            console.log(`Tempo: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
-
-            process.exit();
-
-        }
-    );
+    messagesToProcess.push(instance);
     */
 }
+
+console.log(`Total clients ${configuration.clientsTotal}`);
+console.log(`Total messages ${messageList.length}`);
+
+
+var exectimer = require('exectimer');
+var Tick = new exectimer.Tick(5000);
+Tick.start();
+
+messageList.forEach(element => {
+    console.log(`Sending message ${element.id}`);
+
+    uniquePool.enqueue(JSON.stringify(element), (err, obj: Message) => {
+
+        if (err)
+            console.log(`err: ${err.stack}`);
+
+        console.log(`msg ${obj.id} done.`);
+
+        if (obj.id == configuration.trialsConfiguration[0].especific.neighborsToProcess - 1) {
+            Tick.stop();
+            var trialTimer = exectimer.timers[5000];
+            console.log(`Total time: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
+        }
+    });
+});
+
+console.log(`All messages were sent.`);
+
+
+/*
+Tick.stop();
+var trialTimer = exectimer.timers[1];
+console.log(`Tempo: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
+
+async.parallel(messagesToProcess,
+    function (err, results) {
+        if (err)
+            console.log(`err: ${err.stack}`);
+
+        console.log(`results: ${results.length}`);
+
+        Tick.stop();
+        var trialTimer = exectimer.timers[1];
+        console.log(`Tempo: ${ToNanosecondsToSeconds(trialTimer.duration())}`);
+
+        process.exit();
+
+    }
+);
+*/
+//}
 
 /**
  * Transform nano secs in secs
