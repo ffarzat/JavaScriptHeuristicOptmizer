@@ -149,7 +149,7 @@ function clock(startTime: any): number {
     return Math.round((end[0] * 1000) + (end[1] / 1000000));
 }
 
-function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string, npmCmdDir: string, LibTestPath: string, timeout: number, allHosts: any, cb: () => void) {
+function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string, npmCmdDir: string, LibTestPath: string, timeout: number, allHosts: any, cb: (error, result) => void) {
 
     var hosts: string = "";
     var testCMD = "";
