@@ -355,6 +355,7 @@ abstract class IHeuristic extends events.EventEmitter {
             try {
                 if (err) {
                     this._logger.Write(`[IHeuristic] Pool err: ${err.stack}`);
+                    this.FinishMessage(msg.id, undefined);
                 }
                 else {
                     var processedMessage = obj.stdout;
@@ -370,6 +371,7 @@ abstract class IHeuristic extends events.EventEmitter {
                 }
             } catch (error) {
                 this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
+                this.FinishMessage(msg.id, undefined);
             }
         });
         //============================================ Done
