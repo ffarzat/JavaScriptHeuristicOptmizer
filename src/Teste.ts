@@ -171,7 +171,7 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
         logger.Write(`cmd: ${testCMD}`);
     }
     else {
-        testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${LibTestPath} ${timeout}`;
+        testCMD = `node --expose-gc --max-old-space-size=2047 build/src/MPI/client.js ${LibTestPath} ${timeout}`;
         bufferOption = { maxBuffer: 500 * 1024 };
     }
 
@@ -188,6 +188,7 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
             avg = 0;
             median = 0;
             passedAllTests = false;
+            return;
         }
 
         var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
