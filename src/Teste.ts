@@ -99,9 +99,10 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         */
 
         GetFreeSlot((slotFree) => {
+            var nodeCmdDir = configuration.tmpDirectory + `/${slotFree}/nodev4/node-v4.4.7/out/Release/node`;
             var npmCmdDir = configuration.tmpDirectory + `/${slotFree}/nodev4/node-v4.4.7/out/bin/npm`;
             var directoryToTest = configuration.tmpDirectory + `/${slotFree}/` + contextMutante.LibrarieOverTest.name
-            logger.Write(`NPM... ${directoryToTest}`);
+            logger.Write(`NPM... ${npmCmdDir}`);
             logger.Write(`LIB... ${directoryToTest}`);
 
             Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, npmCmdDir, directoryToTest, timeoutMS, allHosts, () => {
@@ -146,7 +147,7 @@ function clock(startTime: any): number {
     return Math.round((end[0] * 1000) + (end[1] / 1000000));
 }
 
-function Testar(libMainFilePath: string, mutant: Individual, npmCmdDir: string, LibTestPath:string, timeout: number, allHosts: any, cb: () => void) {
+function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string, npmCmdDir: string, LibTestPath: string, timeout: number, allHosts: any, cb: () => void) {
     var hosts: string = "";
     var testCMD = "";
 
@@ -166,7 +167,8 @@ function Testar(libMainFilePath: string, mutant: Individual, npmCmdDir: string, 
 
         hosts = hosts.substring(0, hosts.length - 1);
 
-        testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=${npmCmdDir} /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 build/src/MPI/client.js ${npmCmdDir} ${timeout}`;
+        testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=${nodeCmdDir}:npm=${npmCmdDir} /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 build/src/MPI/client.js ${npmCmdDir} ${timeout}`;
+        logger.Write(`cmd: ${testCMD}`);
     }
     else {
         testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${LibTestPath} ${timeout}`;
