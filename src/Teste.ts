@@ -105,7 +105,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
             logger.Write(`NPM... ${npmCmdDir}`);
             logger.Write(`LIB... ${directoryToTest}`);
 
-            Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, nodeCmdDir, npmCmdDir, directoryToTest, timeoutMS, allHosts, () => {
+            Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First,nodeCmdDir, npmCmdDir, directoryToTest, timeoutMS, allHosts, () => {
                 ReturnSlots(1);
                 callback();
             });
@@ -126,8 +126,6 @@ async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, resul
     console.log(results.length);
 
     console.log(`Total Duration: ${clock(start)}`);
-
-    process.exit();
 });
 //==================================================================================================================//>
 
@@ -149,88 +147,69 @@ function clock(startTime: any): number {
     return Math.round((end[0] * 1000) + (end[1] / 1000000));
 }
 
-function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string, npmCmdDir: string, LibTestPath: string, timeout: number, allHosts: any, cb: (error, result) => void) {
-
+function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string, npmCmdDir: string, LibTestPath: string, timeout: number, allHosts: any, cb: () => void) {
     var hosts: string = "";
     var testCMD = "";
+
+
     var passedAllTests = true;
+
     var max;
     var min;
     var avg;
     var median;
 
-    try {
 
-        if (allHosts) {
-
-            if (allHosts.length > 1) {
-                hosts = "-host";
-
-                allHosts.forEach(host => {
-                    hosts += `${host},`;
-                });
-
-                hosts = hosts.substring(0, hosts.length - 1);
-            }
-
-            testCMD = `mpirun -n ${testUntil} ${hosts} -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=${nodeCmdDir}:npm=${npmCmdDir} node --expose-gc --max-old-space-size=102400 build/src/MPI/client.js ${LibTestPath} ${timeout}`;
-            logger.Write(`cmd: ${testCMD}`);
-        }
-        else {
-            testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${LibTestPath} ${timeout}`;
-            bufferOption = { maxBuffer: 200 * 1024 };
-        }
-
-        WriteCodeToFile(mutant, libMainFilePath);
-
-        var workerProcess = child_process.exec(testCMD, bufferOption, (error, stdout, stderr) => {
-
-            if (error || stderr) {
-                logger.Write(`${error}`);
-                logger.Write(`${stderr}`);
-
-                max = 0;
-                min = 0;
-                avg = 0;
-                median = 0;
-                passedAllTests = false;
-                cb(error, null);
-                return;
-            }
-
-            try {
-                var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
-                stringList = stringList.substring(0, stringList.length - 1);
-
-                var list = JSON.parse(`[${stringList}]`);
-                var numbers = [];
-                for (var index = 0; index < list.length; index++) {
-                    var element = list[index];
-                    numbers.push(element.duration);
-                    //this.logger.Write(`${stdout}`)
-                    console.log(`{${element.host}:${element.duration}:${element.sucess}}`);
-                }
-
-                max = Math.max.apply(null, numbers);
-                min = Math.min.apply(null, numbers);
-                avg = CalculateMean(numbers);
-                median = CalculateMedian(numbers);
-                passedAllTests = (list[0].sucess === "true");
-
-                cb(null, true);
-
-            } catch (error) {
-                logger.Write(`${error}`);
-                cb(error, null);
-            }
-            
+    if (allHosts) {
+        allHosts.forEach(host => {
+            hosts += `${host},`;
         });
 
-    } catch (error) {
-        logger.Write(`${error}`);
-        cb(error, null)
+        hosts = hosts.substring(0, hosts.length - 1);
+
+        testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=${nodeCmdDir}:npm=${npmCmdDir} node --expose-gc --max-old-space-size=102400 build/src/MPI/client.js ${LibTestPath} ${timeout}`;
+        logger.Write(`cmd: ${testCMD}`);
     }
-    
+    else {
+        testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${LibTestPath} ${timeout}`;
+        bufferOption = { maxBuffer: 200 * 1024 };
+    }
+
+    WriteCodeToFile(mutant, libMainFilePath);
+
+    var workerProcess = child_process.exec(testCMD, bufferOption, (error, stdout, stderr) => {
+
+        if (error || stderr) {
+            logger.Write(`${error}`);
+            logger.Write(`${stderr}`);
+
+            max = 0;
+            min = 0;
+            avg = 0;
+            median = 0;
+            passedAllTests = false;
+        }
+
+        var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
+        stringList = stringList.substring(0, stringList.length - 1);
+
+        var list = JSON.parse(`[${stringList}]`);
+        var numbers = [];
+        for (var index = 0; index < list.length; index++) {
+            var element = list[index];
+            numbers.push(element.duration);
+            //this.logger.Write(`${stdout}`)
+            console.log(`{${element.host}:${element.duration}:${element.sucess}}`);
+        }
+
+        max = Math.max.apply(null, numbers);
+        min = Math.min.apply(null, numbers);
+        avg = CalculateMean(numbers);
+        median = CalculateMedian(numbers);
+        passedAllTests = (list[0].sucess === "true");
+
+        cb();
+    });
 }
 
 /**
