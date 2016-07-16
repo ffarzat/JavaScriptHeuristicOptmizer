@@ -188,6 +188,7 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
             avg = 0;
             median = 0;
             passedAllTests = false;
+            cb();
             return;
         }
 
