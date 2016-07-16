@@ -37,7 +37,8 @@ allHostsList.forEach(element => {
     }
 });
 
-allHosts.splice(0, 1); //removing actual host
+if (allHosts.length > 1)
+    allHosts.splice(0, 1); //removing actual host
 
 console.log(`Hosts available:`);
 allHosts.forEach(element => {
@@ -105,7 +106,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
             logger.Write(`NPM... ${npmCmdDir}`);
             logger.Write(`LIB... ${directoryToTest}`);
 
-            Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First,nodeCmdDir, npmCmdDir, directoryToTest, timeoutMS, allHosts, () => {
+            Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, nodeCmdDir, npmCmdDir, directoryToTest, timeoutMS, allHosts, () => {
                 ReturnSlots(1);
                 callback();
             });
@@ -122,11 +123,11 @@ console.log(`messagesToProcess: ${messagesToProcess.length}`);
 var start = process.hrtime();
 
 async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, results) => {
-    
+
     console.log(`Total Duration: ${clock(start)}`);
 
     console.log(error);
-    console.log(results.length);   
+    console.log(results.length);
 });
 //==================================================================================================================//>
 
