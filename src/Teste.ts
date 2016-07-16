@@ -160,7 +160,7 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
     var median;
 
 
-    if (allHosts && (allHosts.length > 1) {
+    if (allHosts && allHosts.length > 1) {
         allHosts.forEach(host => {
             hosts += `${host},`;
         });
