@@ -13,10 +13,7 @@ var timeoutId = setTimeout(function () {
     process.exit(1);
 }, timeoutMS);
 
-var cmd = npmTmpDir == undefined ? `cd ${libPath} && npm test`: npmTmpDir; 
-
-
-var workerProcess = child_process.exec(npmTmpDir, bufferOption, function (error, stdout, stderr) {
+var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption, function (error, stdout, stderr) {
     clearTimeout(timeoutId);
 
     if (error) {
