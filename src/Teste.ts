@@ -149,7 +149,7 @@ function clock(startTime: any): number {
 }
 
 function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string, npmCmdDir: string, LibTestPath: string, timeout: number, allHosts: any, cb: () => void) {
-    var hosts: string = "-host";
+    var hosts: string = "";
     var testCMD = "";
 
 
@@ -162,11 +162,16 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
 
 
     if (allHosts) {
-        allHosts.forEach(host => {
-            hosts += `${host},`;
-        });
 
-        hosts = hosts.substring(0, hosts.length - 1);
+        if (allHosts.length > 1) {
+            hosts = "-host";
+            
+            allHosts.forEach(host => {
+                hosts += `${host},`;
+            });
+
+            hosts = hosts.substring(0, hosts.length - 1);
+        }
 
         testCMD = `mpirun -n ${testUntil} ${hosts} -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=${nodeCmdDir}:npm=${npmCmdDir} node --expose-gc --max-old-space-size=102400 build/src/MPI/client.js ${LibTestPath} ${timeout}`;
         logger.Write(`cmd: ${testCMD}`);
