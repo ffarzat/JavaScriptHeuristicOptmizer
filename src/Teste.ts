@@ -122,11 +122,10 @@ console.log(`messagesToProcess: ${messagesToProcess.length}`);
 var start = process.hrtime();
 
 async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, results) => {
-
-    console.log(`Total Duration: ${clock(start)}`);
-
     console.log(error);
     console.log(results.length);
+
+    console.log(`Total Duration: ${clock(start)}`);
 });
 //==================================================================================================================//>
 
