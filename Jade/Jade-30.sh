@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -k oe
-#PBS -l select=1:ncpus=10
+#PBS -l select=1:ncpus=20
 #PBS -N Jade-30
 ### Request email when job begins and ends
 #PBS -m bea
