@@ -171,8 +171,8 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
         logger.Write(`cmd: ${testCMD}`);
     }
     else {
-        testCMD = `mpirun -n ${testUntil} -x PATH=$PATH:node=${nodeCmdDir}:npm=${npmCmdDir} node --expose-gc --max-old-space-size=102400 build/src/MPI/client.js ${LibTestPath} ${timeout}`;
-        logger.Write(`cmd: ${testCMD}`);
+        testCMD = `node --expose-gc --max-old-space-size=2047 build/src/MPI/client.js ${LibTestPath} ${timeout}`;
+        bufferOption = { maxBuffer: 500 * 1024 };
     }
 
     WriteCodeToFile(mutant, libMainFilePath);
