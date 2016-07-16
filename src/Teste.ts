@@ -101,7 +101,8 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
         GetFreeSlot((slotFree) => {
             var npmCmdDir = configuration.tmpDirectory + `/${slotFree}/nodev4/node-v4.4.7/out/bin/npm`;
             var directoryToTest = configuration.tmpDirectory + `/${slotFree}/` + contextMutante.LibrarieOverTest.name
-            logger.Write(`Testing... ${directoryToTest}`);
+            logger.Write(`NPM... ${directoryToTest}`);
+            logger.Write(`LIB... ${directoryToTest}`);
 
             Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, npmCmdDir, directoryToTest, timeoutMS, allHosts, () => {
                 ReturnSlots(1);
