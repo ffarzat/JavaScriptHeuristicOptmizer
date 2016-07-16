@@ -1,12 +1,12 @@
 {
-    "file": "tleaf.json",
+    "file": "node-browserify.json",
     "trials":60,
-    "startTrial": 0,
+    "startTrial": 35,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
     "crossOverTrials": 1,
-    "logFilePath": "build/tleaf.log",
+    "logFilePath": "build/node-browserify.log",
     "tmpDirectory": "/mnt/scratch/user8/trialstmp",
     "logCategory":"optmization",
     "logFileClearing": false,
@@ -15,14 +15,14 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD"],
+    "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":150,
+    "clientTimeout":240,
     "copyFileTimeout": 14400,
     "clientsTotal": 20,
     "libraries" : [
-        {"name":"tleaf",       "path":"Libraries/tleaf/",         "mainFilePath":"Libraries/tleaf/src/parse.js" }
+        {"name":"node-browserify",         "path":"Libraries/node-browserify/",           "mainFilePath":"Libraries/node-browserify/index.js" }
     ],
     "trialsConfiguration":[
         {

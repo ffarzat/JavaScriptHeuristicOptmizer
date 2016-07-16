@@ -1,13 +1,13 @@
 {
     "file": "gulp-cccr.json",
-    "trials":60,
+    "trials":24,
     "startTrial": 0,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/gulp-cccr.log",
-    "tmpDirectory": "/mnt/scratch/user8/temporaryfiles",
+    "tmpDirectory": "/mnt/scratch/user8/trialstmp",
     "logCategory":"optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
@@ -20,7 +20,7 @@
     "url": "ws://localhost",
     "clientTimeout":2,
     "copyFileTimeout": 14400,
-    "clientsTotal": 40,
+    "clientsTotal": 20,
     "libraries" : [
         {"name":"gulp-cccr",       "path":"Libraries/gulp-ccr-browserify/",         "mainFilePath":"Libraries/gulp-ccr-browserify/index.js" }
     ],
@@ -29,7 +29,7 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 5000,
+                "neighborsToProcess": 20,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
