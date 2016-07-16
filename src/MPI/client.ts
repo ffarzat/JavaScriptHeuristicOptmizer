@@ -9,7 +9,6 @@ var bufferOption = { maxBuffer: 5000 * 1024 };
 var start = process.hrtime();
 
 var timeoutId = setTimeout(function () {
-    console.log(`{"sucess":"false", "host":"${os.hostname()}", "duration":"9999999999"}`);
     process.exit(1);
 }, timeoutMS);
 
