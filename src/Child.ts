@@ -46,7 +46,7 @@ ParseConfigAndLibs(clientWorkDir.path);
 logger.Write(`[Client:${clientId}] ready`);
 
 //========================================================================================== fork-poll handling
-process.on('message', (message)=> {
+process.on('message', function (message) {
 
     //try {
     var msg: Message = JSON.parse(message);
@@ -60,7 +60,7 @@ process.on('message', (message)=> {
     msg.ctx = localClient.Reload(msg.ctx);
 
     //logger.Write(`[runClient]   Client ${localClient.id} processing message ${msg.id}`);
-    //logger.Write(`[runClient]   Processing message ${msg.id}`);
+    logger.Write(`[runClient]   Processing message ${msg.id}`);
 
     /*
     if (message.id == 5) {
@@ -100,7 +100,7 @@ process.on('message', (message)=> {
 
     var msgProcessada = JSON.stringify(msg);
 
-    //logger.Write(`[runClients] Msg ${msg.id} sent back.`);
+    logger.Write(`[runClients] Msg ${msg.id} sent back.`);
     process.send(msg);
 });
 

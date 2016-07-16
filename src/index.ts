@@ -47,8 +47,7 @@ if (hostfile == undefined) {
         }
     });
 
-    if (allHosts.length > 1)
-        allHosts.splice(0, 1); //removing actual host
+    allHosts.splice(0, 1); //removing actual host
 
     logger.Write(`Hosts available:`);
     allHosts.forEach(element => {
@@ -98,7 +97,7 @@ function ExecuteTrials(globalTrial: number) {
 }
 
 function executeHeuristicTrial(globalTrial: number, config: IConfiguration, heuristicTrial: number, ClientsPool: any, cb: () => void) {
-    optmizer = undefined;
+
     optmizer = new Optmizer();
 
     optmizer.Setup(configuration, globalTrial, heuristicTrial, ClientsPool, allHosts);

@@ -50,10 +50,8 @@ export default class CommandTester implements ITester {
         this.testUntil = testUntil;
         this.testTimeout = testTimeout;
         this.AvailableHosts = Hosts;
-        
-        //if(this.AvailableHosts)
-            //console.log(`[CommandTester] Hosts: ${this.AvailableHosts.length}`);
-        
+
+
         //Setup tests with Lib context
         this.libMainFilePath = LibrarieOverTest.mainFilePath;
         this.libDirectoryPath = LibrarieOverTest.path;
@@ -113,23 +111,22 @@ export default class CommandTester implements ITester {
             var bufferOption = { maxBuffer: 1024 * 5000 }
 
             if (this.AvailableHosts == undefined || this.AvailableHosts.length == 0) {
-                testCMD = `node --expose-gc --max-old-space-size=2047 build/src/MPI/client.js ${libPath} ${timeoutMS}`;
+                testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
                 bufferOption = {maxBuffer: 200*1024};
             }
             else {
                 //NACAD environment
-                var hosts: string = "";
-
+                var hosts: string = ``;
                 this.AvailableHosts.forEach(host => {
                     hosts += `${host},`;
                 });                
                 
                 hosts = hosts.substring(0, hosts.length - 1);
 
-                testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PBS_GET_IBWINS=1 -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 build/src/MPI/client.js ${libPath} ${timeoutMS}`;
+                testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
 
 
-                //console.log(`[CommandTester] Hosts count: ${this.AvailableHosts.length}`);
+                //console.log(`[CommandTester] Hosts: ${hosts}`);
                 //console.log(`[CommandTester] cmd: ${testCMD}`);                
             }
 
@@ -145,8 +142,8 @@ export default class CommandTester implements ITester {
             for (var index = 0; index < list.length; index++) {
                 var element = list[index];
                 numbers.push(element.duration);
-                //this.logger.Write(`${stdout}`)
-                console.log(`[Executado no host: ${element.host}:${element.duration}/${element.sucess}]`);
+                this.logger.Write(`${stdout}`)
+                //console.log(`[Executado no host: ${element.host}:${element.duration}]`);
             }
 
             max = Math.max.apply(null, numbers);
@@ -164,7 +161,7 @@ export default class CommandTester implements ITester {
             /* FOR MPIRUN using */
 
         } catch (error) {
-            this.logger.Write(error);
+            //this.logger.Write(error);
             this.logger.Write(`[CommandTester] Tests Failed.`);
             passedAllTests = false;
         }

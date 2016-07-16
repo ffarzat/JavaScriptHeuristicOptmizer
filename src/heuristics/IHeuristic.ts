@@ -217,9 +217,8 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     UpdateBest(newBest: Individual): boolean {
         var found: boolean = false;
-        var newCode = newBest.ToCode()
         try {
-            if (newBest.testResults && newBest.testResults.passedAllTests && (parseInt(newBest.testResults.fit.toString()) < parseInt(this.bestFit.toString())) && (newCode.length > 0) && (newBest.ToCode() != this.bestIndividual.ToCode())) {
+            if (newBest.testResults && newBest.testResults.passedAllTests && (parseInt(newBest.testResults.fit.toString()) < parseInt(this.bestFit.toString())) && (newBest.ToCode() != this.bestIndividual.ToCode())) {
                 this._logger.Write('=================================');
                 this._logger.Write(`Older Fit ${this.bestFit}`);
                 this.bestFit = newBest.testResults.fit;
@@ -342,7 +341,7 @@ abstract class IHeuristic extends events.EventEmitter {
      * Control the list of available Hosts
      */
     private DetermineNextHosts(): Array<string> {
-        return this.Hosts.slice();
+        return this.Hosts;
     }
 
     /**
@@ -356,7 +355,6 @@ abstract class IHeuristic extends events.EventEmitter {
             try {
                 if (err) {
                     this._logger.Write(`[IHeuristic] Pool err: ${err.stack}`);
-                    this.FinishMessage(msg.id, undefined);
                 }
                 else {
                     var processedMessage = obj.stdout;
@@ -372,7 +370,6 @@ abstract class IHeuristic extends events.EventEmitter {
                 }
             } catch (error) {
                 this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
-                this.FinishMessage(msg.id, undefined);
             }
         });
         //============================================ Done
@@ -382,6 +379,11 @@ abstract class IHeuristic extends events.EventEmitter {
      * Terminate a message Life cycle
      */
     FinishMessage(idForCB: number, messageDone: Message) {
+        var hosts: Array<string> = <Array<string>>this.Messages[idForCB].Hosts;
+        hosts.forEach(element => {
+            this.Hosts.push(element);
+        });
+
         this.cbs[idForCB](messageDone);
         delete this.cbs[idForCB];
         delete this.Messages[idForCB];

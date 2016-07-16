@@ -17,8 +17,6 @@ export default class Individual {
      */
     //_astFile: any; //= new tmp.File();
     _astFile: any = new tmp.File();
-    
-    _astObj: any;
 
     /**
      * Options to generate new code
@@ -39,17 +37,15 @@ export default class Individual {
      *  */
     get AST(): any {
         //console.log(`AST GET: ${this._astFile.path}`);
-        //return JSON.parse(fs.readFileSync(this._astFile.path).toString());
+        return JSON.parse(fs.readFileSync(this._astFile.path).toString());
         //return JSON.parse(snappy.uncompressSync(this._astFile, { asBuffer: false }));
-        return this._astObj;
     }
     /**
      * Store string representation of the AST object
      */
     set AST(value: any) {
-        this._astObj = value;
         //console.log(`AST SET: ${this._astFile.path}`);
-        //fs.writeFileSync(this._astFile.path, JSON.stringify(value), { flag: 'w' });
+        fs.writeFileSync(this._astFile.path, JSON.stringify(value), { flag: 'w' });
         //this._astFile = snappy.compressSync(JSON.stringify(value));
     }
 
