@@ -160,7 +160,7 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
     var median;
 
 
-    if (allHosts) {
+    if (allHosts && (allHosts.length > 1) {
         allHosts.forEach(host => {
             hosts += `${host},`;
         });
@@ -172,7 +172,7 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
     }
     else {
         testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${LibTestPath} ${timeout}`;
-        bufferOption = { maxBuffer: 200 * 1024 };
+        bufferOption = { maxBuffer: 500 * 1024 };
     }
 
     WriteCodeToFile(mutant, libMainFilePath);
