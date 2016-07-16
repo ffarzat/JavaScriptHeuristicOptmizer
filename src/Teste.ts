@@ -194,7 +194,7 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
                 avg = 0;
                 median = 0;
                 passedAllTests = false;
-                cb();
+                cb(error, null);
                 return;
             }
 
@@ -216,20 +216,21 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
                 avg = CalculateMean(numbers);
                 median = CalculateMedian(numbers);
                 passedAllTests = (list[0].sucess === "true");
+
+                cb(null, true);
+
             } catch (error) {
                 logger.Write(`${error}`);
+                cb(error, null);
             }
-            finally{
-                cb();
-            }
+            
         });
 
     } catch (error) {
         logger.Write(`${error}`);
+        cb(error, null)
     }
-    finally{
-        cb();
-    }
+    
 }
 
 /**
