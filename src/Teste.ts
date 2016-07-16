@@ -126,6 +126,8 @@ async.parallelLimit(messagesToProcess, configuration.clientsTotal, (error, resul
     console.log(results.length);
 
     console.log(`Total Duration: ${clock(start)}`);
+
+    process.exit();
 });
 //==================================================================================================================//>
 
