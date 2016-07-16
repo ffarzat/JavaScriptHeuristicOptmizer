@@ -105,7 +105,7 @@ for (var index = 0; index < configuration.trialsConfiguration[0].especific.neigh
             logger.Write(`NPM... ${npmCmdDir}`);
             logger.Write(`LIB... ${directoryToTest}`);
 
-            Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First, npmCmdDir, directoryToTest, timeoutMS, allHosts, () => {
+            Testar(contextMutante.LibrarieOverTest.mainFilePath, contextMutante.First,nodeCmdDir, npmCmdDir, directoryToTest, timeoutMS, allHosts, () => {
                 ReturnSlots(1);
                 callback();
             });
