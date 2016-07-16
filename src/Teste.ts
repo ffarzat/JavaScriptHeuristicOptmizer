@@ -26,7 +26,6 @@ var configurationFile: string = path.join(process.cwd(), configFile);
 var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
 var clientOptions = '--max-old-space-size=512000';
-var bufferOption = { maxBuffer: 5000 * 1024 };
 var allHosts: Array<string> = [];
 var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
 
@@ -72,9 +71,7 @@ context.LibrarieOverTest = lib;
 var testUntil = configuration.testUntil;
 var timeoutMS = configuration.clientTimeout * 1000;
 var libPath = "Libraries/uuid";
-
-
-
+var bufferOption = { maxBuffer: 5000 * 1024, timeout: timeoutMS, killSignal: 'SIGKILL' };
 
 var passedAllTests = true;
 var max;
@@ -171,12 +168,12 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
         logger.Write(`cmd: ${testCMD}`);
     }
     else {
-        testCMD = `node --expose-gc --max-old-space-size=2047 build/src/MPI/client.js ${LibTestPath} ${timeout}`;
-        bufferOption = { maxBuffer: 500 * 1024 };
+        testCMD = `mpirun -n ${testUntil} -x PATH=$PATH:node=${nodeCmdDir}:npm=${npmCmdDir}  /mnt/scratch/user8/LibsTemp/npmtest.sh ${LibTestPath}`;
     }
 
     WriteCodeToFile(mutant, libMainFilePath);
 
+    var start = process.hrtime();
     var workerProcess = child_process.exec(testCMD, bufferOption, (error, stdout, stderr) => {
 
         if (error || stderr) {
@@ -192,24 +189,12 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
             return;
         }
 
-        var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
-        stringList = stringList.substring(0, stringList.length - 1);
-
-        var list = JSON.parse(`[${stringList}]`);
-        var numbers = [];
-        for (var index = 0; index < list.length; index++) {
-            var element = list[index];
-            numbers.push(element.duration);
-            //this.logger.Write(`${stdout}`)
-            console.log(`{${element.host}:${element.duration}:${element.sucess}}`);
-        }
-
-        max = Math.max.apply(null, numbers);
-        min = Math.min.apply(null, numbers);
-        avg = CalculateMean(numbers);
-        median = CalculateMedian(numbers);
-        passedAllTests = (list[0].sucess === "true");
-
+        var totalDuration = clock(start);
+        max = totalDuration;
+        min = totalDuration;
+        avg = totalDuration;
+        median = totalDuration;
+        passedAllTests = true;
         cb();
     });
 }
