@@ -394,13 +394,21 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Store a Message
      */
-    SaveMessage(messageToSave: Message, cb:any) {
-        messageToSave.id = this.nextId++;
-        messageToSave.Hosts = this.DetermineNextHosts();
-        messageToSave.ActualLibrary = this._lib.name;
+    SaveMessage(messageToSave: Message, cb: any) {
+        try {
+            messageToSave.id = this.nextId++;
+            messageToSave.Hosts = this.DetermineNextHosts();
+            messageToSave.ActualLibrary = this._lib.name;
 
-        this.cbs[messageToSave.id] = cb;
-        this.Messages[messageToSave.id] = messageToSave;
+            this.cbs[messageToSave.id] = cb;
+            this.Messages[messageToSave.id] = messageToSave;
+        } catch (error) {
+
+            delete this.cbs[messageToSave.id];
+            delete this.Messages[messageToSave.id];
+
+            cb(undefined);
+        }
     }
 
     /**
@@ -417,7 +425,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         setTimeout(() => {
             var messageTimeouted = this.Messages[messageToWait.id];
-            
+
             if (messageTimeouted) {
                 this._logger.Write(`[IHeuristic] timeout for Message ${messageToWait.id}`);
                 this.FinishMessage(messageToWait.id, undefined);
