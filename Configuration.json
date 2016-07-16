@@ -22,7 +22,7 @@
     "clientsTotal": 10,
     "copyFileTimeout": 30,
     "libraries" : [
-        {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" }
+        {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" }
     ],
     "trialsConfiguration":[
         {
