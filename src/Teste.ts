@@ -190,6 +190,7 @@ function Testar(libMainFilePath: string, mutant: Individual, nodeCmdDir: string,
         }
 
         var totalDuration = clock(start);
+        logger.Write(`ms: ${totalDuration}`);
         max = totalDuration;
         min = totalDuration;
         avg = totalDuration;
