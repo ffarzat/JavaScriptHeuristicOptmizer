@@ -18,6 +18,8 @@ export default class Individual {
     //_astFile: any; //= new tmp.File();
     _astFile: any = new tmp.File();
 
+    astObj:any;
+
     /**
      * Options to generate new code
      * https://github.com/estools/escodegen/wiki/API
@@ -37,16 +39,18 @@ export default class Individual {
      *  */
     get AST(): any {
         //console.log(`AST GET: ${this._astFile.path}`);
-        return JSON.parse(fs.readFileSync(this._astFile.path).toString());
+        //return JSON.parse(fs.readFileSync(this._astFile.path).toString());
         //return JSON.parse(snappy.uncompressSync(this._astFile, { asBuffer: false }));
+        return this.astObj;
     }
     /**
      * Store string representation of the AST object
      */
     set AST(value: any) {
         //console.log(`AST SET: ${this._astFile.path}`);
-        fs.writeFileSync(this._astFile.path, JSON.stringify(value), { flag: 'w' });
+        //fs.writeFileSync(this._astFile.path, JSON.stringify(value), { flag: 'w' });
         //this._astFile = snappy.compressSync(JSON.stringify(value));
+        this.astObj = value;
     }
 
     /**
