@@ -129,6 +129,7 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ctx = context;
 
         this.getResponse(msg, (newMsg) => {
+            
             if (newMsg == undefined) {
                 cb([this.bestIndividual, this.bestIndividual]);
                 return;
@@ -137,13 +138,12 @@ abstract class IHeuristic extends events.EventEmitter {
 
             try {
                 cb([newMsg.ctx.First, newMsg.ctx.Second]);
+                return;
             } catch (error) {
                 this._logger.Write(`[IHeuristic] CrossOver Failed ${error.stack}}`);
-            }
-            finally {
                 cb([this.bestIndividual, this.bestIndividual]);
             }
-
+            
             return;
         });
     }
