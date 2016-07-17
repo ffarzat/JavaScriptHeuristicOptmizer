@@ -399,8 +399,8 @@ abstract class IHeuristic extends events.EventEmitter {
         delete this.cbs[idForCB];
         delete this.Messages[idForCB];
 
-        console.log(`Messages: ${Object.keys(this.Messages).length}`);
-        console.log(`cbs: ${Object.keys(this.cbs).length}`);
+        this._logger.Write(`Messages: ${Object.keys(this.Messages).length}`);
+        this._logger.Write(`cbs: ${Object.keys(this.cbs).length}`);
 
     }
 
