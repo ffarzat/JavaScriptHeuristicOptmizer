@@ -100,10 +100,20 @@ process.on('message', function (message) {
     var trialTimer = exectimer.timers[msg.id];
     msg.ProcessedTime = ToNanosecondsToSeconds(trialTimer.duration());;
 
-    var msgProcessada = JSON.stringify(msg);
+    //var msgProcessada = JSON.stringify(msg);
 
-    logger.Write(`[runClients] Msg ${msg.id} sent back.`);
-    process.send(msg);
+    
+    try {
+        process.send(msg);    
+    } catch (error) {
+        logger.Write(`[runClients] Msg ${msg.id} error.`);
+        logger.Write(`[runClients] =======> ${error.stack}.`);
+    }
+    finally{
+        logger.Write(`[runClients] Msg ${msg.id} sent back.`);
+        process.send(undefined);
+    }
+    
 });
 
 function RecursivaInfinita() {

@@ -135,7 +135,6 @@ abstract class IHeuristic extends events.EventEmitter {
                 return;
             }
 
-
             try {
                 cb([newMsg.ctx.First, newMsg.ctx.Second]);
                 return;
