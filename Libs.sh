@@ -54,11 +54,11 @@
 
 ### Underscore		
 	### echo "Underscore/underscore-0.sh" && qsub Underscore/underscore-0.sh
-	echo "Underscore/underscore-10.sh" && qsub Underscore/underscore-10.sh
-	echo "Underscore/underscore-20.sh" && qsub Underscore/underscore-20.sh
-	echo "Underscore/underscore-30.sh" && qsub Underscore/underscore-30.sh
-	echo "Underscore/underscore-40.sh" && qsub Underscore/underscore-40.sh
-	echo "Underscore/underscore-50.sh" && qsub Underscore/underscore-50.sh
+	echo "Underscore/Underscore-10.sh" && qsub Underscore/Underscore-10.sh
+	echo "Underscore/Underscore-20.sh" && qsub Underscore/Underscore-20.sh
+	echo "Underscore/Underscore-30.sh" && qsub Underscore/Underscore-30.sh
+	echo "Underscore/Underscore-40.sh" && qsub Underscore/Underscore-40.sh
+	echo "Underscore/Underscore-50.sh" && qsub Underscore/Underscore-50.sh
 
 ### UUID
 	echo "uuid.sh" && qsub uuid.sh
