@@ -43,3 +43,6 @@
 
 ### Minimist
 	echo "minimist.sh" && qsub minimist.sh
+
+### Plivo-node
+	echo "Plivo-node.sh" && qsub Plivo-node.sh
