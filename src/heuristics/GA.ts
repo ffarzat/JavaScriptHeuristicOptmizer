@@ -41,6 +41,7 @@ export default class GA extends IHeuristic {
         this.mutationProbability = config.mutationProbability;
         this.elitism = config.elitism;
         this.elitismPercentual = config.elitismPercentual;
+        this.totalCallBack = 0;
         this.operationsCounter = 0;
     }
 
@@ -103,10 +104,9 @@ export default class GA extends IHeuristic {
                 //this._logger.Write(`[GA] Asking CrossOver for an individual ${elementIndex}`);
                 this.operationsCounter++
                 this.CrossOver(individual, individual, (elements) => {
-                    //this._logger.Write(`[GA] Crossover done [${this.totalCallBack}]`);
-
                     try {
                         this.totalCallBack++;
+                        this._logger.Write(`[GA] Crossover done [${this.totalCallBack}]`);
 
                         population.push(elements[0]);
                         population.push(elements[1]);
@@ -116,8 +116,6 @@ export default class GA extends IHeuristic {
                     } catch (error) {
                         this._logger.Write(`[GA] ProcessOperations/Crossover error: ${error.stack}`);
                     }
-
-
                 });
             }
 
@@ -181,6 +179,8 @@ export default class GA extends IHeuristic {
                     crossoverIndexes.push(individualIndex);
                 } catch (error) {
                     this._logger.Write(`[GA] Crossover error: ${error.stack}`);
+                    cb();
+                    return;
                 }
             }
         }
