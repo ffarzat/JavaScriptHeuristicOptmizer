@@ -7,7 +7,7 @@
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/Jade-40.log",
-    "tmpDirectory": "/mnt/scratch/user8/trialstmp",
+    "tmpDirectory": "/mnt/scratch/user8/trialstmp/new",
     "logCategory":"optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",

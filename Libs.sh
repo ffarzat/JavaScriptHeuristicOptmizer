@@ -49,3 +49,6 @@
 
 ### Tleaf
 	echo "Tleaf.sh" && qsub Tleaf.sh
+
+### UUID
+	echo "uuid.sh" && qsub uuid.sh
