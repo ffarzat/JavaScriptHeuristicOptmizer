@@ -129,15 +129,21 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ctx = context;
 
         this.getResponse(msg, (newMsg) => {
-            try {
-                cb([newMsg.ctx.First, newMsg.ctx.Second]);    
-            } catch (error) {
-                this._logger.Write(`[IHeuristic] CrossOver Failed ${error.stack}}`);                
+            if (newMsg == undefined) {
+                cb([this.bestIndividual, this.bestIndividual]);
+                return;
             }
-            finally{
+
+
+            try {
+                cb([newMsg.ctx.First, newMsg.ctx.Second]);
+            } catch (error) {
+                this._logger.Write(`[IHeuristic] CrossOver Failed ${error.stack}}`);
+            }
+            finally {
                 cb([this.bestIndividual, this.bestIndividual]);
             }
-            
+
             return;
         });
     }
@@ -399,10 +405,10 @@ abstract class IHeuristic extends events.EventEmitter {
         */
 
         var cbReal = this.cbs[idForCB];
-        
+
         delete this.cbs[idForCB];
         delete this.Messages[idForCB];
-        
+
         this._logger.Write(`[IHeuristic] Messages: ${Object.keys(this.Messages).length}`);
         this._logger.Write(`[IHeuristic] cbs: ${Object.keys(this.cbs).length}`);
         this._logger.Write(`[IHeuristic] Message ${idForCB} done`);
