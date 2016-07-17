@@ -152,9 +152,8 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ctx = context;
 
         this.getResponse(msg, (newMsg) => {
-            
-            if(newMsg ==undefined)
-            {
+
+            if (newMsg == undefined) {
                 cb(undefined);
                 return;
             }
@@ -393,15 +392,17 @@ abstract class IHeuristic extends events.EventEmitter {
             this.Hosts.push(element);
         });
         */
+
+        var cbReal = this.cbs[idForCB];
         
-        this.cbs[idForCB](messageDone);
         delete this.cbs[idForCB];
         delete this.Messages[idForCB];
-
+        
         this._logger.Write(`[IHeuristic] Messages: ${Object.keys(this.Messages).length}`);
         this._logger.Write(`[IHeuristic] cbs: ${Object.keys(this.cbs).length}`);
         this._logger.Write(`[IHeuristic] Message ${idForCB} done`);
 
+        cbReal(messageDone);
     }
 
     /**
