@@ -70,7 +70,7 @@ export default class Individual {
             var generatedAST = this.AST;
             code = escodegen.generate(generatedAST, this.Options);
         } catch (error) {
-            console.error('Error regenerating code: ' + error);
+            //console.error('Error regenerating code: ' + error);
         }
 
         return code;
