@@ -400,7 +400,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         this._logger.Write(`[IHeuristic] Messages: ${Object.keys(this.Messages).length}`);
         this._logger.Write(`[IHeuristic] cbs: ${Object.keys(this.cbs).length}`);
-        this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
+        this._logger.Write(`[IHeuristic] Message ${idForCB} done`);
 
     }
 
