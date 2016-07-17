@@ -66,11 +66,11 @@ export default class Individual {
         var code: string = "";
 
         try {
-            //console.log(`Path: ${this._astFile.path}`);
+            //console.log(`AST: ${this.AST}`);
             var generatedAST = this.AST;
             code = escodegen.generate(generatedAST, this.Options);
         } catch (error) {
-            //console.error('Error regenerating code: ' + error);
+            console.error('Error regenerating code: ' + error);
         }
 
         return code;

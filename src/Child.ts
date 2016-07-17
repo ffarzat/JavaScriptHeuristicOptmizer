@@ -50,7 +50,7 @@ process.on('message', function (message) {
 
     //try {
     var msg: Message = JSON.parse(message);
-
+    
     var exectimer = require('exectimer');
     var Tick = new exectimer.Tick(msg.id);
     Tick.start();
@@ -58,6 +58,8 @@ process.on('message', function (message) {
     localClient.SetHosts(msg.Hosts);
 
     msg.ctx = localClient.Reload(msg.ctx);
+
+    //logger.Write(`[Child]   AST ${msg.ctx.First.AST}`);
 
     //logger.Write(`[runClient]   Client ${localClient.id} processing message ${msg.id}`);
     logger.Write(`[runClient]   Processing message ${msg.id}`);

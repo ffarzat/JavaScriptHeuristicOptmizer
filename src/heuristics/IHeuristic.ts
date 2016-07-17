@@ -348,8 +348,8 @@ abstract class IHeuristic extends events.EventEmitter {
      * To resolve a single comunication with server trougth cluster comunication
      */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
-        this._logger.Write(`[IHeuristic] Message ${msg.id} arrived`);
         this.SaveMessage(msg, cb);
+        this._logger.Write(`[IHeuristic] Message ${msg.id} arrived`);
         //============================================ Pool -> clients
         this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
             try {

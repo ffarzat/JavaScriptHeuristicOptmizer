@@ -112,7 +112,6 @@ export default class CommandTester implements ITester {
 
             if (this.AvailableHosts == undefined || this.AvailableHosts.length == 0) {
                 testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
-                bufferOption = {maxBuffer: 200*1024};
             }
             else {
                 //NACAD environment
@@ -161,7 +160,7 @@ export default class CommandTester implements ITester {
             /* FOR MPIRUN using */
 
         } catch (error) {
-            this.logger.Write(error.stack);
+            this.logger.Write(error);
             this.logger.Write(`[CommandTester] Tests Failed.`);
             passedAllTests = false;
         }
