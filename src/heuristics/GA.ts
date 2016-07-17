@@ -105,13 +105,18 @@ export default class GA extends IHeuristic {
                 this.CrossOver(individual, individual, (elements) => {
                     //this._logger.Write(`[GA] Crossover done [${this.totalCallBack}]`);
 
-                    this.totalCallBack++;
+                    try {
+                        this.totalCallBack++;
 
-                    population.push(elements[0]);
-                    population.push(elements[1]);
+                        population.push(elements[0]);
+                        population.push(elements[1]);
 
-                    this.UpdateBest(elements[0]);
-                    this.UpdateBest(elements[1]);
+                        this.UpdateBest(elements[0]);
+                        this.UpdateBest(elements[1]);
+                    } catch (error) {
+                        this._logger.Write(`[GA] ProcessOperations error: ${error.stack}`);
+                    }
+
 
                 });
             }
@@ -167,8 +172,12 @@ export default class GA extends IHeuristic {
         for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
             var crossoverChance = this.GenereateRandom(0, 100);
             if (this.crossoverProbability >= crossoverChance) {
-                totalOperationsInternal++;
-                crossoverIndexes.push(individualIndex);
+                try {
+                    totalOperationsInternal++;
+                    crossoverIndexes.push(individualIndex);
+                } catch (error) {
+                    this._logger.Write(`[GA] Crossover error: ${error.stack}`);
+                }
             }
         }
 
