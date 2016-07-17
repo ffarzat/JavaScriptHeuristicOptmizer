@@ -67,6 +67,7 @@ export default class HC extends IHeuristic {
             }
             else{
                 cb(undefined);
+                return;
             }
         });
     }

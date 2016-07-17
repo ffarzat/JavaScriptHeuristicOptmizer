@@ -189,7 +189,8 @@ export default class Optmizer {
             this.actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
                 if (resultaForTrial == undefined) {
                     this.logger.Write(` [Optmizer] Fail to execute test for  ${actualLibrary.name} original code.`);
-                } else {
+                } else 
+                {
                     this.outter.WriteTrialResults(resultaForTrial);
                     this.outter.Finish();
                     this.Notify(resultaForTrial);
@@ -198,11 +199,13 @@ export default class Optmizer {
                 }
                 this.logger.Write('=================================');
                 cb();
+                return;
             });
         }
         catch (err) {
             this.logger.Write(` [Optmizer] Fatal Error: ${err.stack}`);
             cb();
+            return;
         }
     }
 
@@ -218,6 +221,7 @@ export default class Optmizer {
 
                 if (heuristicIndex == (this.heuristics.length)) {
                     cb();
+                    return;
                 }
                 else {
                     this.runLibOverHeuristic(libIndex, heuristicIndex, cb);
@@ -226,6 +230,7 @@ export default class Optmizer {
         } catch (error) {
             this.logger.Write(` [Optmizer] ${error.stack}`);
             cb();
+            return;
         }
     }
 
@@ -246,9 +251,11 @@ export default class Optmizer {
 
                 if (this.configuration.libraries.length == libIndex) {
                     DoOptmizationcb();
+                    return;
                 }
                 else {
                     this.DoOptmization(libIndex, DoOptmizationcb);
+                    return;
                 }
             });
         }

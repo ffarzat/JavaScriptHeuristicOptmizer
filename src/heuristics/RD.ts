@@ -55,6 +55,7 @@ export default class RD extends IHeuristic {
             }
             else {
                 cb(undefined);
+                return;
             }
         });
 

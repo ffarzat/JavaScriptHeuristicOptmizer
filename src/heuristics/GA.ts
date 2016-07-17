@@ -64,6 +64,7 @@ export default class GA extends IHeuristic {
             }
             else {
                 cb(undefined);
+                return;
             }
         });
     }
