@@ -366,7 +366,7 @@ abstract class IHeuristic extends events.EventEmitter {
                 }
                 else {
                     var processedMessage = obj.stdout;
-                    //processedMessage.ctx = this.Reload(processedMessage.ctx);
+                    processedMessage.ctx = this.Reload(processedMessage.ctx);
 
                     if (this.cbs[msg.id] != undefined) {
                         this.FinishMessage(msg.id, processedMessage);
