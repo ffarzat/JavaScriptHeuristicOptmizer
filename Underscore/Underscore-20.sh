@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
-#PBS -l select=1:ncpus=48:mpiprocs=48:arch=linux
-#PBS -N underscore
+#PBS -l select=1:ncpus=48
+#PBS -N underscore-20
 ### Request email when job begins and ends
 #PBS -m bea
 ### Specify email address to use for notification.
@@ -27,7 +27,7 @@ echo "----------------"
 
 
 ### run the program (on the nodes as provided by PBS):
-node --expose-gc --max-old-space-size=512000 build/src/index.js  Configuration/underscore.json $NPROCS $PBS_NODEFILE
+node --expose-gc --max-old-space-size=512000 build/src/index.js  Underscore/underscore-20.json $NPROCS $PBS_NODEFILE
 
 ### mpirun -np 400 --hostfile $PBS_NODEFILE node --expose-gc --max-old-space-size=102400 build/src/Teste.js 
 ### mpirun node --expose-gc --max-old-space-size=102400 build/src/Teste.js
