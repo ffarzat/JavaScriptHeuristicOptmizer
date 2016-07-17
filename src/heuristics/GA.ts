@@ -50,7 +50,7 @@ export default class GA extends IHeuristic {
     RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
         this._logger.Write(`[GA] Starting  Trial ${trialIndex} with ${this.generations} generations with ${this.individuals} individuals`);
 
-        this.SetLibrary(library, (sucess:boolean) => {
+        this.SetLibrary(library, (sucess: boolean) => {
             if (sucess) {
                 this.Start();
                 this.CreatesFirstGeneration(this.Original, (population) => {
@@ -61,7 +61,7 @@ export default class GA extends IHeuristic {
                     });
                 });
             }
-            else{
+            else {
                 cb(undefined);
             }
         });
@@ -338,10 +338,15 @@ export default class GA extends IHeuristic {
             var context: OperatorContext = new OperatorContext();
             context.First = this.bestIndividual.Clone();
             this.operationsCounter++;
+
             this.Mutate(context, (mutant) => {
-                neighbors.push(mutant);
-                this.totalCallBack++;
-                //this._logger.Write(`[GA] Mutant done: ${neighbors.length}`);
+
+                try {
+                    this.totalCallBack++;
+                    neighbors.push(mutant);
+                } catch (error) {
+                    this._logger.Write(`[GA] Mutant error: ${error.stack}`);
+                }
             });
 
             counter++;

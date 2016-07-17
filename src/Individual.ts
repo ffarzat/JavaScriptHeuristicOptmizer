@@ -16,7 +16,7 @@ export default class Individual {
      * Keeps all tree for this individual
      */
     //_astFile: any; //= new tmp.File();
-    _astFile: any = new tmp.File();
+    //_astFile: any = new tmp.File();
 
     astObj:any;
 
