@@ -370,7 +370,6 @@ abstract class IHeuristic extends events.EventEmitter {
 
                     if (this.cbs[msg.id] != undefined) {
                         this.FinishMessage(msg.id, processedMessage);
-                        this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
                     }
                     else {
                         this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
@@ -399,8 +398,9 @@ abstract class IHeuristic extends events.EventEmitter {
         delete this.cbs[idForCB];
         delete this.Messages[idForCB];
 
-        this._logger.Write(`Messages: ${Object.keys(this.Messages).length}`);
-        this._logger.Write(`cbs: ${Object.keys(this.cbs).length}`);
+        this._logger.Write(`[IHeuristic] Messages: ${Object.keys(this.Messages).length}`);
+        this._logger.Write(`[IHeuristic] cbs: ${Object.keys(this.cbs).length}`);
+        this._logger.Write(`[IHeuristic] Message ${msg.id} done`);
 
     }
 
