@@ -114,7 +114,7 @@ export default class GA extends IHeuristic {
                         this.UpdateBest(elements[0]);
                         this.UpdateBest(elements[1]);
                     } catch (error) {
-                        this._logger.Write(`[GA] ProcessOperations error: ${error.stack}`);
+                        this._logger.Write(`[GA] ProcessOperations/Crossover error: ${error.stack}`);
                     }
 
 
@@ -127,11 +127,16 @@ export default class GA extends IHeuristic {
                 var context: OperatorContext = new OperatorContext();
                 context.First = individual;
                 this.operationsCounter++
+
                 this.Mutate(context, (mutant) => {
                     //this._logger.Write(`[GA] Mutation ${this.totalCallBack} done`);
-                    this.totalCallBack++;
-                    population.push(mutant);
-                    this.UpdateBest(mutant);
+                    try {
+                        this.totalCallBack++;
+                        population.push(mutant);
+                        this.UpdateBest(mutant);
+                    } catch (error) {
+                        this._logger.Write(`[GA] ProcessOperations/Mutate error: ${error.stack}`);
+                    }
                 });
             }
 
@@ -165,7 +170,6 @@ export default class GA extends IHeuristic {
      */
     private DoCrossovers(population: Individual[], cb: () => void) {
         let crossoverIndex = 0;
-        let totalCallback = 0;
         let crossoverIndexes: number[] = [];
         let totalOperationsInternal = 0;
 
@@ -198,7 +202,6 @@ export default class GA extends IHeuristic {
      */
     private DoMutations(population: Individual[], cb: () => void) {
         let crossoverIndex = 0;
-        let totalCallback = 0;
         let crossoverIndexes: number[] = [];
         let totalOperationsInternal = 0;
 
@@ -292,6 +295,7 @@ export default class GA extends IHeuristic {
 
                 if (this.operationsCounter == this.totalCallBack) {
                     this.totalCallBack = 0;
+
                     this.operationsCounter = 0;
 
                     clearInterval(this.intervalId);
