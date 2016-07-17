@@ -45,7 +45,8 @@ export default class ASTExplorer {
             var oldFirst = context.First;
             newCtx.First = new Individual();
             //newCtx.First['_astFile'] = new Buffer(oldFirst['_astFile'].data);
-            newCtx.First.AST = JSON.parse(fs.readFileSync(oldFirst['_astFile'].path).toString());
+            //newCtx.First.AST = JSON.parse(fs.readFileSync(oldFirst['_astFile'].path).toString());
+            newCtx.First.AST = oldFirst.AST;
             newCtx.First.testResults = oldFirst.testResults;
         }
 
@@ -53,7 +54,8 @@ export default class ASTExplorer {
             var oldSecond = context.Second;
             newCtx.Second = new Individual();
             //newCtx.Second['_astFile'] = new Buffer(oldSecond['_astFile'].data);
-            newCtx.Second.AST = JSON.parse(fs.readFileSync(oldSecond['_astFile'].path).toString());
+            //newCtx.Second.AST = JSON.parse(fs.readFileSync(oldSecond['_astFile'].path).toString());
+            newCtx.Second.AST = oldSecond.AST;
             newCtx.Second.testResults = oldSecond.testResults;
         }
 
@@ -61,7 +63,8 @@ export default class ASTExplorer {
             var oldOriginal = context.Original;
             newCtx.Original = new Individual();
             //newCtx.Original['_astFile'] = new Buffer(oldOriginal['_astFile'].data); 
-            newCtx.Original.AST = JSON.parse(fs.readFileSync(oldOriginal['_astFile'].path).toString());
+            //newCtx.Original.AST = JSON.parse(fs.readFileSync(oldOriginal['_astFile'].path).toString());
+            newCtx.Original.AST = oldOriginal.AST;
             newCtx.Original.testResults = oldOriginal.testResults;
         }
 

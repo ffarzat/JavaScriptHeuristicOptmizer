@@ -3,7 +3,7 @@
     "trials":1,
     "startTrial": 0,
     "fitType":"median",
-    "testUntil": 5,
+    "testUntil": 1,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/optmization.log",
@@ -15,14 +15,14 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["GA"],
+    "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":10,
-    "clientsTotal": 10,
+    "clientsTotal": 1,
     "copyFileTimeout": 30,
     "libraries" : [
-        {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" }
+        {"name":"uuid",   "path":"Libraries/uuid/",     "mainFilePath":"Libraries/uuid/lib/uuid.js" }
     ],
     "trialsConfiguration":[
         {
