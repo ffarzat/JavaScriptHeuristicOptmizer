@@ -1,7 +1,7 @@
 {
     "file": "tleaf.json",
     "trials":60,
-    "startTrial": 0,
+    "startTrial": 13,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,

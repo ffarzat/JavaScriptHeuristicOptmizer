@@ -46,3 +46,6 @@
 
 ### Plivo-node
 	echo "Plivo-node.sh" && qsub Plivo-node.sh
+
+### Tleaf
+	echo "Tleaf.sh" && qsub Tleaf.sh
