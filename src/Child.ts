@@ -50,7 +50,7 @@ process.on('message', function (message) {
 
     //try {
     var msg: Message = JSON.parse(message);
-    
+
     var exectimer = require('exectimer');
     var Tick = new exectimer.Tick(msg.id);
     Tick.start();
@@ -102,18 +102,9 @@ process.on('message', function (message) {
 
     //var msgProcessada = JSON.stringify(msg);
 
-    
-    try {
-        process.send(msg);    
-    } catch (error) {
-        logger.Write(`[runClients] Msg ${msg.id} error.`);
-        logger.Write(`[runClients] =======> ${error.stack}.`);
-    }
-    finally{
-        logger.Write(`[runClients] Msg ${msg.id} sent back.`);
-        process.send(undefined);
-    }
-    
+    process.send(msg);
+    logger.Write(`[runClients] Msg ${msg.id} sent back.`);
+
 });
 
 function RecursivaInfinita() {
