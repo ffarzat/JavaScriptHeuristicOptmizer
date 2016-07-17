@@ -20,7 +20,7 @@
     "url": "ws://localhost",
     "clientTimeout":150,
     "copyFileTimeout": 14400,
-    "clientsTotal": 40,
+    "clientsTotal": 20,
     "libraries" : [
         {"name":"jquery",       "path":"Libraries/jquery/",         "mainFilePath":"Libraries/jquery/dist/jquery.js" }
     ],
@@ -29,7 +29,7 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 50000,
+                "neighborsToProcess": 20,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
