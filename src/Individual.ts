@@ -81,8 +81,8 @@ export default class Individual {
      */
     Clone(): Individual {
         var newOne = new Individual();
-        newOne.AST = this.AST;
-        newOne.testResults = this.testResults;
+        newOne.AST =   traverse(this.AST).clone();
+        newOne.testResults = traverse(this.testResults).clone();
         return newOne;
     }
 }
