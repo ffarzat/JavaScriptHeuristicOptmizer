@@ -40,3 +40,6 @@
 
 ### Node-Browserify
     echo "Node-browserrify/Job0.sh" && qsub Node-browserrify/Job50.sh
+
+### Minimist
+	echo "minimist.sh" && qsub minimist.sh
