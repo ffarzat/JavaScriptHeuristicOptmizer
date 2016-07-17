@@ -61,7 +61,7 @@ export default class Client {
                 this._tester.Test(newIndividual);
                 this.logger.Write(`[Client]  Tests done.`);
             } else {
-                newIndividual = context.Original;
+                newIndividual = context.Original.Clone();
                 this.logger.Write(`[Client]  New mutant Fail`);
             }
 
@@ -69,7 +69,7 @@ export default class Client {
 
         } catch (err) {
             this.logger.Write(`[Client]Error: ${err}`);
-            newIndividual = context.Original;
+            newIndividual = context.Original.Clone();
             ctx.First = newIndividual;
         }
 
@@ -95,7 +95,7 @@ export default class Client {
                 this._tester.Test(newIndividual);
                 this.logger.Write(`[Client]  Tests done.`);
             } else {
-                newIndividual = context.Original;
+                newIndividual = context.Original.Clone();
                 this.logger.Write(`[Client]  New mutant Fail`);
             }
 
@@ -105,7 +105,7 @@ export default class Client {
         }
         catch (err) {
             this.logger.Write(`[Client]Error: ${err}`);
-            newIndividual = context.Original;
+            newIndividual = context.Original.Clone();
             ctx.First = newIndividual;
         }
 
@@ -130,7 +130,7 @@ export default class Client {
                 this._tester.Test(news[0]);
                 this.logger.Write(`[Client]  Tests done.`);
             } else {
-                news[0] = context.Original;
+                news[0] = context.Original.Clone();
                 this.logger.Write(`[Client]  First Fail`);
             }
 
@@ -140,7 +140,7 @@ export default class Client {
                 this._tester.Test(news[1]);
                 this.logger.Write(`[Client]  Tests done.`);
             } else {
-                news[1] = context.Original;
+                news[1] = context.Original.Clone();
                 this.logger.Write(`[Client]  Second Fail`);
             }
 
@@ -176,7 +176,7 @@ export default class Client {
         }
         catch (err) {
             this.logger.Write(`[Client]${err.stack}`);
-            ctx.First = context.Original;
+            ctx.First = context.Original.Clone();
         }
 
 
