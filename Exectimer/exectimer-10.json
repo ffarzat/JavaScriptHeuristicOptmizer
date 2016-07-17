@@ -1,7 +1,7 @@
 {
     "file": "exectimer.json",
     "trials":19,
-    "startTrial": 11,
+    "startTrial": 10,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
