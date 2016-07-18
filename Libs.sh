@@ -31,6 +31,9 @@
 	echo "Jade/Jade-40.sh" && qsub Jade/Jade-40.sh
 	echo "Jade/Jade-50.sh" && qsub Jade/Jade-50.sh
 
+### Jquery
+	echo "Jquery.sh" && qsub Configuration/jquery.json
+
 ### Lodash		
 	echo "Lodash/Lodash-0.sh" && qsub Lodash/Lodash-0.sh
 	echo "Lodash/Lodash-20.sh" && qsub Lodash/Lodash-20.sh
@@ -62,3 +65,6 @@
 
 ### UUID
 	echo "uuid.sh" && qsub uuid.sh 
+
+### xml2js
+	echo "xml2js.sh" && qsub Configuration/xml2js.json
