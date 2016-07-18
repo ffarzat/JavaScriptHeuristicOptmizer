@@ -25,7 +25,9 @@
 	### echo "Gulp/GA-40-gulp-cccr.sh" && qsub Gulp/GA-40-gulp-cccr.sh
 	### echo "Gulp/GA-50-gulp-cccr.sh" && qsub Gulp/GA-50-gulp-cccr.sh
 
-### Jade			
+### Jade
+	echo "Jade/Jade-0.sh" && qsub Jade/Jade-0.sh			
+	echo "Jade/Jade-10.sh" && qsub Jade/Jade-10.sh
     echo "Jade/Jade-20.sh" && qsub Jade/Jade-20.sh
     echo "Jade/Jade-30.sh" && qsub Jade/Jade-30.sh
 	echo "Jade/Jade-40.sh" && qsub Jade/Jade-40.sh
@@ -69,8 +71,6 @@
 	echo "uuid.sh" && qsub uuid.sh 
 
 ### xml2js
-	echo "xml2js-5" && qsub -N xml2js-5 -l select=1:ncpus=48 -m bea -M ffarzat@cos.ufrj.br node build/src/index.js COnfiguration/xml2js null null 5
-	echo "xml2js-6" && qsub -N xml2js-6 -l select=1:ncpus=48 -m bea -M ffarzat@cos.ufrj.br node build/src/index.js COnfiguration/xml2js null null 6 
-	echo "xml2js-7" && qsub -N xml2js-7 -l select=1:ncpus=48 -m bea -M ffarzat@cos.ufrj.br node build/src/index.js COnfiguration/xml2js null null 7
+	echo "xml2js.sh" && qsub xml2js.sh
 	
 	
