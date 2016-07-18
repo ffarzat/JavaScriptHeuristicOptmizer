@@ -1,6 +1,6 @@
 {
     "file": "minimist.json",
-    "trials":12,
+    "trials":60,
     "startTrial": 38,
     "fitType":"median",
     "testUntil": 5,
