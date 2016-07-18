@@ -1,7 +1,7 @@
 {
     "file": "uuid.json",
-    "trials":31,
-    "startTrial": 29,
+    "trials":30,
+    "startTrial": 30,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
