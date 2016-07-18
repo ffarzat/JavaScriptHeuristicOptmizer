@@ -18,7 +18,7 @@ for (var index = 0; index < 60; index++) {
     result += `node build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
 
 
-    runResult += `qsub xml2js-${index}.sh` + "\n";
+    runResult += `qsub ${DirectoryToSave}/xml2js-${index}.sh` + "\n";
     runResult += `sleep 0.5` + "\n";
 
 
