@@ -1,7 +1,7 @@
 {
     "file": "plivo-node.json",
     "trials":60,
-    "startTrial": 19,
+    "startTrial": 28,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,

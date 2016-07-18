@@ -1,7 +1,7 @@
 {
     "file": "underscore.json",
-    "trials":5,
-    "startTrial": 24,
+    "trials":29,
+    "startTrial": 27,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
