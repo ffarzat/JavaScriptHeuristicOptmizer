@@ -20,7 +20,7 @@ export default class RD extends IHeuristic {
     intervalId;
     timeoutId;
     operationsCounter: number;
-
+    totalCallBack: number;
     /**
      * Especific Setup
      */
@@ -67,6 +67,7 @@ export default class RD extends IHeuristic {
     private executeCalculatedTimes(time: number, cb: () => void) {
 
         this.operationsCounter = 0;
+        this.totalCallBack = 0;
 
         this.DoMutationsPerTime(1, [], (mutants) => {
 
@@ -106,9 +107,9 @@ export default class RD extends IHeuristic {
                 var start = new Date();
 
                 this.intervalId = setInterval(() => {
-                    this._logger.Write(`[RD] Mutations total: ${neighbors.length}/${this.operationsCounter}`);
+                    this._logger.Write(`[RD] Mutations total: ${this.totalCallBack}/${this.operationsCounter}`);
 
-                    if (neighbors.length == this.operationsCounter) {
+                    if (this.totalCallBack == this.operationsCounter) {
                         clearInterval(this.intervalId);
                         this.intervalId = undefined;
                         cb(neighbors);
@@ -127,6 +128,7 @@ export default class RD extends IHeuristic {
 
             this.Mutate(context, (mutant) => {
                 try {
+                    this.totalCallBack++;
                     neighbors.push(mutant);
                     //this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
                 } catch (error) {
