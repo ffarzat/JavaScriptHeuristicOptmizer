@@ -1,8 +1,8 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
-#PBS -N xml2js
+#PBS -N xml2js-8
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
-node build/src/index.js xml2js/xml2js.json null null 8
+node /mnt/scratch/user8/MomentTrials/JavaScriptHeuristicOptmizer/build/src/index.js xml2js/xml2js.json null null 8
 

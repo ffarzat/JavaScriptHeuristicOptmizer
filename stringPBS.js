@@ -12,10 +12,10 @@ for (var index = 0; index < 60; index++) {
     result += "#!/bin/bash" + "\n";
     result += "#PBS -k oe" + "\n";
     result += "#PBS -l select=1:ncpus=48" + "\n";
-    result += `#PBS -N ${Libname}` + "\n";
+    result += `#PBS -N ${Libname}-${index}` + "\n";
     result += "#PBS -m bea" + "\n";
     result += "#PBS -M ffarzat@cos.ufrj.br" + "\n";
-    result += `node build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
+    result += `node /mnt/scratch/user8/MomentTrials/JavaScriptHeuristicOptmizer/build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
 
 
     runResult += `qsub ${DirectoryToSave}/xml2js-${index}.sh` + "\n";
