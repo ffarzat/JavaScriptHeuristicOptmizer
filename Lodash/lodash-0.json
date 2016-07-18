@@ -1,7 +1,7 @@
 {
     "file": "lodash.json",
-    "trials":19,
-    "startTrial": 9,
+    "trials":9,
+    "startTrial": 11,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
