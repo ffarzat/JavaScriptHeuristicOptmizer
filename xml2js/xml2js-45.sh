@@ -4,5 +4,11 @@
 #PBS -N xml2js-45
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
-node /mnt/scratch/user8/MomentTrials/JavaScriptHeuristicOptmizer/build/src/index.js xml2js/xml2js.json null null 45
+cd $PBS_O_WORKDIR
+echo "----------------"
+echo "PBS job running on: `hostname`"
+echo "in directory:       `pwd`"
+echo "nodes: $NPROCS"
+echo "----------------"
+node build/src/index.js xml2js/xml2js.json null null 45
 

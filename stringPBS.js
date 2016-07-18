@@ -15,7 +15,13 @@ for (var index = 0; index < 60; index++) {
     result += `#PBS -N ${Libname}-${index}` + "\n";
     result += "#PBS -m bea" + "\n";
     result += "#PBS -M ffarzat@cos.ufrj.br" + "\n";
-    result += `node /mnt/scratch/user8/MomentTrials/JavaScriptHeuristicOptmizer/build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
+    result += "cd $PBS_O_WORKDIR" + "\n";
+    result += 'echo "----------------"' + "\n";
+    result += 'echo "PBS job running on: `hostname`"' + "\n";
+    result += 'echo "in directory:       `pwd`"' + "\n";
+    result += 'echo "nodes: $NPROCS"' + "\n";
+    result += 'echo "----------------"' + "\n";
+    result += `node build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
 
 
     runResult += `qsub ${DirectoryToSave}/xml2js-${index}.sh` + "\n";
