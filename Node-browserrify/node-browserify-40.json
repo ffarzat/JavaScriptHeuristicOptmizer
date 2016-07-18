@@ -1,6 +1,6 @@
 {
     "file": "node-browserify.json",
-    "trials":9,
+    "trials":49,
     "startTrial": 40,
     "fitType":"median",
     "testUntil": 5,
