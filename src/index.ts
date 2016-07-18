@@ -23,12 +23,22 @@ var hostfile = process.argv[4];
 var clientOptions = '--max-old-space-size=512000';
 var allHosts: Array<string> = [];
 
+var retrial = process.argv[5];
+
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
 
 //Patch for execution over NACAD PBS 
 if (process.platform !== "win32") {
     process.env['TMPDIR'] = configuration.tmpDirectory;
+}
+
+//Patch for parallel from PSB command line
+if (retrial != undefined) {
+    configuration.trials = 1;
+    configuration.startTrial = retrial;
+    configuration.logFilePath += `${retrial}-`;
+    configuration.trialResultsFile += `${retrial}-`;
 }
 
 //=========================================================================================== Logger
@@ -152,6 +162,7 @@ function DisplayConfig() {
     logger.Write(`Logfile:  ${configuration.logFilePath}`);
     logger.Write(`Results directory:  ${configuration.resultsDirectory}`);
     logger.Write(`Total Trials:  ${configuration.trials}`);
+    logger.Write(`Start Trial:  ${configuration.startTrial}`);
     logger.Write(`Especific configuration:  ${configuration.trialsConfiguration.length}`);
     logger.Write(`Total libraries:  ${configuration.libraries.length}`);
     logger.Write(`Total heuristics:  ${configuration.heuristics.length}`);
