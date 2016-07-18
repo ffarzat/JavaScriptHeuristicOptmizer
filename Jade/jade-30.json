@@ -1,7 +1,7 @@
 {
     "file": "Jade.json",
-    "trials":1,
-    "startTrial": 38,
+    "trials":39,
+    "startTrial": 30,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD"],
+    "heuristics": ["GA"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":10,
