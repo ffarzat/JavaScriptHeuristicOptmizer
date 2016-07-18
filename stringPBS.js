@@ -1,9 +1,23 @@
+var Libname = "xml2js";
+var ConfigName = "xml2js/xml2js.json";
+var DirectoryToSave = "xml2js";
+//====================================================================================//>
 var fs = require('fs');
 
-var result = "";
+for (var index = 0; index < 60; index++) {
+    var result = "";
+    result += "#!/bin/bash" + "\n";
+    result += "#PBS -k oe" + "\n";
+    result += "#PBS -l select=1:ncpus=48" + "\n";
+    result += `#PBS -N ${Libname}` + "\n";
+    result += "#PBS -m bea" + "\n";
+    result += "#PBS -M ffarzat@cos.ufrj.br" + "\n";
+    result += `node build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
 
-for (var index = 4; index < 60; index++) {
-    result += `qsub -N xml2js-${index} -l select=1:ncpus=48 -k oe -m bea -M ffarzat@cos.ufrj.br -- command node build/src/index.js Configuration/xml2js.json null null ${index}\n`;
+    if (!fs.existsSync(DirectoryToSave)) {
+        fs.mkdirSync(DirectoryToSave);
+    }
+
+    fs.writeFileSync(`${DirectoryToSave}/xml2js-${index}.sh`, result);
 }
 
-fs.writeFileSync("xml2js.txt", result);
