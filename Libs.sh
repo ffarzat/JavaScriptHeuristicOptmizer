@@ -21,8 +21,8 @@
 	echo "Gulp/GA-0-gulp-cccr.sh" && qsub Gulp/GA-0-gulp-cccr.sh
 	echo "Gulp/GA-10-gulp-cccr.sh" && qsub Gulp/GA-10-gulp-cccr.sh
 	echo "Gulp/GA-20-gulp-cccr.sh" && qsub Gulp/GA-20-gulp-cccr.sh	
-	echo "Gulp/GA-30-gulp-cccr.sh" && qsub Gulp/GA-30-gulp-cccr.sh
-	echo "Gulp/GA-40-gulp-cccr.sh" && qsub Gulp/GA-40-gulp-cccr.sh
+	### echo "Gulp/GA-30-gulp-cccr.sh" && qsub Gulp/GA-30-gulp-cccr.sh
+	### echo "Gulp/GA-40-gulp-cccr.sh" && qsub Gulp/GA-40-gulp-cccr.sh
 	echo "Gulp/GA-50-gulp-cccr.sh" && qsub Gulp/GA-50-gulp-cccr.sh
 
 ### Jade			
