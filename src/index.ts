@@ -15,15 +15,18 @@ import Shell = require('shelljs');
 var optmizer: Optmizer = undefined;
 
 //=========================================================================================== Reads config
+console.log(process.argv);
+
 var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';
 var configurationFile: string = path.join(process.cwd(), configFile);
 
 var Ncpus = process.argv[3];
 var hostfile = process.argv[4];
+var retrial = process.argv[5];
 var clientOptions = '--max-old-space-size=512000';
 var allHosts: Array<string> = [];
 
-var retrial = process.argv[5];
+
 
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
@@ -38,15 +41,15 @@ if (retrial != undefined) {
     var intStartTrial = parseInt(retrial);
     configuration.trials = 1;
     configuration.startTrial = intStartTrial;
-    configuration.logFilePath += `${retrial}-`;
-    configuration.trialResultsFile += `${retrial}-`;
+    configuration.logFilePath = configuration.logFilePath.replace("build/", `build/${retrial}-`);
+    configuration.trialResultsFile = `${retrial}-` + configuration.trialResultsFile;
 }
 
 //=========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
-if (hostfile == undefined) {
+if (hostfile == undefined || hostfile == null || hostfile == "undefined" || hostfile == "null") {
     clientOptions = '--max-old-space-size=2047';
 } else {
     var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
@@ -162,6 +165,7 @@ function DisplayConfig() {
     logger.Write(`Number of testing each individual:  ${configuration.testUntil}`);
     logger.Write(`Logfile:  ${configuration.logFilePath}`);
     logger.Write(`Results directory:  ${configuration.resultsDirectory}`);
+    logger.Write(`Results File:  ${configuration.trialResultsFile}`);
     logger.Write(`Total Trials:  ${configuration.trials}`);
     logger.Write(`Start Trial:  ${configuration.startTrial}`);
     logger.Write(`Especific configuration:  ${configuration.trialsConfiguration.length}`);
