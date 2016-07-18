@@ -1,7 +1,7 @@
 {
     "file": "jquery.json",
-    "trials":60,
-    "startTrial": 0,
+    "trials":59,
+    "startTrial": 1,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
