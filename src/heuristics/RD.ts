@@ -129,12 +129,12 @@ export default class RD extends IHeuristic {
             this.Mutate(context, (mutant) => {
                 try {
                     this.totalCallBack++;
+
                     neighbors.push(mutant);
-                    //this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
+                    this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
                 } catch (error) {
                     this._logger.Write(`[RD] Mutant error: ${error}`);
-
-                    neighbors.push(this.bestIndividual);
+                    neighbors.push(this.bestIndividual.Clone());
                     this._logger.Write(`[RD] Mutant done: ${neighbors.length}`);
                 }
             });
