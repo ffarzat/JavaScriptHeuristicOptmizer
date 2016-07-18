@@ -1,6 +1,6 @@
 {
     "file": "gulp-cccr.json",
-    "trials":19,
+    "trials":3,
     "startTrial": 16,
     "fitType":"median",
     "testUntil": 5,
