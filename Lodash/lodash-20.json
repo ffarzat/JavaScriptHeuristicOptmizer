@@ -1,6 +1,6 @@
 {
     "file": "lodash.json",
-    "trials":7,
+    "trials":29,
     "startTrial": 22,
     "fitType":"median",
     "testUntil": 5,
