@@ -34,7 +34,7 @@
 	echo "Jade/Jade-50.sh" && qsub Jade/Jade-50.sh
 
 ### Jquery
-	echo "Jquery.sh" && qsub Configuration/jquery.json
+	echo "Jquery.sh" && qsub Jquery.sh
 
 ### Lodash		
 	echo "Lodash/Lodash-0.sh" && qsub Lodash/Lodash-0.sh
