@@ -1,6 +1,6 @@
 {
     "file": "exectimer.json",
-    "trials":2,
+    "trials":3,
     "startTrial": 7,
     "fitType":"median",
     "testUntil": 5,
