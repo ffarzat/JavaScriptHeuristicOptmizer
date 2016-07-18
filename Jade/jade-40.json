@@ -11,7 +11,7 @@
     "logCategory":"optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
-    "trialResultsFile": "Results-30.csv",
+    "trialResultsFile": "Results-40.csv",
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
