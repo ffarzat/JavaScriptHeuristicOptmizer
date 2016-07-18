@@ -67,4 +67,8 @@
 	echo "uuid.sh" && qsub uuid.sh 
 
 ### xml2js
-	echo "xml2js.sh" && qsub Configuration/xml2js.json
+	echo "xml2js-5" && qsub -N xml2js-5 -l select=1:ncpus=48 -m bea -M ffarzat@cos.ufrj.br node build/src/index.js COnfiguration/xml2js null null 5
+	echo "xml2js-6" && qsub -N xml2js-6 -l select=1:ncpus=48 -m bea -M ffarzat@cos.ufrj.br node build/src/index.js COnfiguration/xml2js null null 6 
+	echo "xml2js-7" && qsub -N xml2js-7 -l select=1:ncpus=48 -m bea -M ffarzat@cos.ufrj.br node build/src/index.js COnfiguration/xml2js null null 7
+	
+	
