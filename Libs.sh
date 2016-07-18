@@ -1,29 +1,29 @@
 #!/bin/bash
 
 ### Exectimer
-	echo "Exectimer/exectimer-0.sh" && 	qsub Exectimer/exectimer-0.sh
+	### echo "Exectimer/exectimer-0.sh" && 	qsub Exectimer/exectimer-0.sh
 	### echo "Exectimer/exectimer-10.sh" && qsub Exectimer/exectimer-10.sh
 	### echo "Exectimer/exectimer-20.sh" && qsub Exectimer/exectimer-20.sh		
-	echo "Exectimer/exectimer-30.sh" && qsub Exectimer/exectimer-30.sh		
-	echo "Exectimer/exectimer-40.sh" && qsub Exectimer/exectimer-40.sh		
+	### echo "Exectimer/exectimer-30.sh" && qsub Exectimer/exectimer-30.sh		
+	### echo "Exectimer/exectimer-40.sh" && qsub Exectimer/exectimer-40.sh		
 	### echo "Exectimer/exectimer-50.sh" && qsub Exectimer/exectimer-50.sh
 
 ### Express
-	echo "Express/Express-0.sh" && qsub Express/Express-0.sh
-	echo "Express/Express-10.sh" && qsub Express/Express-10.sh
-	echo "Express/Express-20.sh" && qsub Express/Express-20.sh 			
-	echo "Express/Express-30.sh" && qsub Express/Express-30.sh	
-	echo "Express/Express-40.sh" && qsub Express/Express-40.sh
-	echo "Express/Express-50.sh" && qsub Express/Express-50.sh
+	### echo "Express/Express-0.sh" && qsub Express/Express-0.sh
+	### echo "Express/Express-10.sh" && qsub Express/Express-10.sh
+	### echo "Express/Express-20.sh" && qsub Express/Express-20.sh 			
+	### echo "Express/Express-30.sh" && qsub Express/Express-30.sh	
+	### echo "Express/Express-40.sh" && qsub Express/Express-40.sh
+	### echo "Express/Express-50.sh" && qsub Express/Express-50.sh
 
 ### Gulp
 	echo "Gulp/RD-gulp-cccr.sh" && qsub Gulp/RD-gulp-cccr.sh
-	echo "Gulp/GA-0-gulp-cccr.sh" && qsub Gulp/GA-0-gulp-cccr.sh
-	echo "Gulp/GA-10-gulp-cccr.sh" && qsub Gulp/GA-10-gulp-cccr.sh
-	echo "Gulp/GA-20-gulp-cccr.sh" && qsub Gulp/GA-20-gulp-cccr.sh	
+	### echo "Gulp/GA-0-gulp-cccr.sh" && qsub Gulp/GA-0-gulp-cccr.sh
+	### echo "Gulp/GA-10-gulp-cccr.sh" && qsub Gulp/GA-10-gulp-cccr.sh
+	### echo "Gulp/GA-20-gulp-cccr.sh" && qsub Gulp/GA-20-gulp-cccr.sh	
 	### echo "Gulp/GA-30-gulp-cccr.sh" && qsub Gulp/GA-30-gulp-cccr.sh
 	### echo "Gulp/GA-40-gulp-cccr.sh" && qsub Gulp/GA-40-gulp-cccr.sh
-	echo "Gulp/GA-50-gulp-cccr.sh" && qsub Gulp/GA-50-gulp-cccr.sh
+	### echo "Gulp/GA-50-gulp-cccr.sh" && qsub Gulp/GA-50-gulp-cccr.sh
 
 ### Jade			
     echo "Jade/Jade-20.sh" && qsub Jade/Jade-20.sh
