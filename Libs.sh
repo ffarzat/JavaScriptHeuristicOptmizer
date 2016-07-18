@@ -29,7 +29,7 @@
     echo "Jade/Jade-20.sh" && qsub Jade/Jade-20.sh
     echo "Jade/Jade-30.sh" && qsub Jade/Jade-30.sh
 	echo "Jade/Jade-40.sh" && qsub Jade/Jade-40.sh
-	echo "qsub Jade/Jade-50.sh" && qsub Jade/Jade-50.sh
+	echo "Jade/Jade-50.sh" && qsub Jade/Jade-50.sh
 
 ### Lodash		
 	echo "Lodash/Lodash-0.sh" && qsub Lodash/Lodash-0.sh
