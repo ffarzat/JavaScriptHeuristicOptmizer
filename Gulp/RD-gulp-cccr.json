@@ -1,6 +1,6 @@
 {
     "file": "gulp-cccr.json",
-    "trials":19,
+    "trials":12,
     "startTrial": 7,
     "fitType":"median",
     "testUntil": 5,
@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["GA"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":2,
