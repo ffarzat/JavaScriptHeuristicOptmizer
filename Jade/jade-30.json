@@ -1,7 +1,7 @@
 {
     "file": "Jade.json",
-    "trials":39,
-    "startTrial": 30,
+    "trials":1,
+    "startTrial": 38,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
