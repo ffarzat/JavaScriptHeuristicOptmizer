@@ -47,7 +47,9 @@
 ### Moment
 
 ### Node-Browserify
-    echo "Node-browserrify/Job0.sh" && qsub Node-browserrify/Job50.sh
+	echo "Node-browserrify/Job0.sh" && qsub Node-browserrify/Job0.sh
+	echo "Node-browserrify/Job40.sh" && qsub Node-browserrify/Job40.sh
+    echo "Node-browserrify/Job50.sh" && qsub Node-browserrify/Job50.sh
 
 ### Plivo-node
 	echo "Plivo-node.sh" && qsub Plivo-node.sh
