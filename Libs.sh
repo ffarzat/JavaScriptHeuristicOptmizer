@@ -26,12 +26,12 @@
 	### echo "Gulp/GA-50-gulp-cccr.sh" && qsub Gulp/GA-50-gulp-cccr.sh
 
 ### Jade
-	echo "Jade/Jade-0.sh" && qsub Jade/Jade-0.sh			
-	echo "Jade/Jade-10.sh" && qsub Jade/Jade-10.sh
-    echo "Jade/Jade-20.sh" && qsub Jade/Jade-20.sh
-    echo "Jade/Jade-30.sh" && qsub Jade/Jade-30.sh
-	echo "Jade/Jade-40.sh" && qsub Jade/Jade-40.sh
-	echo "Jade/Jade-50.sh" && qsub Jade/Jade-50.sh
+	### echo "Jade/Jade-0.sh" && qsub Jade/Jade-0.sh			
+	### echo "Jade/Jade-10.sh" && qsub Jade/Jade-10.sh
+    ##echo "Jade/Jade-20.sh" && qsub Jade/Jade-20.sh
+    ##echo "Jade/Jade-30.sh" && qsub Jade/Jade-30.sh
+	##echo "Jade/Jade-40.sh" && qsub Jade/Jade-40.sh
+	### echo "Jade/Jade-50.sh" && qsub Jade/Jade-50.sh
 
 ### Jquery
 	echo "Jquery.sh" && qsub Jquery.sh
