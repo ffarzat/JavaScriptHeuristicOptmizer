@@ -24,7 +24,7 @@ for (var index = 0; index < 60; index++) {
     result += `node build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
 
 
-    runResult += `qsub ${DirectoryToSave}/xml2js-${index}.sh` + "\n";
+    runResult += `qsub ${DirectoryToSave}/${Libname}-${index}.sh` + "\n";
     runResult += `sleep 0.5` + "\n";
 
 
@@ -32,7 +32,7 @@ for (var index = 0; index < 60; index++) {
         fs.mkdirSync(DirectoryToSave);
     }
 
-    fs.writeFileSync(`${DirectoryToSave}/xml2js-${index}.sh`, result);
+    fs.writeFileSync(`${DirectoryToSave}/${Libname}-${index}.sh`, result);
 }
 
 fs.writeFileSync(`${DirectoryToSave}/run.sh`, runResult);
