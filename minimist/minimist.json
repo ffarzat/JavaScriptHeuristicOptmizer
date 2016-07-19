@@ -1,7 +1,7 @@
 {
     "file": "minimist.json",
     "trials":60,
-    "startTrial": 38,
+    "startTrial": 0,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
@@ -15,10 +15,10 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD"],
+    "heuristics": ["GA"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":30,
+    "clientTimeout":60,
     "copyFileTimeout": 14400,
     "clientsTotal": 20,
     "libraries" : [

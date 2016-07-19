@@ -1,6 +1,6 @@
-var Libname = "jade";
-var ConfigName = "Jade/jade.json";
-var DirectoryToSave = "Jade";
+var Libname = "minimist";
+var ConfigName = "minimist/minimist.json";
+var DirectoryToSave = "minimist";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";
