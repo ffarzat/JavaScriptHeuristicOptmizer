@@ -10,5 +10,5 @@ echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
 echo "----------------"
-node build/src/index.js Underscore/Underscore.json null null 47
+node --max-old-space-size=512000 build/src/index.js Underscore/Underscore.json null null 47
 

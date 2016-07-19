@@ -21,7 +21,7 @@ for (var index = 0; index < 60; index++) {
     result += 'echo "in directory:       `pwd`"' + "\n";
     result += 'echo "nodes: $NPROCS"' + "\n";
     result += 'echo "----------------"' + "\n";
-    result += `node build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
+    result += `node --max-old-space-size=512000 build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
 
 
     runResult += `qsub ${DirectoryToSave}/${Libname}-${index}.sh` + "\n";
