@@ -1,7 +1,7 @@
 {
     "file": "Jade.json",
     "trials":29,
-    "startTrial": 20,
+    "startTrial": 21,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
@@ -18,7 +18,7 @@
     "heuristics": ["GA"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":30,
+    "clientTimeout":120,
     "copyFileTimeout": 14400,
     "clientsTotal": 20,
     "libraries" : [
