@@ -16,6 +16,8 @@ try {
 }
 
 describe('pug', function(){
+	
+	this.timeout(60 * 10 * 1000);
 
   describe('.properties', function(){
     it('should have exports', function(){
