@@ -39,7 +39,7 @@ if (process.platform !== "win32") {
 //Patch for parallel from PSB command line
 if (retrial != undefined) {
     var intStartTrial = parseInt(retrial);
-    configuration.trials = 1;
+    configuration.trials = intStartTrial +1;
     configuration.startTrial = intStartTrial;
     configuration.logFilePath = configuration.logFilePath.replace("build/", `build/${retrial}-`);
     configuration.trialResultsFile = `${retrial}-` + configuration.trialResultsFile;
