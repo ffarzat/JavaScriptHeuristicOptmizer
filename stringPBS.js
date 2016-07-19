@@ -1,6 +1,6 @@
-var Libname = "minimist";
-var ConfigName = "minimist/minimist.json";
-var DirectoryToSave = "minimist";
+var Libname = "Underscore";
+var ConfigName = "Underscore/Underscore.json";
+var DirectoryToSave = "Underscore";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";
