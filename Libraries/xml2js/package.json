@@ -52,7 +52,7 @@
     "Bogdan Chadkin <trysound@yandex.ru> (https://github.com/TrySound)",
     "David Wood <david.p.wood@gmail.com> (http://codesleuth.co.uk/)"
   ],
-  "main": "./lib/xml2js",
+  "main": "/lib/xml2js.js",
   "files": [
     "lib"
   ],
