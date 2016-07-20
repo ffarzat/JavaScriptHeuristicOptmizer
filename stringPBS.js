@@ -1,6 +1,6 @@
-var Libname = "Underscore";
-var ConfigName = "Underscore/Underscore.json";
-var DirectoryToSave = "Underscore";
+var Libname = "zml2js";
+var ConfigName = "xml2js/xml2js.json";
+var DirectoryToSave = "xml2js";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";
