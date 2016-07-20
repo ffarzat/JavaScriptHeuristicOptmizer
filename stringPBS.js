@@ -1,6 +1,6 @@
-var Libname = "Jade";
-var ConfigName = "Jade/jade.json";
-var DirectoryToSave = "Jade";
+var Libname = "Lodash";
+var ConfigName = "Lodash/lodash.json";
+var DirectoryToSave = "Lodash";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";
