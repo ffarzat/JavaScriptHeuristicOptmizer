@@ -1,6 +1,6 @@
-var Libname = "Plivo";
-var ConfigName = "Plivo/plivo-node.json";
-var DirectoryToSave = "Plivo";
+var Libname = "Tleaf";
+var ConfigName = "Tleaf/tleaf.json";
+var DirectoryToSave = "Tleaf";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";
