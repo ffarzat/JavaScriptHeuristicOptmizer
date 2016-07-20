@@ -1,6 +1,6 @@
-var Libname = "zml2js";
-var ConfigName = "xml2js/xml2js.json";
-var DirectoryToSave = "xml2js";
+var Libname = "Jade";
+var ConfigName = "Jade/jade.json";
+var DirectoryToSave = "Jade";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";

@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
-#PBS -N jade-57
+#PBS -N Jade-57
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
 cd $PBS_O_WORKDIR
@@ -10,5 +10,5 @@ echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
 echo "----------------"
-node build/src/index.js Jade/jade.json null null 57
+node --max-old-space-size=512000 build/src/index.js Jade/jade.json null null 57
 
