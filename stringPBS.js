@@ -1,12 +1,12 @@
-var Libname = "Lodash";
-var ConfigName = "Lodash/lodash.json";
-var DirectoryToSave = "Lodash";
+var Libname = "Tleaf";
+var ConfigName = "Tleaf/tleaf.json";
+var DirectoryToSave = "Tleaf";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";
 runResult += "#!/bin/bash" + "\n";
 
-for (var index = 0; index < 60; index++) {
+for (var index = 35; index < 60; index++) {
 
     var result = "";
     result += "#!/bin/bash" + "\n";

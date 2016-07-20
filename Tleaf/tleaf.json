@@ -1,7 +1,7 @@
 {
     "file": "tleaf.json",
     "trials":60,
-    "startTrial": 19,
+    "startTrial": 0,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
@@ -18,7 +18,7 @@
     "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":150,
+    "clientTimeout":450,
     "copyFileTimeout": 14400,
     "clientsTotal": 20,
     "libraries" : [
@@ -29,7 +29,7 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 10,
+                "neighborsToProcess": 20,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
