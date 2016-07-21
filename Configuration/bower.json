@@ -1,13 +1,13 @@
 {
     "file": "bower.json",
-    "trials":60,
+    "trials":1,
     "startTrial": 0,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/bower.log",
-    "tmpDirectory": "/mnt/scratch/user8/trialstmp",
+    "tmpDirectory": "/mnt/scratch/user8/trialstmp/new",
     "logCategory":"optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
@@ -18,9 +18,9 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":70,
+    "clientTimeout":450,
     "copyFileTimeout": 14400,
-    "clientsTotal": 20,
+    "clientsTotal": 40,
     "libraries" : [
         {"name":"bower",         "path":"Libraries/bower/",           "mainFilePath":"Libraries/bower/lib/core/Manager.js" }
     ],
@@ -29,7 +29,7 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 10,
+                "neighborsToProcess": 40,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 

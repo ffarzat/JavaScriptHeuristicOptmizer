@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
-#PBS -N moment
+#PBS -N bower
 ### Request email when job begins and ends
 #PBS -m bea
 ### Specify email address to use for notification.
@@ -27,7 +27,7 @@ echo "----------------"
 
 
 ### run the program (on the nodes as provided by PBS):
-node --expose-gc --max-old-space-size=512000 build/src/index.js  Configuration/moment.json $NPROCS $PBS_NODEFILE
+node --expose-gc --max-old-space-size=512000 build/src/index.js  Configuration/bower.json $NPROCS $PBS_NODEFILE
 
 date
 

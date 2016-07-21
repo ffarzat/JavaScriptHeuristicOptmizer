@@ -1,7 +1,7 @@
 {
     "file": "moment.json",
-    "trials":60,
-    "startTrial": 0,
+    "trials":2,
+    "startTrial": 1,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
@@ -15,12 +15,12 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD"],
+    "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":20,
     "copyFileTimeout": 14400,
-    "clientsTotal": 20,
+    "clientsTotal": 40,
     "libraries" : [
         {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" }
     ],
@@ -29,7 +29,7 @@
             "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 20,
+                "neighborsToProcess": 40,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
