@@ -129,7 +129,7 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ctx = context;
 
         this.getResponse(msg, (newMsg) => {
-            
+
             if (newMsg == undefined) {
                 cb([this.bestIndividual, this.bestIndividual]);
                 return;
@@ -142,7 +142,7 @@ abstract class IHeuristic extends events.EventEmitter {
                 this._logger.Write(`[IHeuristic] CrossOver Failed ${error.stack}}`);
                 cb([this.bestIndividual, this.bestIndividual]);
             }
-            
+
             return;
         });
     }
@@ -233,7 +233,7 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     UpdateBest(newBest: Individual): boolean {
         var found: boolean = false;
-        var newCode = newBest.ToCode(); 
+        var newCode = newBest.ToCode();
         try {
             if (newBest.testResults && newBest.testResults.passedAllTests && (parseInt(newBest.testResults.fit.toString()) < parseInt(this.bestFit.toString())) && (newCode != "") && (newCode != this.bestIndividual.ToCode())) {
                 this._logger.Write('=================================');
@@ -368,28 +368,33 @@ abstract class IHeuristic extends events.EventEmitter {
         this.SaveMessage(msg, cb);
         this._logger.Write(`[IHeuristic] Message ${msg.id} arrived`);
         //============================================ Pool -> clients
-        this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
-            try {
-                if (err) {
-                    this._logger.Write(`[IHeuristic] Pool err: ${err.stack}`);
-                    this.FinishMessage(msg.id, undefined);
-                }
-                else {
-                    var processedMessage = obj.stdout;
-                    processedMessage.ctx = this.Reload(processedMessage.ctx);
-
-                    if (this.cbs[msg.id] != undefined) {
-                        this.FinishMessage(msg.id, processedMessage);
+        try {
+            this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
+                try {
+                    if (err) {
+                        this._logger.Write(`[IHeuristic] Pool err: ${err.stack}`);
+                        this.FinishMessage(msg.id, undefined);
                     }
                     else {
-                        this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
+                        var processedMessage = obj.stdout;
+                        processedMessage.ctx = this.Reload(processedMessage.ctx);
+
+                        if (this.cbs[msg.id] != undefined) {
+                            this.FinishMessage(msg.id, processedMessage);
+                        }
+                        else {
+                            this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
+                        }
                     }
+                } catch (error) {
+                    this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
+                    this.FinishMessage(msg.id, undefined);
                 }
-            } catch (error) {
-                this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
-                this.FinishMessage(msg.id, undefined);
-            }
-        });
+            });
+        } catch (error) {
+            this._logger.Write(`[IHeuristic] Pool err: ${error.stack}`);
+            this.FinishMessage(msg.id, undefined);
+        }
         //============================================ Done
     }
 
