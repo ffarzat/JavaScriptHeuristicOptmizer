@@ -1,12 +1,12 @@
-var Libname = "Tleaf";
-var ConfigName = "Tleaf/tleaf.json";
-var DirectoryToSave = "Tleaf";
+var Libname = "Jquery";
+var ConfigName = "Jquery/jquery.json";
+var DirectoryToSave = "Jquery";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";
 runResult += "#!/bin/bash" + "\n";
 
-for (var index = 0; index < 60; index++) {
+for (var index = 1; index < 60; index++) {
 
     var result = "";
     result += "#!/bin/bash" + "\n";
