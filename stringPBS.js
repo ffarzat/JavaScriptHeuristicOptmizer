@@ -25,7 +25,7 @@ for (var index = 1; index < 60; index++) {
 
 
     runResult += `qsub ${DirectoryToSave}/${Libname}-${index}.sh` + "\n";
-    runResult += `sleep 0.5` + "\n";
+    runResult += `sleep 1m` + "\n";
 
 
     if (!fs.existsSync(DirectoryToSave)) {
