@@ -1,6 +1,6 @@
-var Libname = "Jquery";
-var ConfigName = "Jquery/jquery.json";
-var DirectoryToSave = "Jquery";
+var Libname = "Node-browserrify";
+var ConfigName = "Node-browserrify/node-browserrify.json";
+var DirectoryToSave = "Node-browserrify";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";
