@@ -1,5 +1,5 @@
 var Libname = "Node-browserrify";
-var ConfigName = "Node-browserrify/node-browserrify.json";
+var ConfigName = "Node-browserrify/node-browserify.json";
 var DirectoryToSave = "Node-browserrify";
 //====================================================================================//>
 var fs = require('fs');

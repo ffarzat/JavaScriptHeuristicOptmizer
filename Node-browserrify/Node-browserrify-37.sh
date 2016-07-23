@@ -10,5 +10,5 @@ echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
 echo "----------------"
-node --max-old-space-size=512000 build/src/index.js Node-browserrify/node-browserrify.json null null 37
+node --max-old-space-size=512000 build/src/index.js Node-browserrify/node-browserify.json null null 37
 
