@@ -12,7 +12,7 @@ date
 ### cd to directory where the job was submitted:
 cd $PBS_O_WORKDIR
 
-node build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/uuid lib/uuid.js /mnt/scratch/user8/Resultados/uuid 30
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/uuid lib/uuid.js /mnt/scratch/user8/Resultados/uuid 30
 
 
 date
