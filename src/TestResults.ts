@@ -51,6 +51,12 @@ export default class TestResults {
      * Determines the global results
      */
     passedAllTests: boolean;
+
+    /**
+     * Para análise dos resultados
+     */
+    Trial:string;
+    Heuristic:string; 
     
     
     /**
