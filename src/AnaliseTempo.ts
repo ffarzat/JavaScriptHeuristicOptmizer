@@ -40,6 +40,10 @@ if (!fs.existsSync(oldLibFilePath))
 
 var caminhoOriginal = DiretorioResultados + '/RD/original.js';
 WriteCodeToFile(arquivoRootBiblioteca, fs.readFileSync(caminhoOriginal, 'UTF8'));
+
+//Despreza a primeira execuçao
+ExecutarTeste(DiretorioBiblioteca, bufferOption, 1, "0", "original")
+
 resultadosProcessados.push(ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade, "0", "original"));
 
 //============================================================================================ Rodadas //>
@@ -86,7 +90,7 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
 
     if (os.hostname() != "Optmus")
     {
-        testCMD = "sleep 0.5 && " + testCMD;
+        testCMD = "sleep 1 && " + testCMD;
     }
 
 
