@@ -45,7 +45,7 @@ resultadosProcessados.push(ExecutarTeste(DiretorioBiblioteca, bufferOption, Quan
 //============================================================================================ Rodadas //>
 
 heuristicas.forEach(heuristica => {
-    for (var index = 0; index < Quantidade; index++) {
+    for (var index = 0; index < 59; index++) {
         console.log(`Executando rodada ${index} da heuristica ${heuristica}`);
 
         var caminhoArquivoRodada = DiretorioResultados + "/" + heuristica + "/" + index + ".js";
