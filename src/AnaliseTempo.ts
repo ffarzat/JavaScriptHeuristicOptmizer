@@ -56,7 +56,7 @@ heuristicas.forEach(heuristica => {
 
         WriteCodeToFile(arquivoRootBiblioteca, fs.readFileSync(caminhoArquivoRodada, 'UTF8'));
 
-        resultadosProcessados.push(ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade, `${index}`,  heuristica));
+        resultadosProcessados.push(ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade, `${index}`, heuristica));
 
     }
 });
@@ -82,35 +82,42 @@ function WriteCodeToFile(caminho: string, codigo: string) {
 /**
  * Executa os testes e recupera os valores
  */
-function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidade: number, trial: string, heuristica:string): TestResults {
+function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidade: number, trial: string, heuristica: string): TestResults {
     var msgId = uuid.v4();
     var passedAllTests = true;
-    
+
     var testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js 0 ${DiretorioBiblioteca} ${120000}`; //timeout bem grande
 
-    if (os.hostname() != "Optmus")
-    {
+    if (os.hostname() != "Optmus") {
         testCMD = "sleep 1 && " + testCMD;
     }
 
 
     for (var index = 0; index < quantidade; index++) {
-        var Tick = new exectimer.Tick(msgId);
-        Tick.start();
-        console.log(`   ${index}x`);
 
-        var stdout = child_process.execSync(testCMD, bufferOption).toString();
-        Tick.stop();
+        try {
+            var Tick = new exectimer.Tick(msgId);
+            Tick.start();
+            console.log(`   ${index}x`);
 
-        var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
-        stringList = stringList.substring(0, stringList.length - 1);
-        //console.log(`${stringList}`);
-        var resultadoJson = JSON.parse(`${stringList}`);
+            var stdout = child_process.execSync(testCMD, bufferOption).toString();
+            Tick.stop();
 
-        if (resultadoJson.sucess == "false") {
+            var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
+            stringList = stringList.substring(0, stringList.length - 1);
+            //console.log(`${stringList}`);
+            var resultadoJson = JSON.parse(`${stringList}`);
+
+            if (resultadoJson.sucess == "false") {
+                passedAllTests = false;
+                break;
+            }
+        } catch (error) {
+            Tick.stop();
             passedAllTests = false;
             break;
         }
+
     }
 
     var unitTestsTimer = exectimer.timers[msgId];
@@ -152,15 +159,16 @@ function ShowConsoleResults(result: TestResults) {
 /**
  * Salva os resultados na raiz
  */
-function EscreverResultadoEmCsv(DiretorioResultados:string, listaResultados: TestResults[]) {
-    
+function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: TestResults[]) {
+
     var newLine: string = '\n';
     var csvcontent = "sep=;" + newLine;
     csvcontent += "Rodada;Algoritmo;min;max;media;mediana;duracao" + newLine;
 
     listaResultados.forEach(element => {
-        csvcontent += `${element.Trial};${element.Heuristic};${element.min};${element.max};${element.median};${element.mean};${element.duration}` + newLine;
+        if(element.passedAllTests)
+            csvcontent += `${element.Trial};${element.Heuristic};${element.min};${element.max};${element.median};${element.mean};${element.duration}` + newLine;
     });
 
-    fs.writeFileSync(path.join(DiretorioResultados, 'analiseTempoExecucao.csv') , csvcontent);
+    fs.writeFileSync(path.join(DiretorioResultados, 'analiseTempoExecucao.csv'), csvcontent);
 }
