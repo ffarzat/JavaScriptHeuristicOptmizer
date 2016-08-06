@@ -13,6 +13,11 @@ date
 cd $PBS_O_WORKDIR
 
 ## node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/uuid lib/uuid.js /mnt/scratch/user8/Resultados/uuid 30
+
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/exectimer index.js /mnt/scratch/user8/Resultados/exectimer 30
+
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/minimist index.js /mnt/scratch/user8/Resultados/minimist 30
+
 node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/lodash lodash.js /mnt/scratch/user8/Resultados/lodash 30
 
 date
