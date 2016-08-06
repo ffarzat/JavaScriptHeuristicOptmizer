@@ -113,6 +113,7 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
                 break;
             }
         } catch (error) {
+            console.log(`${error.stack}`);
             Tick.stop();
             passedAllTests = false;
             break;
