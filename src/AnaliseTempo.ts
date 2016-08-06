@@ -92,6 +92,7 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
         testCMD = "sleep 1 && " + testCMD;
     }
 
+    var stdout = "";
 
     for (var index = 0; index < quantidade; index++) {
 
@@ -100,7 +101,7 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
             Tick.start();
             console.log(`   ${index}x`);
 
-            var stdout = child_process.execSync(testCMD, bufferOption).toString();
+            stdout = child_process.execSync(testCMD, bufferOption).toString();
             Tick.stop();
 
             var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
@@ -113,7 +114,9 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
                 break;
             }
         } catch (error) {
+            console.log(`stdout: ${stdout}`);
             console.log(`${error.stack}`);
+
             Tick.stop();
             passedAllTests = false;
             break;
@@ -167,7 +170,7 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
     csvcontent += "Rodada;Algoritmo;min;max;media;mediana;duracao" + newLine;
 
     listaResultados.forEach(element => {
-        if(element.passedAllTests)
+        if (element.passedAllTests)
             csvcontent += `${element.Trial};${element.Heuristic};${element.min};${element.max};${element.median};${element.mean};${element.duration}` + newLine;
     });
 
