@@ -14,10 +14,26 @@ cd $PBS_O_WORKDIR
 
 ## node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/uuid lib/uuid.js /mnt/scratch/user8/Resultados/uuid 30
 
-node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/exectimer index.js /mnt/scratch/user8/Resultados/exectimer 30
+## node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/exectimer index.js /mnt/scratch/user8/Resultados/exectimer 30
 
-node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/minimist index.js /mnt/scratch/user8/Resultados/minimist 30
+## node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/minimist index.js /mnt/scratch/user8/Resultados/minimist 30
 
-node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/lodash lodash.js /mnt/scratch/user8/Resultados/lodash 30
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/express-ifttt-webhook lib/webhook.js /mnt/scratch/user8/Resultados/express-ifttt-webhook 30
+
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/gulp-ccr-browserify index.js /mnt/scratch/user8/Resultados/gulp-cccr 30
+
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/Jade lib/index.js /mnt/scratch/user8/Resultados/Jade 30
+
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/node-browserify index.js /mnt/scratch/user8/Resultados/node-browserify 30
+
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/plivo-node lib/plivo.js /mnt/scratch/user8/Resultados/plivo-node 30
+
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/tleaf src/parse.js /mnt/scratch/user8/Resultados/tleaf 30
+
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/underscore underscore.js /mnt/scratch/user8/Resultados/underscore 30
+
+node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/xml2js lib/xml2js.js /mnt/scratch/user8/Resultados/xml2js 30
+
+## node --max-old-space-size=512000 build/src/AnaliseTempo.js /mnt/scratch/user8/JavaScriptHeuristicOptmizer/Libraries/lodash lodash.js /mnt/scratch/user8/Resultados/lodash 30
 
 date
