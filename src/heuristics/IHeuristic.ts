@@ -365,37 +365,39 @@ abstract class IHeuristic extends events.EventEmitter {
      * To resolve a single comunication with server trougth cluster comunication
      */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
-        this.SaveMessage(msg, cb);
         this._logger.Write(`[IHeuristic] Message ${msg.id} arrived`);
-        //============================================ Pool -> clients
-        try {
-            this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
-                try {
-                    if (err) {
-                        this._logger.Write(`[IHeuristic] Pool err: ${err.stack}`);
-                        this.FinishMessage(msg.id, undefined);
-                    }
-                    else {
-                        var processedMessage = obj.stdout;
-                        processedMessage.ctx = this.Reload(processedMessage.ctx);
-
-                        if (this.cbs[msg.id] != undefined) {
-                            this.FinishMessage(msg.id, processedMessage);
+        var didIT = this.SaveMessage(msg, cb);
+        if (didIT) {
+            //============================================ Pool -> clients
+            try {
+                this.Pool.enqueue(JSON.stringify(msg), (err, obj) => {
+                    try {
+                        if (err) {
+                            this._logger.Write(`[IHeuristic] Pool err: ${err.stack}`);
+                            this.FinishMessage(msg.id, undefined);
                         }
                         else {
-                            this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
+                            var processedMessage = obj.stdout;
+                            processedMessage.ctx = this.Reload(processedMessage.ctx);
+
+                            if (this.cbs[msg.id] != undefined) {
+                                this.FinishMessage(msg.id, processedMessage);
+                            }
+                            else {
+                                this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
+                            }
                         }
+                    } catch (error) {
+                        this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
+                        this.FinishMessage(msg.id, undefined);
                     }
-                } catch (error) {
-                    this._logger.Write(`[IHeuristic] Pool fail: ${error.stack}`);
-                    this.FinishMessage(msg.id, undefined);
-                }
-            });
-        } catch (error) {
-            this._logger.Write(`[IHeuristic] Pool err: ${error.stack}`);
-            this.FinishMessage(msg.id, undefined);
+                });
+            } catch (error) {
+                this._logger.Write(`[IHeuristic] Pool err: ${error.stack}`);
+                this.FinishMessage(msg.id, undefined);
+            }
+            //============================================ Done
         }
-        //============================================ Done
     }
 
     /**
@@ -409,22 +411,32 @@ abstract class IHeuristic extends events.EventEmitter {
         });
         */
 
-        var cbReal = this.cbs[idForCB];
+        try {
+            var cbReal = this.cbs[idForCB];
 
-        delete this.cbs[idForCB];
-        delete this.Messages[idForCB];
+            delete this.cbs[idForCB];
+            delete this.Messages[idForCB];
 
-        this._logger.Write(`[IHeuristic] Messages: ${Object.keys(this.Messages).length}`);
-        this._logger.Write(`[IHeuristic] cbs: ${Object.keys(this.cbs).length}`);
-        this._logger.Write(`[IHeuristic] Message ${idForCB} done`);
+            this._logger.Write(`[IHeuristic] Messages: ${Object.keys(this.Messages).length}`);
+            this._logger.Write(`[IHeuristic] cbs: ${Object.keys(this.cbs).length}`);
+            this._logger.Write(`[IHeuristic] Message ${idForCB} done`);
 
-        cbReal(messageDone);
+            cbReal(messageDone);
+        } catch (error) {
+            this._logger.Write(`[IHeuristic] FinishMessage err ${error.stack}`);
+            
+            throw new Error("it has failed inside FinishMessage");
+            
+            //delete this.cbs[idForCB];
+            //delete this.Messages[idForCB];
+        }
     }
 
     /**
      * Store a Message
      */
-    SaveMessage(messageToSave: Message, cb: any) {
+    SaveMessage(messageToSave: Message, cb: any): boolean {
+        var result = false;
         try {
             messageToSave.id = this.nextId++;
             messageToSave.Hosts = this.DetermineNextHosts();
@@ -432,6 +444,9 @@ abstract class IHeuristic extends events.EventEmitter {
 
             this.cbs[messageToSave.id] = cb;
             this.Messages[messageToSave.id] = messageToSave;
+
+            result = true;
+
         } catch (error) {
 
             delete this.cbs[messageToSave.id];
@@ -439,6 +454,8 @@ abstract class IHeuristic extends events.EventEmitter {
 
             cb(undefined);
         }
+
+        return result;
     }
 
     /**
