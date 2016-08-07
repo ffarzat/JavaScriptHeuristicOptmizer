@@ -86,7 +86,7 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
     var msgId = uuid.v4();
     var passedAllTests = true;
 
-    var testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js 0 ${DiretorioBiblioteca} ${120000}`; //timeout bem grande
+    var testCMD = `node --expose-gc --max-old-space-size=512000  src/client.js 0 ${DiretorioBiblioteca} ${120000}`; //timeout bem grande
 
     if (os.hostname() != "Optmus") {
         testCMD = "sleep 1 && " + testCMD;
