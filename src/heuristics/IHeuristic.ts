@@ -74,11 +74,6 @@ abstract class IHeuristic extends events.EventEmitter {
         this.cbs = {};
         this.Hosts = allHosts;
         this.Messages = {};
-
-        //Just for get clients ready
-        this.SetLibrary(library, (sucess: boolean) => {
-            console.log(`First Test ${sucess}`);
-        });
     }
 
     public Start() {
@@ -451,7 +446,7 @@ abstract class IHeuristic extends events.EventEmitter {
             this.cbs[messageToSave.id] = cb;
             this.Messages[messageToSave.id] = messageToSave;
 
-            this.DetermineMessageTimeout(Message)/
+            this.DetermineMessageTimeout(Message);
             result = true;
 
         } catch (error) {
