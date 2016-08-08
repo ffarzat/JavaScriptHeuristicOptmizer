@@ -48,62 +48,65 @@ logger.Write(`[Client:${clientId}] ready`);
 //========================================================================================== fork-poll handling
 process.on('message', function (message) {
 
-    //try {
-    var msg: Message = JSON.parse(message);
+    try {
+        var msg: Message = JSON.parse(message);
 
-    var exectimer = require('exectimer');
-    var Tick = new exectimer.Tick(msg.id);
-    Tick.start();
+        var exectimer = require('exectimer');
+        var Tick = new exectimer.Tick(msg.id);
+        Tick.start();
 
-    localClient.SetHosts(msg.Hosts);
+        localClient.SetHosts(msg.Hosts);
 
-    msg.ctx = localClient.Reload(msg.ctx);
+        msg.ctx = localClient.Reload(msg.ctx);
 
-    //logger.Write(`[Child]   AST ${msg.ctx.First.AST}`);
+        //logger.Write(`[Child]   AST ${msg.ctx.First.AST}`);
 
-    //logger.Write(`[runClient]   Client ${localClient.id} processing message ${msg.id}`);
-    logger.Write(`[runClient]   Processing message ${msg.id}`);
+        //logger.Write(`[runClient]   Client ${localClient.id} processing message ${msg.id}`);
+        logger.Write(`[runClient]   Processing message ${msg.id}`);
 
-    /*
-    if (message.id == 5) {
-        throw new Error("Just for test");
+        /*
+        if (message.id == 5) {
+            throw new Error("Just for test");
+        }
+    
+        if (message.id == 20) {
+            RecursivaInfinita();
+            return;
+        }
+        */
+
+
+        if (msg.ctx.Operation == "Mutation") {
+            //logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant`);
+            msg.ctx = localClient.Mutate(msg.ctx);
+        }
+
+        if (msg.ctx.Operation == "MutationByIndex") {
+            //logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant by node index`);
+            msg.ctx = localClient.MutateBy(msg.ctx);
+        }
+
+        if (msg.ctx.Operation == "CrossOver") {
+            //logger.Write(`[runClient]processing ${msg.ActualLibrary} new crossover`);
+            msg.ctx = localClient.CrossOver(msg.ctx);
+        }
+
+        if (msg.ctx.Operation == "Test") {
+            //logger.Write(`[runClient]processing ${msg.ActualLibrary} tests`);
+            msg.ctx = localClient.Test(msg.ctx);
+        }
+
+        Tick.stop();
+        var trialTimer = exectimer.timers[msg.id];
+        msg.ProcessedTime = ToNanosecondsToSeconds(trialTimer.duration());
+
+        //var msgProcessada = JSON.stringify(msg);
+
+        process.send(msg);
+        logger.Write(`[runClients] Msg ${msg.id} sent back.`);
+    } catch (error) {
+        process.send(message);
     }
-
-    if (message.id == 20) {
-        RecursivaInfinita();
-        return;
-    }
-    */
-
-
-    if (msg.ctx.Operation == "Mutation") {
-        //logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant`);
-        msg.ctx = localClient.Mutate(msg.ctx);
-    }
-
-    if (msg.ctx.Operation == "MutationByIndex") {
-        //logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant by node index`);
-        msg.ctx = localClient.MutateBy(msg.ctx);
-    }
-
-    if (msg.ctx.Operation == "CrossOver") {
-        //logger.Write(`[runClient]processing ${msg.ActualLibrary} new crossover`);
-        msg.ctx = localClient.CrossOver(msg.ctx);
-    }
-
-    if (msg.ctx.Operation == "Test") {
-        //logger.Write(`[runClient]processing ${msg.ActualLibrary} tests`);
-        msg.ctx = localClient.Test(msg.ctx);
-    }
-
-    Tick.stop();
-    var trialTimer = exectimer.timers[msg.id];
-    msg.ProcessedTime = ToNanosecondsToSeconds(trialTimer.duration());
-
-    //var msgProcessada = JSON.stringify(msg);
-
-    process.send(msg);
-    logger.Write(`[runClients] Msg ${msg.id} sent back.`);
 
 });
 

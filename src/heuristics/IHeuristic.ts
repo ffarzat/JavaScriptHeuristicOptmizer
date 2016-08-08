@@ -437,6 +437,7 @@ abstract class IHeuristic extends events.EventEmitter {
      */
     SaveMessage(messageToSave: Message, cb: any): boolean {
         var result = false;
+        
         try {
             messageToSave.id = this.nextId++;
             messageToSave.Hosts = this.DetermineNextHosts();

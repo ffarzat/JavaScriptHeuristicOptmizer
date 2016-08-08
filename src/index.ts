@@ -50,7 +50,7 @@ var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
 if (hostfile == undefined || hostfile == null || hostfile == "undefined" || hostfile == "null") {
-    clientOptions = '--max-old-space-size=2047';
+    clientOptions = '--max-old-space-size=512000';
 } else {
     var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
 
