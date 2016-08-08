@@ -451,6 +451,7 @@ abstract class IHeuristic extends events.EventEmitter {
             this.cbs[messageToSave.id] = cb;
             this.Messages[messageToSave.id] = messageToSave;
 
+            this.DetermineMessageTimeout(Message)/
             result = true;
 
         } catch (error) {
