@@ -109,7 +109,7 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
     var testCMD = `node --expose-gc --max-old-space-size=512000  src/client.js 0 ${DiretorioBiblioteca} ${120000}`; //timeout bem grande
 
     if (os.hostname() != "Optmus") {
-        testCMD = "sleep 1 && " + testCMD;
+        child_process.execSync("sleep 1", bufferOption).toString();
     }
 
     var stdout = "";
