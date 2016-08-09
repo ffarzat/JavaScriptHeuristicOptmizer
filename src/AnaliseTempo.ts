@@ -39,12 +39,13 @@ if (!fs.existsSync(oldLibFilePath))
 //============================================================================================ Original //>
 
 var caminhoOriginal = DiretorioResultados + '/RD/original.js';
-WriteCodeToFile(arquivoRootBiblioteca, fs.readFileSync(caminhoOriginal, 'UTF8'));
+var codigoOriginal = fs.readFileSync(caminhoOriginal, 'UTF8');
+WriteCodeToFile(arquivoRootBiblioteca, codigoOriginal);
 
 //Despreza a primeira execuçao
 ExecutarTeste(DiretorioBiblioteca, bufferOption, 1, "0", "original")
-
-resultadosProcessados.push(ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade, "0", "original"));
+var resultadoOriginal = ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade, "0", "original");
+resultadosProcessados.push(resultadoOriginal);
 
 //============================================================================================ Rodadas //>
 
@@ -53,11 +54,30 @@ heuristicas.forEach(heuristica => {
         console.log(`Executando rodada ${index} da heuristica ${heuristica}`);
 
         var caminhoArquivoRodada = DiretorioResultados + "/" + heuristica + "/" + index + ".js";
+        var CodigoDaRodada = fs.readFileSync(caminhoArquivoRodada, 'UTF8');
 
-        WriteCodeToFile(arquivoRootBiblioteca, fs.readFileSync(caminhoArquivoRodada, 'UTF8'));
+        if (CodigoDaRodada != codigoOriginal) {
 
-        resultadosProcessados.push(ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade, `${index}`, heuristica));
+            WriteCodeToFile(arquivoRootBiblioteca, CodigoDaRodada);
 
+            resultadosProcessados.push(ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade, `${index}`, heuristica));
+        }
+        else {
+            
+            var resultadoFinal: TestResults = new TestResults();
+
+            resultadoFinal.rounds = Quantidade;
+            resultadoFinal.min = resultadoOriginal.min;
+            resultadoFinal.max = resultadoOriginal.max;
+            resultadoFinal.mean = resultadoOriginal.mean;
+            resultadoFinal.median = resultadoOriginal.median;
+            resultadoFinal.duration = resultadoOriginal.duration;
+            resultadoFinal.passedAllTests = true;
+
+            resultadoFinal.Trial = "0";
+
+            resultadosProcessados.push();
+        }
     }
 });
 
