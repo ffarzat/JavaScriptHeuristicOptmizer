@@ -111,7 +111,7 @@ export default class CommandTester implements ITester {
             var bufferOption = { maxBuffer: 1024 * 5000 }
 
             if (this.AvailableHosts == undefined || this.AvailableHosts.length == 0) {
-                testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
+                testCMD = `node --expose-gc --max-old-space-size=2408000 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
             }
             else {
                 //NACAD environment

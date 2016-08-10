@@ -18,7 +18,7 @@
     "heuristics": ["GA"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":450,
+    "clientTimeout":60,
     "copyFileTimeout": 14400,
     "clientsTotal": 40,
     "libraries" : [

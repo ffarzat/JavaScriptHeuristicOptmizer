@@ -1,12 +1,12 @@
-var Libname = "Node-browserrify";
-var ConfigName = "Node-browserrify/node-browserify.json";
-var DirectoryToSave = "Node-browserrify";
+var Libname = "Jquery";
+var ConfigName = "Jquery/jquery.json";
+var DirectoryToSave = "Jquery";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";
 runResult += "#!/bin/bash" + "\n";
 
-for (var index = 1; index < 60; index++) {
+for (var index = 0; index < 60; index++) {
 
     var result = "";
     result += "#!/bin/bash" + "\n";
@@ -21,11 +21,11 @@ for (var index = 1; index < 60; index++) {
     result += 'echo "in directory:       `pwd`"' + "\n";
     result += 'echo "nodes: $NPROCS"' + "\n";
     result += 'echo "----------------"' + "\n";
-    result += `node --max-old-space-size=512000 build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
+    result += `node --max-old-space-size=2408000 build/src/index.js ${ConfigName} null null ${index}\n` + "\n";
 
 
     runResult += `qsub ${DirectoryToSave}/${Libname}-${index}.sh` + "\n";
-    runResult += `sleep 1m` + "\n";
+    runResult += `sleep 5m` + "\n";
 
 
     if (!fs.existsSync(DirectoryToSave)) {
