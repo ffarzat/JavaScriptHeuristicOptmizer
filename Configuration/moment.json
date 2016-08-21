@@ -1,7 +1,7 @@
 {
     "file": "moment.json",
-    "trials":2,
-    "startTrial": 1,
+    "trials":59,
+    "startTrial": 0,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
