@@ -1,6 +1,6 @@
-var Libname = "Moment";
-var ConfigName = "Configuration/moment.json";
-var DirectoryToSave = "Moment";
+var Libname = "Lodash";
+var ConfigName = "Lodash/lodash.json";
+var DirectoryToSave = "lodash";
 //====================================================================================//>
 var fs = require('fs');
 //var runResult = "";
