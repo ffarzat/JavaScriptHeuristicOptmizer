@@ -129,8 +129,6 @@ export default class CommandTester implements ITester {
                 //console.log(`[CommandTester] cmd: ${testCMD}`);                
             }
 
-            console.log(`[CommandTester] cmd: ${testCMD}`);                
-
             //console.log(`[CommandTester] Before`);
             var stdout = child_process.execSync(testCMD, bufferOption).toString();
             //console.log(`[CommandTester] After`);
