@@ -157,6 +157,7 @@ abstract class IHeuristic extends events.EventEmitter {
         context.First = individual;
         context.Original = this.bestIndividual; //is usual to be the original
         context.LibrarieOverTest = this._lib;
+        context.MemoryToUse = this._globalConfig.memory == undefined? 2047: this._globalConfig.memory;
 
         msg.FirstOne = true;
         msg.ctx = context;

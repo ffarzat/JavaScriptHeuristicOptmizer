@@ -147,6 +147,11 @@ interface IConfiguration {
      */
     trialsConfiguration: TrialConfiguration[];
 
+    /**
+     * Total amount of memory to testing
+     */
+    memory: number;
+
 }
 
 export default IConfiguration;

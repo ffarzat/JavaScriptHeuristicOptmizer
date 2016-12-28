@@ -50,7 +50,7 @@ var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
 if (hostfile == undefined || hostfile == null || hostfile == "undefined" || hostfile == "null") {
-    clientOptions = '--max-old-space-size=512000';
+    clientOptions = '--max-old-space-size=' + (configuration.memory == undefined? 2047: configuration.memory);
 } else {
     var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
 
@@ -68,9 +68,10 @@ if (hostfile == undefined || hostfile == null || hostfile == "undefined" || host
         logger.Write(`-> ${element}`);
     });
 
+    clientOptions = '--max-old-space-size=512000';
 }
 
-
+logger.Write(`clientOptions: ${clientOptions}`);
 
 var pool = require('fork-pool');
 var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
