@@ -66,6 +66,7 @@ describe('Client Tests', function () {
         context.First = generatedIndividual;
         context.Second = this.bestIndividual; //is usual to be the original
         context.LibrarieOverTest = lib;
+        context.MemoryToUse = 2047;
 
         msg.ctx = context;
 

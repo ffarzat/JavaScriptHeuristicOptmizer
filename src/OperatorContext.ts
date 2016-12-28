@@ -51,4 +51,9 @@ export default class OperatorContext {
      * For mutation by node index
      */
     NodeIndex: number;
+
+    /**
+     * Amount of Available meomry to use for testing
+     */
+    MemoryToUse: number;
 }

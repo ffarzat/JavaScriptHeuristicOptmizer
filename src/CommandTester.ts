@@ -42,15 +42,17 @@ export default class CommandTester implements ITester {
     
     AvailableHosts: Array<string>
 
+    memory: number;
+
     /**
      * Initializes NPM packages if necessary
      */
-    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string, testTimeout: number, Hosts: Array<string>) {
+    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string, testTimeout: number, Hosts: Array<string>, memoryLimit: number) {
 
         this.testUntil = testUntil;
         this.testTimeout = testTimeout;
         this.AvailableHosts = Hosts;
-
+        this.memory = memoryLimit == undefined? 512000: memoryLimit;
 
         //Setup tests with Lib context
         this.libMainFilePath = LibrarieOverTest.mainFilePath;
@@ -111,7 +113,7 @@ export default class CommandTester implements ITester {
             var bufferOption = { maxBuffer: 1024 * 5000 }
 
             if (this.AvailableHosts == undefined || this.AvailableHosts.length == 0) {
-                testCMD = `node --expose-gc --max-old-space-size=2408000 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
+                testCMD = `node --expose-gc --max-old-space-size=${this.memory} src/client.js ${msgId} ${libPath} ${timeoutMS}`;
             }
             else {
                 //NACAD environment

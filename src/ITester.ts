@@ -8,7 +8,7 @@ import ILogger from './ILogger';
 
 interface ITester{
     
-    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string, testTimeout: number, Hosts:Array<string>);
+    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string, testTimeout: number, Hosts:Array<string>, memoryLimit: number);
     
     Test(individual:Individual);
     
