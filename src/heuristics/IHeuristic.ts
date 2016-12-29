@@ -39,6 +39,8 @@ abstract class IHeuristic extends events.EventEmitter {
     public mutationTrials: number;
     public crossOverTrials: number;
 
+    public nodesSelectionApproach: string;
+
     public Original: Individual;
 
     waitingMessages: any;   //store waiting messages
@@ -317,6 +319,14 @@ abstract class IHeuristic extends events.EventEmitter {
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
         this.bestIndividual = this.Original;
+
+        if (this.nodesSelectionApproach == "ByFunction")
+        {
+            //must determine ranking of most used functions
+            
+
+        }
+
 
         this.Test(this.Original, (testedOriginal) => {
             this.Original = testedOriginal;

@@ -22,8 +22,8 @@ export default class TrialConfiguration {
      * 
      * By now can be:
      * 
-     * [Function]
-     * 
+     * [Global, ByFunction, DinamycFunction]
+     *  
      */
     nodesType: string [];
     

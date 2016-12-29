@@ -7,6 +7,7 @@ import path = require('path');
 import traverse = require('traverse');
 
 var escodegen = require('escodegen');
+//var _ = require('underscore');
 
 /**
 * ASTExplorer
@@ -17,6 +18,11 @@ export default class ASTExplorer {
      * Esprima Global Parser options 
      */
     globalOptions: esprima.Options = { raw: true, tokens: true, range: true, loc: true, comment: true };
+
+    /**
+     * Not included in Function Ranking
+     */
+    excludedFunctions = ['undefined', 'String', 'parseInt', 'parseFloat'];
 
     /**
     * Generates the AST for especified code
@@ -296,5 +302,34 @@ export default class ASTExplorer {
 
         return nodesIndex;
     }
+
+
+    /**
+     * Make a Count of functions most used and return a dictionary of them
+     */
+    MakeFunctionStaticRanking(individual: Individual): any {
+
+        var funcs = {};
+
+        traverse(individual.AST).forEach( (j) => {
+            if (j && j.type == 'CallExpression') {
+                var functionName = String(j.callee.name);
+
+                if (this.excludedFunctions.indexOf(functionName) == -1) {
+                    
+                    if (isNaN(parseFloat(funcs[functionName])))
+                    {
+                        funcs[functionName] = 0;
+                    }
+
+                    funcs[functionName] = parseInt(funcs[functionName] + 1);
+                }
+            }
+        });
+
+        return funcs;
+    }
+
+
 
 }
