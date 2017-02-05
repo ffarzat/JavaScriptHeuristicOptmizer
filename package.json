@@ -33,7 +33,6 @@
     "rmdir": "1.2.0",
     "run-parallel-limit": "^1.0.3",
     "shelljs": "0.6.0",
-    "snappy": "5.0.3",
     "temporary": "0.0.8",
     "traverse": "0.6.6",
     "typescript": "1.8.10",
