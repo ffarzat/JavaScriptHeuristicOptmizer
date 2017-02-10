@@ -51,7 +51,28 @@ export default class HC extends IHeuristic {
         this.SetLibrary(library, (sucess: boolean) => {
             if (sucess) {
                 this.Start();
-                var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
+
+                switch (this.nodesSelectionApproach) {
+                    case "Global":
+                        this.runGlobal(trialIndex, cb);
+                        break;
+                
+                    default:
+                        console.log(this.nodesSelectionApproach);
+                        cb(undefined);
+                        break;
+                }               
+            }
+            else{
+                cb(undefined);
+                return;
+            }
+        });
+    }
+
+    runGlobal(trialIndex: number, cb: (results: TrialResults) => void):void
+    {
+        var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
                 var indexes: NodeIndex = nodesIndexList[0];
                 var totalTrials = this.trials;
                 this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
@@ -64,13 +85,8 @@ export default class HC extends IHeuristic {
                     cb(results);
                     return;
                 });
-            }
-            else{
-                cb(undefined);
-                return;
-            }
-        });
     }
+
 
     /**
      * How many time to execute DoMutationsPerTime

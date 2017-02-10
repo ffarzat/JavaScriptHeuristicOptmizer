@@ -62,6 +62,9 @@ abstract class IHeuristic extends events.EventEmitter {
     Hosts: Array<string>;
     Messages: any;
 
+    functionsCount: Object;
+
+
     /**
      * Forces the Heuristic to validate config
      */
@@ -319,12 +322,23 @@ abstract class IHeuristic extends events.EventEmitter {
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
         this.bestIndividual = this.Original;
+        
+        //ByFunction, Global, ByFunctionDinamyc
 
         if (this.nodesSelectionApproach == "ByFunction")
         {
-            //must determine ranking of most used functions
-            
+                       
+           this.functionsCount = this.getFunctionStaticList();
+           var keysSorted = Object.keys(this.functionsCount).sort((a,b)=>{return this.functionsCount[b] - this.functionsCount[a]});
+           //keysSorted.forEach(element => {
+               //console.log(`${element}: ${this.functionsCount[element]}`);
+           //});
 
+           //Object.keys(this.functionsCount).forEach(function (key) {
+              //console.log(`${key}: ${localCount[key]}`);
+           //});
+
+            //process.exit();
         }
 
 
@@ -348,6 +362,44 @@ abstract class IHeuristic extends events.EventEmitter {
             }
         });
 
+    }
+
+    /**
+     * Ranking estático de funções mais utilizadas no código
+     */
+    getFunctionStaticList(): Object
+    {
+        //must determine ranking of most used functions
+            var types = require("ast-types");
+            var localCount = {};
+            
+            types.visit(this.Original.AST, {
+                
+                visitCallExpression: function(path) {
+                    var node = path.node;
+
+
+                    //console.log(node.callee);
+
+                    if(node.callee.property && node.callee.property.name)
+                    {
+                        var name = node.callee.property.name;
+                        if(isNaN(parseInt(localCount[name])))
+                        {
+                            localCount[name] = 1;
+                        }
+                        else
+                        {
+                            localCount[name] ++;
+                        }
+                        
+                    }
+
+                    this.traverse(path);
+                }                
+            });
+
+            return localCount;
     }
 
 

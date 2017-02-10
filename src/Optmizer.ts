@@ -179,6 +179,7 @@ export default class Optmizer {
 
             this.InitializeOutWritter(actualLibrary, this.actualHeuristic);
 
+            this.actualHeuristic.nodesSelectionApproach = this.nodesSelectionApproach;
             this.actualHeuristic.ActualGlobalTrial = this.trialIndex;
             this.actualHeuristic.ActualInternalTrial = this.heuristicTrial;
             this.actualHeuristic.ActualLibrary = actualLibrary.name;

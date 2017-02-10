@@ -23,11 +23,11 @@
     "copyFileTimeout": 30,
     "memory": 2047,
     "libraries" : [
-        {"name":"Lodash",   "path":"Libraries/lodash/",     "mainFilePath":"Libraries/lodash/lodash.js" }
+        {"name":"uuid",   "path":"Libraries/uuid/",     "mainFilePath":"Libraries/uuid/lib/uuid.js" }
     ],
     "trialsConfiguration":[
         {
-            "nodesSelectionApproach":"Global", 
+            "nodesSelectionApproach":"ByFunction", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
                 "neighborsToProcess": 1,

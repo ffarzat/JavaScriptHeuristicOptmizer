@@ -17,6 +17,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "ast-types": "^0.9.5",
     "async": "^2.0.0-rc.6",
     "escodegen": "git@github.com:ffarzat/escodegen.git#99ca5657bd6d6386c3ee9309046dbdd20a8c4803",
     "esprima": "2.7.2",
