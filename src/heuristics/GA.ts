@@ -83,9 +83,9 @@ export default class GA extends IHeuristic {
                 this.DoMutations(population, () => {
                     this.DoPopuplationCut(population, () => {
                         generationIndex++
-                        setTimeout(() => {
+                        process.nextTick(() => {
                             this.executeStack(generationIndex, population, cb);
-                        }, 0);
+                        });
                     });
                 });
             });
@@ -97,7 +97,7 @@ export default class GA extends IHeuristic {
      */
     ProcessOperations(population: Individual[], elements: number[], operation: string, cb: () => void) {
 
-        setTimeout(() => {
+        process.nextTick(() => {
             var elementIndex = elements.shift();
             var individual = population[elementIndex];
 
@@ -140,8 +140,7 @@ export default class GA extends IHeuristic {
             }
 
             if (elements.length > 0) {
-                setTimeout(() => { this.ProcessOperations(population, elements, operation, cb); }
-                    , 50);
+                process.nextTick(() => { this.ProcessOperations(population, elements, operation, cb); });
             }
             else {
                 this._logger.Write(`[GA] Operation requests done. Just waiting for clients.`);
@@ -161,7 +160,7 @@ export default class GA extends IHeuristic {
                 }
             }
 
-        }, 50);
+        });
     }
 
     /**
@@ -365,9 +364,9 @@ export default class GA extends IHeuristic {
 
             counter++;
 
-            setTimeout(() => {
+            process.nextTick(() => {
                 this.DoMutationsPerTime(counter, neighbors, totalMutants, cb);
-            }, 0);
+            });
         }
     }
 

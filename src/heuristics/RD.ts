@@ -86,9 +86,9 @@ export default class RD extends IHeuristic {
                 cb();
             } else {
 
-                setTimeout(() => {
+                process.nextTick(() => {
                     this.executeCalculatedTimes(time, cb);
-                }, 0);
+                });
             }
 
         });
@@ -141,9 +141,9 @@ export default class RD extends IHeuristic {
 
             counter++;
 
-            setTimeout(() => {
+            process.nextTick(() => {
                 this.DoMutationsPerTime(counter, neighbors, cb);
-            }, 50);
+            });
         }
     }
 
