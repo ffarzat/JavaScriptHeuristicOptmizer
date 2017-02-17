@@ -191,9 +191,17 @@ export default class HC extends IHeuristic {
 
                 }
 
-                process.nextTick(() => {
-                    this.ExecutarMutacao(indexes, nodesIndexList, trialIndex, cb);
-                });
+                if (this.trials > this.operationsCount) {
+                    process.nextTick(() => {
+                        this.ExecutarMutacao(indexes, nodesIndexList, trialIndex, cb);
+                    });
+                } else {
+                    this._logger.Write(`[HC] Orçamento esgotado!`);
+                    this.Stop();
+                    var results = this.ProcessResult(trialIndex, this.Original, this.ActualBestForFunctionScope);
+                    cb(results);
+                    return;
+                }
             });
         });
     }
