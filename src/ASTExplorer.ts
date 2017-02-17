@@ -224,6 +224,8 @@ export default class ASTExplorer {
         var localNodeIndex = context.NodeIndex;
         var counter = 0;
 
+
+
         //console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
 
         mutant.AST = traverse(mutant.AST).map(function (node) {
@@ -234,6 +236,11 @@ export default class ASTExplorer {
             }
             counter++;
         });
+
+
+        //const fs = require('fs');
+        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, mutant.ToCode());
+
 
         return mutant;
     }

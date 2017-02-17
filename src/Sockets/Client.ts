@@ -165,8 +165,8 @@ export default class Client {
     ReconstruirIndividio(context: OperatorContext) {
         if (context.nodesSelectionApproach == "ByFunction") {
             
-            const fs = require('fs');
-            fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
+            //const fs = require('fs');
+            //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
             
             context.First = this.ReplaceFunctionNode(context.First, context.ActualBestForFunctionScope, context.functionName);
 
