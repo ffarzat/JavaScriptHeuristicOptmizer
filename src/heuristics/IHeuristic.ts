@@ -330,14 +330,13 @@ abstract class IHeuristic extends events.EventEmitter {
         var novoIndividuo = undefined;
 
         var caminho = __dirname.replace('build', '');
-        var functionExtractor = require( caminho + '/function-extractor.js');
+        var functionExtractor = require(caminho + '/function-extractor.js');
         var functions = functionExtractor.interpret(individuo.AST);
         var functionAST = undefined;
-        
+
         for (var i = 0; i < functions.length; i++) {
             var functionObj = functions[i];
-            if(functionObj.name === functionName)
-            {
+            if (functionObj.name === functionName) {
                 functionAST = functionObj.node
             }
         }
@@ -378,6 +377,7 @@ abstract class IHeuristic extends events.EventEmitter {
                     }
                 }
             }
+            this._logger.Write(`Funções para Otimizar: ${this.functionStack.length}`);
         }
 
         this.Test(this.Original, (testedOriginal) => {
