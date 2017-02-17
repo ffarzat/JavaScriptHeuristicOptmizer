@@ -18,9 +18,9 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":450,
+    "clientTimeout":20,
     "copyFileTimeout": 14400,
-    "clientsTotal": 40,
+    "clientsTotal": 10,
     "libraries" : [
         {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" }
     ],
@@ -29,7 +29,7 @@
             "nodesSelectionApproach":"ByFunction", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 40,
+                "neighborsToProcess": 10,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 

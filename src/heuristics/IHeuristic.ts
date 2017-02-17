@@ -379,7 +379,7 @@ abstract class IHeuristic extends events.EventEmitter {
         var functionExtractor = require(caminho + '/function-extractor.js');
         var functions = functionExtractor.interpret(this.Original.AST);
         var temp = this.Original.ToCode();
-        console.log(`Funções: ${functions.length}`)
+        this._logger.Write(`Funções: ${functions.length}`);
 
         for (var i = 0; i < functions.length; i++) {
             var nome = functions[i].name;
