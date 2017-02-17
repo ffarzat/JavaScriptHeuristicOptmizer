@@ -110,7 +110,8 @@ export default class HC extends IHeuristic {
 
         while (this.functionStack.length > 0) {
             melhorFuncao = this.functionStack.shift();
-            this.bestIndividual = this.GetFunctionAstByName(this.ActualBestForFunctionScope, this.ActualFunction);
+
+            this.bestIndividual = this.GetFunctionAstByName(this.ActualBestForFunctionScope, melhorFuncao);
             if (this.bestIndividual != undefined) {
                 console.log(`Achamos a função: ${melhorFuncao}`);
                 break;

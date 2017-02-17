@@ -344,9 +344,10 @@ abstract class IHeuristic extends events.EventEmitter {
 
 
         if (functionAST != undefined) {
-            console.log(`${functionAST}`);
+            //console.log(`${functionAST}`);
             novoIndividuo = new Individual();
             novoIndividuo.AST = functionAST;
+            this.ActualFunction = functionName;
         }
 
         return novoIndividuo;
