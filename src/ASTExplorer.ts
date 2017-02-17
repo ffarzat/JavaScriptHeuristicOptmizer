@@ -65,6 +65,13 @@ export default class ASTExplorer {
             newCtx.Second.testResults = oldSecond.testResults;
         }
 
+        if (context.ActualBestForFunctionScope) {
+            var oldActualBestForFunctionScope = context.ActualBestForFunctionScope;
+            newCtx.ActualBestForFunctionScope = new Individual();
+            newCtx.ActualBestForFunctionScope.AST = oldActualBestForFunctionScope.astObj;
+            newCtx.ActualBestForFunctionScope.testResults = oldActualBestForFunctionScope.testResults;
+        }
+
         if (context.Original) {
             var oldOriginal = context.Original;
             newCtx.Original = new Individual();
@@ -291,7 +298,7 @@ export default class ASTExplorer {
         var index: number = 0;
 
         traverse(individual.AST).forEach(function (node) {
-            if (node && node.type && node.type == nodeType) {
+            if (node && node.type && node.type === nodeType) {
                 nodesIndex.push(index);
                 //console.log(`[ASTExplorer.IndexNodesBy]Tipo:${node.type}`);
                 //console.log(`[ASTExplorer.IndexNodesBy]Indice:${index}`);
@@ -311,14 +318,13 @@ export default class ASTExplorer {
 
         var funcs = {};
 
-        traverse(individual.AST).forEach( (j) => {
+        traverse(individual.AST).forEach((j) => {
             if (j && j.type == 'CallExpression') {
                 var functionName = String(j.callee.name);
 
                 if (this.excludedFunctions.indexOf(functionName) == -1) {
-                    
-                    if (isNaN(parseFloat(funcs[functionName])))
-                    {
+
+                    if (isNaN(parseFloat(funcs[functionName]))) {
                         funcs[functionName] = 0;
                     }
 

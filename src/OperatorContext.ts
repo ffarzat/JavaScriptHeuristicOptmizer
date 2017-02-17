@@ -56,4 +56,12 @@ export default class OperatorContext {
      * Amount of Available meomry to use for testing
      */
     MemoryToUse: number;
+
+    //Global, ByFunction
+    nodesSelectionApproach: string;
+
+
+    ActualBestForFunctionScope: Individual;
+
+    functionName: string
 }

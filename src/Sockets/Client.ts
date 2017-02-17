@@ -40,7 +40,7 @@ export default class Client {
         return this._astExplorer.Reload(context);
     }
 
-    SetHosts(hosts:Array<string>){
+    SetHosts(hosts: Array<string>) {
         this.HostsAvailable = hosts;
     }
 
@@ -160,12 +160,29 @@ export default class Client {
     }
 
     /**
+     * Reconstrói o código completo (Otimização por função)
+     */
+    ReconstruirIndividio(context: OperatorContext) {
+        if (context.nodesSelectionApproach == "ByFunction") {
+            context.First = this.ReplaceFunctionNode(context.First, context.ActualBestForFunctionScope, context.functionName);
+
+            const fs = require('fs');
+            var code = context.First.ToCode();
+
+            this.logger.Write(`[Client] Voltando a função mutante para o código completo para permitir execução dos testes [code length: ${code.length}]`);
+            if (code.length > 0)
+                fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
+        }
+    }
+
+    /**
      * Global distributed Test execution
      */
     Test(context: OperatorContext): OperatorContext {
         this.logger.Write(`[Client]Executing Tests for ${context.LibrarieOverTest.name}`);
 
         var ctx = new OperatorContext();
+
 
         try {
             this._config.clientTimeout = this._config.clientTimeout;
@@ -186,6 +203,44 @@ export default class Client {
     }
 
     /**
+     * Atualiza um individuo com uma nova AST apenas em uma função
+     */
+    ReplaceFunctionNode(functionAST: Object, ActualBestForFunctionScope: Individual, functionName: string): Individual {
+        var types = require("ast-types");
+        var novoIndividuo = ActualBestForFunctionScope.Clone();
+
+        types.visit(novoIndividuo.AST, {
+            //FunctionDeclaration, FunctionExpression, ArrowFunctionExpression
+            visitFunction: function (path) {
+                var node = path.node;
+
+                var internalName = "";
+
+                if (node.type == 'FunctionDeclaration') {
+                    internalName = node.id.name;
+                }
+
+                if (node.type == 'FunctionExpression') {
+                    var expressionNode = path.parent;
+                    internalName = expressionNode.value.left.property.name;
+                }
+
+                if (internalName == functionName) {
+                    path.replace(functionAST);
+                    this.abort();
+                }
+                else {
+                    this.traverse(path);
+                }
+            }
+        });
+
+        return novoIndividuo;
+
+    }
+
+
+    /**
     * Initializes configurated Tester class
     */
     private InitializeTester(context: OperatorContext) {
@@ -199,6 +254,9 @@ export default class Client {
                 context.LibrarieOverTest.path = `${this.TempDirectory.path}/${context.LibrarieOverTest.name}`;
             }
         });
+
+        //Verificar e executa necessidade de remontar o código completo antes de testá-lo (Otimização por função)
+        this.ReconstruirIndividio(context);
 
         this.logger.Write(`[Client] Test lib environment: ${context.LibrarieOverTest.name}`)
         this._tester = new TesterFactory().CreateByName(this._config.tester);
