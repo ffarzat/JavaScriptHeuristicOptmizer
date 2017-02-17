@@ -322,37 +322,6 @@ abstract class IHeuristic extends events.EventEmitter {
         fs.writeFileSync(lib.mainFilePath, individual.ToCode());
     }
 
-    /**
-     * Recupera a AST da Função por nome
-     */
-    GetFunctionAstByName(individuo: Individual, functionName: string): Individual {
-        var traverse = require('traverse');
-        var novoIndividuo = undefined;
-
-        var caminho = __dirname.replace('build', '');
-        var functionExtractor = require(caminho + '/function-extractor.js');
-        var functions = functionExtractor.interpret(individuo.AST);
-        var functionAST = undefined;
-
-        for (var i = 0; i < functions.length; i++) {
-            var functionObj = functions[i];
-            if (functionObj.name === functionName) {
-                functionAST = functionObj.node
-            }
-        }
-
-
-        if (functionAST != undefined) {
-            //console.log(`${functionAST}`);
-            novoIndividuo = new Individual();
-            novoIndividuo.AST = functionAST;
-            this.ActualFunction = functionName;
-        }
-
-        return novoIndividuo;
-    }
-
-
 
     /**
     * Defines library and test original code
@@ -370,12 +339,8 @@ abstract class IHeuristic extends events.EventEmitter {
             var list = this.getFunctionStaticList();
             var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
             for (let element in keysSorted) {
-                if (element != undefined) {
-                    var Newindividual = this.GetFunctionAstByName(this.bestIndividual, keysSorted[element]);
-                    if (Newindividual != undefined && Newindividual.AST != undefined) {
-                        this.functionStack.push(keysSorted[element]);
-                    }
-                }
+                console.log(`Função ${keysSorted[element]}: ${element}`);
+                this.functionStack.push(keysSorted[element]);
             }
             this._logger.Write(`Funções para Otimizar: ${this.functionStack.length}`);
         }
@@ -410,30 +375,54 @@ abstract class IHeuristic extends events.EventEmitter {
         var types = require("ast-types");
         var localCount = {};
 
-        types.visit(this.Original.AST, {
+        var caminho = __dirname.replace('build', '');
+        var functionExtractor = require(caminho + '/function-extractor.js');
+        var functions = functionExtractor.interpret(this.Original.AST);
+        var temp = this.Original.ToCode();
+        console.log(`Funções: ${functions.length}`)
 
-            visitCallExpression: function (path) {
-                var node = path.node;
-                //console.log(node.callee);
+        for (var i = 0; i < functions.length; i++) {
+            var nome = functions[i].name;
+            var total = temp.split('.' + nome).length;
+            localCount[nome] = total -1;
+        }
 
-                if (node.callee.property && node.callee.property.name) {
-                    var name = node.callee.property.name;
-                    if (isNaN(parseInt(localCount[name]))) {
-                        localCount[name] = 1;
-                    }
-                    else {
-                        localCount[name]++;
-                    }
-
-                }
-
-                this.traverse(path);
-            }
-        });
+        //console.log(`${JSON.stringify(localCount)}`);
 
         return localCount;
     }
 
+    /**
+     * Recupera a AST da Função por nome
+     */
+    GetFunctionAstByName(individuo: Individual, functionName: string): Individual {
+        var traverse = require('traverse');
+        var novoIndividuo = undefined;
+
+        var caminho = __dirname.replace('build', '');
+        var functionExtractor = require(caminho + '/function-extractor.js');
+        var functions = functionExtractor.interpret(individuo.AST);
+        var functionAST = undefined;
+
+        //console.log(`Funções: ${functions.length}`);
+
+        for (var i = 0; i < functions.length; i++) {
+            var functionObj = functions[i];
+            if (functionObj.name === functionName) {
+                functionAST = functionObj.node
+            }
+        }
+
+
+        if (functionAST != undefined) {
+            //console.log(`${functionAST}`);
+            novoIndividuo = new Individual();
+            novoIndividuo.AST = functionAST;
+            this.ActualFunction = functionName;
+        }
+
+        return novoIndividuo;
+    }
 
     /**
     * Create the orginal individual from library settings

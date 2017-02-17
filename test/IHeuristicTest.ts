@@ -65,13 +65,13 @@ describe('IHeuristic Tests', () => {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[1];
+        var lib = configuration.libraries[2];
         var libFile: string = lib.mainFilePath;
         var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
         
-        var functionAST = hc.GetFunctionAstByName(generatedIndividual, 'paddedString');
+        var functionAST = hc.GetFunctionAstByName(generatedIndividual, 'lazyValue');
 
-        console.log(functionAST.ToCode());
+        //console.log(functionAST.ToCode());
 
         expect(functionAST).not.be(undefined);
         

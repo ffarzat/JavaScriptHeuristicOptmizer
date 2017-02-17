@@ -24,7 +24,8 @@
     "memory": 2047,
     "libraries" : [
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
-        {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" }
+        {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
+        {"name":"lodash",   "path":"Libraries/lodash/",     "mainFilePath":"Libraries/lodash/lodash.js" }
     ],
     "trialsConfiguration":[
         {
