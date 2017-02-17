@@ -271,7 +271,7 @@ export default class ASTExplorer {
      * Creates a index map for all valid node types
      */
     IndexNodes(individual: Individual): number[] {
-        var nodes = traverse(individual.AST).nodes();
+        //var nodes = traverse(individual.AST).nodes();
         var nodesIndex: number[] = [];
         var index: number = 0;
 
@@ -335,7 +335,4 @@ export default class ASTExplorer {
 
         return funcs;
     }
-
-
-
 }

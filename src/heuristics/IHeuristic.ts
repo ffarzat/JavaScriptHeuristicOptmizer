@@ -170,7 +170,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         msg.FirstOne = true;
         msg.ctx = context;
-        msg.id= 5000;
+        msg.id = 5000;
 
         this.getResponse(msg, (newMsg) => {
 
@@ -322,43 +322,36 @@ abstract class IHeuristic extends events.EventEmitter {
         fs.writeFileSync(lib.mainFilePath, individual.ToCode());
     }
 
-
     /**
      * Recupera a AST da Função por nome
      */
     GetFunctionAstByName(individuo: Individual, functionName: string): Individual {
-        var types = require("ast-types");
+        var traverse = require('traverse');
         var novoIndividuo = undefined;
 
-        types.visit(individuo.AST, {
-            //FunctionDeclaration, FunctionExpression, ArrowFunctionExpression
-            visitFunction: function (path) {
-                var node = path.node;
-
-                var internalName = "";
-
-                if (node.type == 'FunctionDeclaration') {
-                    internalName = node.id.name;
-                }
-
-                if (node.type == 'FunctionExpression') {
-                    var expressionNode = path.parent;
-                    internalName = expressionNode.value.left.property.name;
-                }
-
-                if (internalName == functionName) {
-                    novoIndividuo = new Individual();
-                    novoIndividuo.AST = node;
-                    this.abort();
-                }
-                else {
-                    this.traverse(path);
-                }
+        var caminho = __dirname.replace('build', '');
+        var functionExtractor = require( caminho + '/function-extractor.js');
+        var functions = functionExtractor.interpret(individuo.AST);
+        var functionAST = undefined;
+        
+        for (var i = 0; i < functions.length; i++) {
+            var functionObj = functions[i];
+            if(functionObj.name === functionName)
+            {
+                functionAST = functionObj.node
             }
-        });
+        }
+
+
+        if (functionAST != undefined) {
+            console.log(`${functionAST}`);
+            novoIndividuo = new Individual();
+            novoIndividuo.AST = functionAST;
+        }
 
         return novoIndividuo;
     }
+
 
 
     /**
@@ -377,9 +370,12 @@ abstract class IHeuristic extends events.EventEmitter {
             var list = this.getFunctionStaticList();
             var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
             for (let element in keysSorted) {
-                var Newindividual = this.GetFunctionAstByName(this.bestIndividual, keysSorted[element]);
-                if (Newindividual && Newindividual.AST)
-                    this.functionStack.push(keysSorted[element]);
+                if (element != undefined) {
+                    var Newindividual = this.GetFunctionAstByName(this.bestIndividual, keysSorted[element]);
+                    if (Newindividual != undefined && Newindividual.AST != undefined) {
+                        this.functionStack.push(keysSorted[element]);
+                    }
+                }
             }
         }
 

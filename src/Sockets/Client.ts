@@ -164,14 +164,19 @@ export default class Client {
      */
     ReconstruirIndividio(context: OperatorContext) {
         if (context.nodesSelectionApproach == "ByFunction") {
+            
+            const fs = require('fs');
+            fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
+            
             context.First = this.ReplaceFunctionNode(context.First, context.ActualBestForFunctionScope, context.functionName);
 
-            const fs = require('fs');
+            
             var code = context.First.ToCode();
 
             this.logger.Write(`[Client] Voltando a função mutante para o código completo para permitir execução dos testes [code length: ${code.length}]`);
-            if (code.length > 0)
-                fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
+            
+            //if (code.length > 0)
+                //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
         }
     }
 
@@ -222,7 +227,9 @@ export default class Client {
 
                 if (node.type == 'FunctionExpression') {
                     var expressionNode = path.parent;
-                    internalName = expressionNode.value.left.property.name;
+                    if (expressionNode != undefined && expressionNode.value != undefined && expressionNode.value.left != undefined && expressionNode.value.left.property != undefined) {
+                        internalName = expressionNode.value.left.property.name;
+                    }
                 }
 
                 if (internalName == functionName) {
