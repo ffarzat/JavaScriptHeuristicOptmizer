@@ -3,7 +3,7 @@
     "trials":60,
     "startTrial": 0,
     "fitType":"median",
-    "testUntil": 5,
+    "testUntil": 2,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/lodash.log",
@@ -20,7 +20,7 @@
     "url": "ws://localhost",
     "clientTimeout":20,
     "copyFileTimeout": 14400,
-    "clientsTotal": 10,
+    "clientsTotal": 20,
     "libraries" : [
         {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" }
     ],
@@ -28,8 +28,8 @@
         {
             "nodesSelectionApproach":"ByFunction", 
             "especific": {
-                "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 10,
+                "neighborApproach":"LastAscent", 
+                "neighborsToProcess": 20,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
