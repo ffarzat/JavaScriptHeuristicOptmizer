@@ -205,6 +205,8 @@ export default class ASTExplorer {
             var mutantCode = mutant.ToCode();
 
             if (mutantCode != "" && mutantCode != originalCode) {
+                //const fs = require('fs');
+                //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, mutantCode);
                 break;
             }
         }
