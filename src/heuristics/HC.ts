@@ -102,26 +102,6 @@ export default class HC extends IHeuristic {
         this.ExecutarPorFuncao(trialIndex, cb);
     }
 
-    /**
-     * Retorna a próxima melhor funçao para otimizar
-     */
-    RecuperarMelhorFuncaoAtual(): string {
-        var melhorFuncao = undefined;
-
-        while (this.functionStack.length > 0) {
-            melhorFuncao = this.functionStack.shift();
-
-            this.bestIndividual = this.GetFunctionAstByName(this.ActualBestForFunctionScope, melhorFuncao);
-            if (this.bestIndividual != undefined) {
-                console.log(`Achamos a função: ${melhorFuncao}`);
-                break;
-            }
-
-        }
-
-        return melhorFuncao;
-    }
-
 
     /**
      * Surrogate para a runByFunction

@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":20,
@@ -23,7 +23,7 @@
     "copyFileTimeout": 30,
     "memory": 2047,
     "libraries" : [
-        {"name":"lodash",   "path":"Libraries/lodash/",     "mainFilePath":"Libraries/lodash/lodash.js" }
+        {"name":"uuid",   "path":"Libraries/uuid/",     "mainFilePath":"Libraries/uuid/lib/uuid.js" }
     ],
     "trialsConfiguration":[
         {
@@ -31,7 +31,7 @@
             "especific": {
                 "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 10,
-                "trials": 5000,
+                "trials": 10,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 5, 
                 "generations": 2,

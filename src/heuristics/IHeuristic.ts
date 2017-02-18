@@ -322,6 +322,26 @@ abstract class IHeuristic extends events.EventEmitter {
         fs.writeFileSync(lib.mainFilePath, individual.ToCode());
     }
 
+    /**
+         * Retorna a próxima melhor funçao para otimizar
+         */
+    RecuperarMelhorFuncaoAtual(): string {
+        var melhorFuncao = undefined;
+
+        while (this.functionStack.length > 0) {
+            melhorFuncao = this.functionStack.shift();
+
+            this.bestIndividual = this.GetFunctionAstByName(this.ActualBestForFunctionScope, melhorFuncao);
+            if (this.bestIndividual != undefined) {
+                console.log(`Achamos a função: ${melhorFuncao}`);
+                break;
+            }
+
+        }
+
+        return melhorFuncao;
+    }
+
 
     /**
     * Defines library and test original code
@@ -384,7 +404,7 @@ abstract class IHeuristic extends events.EventEmitter {
         for (var i = 0; i < functions.length; i++) {
             var nome = functions[i].name;
             var total = temp.split('.' + nome).length;
-            localCount[nome] = total -1;
+            localCount[nome] = total - 1;
         }
 
         //console.log(`${JSON.stringify(localCount)}`);

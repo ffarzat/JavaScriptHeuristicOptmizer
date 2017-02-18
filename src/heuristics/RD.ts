@@ -39,19 +39,25 @@ export default class RD extends IHeuristic {
         this._logger.Write(`[RD] Starting  Random Search`);
         this._logger.Write(`[RD] Starting  Trial ${trialIndex} of ${this.Trials}`);
 
-        this.howManyTimes = Math.floor((this.trials % this._config.neighborsToProcess) + (this.trials / this._config.neighborsToProcess)); // force interger
-
-        this._logger.Write(`[RD] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
-
         this.SetLibrary(library, (sucess: boolean) => {
             if (sucess) {
                 this.Start();
-                this.executeCalculatedTimes(0, () => {
-                    this.Stop();
-                    var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
-                    cb(results);
-                    return;
-                });
+
+
+                switch (this.nodesSelectionApproach) {
+                    case "Global":
+                        this.runGlobal(trialIndex, cb);
+                        break;
+
+                    case "ByFunction":
+                        this.runByFunction(trialIndex, cb);
+                        break;
+
+                    default:
+                        this._logger.Write(this.nodesSelectionApproach);
+                        cb(undefined);
+                        break;
+                }
             }
             else {
                 cb(undefined);
@@ -60,6 +66,87 @@ export default class RD extends IHeuristic {
         });
 
     }
+
+    /**
+     * Surrogate para executeCalculatedTimes
+     */
+    private runGlobal(trialIndex: number, cb: (results: TrialResults) => void) {
+
+        this.executeCalculatedTimes(0, () => {
+            this.Stop();
+            var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+            cb(results);
+            return;
+        });
+    }
+
+    /**
+    * Surrogate para execução da Otimização por função
+    */
+    private runByFunction(trialIndex: number, cb: (results: TrialResults) => void) {
+        this.operationsCounter = 0;
+        this.totalCallBack = 0;
+        this.ActualBestForFunctionScope = this.bestIndividual.Clone(); // Nesse momento o bestIndividual é o original
+        this.ExecutarPorFuncao(trialIndex, cb);
+    }
+
+
+    /**
+     * Surrogate para a runByFunction
+     */
+    private ExecutarPorFuncao(trialIndex: number, cb: (results: TrialResults) => void) {
+        var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
+
+        if (funcaoAtual == undefined) {
+            this._logger.Write(`[RD] Não há mais funções para otimizar!`);
+            this.Stop();
+            var results = this.ProcessResult(trialIndex, this.Original, this.ActualBestForFunctionScope);
+            cb(results);
+            return;
+        }
+        //Seta a fução atual
+        this.ActualFunction = funcaoAtual;
+        this._logger.Write(`[RD] Otimizando a função ${this.ActualFunction}!`);
+
+        this.ExecutarMutacao(trialIndex, cb);
+    }
+
+
+    /**
+    * Executa as mutações em sequencia
+    */
+    private ExecutarMutacao(trialIndex: number, cb: (results: TrialResults) => void) {
+
+        process.nextTick(() => {
+            this.operationsCounter++;
+
+            var context: OperatorContext = new OperatorContext();
+            context.First = this.bestIndividual.Clone();
+            context.nodesSelectionApproach = "ByFunction";
+            context.ActualBestForFunctionScope = this.ActualBestForFunctionScope;
+            
+            this.Mutate(context, (mutant) => {
+                this.totalCallBack++;
+                //this._logger.Write(`[RD] this.totalCallBack: ${this.totalCallBack}`);
+                try {
+                    if (this.UpdateBest(mutant)) {
+                        this.ActualBestForFunctionScope = this.bestIndividual;
+                    }
+                } catch (error) {
+                    this._logger.Write(`[RD] Mutant error: ${error}`);
+                }
+
+                process.nextTick(()=>{
+                    
+                });
+
+
+            });
+        });
+
+    }
+
+
 
     /**
      * How many time to execute DoMutationsPerTime
