@@ -25,9 +25,9 @@
     "libraries" : [
         {"name":"uuid",   "path":"Libraries/uuid/",     "mainFilePath":"Libraries/uuid/lib/uuid.js" }
     ],
-    "trialsConfiguration":[
+    "trialsConfiguration":[ 
         {
-            "nodesSelectionApproach":"ByFunction", 
+            "nodesSelectionApproach":"Global", 
             "especific": {
                 "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 10,

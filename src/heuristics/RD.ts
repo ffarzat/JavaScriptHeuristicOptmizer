@@ -71,6 +71,9 @@ export default class RD extends IHeuristic {
      * Surrogate para executeCalculatedTimes
      */
     private runGlobal(trialIndex: number, cb: (results: TrialResults) => void) {
+        var totalTrials = this.trials;
+        this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
+        this._logger.Write(`[RD] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
 
         this.executeCalculatedTimes(0, () => {
             this.Stop();
@@ -124,7 +127,7 @@ export default class RD extends IHeuristic {
             context.First = this.bestIndividual.Clone();
             context.nodesSelectionApproach = "ByFunction";
             context.ActualBestForFunctionScope = this.ActualBestForFunctionScope;
-            
+
             this.Mutate(context, (mutant) => {
                 this.totalCallBack++;
                 //this._logger.Write(`[RD] this.totalCallBack: ${this.totalCallBack}`);
@@ -136,8 +139,8 @@ export default class RD extends IHeuristic {
                     this._logger.Write(`[RD] Mutant error: ${error}`);
                 }
 
-                process.nextTick(()=>{
-                    
+                process.nextTick(() => {
+
                 });
 
 
