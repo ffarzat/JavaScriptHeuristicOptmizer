@@ -1,13 +1,13 @@
 {
     "file": "uuid.json",
     "trials":60,
-    "startTrial": 49,
+    "startTrial": 0,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/uuid.log",
-    "tmpDirectory": "/mnt/scratch/user8/trialstmp/new",
+    "tmpDirectory": "/scratch/41061a/ffarzat1981/libstemp/uuid",
     "logCategory":"optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["GA"],
+    "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":3,
@@ -26,9 +26,9 @@
     ],
     "trialsConfiguration":[
         {
-            "nodesSelectionApproach":"Global", 
+            "nodesSelectionApproach":"ByFunction", 
             "especific": {
-                "neighborApproach":"FirstAscent", 
+                "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 20,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
