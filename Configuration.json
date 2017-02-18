@@ -18,7 +18,7 @@
     "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":20,
+    "clientTimeout":5,
     "clientsTotal": 10,
     "copyFileTimeout": 30,
     "memory": 2047,
@@ -27,11 +27,11 @@
     ],
     "trialsConfiguration":[ 
         {
-            "nodesSelectionApproach":"Global", 
+            "nodesSelectionApproach":"ByFunction", 
             "especific": {
                 "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 10,
-                "trials": 10,
+                "trials": 60,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 5, 
                 "generations": 2,

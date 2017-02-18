@@ -21,6 +21,9 @@ export default class RD extends IHeuristic {
     timeoutId;
     operationsCounter: number;
     totalCallBack: number;
+
+    qtdMutantesAtuais: number;
+    qtdMutacoesNaFuncaoAtual: number;
     /**
      * Especific Setup
      */
@@ -42,6 +45,10 @@ export default class RD extends IHeuristic {
         this.SetLibrary(library, (sucess: boolean) => {
             if (sucess) {
                 this.Start();
+
+                var totalTrials = this.trials;
+                this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
+                this._logger.Write(`[RD] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
 
 
                 switch (this.nodesSelectionApproach) {
@@ -71,10 +78,6 @@ export default class RD extends IHeuristic {
      * Surrogate para executeCalculatedTimes
      */
     private runGlobal(trialIndex: number, cb: (results: TrialResults) => void) {
-        var totalTrials = this.trials;
-        this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
-        this._logger.Write(`[RD] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
-
         this.executeCalculatedTimes(0, () => {
             this.Stop();
             var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
@@ -87,69 +90,163 @@ export default class RD extends IHeuristic {
     * Surrogate para execução da Otimização por função
     */
     private runByFunction(trialIndex: number, cb: (results: TrialResults) => void) {
+        this.qtdMutantesAtuais = 0;
         this.operationsCounter = 0;
         this.totalCallBack = 0;
         this.ActualBestForFunctionScope = this.bestIndividual.Clone(); // Nesse momento o bestIndividual é o original
-        this.ExecutarPorFuncao(trialIndex, cb);
-    }
 
-
-    /**
-     * Surrogate para a runByFunction
-     */
-    private ExecutarPorFuncao(trialIndex: number, cb: (results: TrialResults) => void) {
-        var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
-
-        if (funcaoAtual == undefined) {
-            this._logger.Write(`[RD] Não há mais funções para otimizar!`);
+        this.ExecutarParaCadaFuncao(() => {
             this.Stop();
             var results = this.ProcessResult(trialIndex, this.Original, this.ActualBestForFunctionScope);
             cb(results);
             return;
-        }
-        //Seta a fução atual
-        this.ActualFunction = funcaoAtual;
-        this._logger.Write(`[RD] Otimizando a função ${this.ActualFunction}!`);
-
-        this.ExecutarMutacao(trialIndex, cb);
-    }
-
-
-    /**
-    * Executa as mutações em sequencia
-    */
-    private ExecutarMutacao(trialIndex: number, cb: (results: TrialResults) => void) {
-
-        process.nextTick(() => {
-            this.operationsCounter++;
-
-            var context: OperatorContext = new OperatorContext();
-            context.First = this.bestIndividual.Clone();
-            context.nodesSelectionApproach = "ByFunction";
-            context.ActualBestForFunctionScope = this.ActualBestForFunctionScope;
-
-            this.Mutate(context, (mutant) => {
-                this.totalCallBack++;
-                //this._logger.Write(`[RD] this.totalCallBack: ${this.totalCallBack}`);
-                try {
-                    if (this.UpdateBest(mutant)) {
-                        this.ActualBestForFunctionScope = this.bestIndividual;
-                    }
-                } catch (error) {
-                    this._logger.Write(`[RD] Mutant error: ${error}`);
-                }
-
-                process.nextTick(() => {
-
-                });
-
-
-            });
         });
 
     }
 
+    /**
+     * Para cada função na lista e enquando houver orçamento
+     */
+    private ExecutarParaCadaFuncao(cb: () => void) {
+        var orcamento = (this.trials - this.qtdMutantesAtuais);
+        //this._logger.Write(`[RD] Orçamento restante ${orcamento}`);
+        
+        if(orcamento <= 0)
+        {
+            this._logger.Write(`[RD] Não há mais orçamento de rodadas!`);
+            cb();
+            return;
+        }
 
+        var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
+        if (funcaoAtual == undefined) {
+            this._logger.Write(`[RD] Não há mais funções para otimizar!`);
+            cb();
+            return;
+        }
+
+        //Seta a fução atual
+        this.ActualFunction = funcaoAtual;
+        this._logger.Write(`[RD] Otimizando a função ${this.ActualFunction}!`);
+        //Decide quantas instruções (e não quais) sroferão mutação (entre 0 e o total dessa função)
+        this.qtdMutacoesNaFuncaoAtual = this._astExplorer.GenereateRandom(0, this._astExplorer.CountNodes(this.bestIndividual));
+        this._logger.Write(`[RD] Serão executadas ${this.qtdMutacoesNaFuncaoAtual} nessa função`);
+        //Zera os contadores
+        this.operationsCounter = 0;
+        this.totalCallBack = 0;
+        //Executar qtdMutacoesNaFuncaoAtual enquanto houver orçamento
+        this.ExecutarMutacoesPorFuncaoComLimite([], (mutantes) => {
+
+            //this._logger.Write(`[RD] deveria ter acabado de processar os vizinhos de uma função: ${mutantes.length}`);
+
+            if (this.functionStack.length > 0) {
+                process.nextTick(() => {
+                    //Incrementa a função
+                    this.ExecutarParaCadaFuncao(cb);
+                });
+            }
+        });
+    }
+
+    /**
+     * Executa as mutações para uma determinada função. Encerra quando o orçamento de rodadas acaba ou quando concluí as mutações da função
+     */
+    private ExecutarMutacoesPorFuncaoComLimite(mutantesAtuais: Individual[], cb: (mutantes: Individual[]) => void) {
+
+        //Zera os contadores da DoMutationsPerTime
+        this.operationsCounter = 0;
+        this.totalCallBack = 0;
+
+        this.ExecutarMutacoesPorVez(0, [], (mutantesProcessados) => {
+
+            mutantesProcessados.forEach(element => {
+                this.UpdateBest(element);
+
+                mutantesAtuais.push(element);
+            }); 
+
+            this._logger.Write(`[RD] mutantes atuais: ${mutantesAtuais.length}`);
+            this.qtdMutantesAtuais = (this.qtdMutantesAtuais + mutantesProcessados.length);
+
+            //Bateu no total de execuções paralelas?
+            //TODO:Verificar por igualdade. Aqui está rolando uma perda por função
+
+            var orcamento = (this.trials - this.qtdMutantesAtuais);
+            this._logger.Write(`[RD] Orçamento restante ${orcamento}`);
+
+            if (mutantesAtuais.length > this.qtdMutacoesNaFuncaoAtual || orcamento <= 0) {
+                cb(mutantesProcessados);
+                return;
+            }
+
+            process.nextTick(() => {
+                this.ExecutarMutacoesPorFuncaoComLimite(mutantesAtuais, cb);
+            });
+
+        })
+    }
+
+    /**
+     * Executa as X mutações por vez. Usa a configuração neighborsToProcess 
+     */
+    ExecutarMutacoesPorVez(contadorLocal: number, vizinhos: Individual[], cb: (mutantes: Individual[]) => void) {
+
+        if (contadorLocal == this._config.neighborsToProcess) {
+            this._logger.Write(`[RD] Done requests. Just waiting`);
+
+            //this._logger.Write(`[RD] ${this.intervalId == undefined}`);
+            if (this.intervalId == undefined) {
+                var start = new Date();
+
+                this.intervalId = setInterval(() => {
+                    this._logger.Write(`[RD] Mutations total: ${this.totalCallBack}/${this.operationsCounter}`);
+
+                    if (this.totalCallBack == this.operationsCounter) {
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
+                        cb(vizinhos);
+                    }
+                }, 1 * 1000);
+            }
+
+            return;
+        }
+
+        //Contador local/global
+        this.operationsCounter++;
+
+        var context: OperatorContext = new OperatorContext();
+        context.First = this.bestIndividual.Clone();
+        context.ActualBestForFunctionScope = this.ActualBestForFunctionScope;
+        context.functionName = this.ActualFunction;
+
+        this.Mutate(context, (mutant) => {
+            try {
+                this.totalCallBack++;
+                vizinhos.push(mutant);
+                this._logger.Write(`[RD] Mutant done: ${vizinhos.length}`);
+            } catch (error) {
+                this._logger.Write(`[RD] Mutant error: ${error}`);
+                vizinhos.push(this.bestIndividual.Clone());
+                this._logger.Write(`[RD] Mutant done: ${vizinhos.length}`);
+            }
+        });
+
+        contadorLocal++;
+
+        process.nextTick(() => {
+            this.DoMutationsPerTime(contadorLocal, vizinhos, cb);
+        });
+
+
+    }
+
+    /**
+     * Espera as requisições terminarem
+     */
+    EsperarRequisicoes() {
+        this._logger.Write(`[RD] Esperando...`);
+    }
 
     /**
      * How many time to execute DoMutationsPerTime
@@ -189,6 +286,9 @@ export default class RD extends IHeuristic {
      */
     private DoMutationsPerTime(counter: number, neighbors: Individual[], cb: (mutants: Individual[]) => void) {
 
+
+
+
         if (counter == this._config.neighborsToProcess) {
             this._logger.Write(`[RD] Done requests. Just waiting`);
 
@@ -206,7 +306,6 @@ export default class RD extends IHeuristic {
                     }
                 }, 1 * 1000);
             }
-
 
             return;
         } else {

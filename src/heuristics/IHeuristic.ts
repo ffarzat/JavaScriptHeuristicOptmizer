@@ -333,7 +333,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
             this.bestIndividual = this.GetFunctionAstByName(this.ActualBestForFunctionScope, melhorFuncao);
             if (this.bestIndividual != undefined) {
-                console.log(`Achamos a função: ${melhorFuncao}`);
+                console.log(`[IHeuristic] AST da função: ${melhorFuncao} encontrada!`);
                 break;
             }
 
