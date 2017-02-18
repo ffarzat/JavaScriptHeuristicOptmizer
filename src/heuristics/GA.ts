@@ -54,13 +54,22 @@ export default class GA extends IHeuristic {
         this.SetLibrary(library, (sucess: boolean) => {
             if (sucess) {
                 this.Start();
-                this.CreatesFirstGeneration(this.Original, (population) => {
-                    this.executeStack(1, population, () => {
-                        this.Stop();
-                        cb(this.ProcessResult(trialIndex, this.Original, this.bestIndividual));
-                        return;
-                    });
-                });
+
+                switch (this.nodesSelectionApproach) {
+                    case "Global":
+                        this.runGlobal(trialIndex, cb);
+                        break;
+
+                    case "ByFunction":
+                        this.runByFunction(trialIndex, cb);
+                        break;
+
+                    default:
+                        this._logger.Write(this.nodesSelectionApproach);
+                        cb(undefined);
+                        break;
+                }
+
             }
             else {
                 cb(undefined);
@@ -68,6 +77,33 @@ export default class GA extends IHeuristic {
             }
         });
     }
+
+    /**
+     * Surrogate para execução global
+     */
+    private runGlobal(trialIndex: number, cb: (results: TrialResults) => void) {
+        this.CreatesFirstGeneration(this.Original, (population) => {
+            this.executeStack(1, population, () => {
+                this.Stop();
+                cb(this.ProcessResult(trialIndex, this.Original, this.bestIndividual));
+                return;
+            });
+        });
+    }
+
+    /**
+    * Surrogate para execução por função
+    */
+    private runByFunction(trialIndex: number, cb: (results: TrialResults) => void) {
+        this.CreatesFirstGeneration(this.Original, (population) => {
+            this.executeStack(1, population, () => {
+                this.Stop();
+                cb(this.ProcessResult(trialIndex, this.Original, this.bestIndividual));
+                return;
+            });
+        });
+    }
+
 
     /**
      * Repeat recursively crossover, mutant e cutoff
