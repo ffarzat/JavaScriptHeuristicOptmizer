@@ -27,6 +27,8 @@ export default class GA extends IHeuristic {
     operationsCounter: number;
     totalCallBack: number;
 
+    proximaGeracaoDeTroca: number;
+
 
     /**
     * Especific Setup
@@ -43,6 +45,7 @@ export default class GA extends IHeuristic {
         this.elitismPercentual = config.elitismPercentual;
         this.totalCallBack = 0;
         this.operationsCounter = 0;
+        this.proximaGeracaoDeTroca = 0;
     }
 
     /**
@@ -95,10 +98,15 @@ export default class GA extends IHeuristic {
     * Surrogate para execução por função
     */
     private runByFunction(trialIndex: number, cb: (results: TrialResults) => void) {
+        this.ActualBestForFunctionScope = this.bestIndividual.Clone(); // Nesse momento o bestIndividual é o original
+        var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
+        this.ActualFunction = funcaoAtual;
+
         this.CreatesFirstGeneration(this.Original, (population) => {
             this.executeStack(1, population, () => {
                 this.Stop();
-                cb(this.ProcessResult(trialIndex, this.Original, this.bestIndividual));
+                var bestForAMoment = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
+                cb(this.ProcessResult(trialIndex, this.Original, bestForAMoment));
                 return;
             });
         });
@@ -114,6 +122,19 @@ export default class GA extends IHeuristic {
             cb(); //Done!
         } else {
             this._logger.Write(`[GA] Starting generation ${generationIndex}`);
+
+            //Determina quantas execuções para troca de função
+            if (this.proximaGeracaoDeTroca == 0 || this.proximaGeracaoDeTroca == generationIndex) {
+                var qtdGeracoes = this._astExplorer.GenereateRandom(generationIndex, (this._config.generations));
+                this._logger.Write(`[GA] A função ${this.ActualFunction} será otimizada por ${qtdGeracoes} gerações`);
+                this.proximaGeracaoDeTroca = qtdGeracoes;
+
+                if (generationIndex > 1) //caso nao seja a primeira, pode trocar de função
+                {
+                    var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
+                    this.ActualFunction = funcaoAtual;
+                }
+            }
 
             this.DoCrossovers(population, () => {
                 this.DoMutations(population, () => {
@@ -137,10 +158,15 @@ export default class GA extends IHeuristic {
             var elementIndex = elements.shift();
             var individual = population[elementIndex];
 
+            //this._logger.Write(`individual tem resultados? ${individual.testResults != undefined}`);
+
             if (operation == 'c') {
                 //this._logger.Write(`[GA] Asking CrossOver for an individual ${elementIndex}`);
                 this.operationsCounter++
                 this.CrossOver(individual, individual, (elements) => {
+                    this._logger.Write(`elements[0] tem resultados? ${elements[0].testResults != undefined}`);
+                    this._logger.Write(`elements[1] tem resultados? ${elements[1].testResults != undefined}`);
+
                     try {
                         this.totalCallBack++;
                         this._logger.Write(`[GA] Crossover done [${this.totalCallBack}]`);
@@ -165,6 +191,7 @@ export default class GA extends IHeuristic {
 
                 this.Mutate(context, (mutant) => {
                     //this._logger.Write(`[GA] Mutation ${this.totalCallBack} done`);
+                    this._logger.Write(`mutant tem resultados? ${mutant.testResults != undefined}`);
                     try {
                         this.totalCallBack++;
                         population.push(mutant);
@@ -385,13 +412,17 @@ export default class GA extends IHeuristic {
 
             //this._logger.Write(`[GA] Asking  mutant ${counter}`);
             var context: OperatorContext = new OperatorContext();
-            context.First = this.bestIndividual.Clone();
+            context.First = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
             this.operationsCounter++;
 
             this.Mutate(context, (mutant) => {
 
                 try {
                     this.totalCallBack++;
+                    //if (mutant == undefined || mutant.testResults == undefined) {
+                    //process.exit()
+                    //}
+
                     neighbors.push(mutant);
                 } catch (error) {
                     this._logger.Write(`[GA] Mutant error: ${error.stack}`);

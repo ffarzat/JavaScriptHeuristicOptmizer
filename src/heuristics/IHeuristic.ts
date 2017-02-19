@@ -110,12 +110,14 @@ abstract class IHeuristic extends events.EventEmitter {
         context.Operation = "Mutation";
         context.MutationTrials = this._globalConfig.mutationTrials;
         context.LibrarieOverTest = this._lib;
-        context.Original = this.bestIndividual;
+        context.Original = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
+        this.IncluirParametrosPorFuncao(context);
         msg.ctx = context;
 
         this.getResponse(msg, (newMsg) => {
+            var bestForAMoment = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
             if (newMsg == undefined) {
-                cb(this.bestIndividual);
+                cb(bestForAMoment);
                 return;
             }
             cb(newMsg.ctx.First);
@@ -131,16 +133,19 @@ abstract class IHeuristic extends events.EventEmitter {
         context.Operation = "CrossOver";
         context.CrossOverTrials = this._globalConfig.crossOverTrials;
         context.LibrarieOverTest = this._lib;
-        context.Original = this.bestIndividual;
+        context.Original = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
         context.First = first;
         context.Second = second;
         var msg: Message = new Message();
+        
+        this.IncluirParametrosPorFuncao(context);
         msg.ctx = context;
 
         this.getResponse(msg, (newMsg) => {
-
+            var bestForAMoment = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
             if (newMsg == undefined) {
-                cb([this.bestIndividual, this.bestIndividual]);
+                
+                cb([bestForAMoment, bestForAMoment]);
                 return;
             }
 
@@ -149,7 +154,7 @@ abstract class IHeuristic extends events.EventEmitter {
                 return;
             } catch (error) {
                 this._logger.Write(`[IHeuristic] CrossOver Failed ${error.stack}}`);
-                cb([this.bestIndividual, this.bestIndividual]);
+                cb([bestForAMoment, bestForAMoment]);
             }
 
             return;
@@ -167,6 +172,8 @@ abstract class IHeuristic extends events.EventEmitter {
         context.Original = this.bestIndividual; //is usual to be the original
         context.LibrarieOverTest = this._lib;
         context.MemoryToUse = this._globalConfig.memory == undefined ? 2047 : this._globalConfig.memory;
+
+        //this.IncluirParametrosPorFuncao(context);
 
         msg.FirstOne = true;
         msg.ctx = context;
@@ -291,9 +298,8 @@ abstract class IHeuristic extends events.EventEmitter {
         ctx.Original = this.bestIndividual;
         ctx.Operation = "MutationByIndex";
         ctx.MutationTrials = this._globalConfig.mutationTrials;
-        ctx.nodesSelectionApproach = this.nodesSelectionApproach;
-        ctx.ActualBestForFunctionScope = this.ActualBestForFunctionScope;
-        ctx.functionName = this.ActualFunction;
+        
+        this.IncluirParametrosPorFuncao(ctx);
 
         var msg: Message = new Message();
         msg.ctx = ctx;
@@ -307,6 +313,19 @@ abstract class IHeuristic extends events.EventEmitter {
         });
 
     }
+
+    /**
+     * Caso seja necessário incluir os parametros para execução por Função
+     */
+    IncluirParametrosPorFuncao(ctx: OperatorContext)
+    {
+        if (this.nodesSelectionApproach == "ByFunction") {
+            ctx.nodesSelectionApproach = this.nodesSelectionApproach;
+            ctx.ActualBestForFunctionScope = this.ActualBestForFunctionScope;
+            ctx.functionName = this.ActualFunction;
+        }
+    }
+
 
     /**
     * Generates random integer between two numbers low (inclusive) and high (inclusive) ([low, high])  

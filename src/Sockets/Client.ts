@@ -163,20 +163,16 @@ export default class Client {
      * Reconstrói o código completo (Otimização por função)
      */
     ReconstruirIndividio(context: OperatorContext) {
+
         if (context.nodesSelectionApproach == "ByFunction") {
-            
             //const fs = require('fs');
             //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
-            
             context.First = this.ReplaceFunctionNode(context.First, context.ActualBestForFunctionScope, context.functionName);
-
-            
             var code = context.First.ToCode();
+            //this.logger.Write(`[Client] Voltando a função mutante para o código completo para permitir execução dos testes [code length: ${code.length}]`);
 
-            this.logger.Write(`[Client] Voltando a função mutante para o código completo para permitir execução dos testes [code length: ${code.length}]`);
-            
             //if (code.length > 0)
-                //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
+            //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
         }
     }
 
@@ -241,9 +237,7 @@ export default class Client {
                 }
             }
         });
-
         return novoIndividuo;
-
     }
 
 

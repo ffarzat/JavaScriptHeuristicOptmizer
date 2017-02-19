@@ -27,7 +27,7 @@
     ],
     "trialsConfiguration":[ 
         {
-            "nodesSelectionApproach":"Global", 
+            "nodesSelectionApproach":"ByFunction", 
             "especific": {
                 "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 10,
