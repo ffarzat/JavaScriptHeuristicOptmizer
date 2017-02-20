@@ -18,20 +18,20 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":2,
-    "clientsTotal": 1,
-    "copyFileTimeout": 30,
+    "clientTimeout":15,
+    "clientsTotal": 3,
+    "copyFileTimeout": 300,
     "memory": 2047,
     "libraries" : [
-        {"name":"uuid",   "path":"Libraries/uuid/",     "mainFilePath":"Libraries/uuid/lib/uuid.js" }
+        {"name":"lodash",   "path":"Libraries/lodash/",     "mainFilePath":"Libraries/lodash/lodash.js" }
     ],
     "trialsConfiguration":[ 
         {
             "nodesSelectionApproach":"ByFunction", 
             "especific": {
                 "neighborApproach":"LastAscent", 
-                "neighborsToProcess": 1,
-                "trials": 5000,
+                "neighborsToProcess": 3,
+                "trials": 50,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 50, 
                 "generations": 100,

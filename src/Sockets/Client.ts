@@ -93,7 +93,7 @@ export default class Client {
 
             if ((newIndividual.ToCode() != context.Original.ToCode())) {
                 this.logger.Write(`[Client]  Testing new mutant`);
-                this.logger.Write(`[Client]  ${context.clientPath}`);
+                //this.logger.Write(`[Client]  ${context.clientPath}`);
                 this.InitializeTester(context);
                 this._tester.Test(newIndividual);
                 this.logger.Write(`[Client]  Tests done.`);
