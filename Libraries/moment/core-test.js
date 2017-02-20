@@ -39311,7 +39311,7 @@
         assert.equal(2, moment('2013-01-08', 'YYYY-MM-DD').week()); // 53 -- should be 2
         assert.equal(2, moment('2013-01-11', 'YYYY-MM-DD').week()); // 53 -- should be 2
         assert.equal(3, moment('2013-01-12', 'YYYY-MM-DD').week()); // 1 -- should be 3
-        assert.equal(53, moment().weeksInYear(2012)); // 52
+        assert.equal(52, moment().weeksInYear(2012)); // 52
     });
 
 }));
@@ -40545,3 +40545,4 @@
     });
 
 }));
+/*global moment:false*/
