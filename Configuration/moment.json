@@ -1,13 +1,13 @@
 {
     "file": "moment.json",
-    "trials":59,
+    "trials":10,
     "startTrial": 0,
     "fitType":"median",
     "testUntil": 5,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/Moment.log",
-    "tmpDirectory": "/mnt/scratch/user8/trialstmp",
+    "tmpDirectory": "/scratch/41061a/ffarzat1981/libstemp/moment",
     "logCategory":"optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
@@ -18,7 +18,7 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":120,
+    "clientTimeout":10,
     "copyFileTimeout": 14400,
     "clientsTotal": 40,
     "libraries" : [
@@ -26,9 +26,9 @@
     ],
     "trialsConfiguration":[
         {
-            "nodesSelectionApproach":"Global", 
+            "nodesSelectionApproach":"ByFunction", 
             "especific": {
-                "neighborApproach":"FirstAscent", 
+                "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 40,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 

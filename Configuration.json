@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials":1,
+    "trials":10,
     "startTrial": 0,
     "fitType":"median",
     "testUntil": 1,
@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["GA"],
+    "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":20,
@@ -23,7 +23,7 @@
     "copyFileTimeout": 30,
     "memory": 2047,
     "libraries" : [
-        {"name":"uuid",   "path":"Libraries/uuid/",     "mainFilePath":"Libraries/uuid/lib/uuid.js" }
+        {"name":"moment",   "path":"Libraries/moment/",     "mainFilePath":"Libraries/moment/global.js" }
     ],
     "trialsConfiguration":[ 
         {
@@ -33,8 +33,8 @@
                 "neighborsToProcess": 10,
                 "trials": 20,
                 "nodesType": ["CallExpression", "IfStatement"], 
-                "individuals": 10, 
-                "generations": 2,
+                "individuals": 50, 
+                "generations": 100,
                 "crossoverProbability": 75,
                 "mutationProbability": 10,
                 "elitism": true,
