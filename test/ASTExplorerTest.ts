@@ -9,6 +9,17 @@ import ASTExplorer from '../src/ASTExplorer';
 import Individual from '../src/Individual';
 import OperatorContext from '../src/OperatorContext';
 
+
+import IHeuristic from '../src/heuristics/IHeuristic';
+import HeuristicFactory from '../src/heuristics/HeuristicFactory';
+import GA from '../src/heuristics/GA';
+import RD from '../src/heuristics/RD';
+import HC from '../src/heuristics/HC';
+import NodeIndex from '../src/heuristics/NodeIndex';
+
+import LogFactory from '../src/LogFactory';
+import CommandTester from '../src/CommandTester';
+
 describe('ASTExplorer Tests', function () {
 
     this.timeout(60 * 10 * 1000); //10 minutes
@@ -159,8 +170,84 @@ describe('ASTExplorer Tests', function () {
 
         for (var functionName in functionDic) {
             console.log(`${functionName}: ${functionDic[functionName]}`);
-            expect(functionDic[functionName]).not.equal(0);
         }
+        expect(Object.keys(functionDic).length).to.be(36);
+
+
+    });
+
+    /*
+    it('Should run ReplaceFunctionNode', (done) => {
+
+        var astExplorer: ASTExplorer = new ASTExplorer();
+
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var lib = configuration.libraries[2];
+        var libFile: string = lib.mainFilePath;
+        var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
+
+        var logger = new LogFactory().CreateByName(configuration.logWritter);
+        logger.Initialize(configuration);
+
+        //Patch for execution over NACAD PBS 
+        if (process.platform !== "win32") {
+            process.env['TMPDIR'] = configuration.tmpDirectory;
+        }
+
+        expect(lib.name).to.be("lodash");
+
+        var functionName = "SemUso";
+        var functionAST = astExplorer.GetFunctionAstByName(generatedIndividual, functionName);
+
+        //Remover o 4 call gera uma nova função válida que passa nos testes
+        var clientOptions = '--max-old-space-size=' + (configuration.memory == undefined ? 2047 : configuration.memory);
+        var pool = require('fork-pool');
+        var uniquePool = new pool(__dirname + '/../src/Child.js', ['/test/Configuration.json'], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
+        var hc = <HC>new HeuristicFactory().CreateByName('HC');
+        hc.Setup(configuration.trialsConfiguration[0].especific, configuration, []);
+        hc.Name = "HC";
+        hc._logger = logger;
+        hc.Trials = configuration.trials;
+        hc.Pool = uniquePool;
+        hc._lib = lib;
+        hc.ActualBestForFunctionScope = generatedIndividual.Clone();
+        hc.Original = generatedIndividual.Clone();
+        hc.bestIndividual = functionAST;
+        hc.ActualFunction = functionName;
+        hc.nodesSelectionApproach = "ByFunction";
+        hc.nodesType = ['CallExpression'];
+
+
+        var nodesIndexList = hc.DoIndexes(functionAST);
+        var indexes: NodeIndex = nodesIndexList[0];
+        //indexes.ActualIndex = 0; //4 call
+
+        hc.MutateBy(functionAST, indexes, (mutante: Individual) => {
+
+            expect(mutante.testResults).not.be(undefined);
+            expect(mutante.testResults.passedAllTests).not.be(false);
+
+            done();
+        });
+    });
+    */
+
+    it('Should run GetFunctionAstByName', () => {
+
+        var astExplorer: ASTExplorer = new ASTExplorer();
+
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var lib = configuration.libraries[2];
+        var libFile: string = lib.mainFilePath;
+        var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
+
+        var functionAST = astExplorer.GetFunctionAstByName(generatedIndividual, 'lazyValue');
+
+        //console.log(functionAST.ToCode());
+
+        expect(functionAST).not.be(undefined);
 
     });
 

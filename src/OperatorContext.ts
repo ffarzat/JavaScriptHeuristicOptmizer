@@ -7,6 +7,8 @@ import Individual from './Individual';
  */
 export default class OperatorContext {
     
+    clientPath: string;
+
     /**
      * Options ['Mutation', 'CrossOver', 'Testing']
      */

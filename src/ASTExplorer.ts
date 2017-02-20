@@ -116,6 +116,8 @@ export default class ASTExplorer {
             newDaughter = context.Second.Clone();
         }
 
+        newSon = this.ReconstruirIndividio(context, newSon);
+        newDaughter = this.ReconstruirIndividio(context, newDaughter);
 
         return [newSon, newDaughter];
     }
@@ -215,6 +217,8 @@ export default class ASTExplorer {
             mutant = context.First.Clone();
         }
 
+        mutant = this.ReconstruirIndividio(context, mutant);
+
         return mutant;
     }
 
@@ -222,27 +226,53 @@ export default class ASTExplorer {
      * Releases a mutation over an AST  by node index
      */
     MutateBy(context: OperatorContext): Individual {
+        const fs = require('fs');
         var mutant = context.First.Clone();
         var localNodeIndex = context.NodeIndex;
         var counter = 0;
 
-
-
         //console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
+        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/mutante-antes.txt`, mutant.ToCode());
 
         mutant.AST = traverse(mutant.AST).map(function (node) {
             if (counter == localNodeIndex) {
                 this.remove(true); //stopHere=true
-                //console.log(`[ASTExplorer.MutateBy]Node:${node.type}`);
+                //console.log(`[ASTExplorer.MutateBy] Node:${JSON.stringify(node)}`);
                 this.stop();
             }
             counter++;
         });
 
 
-        //const fs = require('fs');
-        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, mutant.ToCode());
 
+        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, mutant.ToCode());
+        //console.log(`[ASTExplorer.MutateBy] Função: ${context.functionName}`);
+
+
+        mutant = this.ReconstruirIndividio(context, mutant);
+
+        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/mutante-final.txt`, mutant.ToCode());
+
+        return mutant;
+    }
+
+    /**
+ * Reconstrói o código completo (Otimização por função)
+ */
+    ReconstruirIndividio(context: OperatorContext, mutant: Individual): Individual {
+
+        if (context.nodesSelectionApproach == "ByFunction") {
+            const fs = require('fs');
+
+            //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/antes-reconstrucao.txt`, mutant.ToCode());
+            //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/FuncaoBase.txt`, context.Original.ToCode());
+
+            context.First = this.ReplaceFunctionNode(mutant, context.ActualBestForFunctionScope, context.functionName);
+            mutant = context.First;
+
+            //if (code.length > 0)
+            //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/depois-reconstrucao.txt`, context.First.ToCode());
+        }
 
         return mutant;
     }
@@ -311,6 +341,7 @@ export default class ASTExplorer {
                 nodesIndex.push(index);
                 //console.log(`[ASTExplorer.IndexNodesBy]Tipo:${node.type}`);
                 //console.log(`[ASTExplorer.IndexNodesBy]Indice:${index}`);
+                //console.log(`[ASTExplorer.IndexNodesBy]Nó:${JSON.stringify(node)}`);
             }
 
             index++;
@@ -343,5 +374,72 @@ export default class ASTExplorer {
         });
 
         return funcs;
+    }
+
+    /**
+    * Atualiza um individuo com uma nova AST apenas em uma função
+    */
+    ReplaceFunctionNode(mutante: Individual, ActualBestForFunctionScope: Individual, functionName: string): Individual {
+        var types = require("ast-types");
+        var novoIndividuo = ActualBestForFunctionScope.Clone();
+
+        types.visit(novoIndividuo.AST, {
+            //FunctionDeclaration, FunctionExpression, ArrowFunctionExpression
+            visitFunction: function (path) {
+                var node = path.node;
+
+                var internalName = "";
+
+                if (node.type == 'FunctionDeclaration') {
+                    internalName = node.id.name;
+                }
+
+                if (node.type == 'FunctionExpression') {
+                    var expressionNode = path.parent;
+                    if (expressionNode != undefined && expressionNode.value != undefined && expressionNode.value.left != undefined && expressionNode.value.left.property != undefined) {
+                        internalName = expressionNode.value.left.property.name;
+                    }
+                }
+
+                if (internalName == functionName) {
+                    path.replace(mutante.AST);
+                    this.abort();
+                }
+                else {
+                    this.traverse(path);
+                }
+            }
+        });
+        return novoIndividuo;
+    }
+
+    /**
+ * Recupera a AST da Função por nome
+ */
+    GetFunctionAstByName(individuo: Individual, functionName: string): Individual {
+        var traverse = require('traverse');
+        var novoIndividuo = undefined;
+
+        var caminho = __dirname.replace('build', '');
+        var functionExtractor = require(caminho + '/heuristics/function-extractor.js');
+        var functions = functionExtractor.interpret(individuo.AST);
+        var functionAST = undefined;
+
+        //console.log(`Funções: ${functions.length}`);
+
+        for (var i = 0; i < functions.length; i++) {
+            var functionObj = functions[i];
+            if (functionObj.name === functionName) {
+                functionAST = functionObj.node
+            }
+        }
+
+        if (functionAST != undefined) {
+            //console.log(`${functionAST}`);
+            novoIndividuo = new Individual();
+            novoIndividuo.AST = functionAST;
+        }
+
+        return novoIndividuo;
     }
 }

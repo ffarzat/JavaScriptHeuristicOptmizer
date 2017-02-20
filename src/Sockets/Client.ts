@@ -24,6 +24,8 @@ export default class Client {
     _astExplorer: ASTExplorer = new ASTExplorer();
     _config: IConfiguration;
 
+    clientPath: string;
+
     TempDirectory: any;
 
     HostsAvailable: Array<string>;
@@ -91,6 +93,7 @@ export default class Client {
 
             if ((newIndividual.ToCode() != context.Original.ToCode())) {
                 this.logger.Write(`[Client]  Testing new mutant`);
+                this.logger.Write(`[Client]  ${context.clientPath}`);
                 this.InitializeTester(context);
                 this._tester.Test(newIndividual);
                 this.logger.Write(`[Client]  Tests done.`);
@@ -160,23 +163,6 @@ export default class Client {
     }
 
     /**
-     * Reconstrói o código completo (Otimização por função)
-     */
-    ReconstruirIndividio(context: OperatorContext) {
-
-        if (context.nodesSelectionApproach == "ByFunction") {
-            //const fs = require('fs');
-            //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
-            context.First = this.ReplaceFunctionNode(context.First, context.ActualBestForFunctionScope, context.functionName);
-            var code = context.First.ToCode();
-            //this.logger.Write(`[Client] Voltando a função mutante para o código completo para permitir execução dos testes [code length: ${code.length}]`);
-
-            //if (code.length > 0)
-            //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, context.First.ToCode());
-        }
-    }
-
-    /**
      * Global distributed Test execution
      */
     Test(context: OperatorContext): OperatorContext {
@@ -203,43 +189,6 @@ export default class Client {
         return ctx;
     }
 
-    /**
-     * Atualiza um individuo com uma nova AST apenas em uma função
-     */
-    ReplaceFunctionNode(functionAST: Object, ActualBestForFunctionScope: Individual, functionName: string): Individual {
-        var types = require("ast-types");
-        var novoIndividuo = ActualBestForFunctionScope.Clone();
-
-        types.visit(novoIndividuo.AST, {
-            //FunctionDeclaration, FunctionExpression, ArrowFunctionExpression
-            visitFunction: function (path) {
-                var node = path.node;
-
-                var internalName = "";
-
-                if (node.type == 'FunctionDeclaration') {
-                    internalName = node.id.name;
-                }
-
-                if (node.type == 'FunctionExpression') {
-                    var expressionNode = path.parent;
-                    if (expressionNode != undefined && expressionNode.value != undefined && expressionNode.value.left != undefined && expressionNode.value.left.property != undefined) {
-                        internalName = expressionNode.value.left.property.name;
-                    }
-                }
-
-                if (internalName == functionName) {
-                    path.replace(functionAST);
-                    this.abort();
-                }
-                else {
-                    this.traverse(path);
-                }
-            }
-        });
-        return novoIndividuo;
-    }
-
 
     /**
     * Initializes configurated Tester class
@@ -256,12 +205,9 @@ export default class Client {
             }
         });
 
-        //Verificar e executa necessidade de remontar o código completo antes de testá-lo (Otimização por função)
-        this.ReconstruirIndividio(context);
-
         this.logger.Write(`[Client] Test lib environment: ${context.LibrarieOverTest.name}`)
         this._tester = new TesterFactory().CreateByName(this._config.tester);
-        this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType, this._config.clientTimeout * 1000, this.HostsAvailable, context.MemoryToUse);
+        this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType, this._config.clientTimeout * 1000, this.HostsAvailable, context.MemoryToUse, context.clientPath);
         this._tester.SetLogger(this.logger);
     }
 }

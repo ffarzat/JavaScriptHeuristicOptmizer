@@ -295,7 +295,7 @@ abstract class IHeuristic extends events.EventEmitter {
         ctx.First = clone;
         ctx.NodeIndex = actualNodeIndex;
         ctx.LibrarieOverTest = this._lib;
-        ctx.Original = this.bestIndividual;
+        ctx.Original = this.Original;
         ctx.Operation = "MutationByIndex";
         ctx.MutationTrials = this._globalConfig.mutationTrials;
         
@@ -305,13 +305,17 @@ abstract class IHeuristic extends events.EventEmitter {
         msg.ctx = ctx;
 
         this.getResponse(msg, (newMsg) => {
+            //this._logger.Write(`[HC] newMsg: ${newMsg ==undefined}`);
+            //this._logger.Write(`[HC] newMsg.ctx.First: ${newMsg.ctx.First.testResults ==undefined}`);
+            
+            var bestForAMoment = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
             if (newMsg == undefined) {
-                cb(this.bestIndividual);
+                cb(bestForAMoment);
                 return;
             }
+            
             cb(newMsg.ctx.First);
         });
-
     }
 
     /**
@@ -350,7 +354,7 @@ abstract class IHeuristic extends events.EventEmitter {
         while (this.functionStack.length > 0) {
             melhorFuncao = this.functionStack.shift();
 
-            this.bestIndividual = this.GetFunctionAstByName(this.ActualBestForFunctionScope, melhorFuncao);
+            this.bestIndividual = this._astExplorer.GetFunctionAstByName(this.ActualBestForFunctionScope, melhorFuncao);
             if (this.bestIndividual != undefined) {
                 console.log(`[IHeuristic] AST da função: ${melhorFuncao} encontrada!`);
                 break;
@@ -432,38 +436,6 @@ abstract class IHeuristic extends events.EventEmitter {
     }
 
     /**
-     * Recupera a AST da Função por nome
-     */
-    GetFunctionAstByName(individuo: Individual, functionName: string): Individual {
-        var traverse = require('traverse');
-        var novoIndividuo = undefined;
-
-        var caminho = __dirname.replace('build', '');
-        var functionExtractor = require(caminho + '/function-extractor.js');
-        var functions = functionExtractor.interpret(individuo.AST);
-        var functionAST = undefined;
-
-        //console.log(`Funções: ${functions.length}`);
-
-        for (var i = 0; i < functions.length; i++) {
-            var functionObj = functions[i];
-            if (functionObj.name === functionName) {
-                functionAST = functionObj.node
-            }
-        }
-
-
-        if (functionAST != undefined) {
-            //console.log(`${functionAST}`);
-            novoIndividuo = new Individual();
-            novoIndividuo.AST = functionAST;
-            this.ActualFunction = functionName;
-        }
-
-        return novoIndividuo;
-    }
-
-    /**
     * Create the orginal individual from library settings
     */
     CreateOriginalFromLibraryConfiguration(library: Library): Individual {
@@ -488,8 +460,8 @@ abstract class IHeuristic extends events.EventEmitter {
     * To resolve a single comunication with server trougth cluster comunication
     */
     getResponse(msg: Message, cb: (msgBack: Message) => void) {
-        //this._logger.Write(`[IHeuristic] Message ${msg.id} arrived`);
         var didIT = this.SaveMessage(msg, cb);
+        //this._logger.Write(`[IHeuristic] Messagem foi salva? ${didIT}`);
         if (didIT) {
             //============================================ Pool -> clients
             try {
@@ -505,6 +477,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
                             if (this.cbs[msg.id] != undefined) {
                                 this.FinishMessage(msg.id, processedMessage);
+                                //this._logger.Write(`[IHeuristic] Message ${msg.id} done.`);
                             }
                             else {
                                 this._logger.Write(`[IHeuristic] Message ${msg.id} has timeoud and client has done now [FIT LOST: ${processedMessage.ctx.First.testResults.fit}]`);
@@ -547,7 +520,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
             cbReal(messageDone);
         } catch (error) {
-            this._logger.Write(`[IHeuristic] FinishMessage err ${error.stack}`);
+            this._logger.Write(`[IHeuristic] FinishMessage err ${error}`);
 
             throw new Error("it has failed inside FinishMessage");
 
@@ -574,6 +547,8 @@ abstract class IHeuristic extends events.EventEmitter {
             result = true;
 
         } catch (error) {
+
+            this._logger.Write(`[IHeuristic] SaveMessage error ${error}`);
 
             delete this.cbs[messageToSave.id];
             delete this.Messages[messageToSave.id];

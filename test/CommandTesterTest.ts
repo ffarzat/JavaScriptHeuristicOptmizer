@@ -32,7 +32,7 @@ describe('CommandTester Tests', function () {
 
         //Setup
         var commandTester = new CommandTester();
-        commandTester.Setup(configuration.testUntil, lib, configuration.fitType, configuration.clientTimeout * 1000, undefined, 2047);
+        commandTester.Setup(configuration.testUntil, lib, configuration.fitType, configuration.clientTimeout * 1000, undefined, 2047, undefined);
         commandTester.SetLogger(logger);
 
         //Exec the test
@@ -50,4 +50,5 @@ describe('CommandTester Tests', function () {
         expect(individualOverTests.testResults.passedAllTests).not.to.be(undefined);
         expect(individualOverTests.testResults.rounds).not.to.be(undefined);
     });
+    
 });

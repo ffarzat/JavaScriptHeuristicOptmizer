@@ -18,20 +18,20 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":20,
-    "clientsTotal": 10,
+    "clientTimeout":2,
+    "clientsTotal": 1,
     "copyFileTimeout": 30,
     "memory": 2047,
     "libraries" : [
-        {"name":"moment",   "path":"Libraries/moment/",     "mainFilePath":"Libraries/moment/global.js" }
+        {"name":"uuid",   "path":"Libraries/uuid/",     "mainFilePath":"Libraries/uuid/lib/uuid.js" }
     ],
     "trialsConfiguration":[ 
         {
             "nodesSelectionApproach":"ByFunction", 
             "especific": {
                 "neighborApproach":"LastAscent", 
-                "neighborsToProcess": 10,
-                "trials": 20,
+                "neighborsToProcess": 1,
+                "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 50, 
                 "generations": 100,

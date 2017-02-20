@@ -43,16 +43,19 @@ export default class CommandTester implements ITester {
     AvailableHosts: Array<string>
 
     memory: number;
+    
+    clientInternalPath: string
 
     /**
      * Initializes NPM packages if necessary
      */
-    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string, testTimeout: number, Hosts: Array<string>, memoryLimit: number) {
+    Setup(testUntil: number, LibrarieOverTest: Library, fitType: string, testTimeout: number, Hosts: Array<string>, memoryLimit: number, clientPath: string) {
 
         this.testUntil = testUntil;
         this.testTimeout = testTimeout;
         this.AvailableHosts = Hosts;
-        this.memory = memoryLimit == undefined? 512000: memoryLimit;
+        this.memory = memoryLimit == undefined? 2047: memoryLimit;
+        this.clientInternalPath = clientPath == undefined ? 'src/client.js': clientPath;
 
         //Setup tests with Lib context
         this.libMainFilePath = LibrarieOverTest.mainFilePath;
@@ -113,7 +116,7 @@ export default class CommandTester implements ITester {
             var bufferOption = { maxBuffer: 1024 * 5000 }
 
             if (this.AvailableHosts == undefined || this.AvailableHosts.length == 0) {
-                testCMD = `node --expose-gc --max-old-space-size=${this.memory} src/client.js ${msgId} ${libPath} ${timeoutMS}`;
+                testCMD = `node --expose-gc --max-old-space-size=${this.memory} ${this.clientInternalPath} ${msgId} ${libPath} ${timeoutMS}`;
             }
             else {
                 //NACAD environment
@@ -124,13 +127,14 @@ export default class CommandTester implements ITester {
                 
                 hosts = hosts.substring(0, hosts.length - 1);
 
-                testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 src/client.js ${msgId} ${libPath} ${timeoutMS}`;
+                testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 ${this.clientInternalPath} ${msgId} ${libPath} ${timeoutMS}`;
 
 
                 //console.log(`[CommandTester] Hosts: ${hosts}`);
                 //console.log(`[CommandTester] cmd: ${testCMD}`);                
             }
 
+            //console.log(`[CommandTester] cmd: ${testCMD}`);                
             //console.log(`[CommandTester] Before`);
             var stdout = child_process.execSync(testCMD, bufferOption).toString();
             //console.log(`[CommandTester] After`);

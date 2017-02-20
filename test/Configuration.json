@@ -3,12 +3,12 @@
     "trials":60,
     "startTrial": 0,
     "fitType":"mean",
-    "testUntil": 5,
+    "testUntil": 1,
     "mutationTrials": 100,
     "crossOverTrials": 5,
     "logFilePath": "build/optmization.log",
     "logCategory":"optmization",
-    "tmpDirectory": "/mnt/scratch/user8/tmp",
+    "tmpDirectory": "/home/fabio/Documents/tmp",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
     "trialResultsFile": "Results.csv",
@@ -18,20 +18,20 @@
     "heuristics": ["GA", "RD", "HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":25,
+    "clientTimeout":240,
     "clientsTotal": 3,
     "copyFileTimeout": 60,
     "memory": 2047,
     "libraries" : [
         {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"Libraries/underscore/underscore.js" },
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
-        {"name":"lodash",   "path":"Libraries/lodash/",     "mainFilePath":"Libraries/lodash/lodash.js" }
+        {"name":"lodash",   "path":"test/lodash-testes/",     "mainFilePath":"test/lodash-testes/lodash-testes.js" }
     ],
     "trialsConfiguration":[
         {
-            "nodesSelectionApproach":"Global", 
+            "nodesSelectionApproach":"ByFunction", 
             "especific": {
-                "neighborApproach":"FirstAscent", 
+                "neighborApproach":"LastAscent", 
                 "restart":true, 
                 "trialsToRestart":1,
                 "trials": 3,

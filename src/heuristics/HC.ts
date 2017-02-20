@@ -37,6 +37,7 @@ export default class HC extends IHeuristic {
         this.trials = config.trials;
         this.nodesType = config.nodesType;
         this.typeIndexCounter = 0;
+        
     }
 
     /**
@@ -246,7 +247,7 @@ export default class HC extends IHeuristic {
 
                 // its over all index?
                 console.log(`[HC] this.typeIndexCounter: ${this.typeIndexCounter}`);
-                conIndexBysole.log(`[HC] indexes.Indexes.length: ${indexes.Indexes.length}`);
+                console.log(`[HC] indexes.Indexes.length: ${indexes.Indexes.length}`);
 
                 if (this.typeIndexCounter >= nodesIndexList.length - 1) {
                     this._logger.Write(`[HC] All neighbors were visited`);
@@ -261,7 +262,7 @@ export default class HC extends IHeuristic {
             }
 
             //All neighbors were visited?
-            if (!itsoIndexByver) {
+            if (!itsover) {
                 this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
                     neighbors.push(mutant);
                 });
@@ -307,14 +308,14 @@ export default class HC extends IHeuristic {
     /**
     * Populates the indexes for NodeType inside Code
     */
-    private DoIndexes(original: Individual): NodeIndex[] {
+    DoIndexes(original: Individual): NodeIndex[] {
         var nodesIndexList: NodeIndex[] = [];
 
         if (this.nodesType.length > 0) {
             this.nodesType.forEach(element => {
                 var nodeIndex = this.IndexBy(element, original);
                 nodesIndexList.push(nodeIndex);
-                this._logger.Write(`${element}: ${nodeIndex.Indexes.length}`);
+                this._logger.Write(`[HC] DoIndexes ${element}: ${nodeIndex.Indexes.length}`);
             });
         }
         else {

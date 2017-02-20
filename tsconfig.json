@@ -19,6 +19,7 @@
    },
    "exclude": [
        "node_modules",
+       "test/lodash-testes",
        "Libraries",
        "typings/browser",
        "typings/browser.d.ts"

@@ -20,6 +20,8 @@ var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration
 var configurationFile: string = path.join(process.cwd(), configFile);
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 
+var clientPath = process.argv[3] != undefined ? process.argv[3] : 'src/client.js';
+
 var testOldDirectory: string = process.cwd();
 
 //========================================================================================== Logger
@@ -35,9 +37,12 @@ if (process.platform !== "win32") {
 var clientId = uuid.v4();
 var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
 
+//logger.Write(`[Child]   configurationFile ${configurationFile}`);
+
 var localClient = new Client();
 localClient.id = clientId;
 localClient.logger = logger;
+localClient.clientPath = clientPath;
 
 localClient.Setup(configuration, clientWorkDir);
 
@@ -59,8 +64,6 @@ process.on('message', function (message) {
 
         msg.ctx = localClient.Reload(msg.ctx);
 
-        //logger.Write(`[Child]   AST ${msg.ctx.First.AST}`);
-
         //logger.Write(`[runClient]   Client ${localClient.id} processing message ${msg.id}`);
         logger.Write(`[runClient]   Processing message ${msg.id}`);
 
@@ -75,6 +78,8 @@ process.on('message', function (message) {
         }
         */
 
+        //Forçando o caminho correto nos testes unitários
+        msg.ctx.clientPath = localClient.clientPath;
 
         if (msg.ctx.Operation == "Mutation") {
             //logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant`);

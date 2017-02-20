@@ -38,7 +38,7 @@ describe('IHeuristic Tests', () => {
         //console.log(JSON.stringify(hcInstance));
 
         expect(hcInstance).not.be.an('undefined');
-        expect(hcInstance.neighborApproach).to.be("FirstAscent");
+        expect(hcInstance.neighborApproach).to.be("LastAscent");
     });
 
     it('Should Creates Concretes Heuristics from configuration ', () => {
@@ -51,33 +51,5 @@ describe('IHeuristic Tests', () => {
         var ga = new HeuristicFactory().CreateByName(configuration.heuristics[0]);
         expect(ga).not.be.an('undefined');
     });
-
-    it('Should run GetFunctionAstByName', () => {
-
-        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
-        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var astExplorer: ASTExplorer = new ASTExplorer();
-
-        expect(configuration.heuristics[2]).to.be('HC');
-
-        var hc = new HeuristicFactory().CreateByName(configuration.heuristics[2]);
-        expect(hc).not.be(undefined);
-
-        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
-        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[2];
-        var libFile: string = lib.mainFilePath;
-        var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
-        
-        var functionAST = hc.GetFunctionAstByName(generatedIndividual, 'lazyValue');
-
-        //console.log(functionAST.ToCode());
-
-        expect(functionAST).not.be(undefined);
-        
-
-    });
-
-    
 
 });
