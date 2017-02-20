@@ -110,16 +110,15 @@ export default class RD extends IHeuristic {
     private ExecutarParaCadaFuncao(cb: () => void) {
         var orcamento = (this.trials - this.qtdMutantesAtuais);
         //this._logger.Write(`[RD] Orçamento restante ${orcamento}`);
-        
-        if(orcamento <= 0)
-        {
+
+        if (orcamento <= 0) {
             this._logger.Write(`[RD] Não há mais orçamento de rodadas!`);
             cb();
             return;
         }
 
         var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
-        if (funcaoAtual == undefined) {
+        if (funcaoAtual == undefined || funcaoAtual == "undefined") {
             this._logger.Write(`[RD] Não há mais funções para otimizar!`);
             cb();
             return;
@@ -163,7 +162,7 @@ export default class RD extends IHeuristic {
                 this.UpdateBest(element);
 
                 mutantesAtuais.push(element);
-            }); 
+            });
 
             this._logger.Write(`[RD] mutantes atuais: ${mutantesAtuais.length}`);
             this.qtdMutantesAtuais = (this.qtdMutantesAtuais + mutantesProcessados.length);

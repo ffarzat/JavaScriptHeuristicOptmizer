@@ -109,7 +109,7 @@ export default class HC extends IHeuristic {
     private ExecutarPorFuncao(trialIndex: number, cb: (results: TrialResults) => void) {
         var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
 
-        if (funcaoAtual == undefined) {
+        if (funcaoAtual == undefined || funcaoAtual == "undefined") {
             this._logger.Write(`[HC] Não há mais funções para otimizar!`);
             this.Stop();
             var results = this.ProcessResult(trialIndex, this.Original, this.ActualBestForFunctionScope);
@@ -118,7 +118,7 @@ export default class HC extends IHeuristic {
         }
         //Seta a fução atual
         this.ActualFunction = funcaoAtual;
-        this._logger.Write(`[HC] Otimizando a função ${this.ActualFunction}!`);
+        this._logger.Write(`[HC] Otimizando a função ${this.ActualFunction}! ${typeof this.ActualFunction}`);
         //Array com todos os indices de nó
         let nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
         this.typeIndexCounter = 0;
@@ -246,7 +246,7 @@ export default class HC extends IHeuristic {
 
                 // its over all index?
                 console.log(`[HC] this.typeIndexCounter: ${this.typeIndexCounter}`);
-                console.log(`[HC] indexes.Indexes.length: ${indexes.Indexes.length}`);
+                conIndexBysole.log(`[HC] indexes.Indexes.length: ${indexes.Indexes.length}`);
 
                 if (this.typeIndexCounter >= nodesIndexList.length - 1) {
                     this._logger.Write(`[HC] All neighbors were visited`);
@@ -261,7 +261,7 @@ export default class HC extends IHeuristic {
             }
 
             //All neighbors were visited?
-            if (!itsover) {
+            if (!itsoIndexByver) {
                 this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
                     neighbors.push(mutant);
                 });
