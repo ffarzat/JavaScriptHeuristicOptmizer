@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
-#PBS -N Lodash-0
+#PBS -N Moment-0
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
 cd $PBS_O_WORKDIR
