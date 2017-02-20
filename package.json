@@ -1,26 +1,52 @@
 {
-    "name": "javascript-heuristic-optmizer",
-    "version": "0.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "postinstall": "tsd install",
-        "build": "tsc",
-        "test": "mocha --recursive build/test",
-        "pretest": "npm run clean && npm run build",
-        "clean": "rm -rf build"
-    },
-    "author": {
-        "name": "Fabio Farzat",
-        "email": "ffarzat@cos.ufrj.br"
-    },
-    "license": "ISC",
-    "dependencies": {
-        "typescript": "1.8.9"
-    },
-    "devDependencies": {
-        "mocha":"2.4.5",
-        "expect.js": "0.3.1",
-        "tsd": "0.6.5"
-    }    
+  "name": "javascript-heuristic-optmizer",
+  "version": "0.0.0",
+  "description": "",
+  "main": "build/src/index.js",
+  "scripts": {
+    "postinstall": "tsd install",
+    "build": "tsc",
+    "test": "mocha --recursive build/test",
+    "pretest": "npm run clean && npm run build",
+    "clean": "grunt && tsd install",
+    "start": "npm run clean && npm run build && node --expose-gc --max-old-space-size=2047 build/src/index.js"
+  },
+  "author": {
+    "name": "Fabio Farzat",
+    "email": "ffarzat@cos.ufrj.br"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "ast-types": "^0.9.5",
+    "async": "^2.0.0-rc.6",
+    "escodegen": "git@github.com:ffarzat/escodegen.git#99ca5657bd6d6386c3ee9309046dbdd20a8c4803",
+    "esprima": "2.7.2",
+    "esprima-ast-utils": "0.0.6",
+    "exectimer": "2.0.0",
+    "express": "^4.13.4",
+    "fork-pool": "^2.0.0",
+    "fs-extra": "0.26.7",
+    "function-extractor": "0.0.5",
+    "http": "0.0.0",
+    "log4js": "0.6.33",
+    "ng-admin": "^1.0.0-alpha2",
+    "node-uuid": "1.4.7",
+    "nodemailer": "0.7.1",
+    "randomizer": "0.0.1",
+    "rmdir": "1.2.0",
+    "run-parallel-limit": "^1.0.3",
+    "shelljs": "0.6.0",
+    "temporary": "0.0.8",
+    "traverse": "0.6.6",
+    "typescript": "1.8.10",
+    "underscore": "^1.8.3",
+    "websocket": "1.0.22",
+    "ws": "1.1.0"
+  },
+  "devDependencies": {
+    "expect.js": "0.3.1",
+    "grunt": "1.0.1",
+    "mocha": "2.4.5",
+    "tsd": "0.6.5"
+  }
 }

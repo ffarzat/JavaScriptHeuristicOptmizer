@@ -1,0 +1,45 @@
+{
+    "file": "Configuration.json",
+    "trials":10,
+    "startTrial": 0,
+    "fitType":"median",
+    "testUntil": 1,
+    "mutationTrials": 1,
+    "crossOverTrials": 1,
+    "logFilePath": "build/optmization.log",
+    "tmpDirectory": "/home/fabio/Documents/tmp",
+    "logCategory":"optmization",
+    "logFileClearing": false,
+    "resultsDirectory": "build/results",
+    "trialResultsFile": "Results.csv",
+    "logWritter": "ConcreteLogger",
+    "tester": "CommandTester",
+    "outWriter": "CsvResultsOutWriter",
+    "heuristics": ["HC"],
+    "port": 5000,
+    "url": "ws://localhost",
+    "clientTimeout":15,
+    "clientsTotal": 3,
+    "copyFileTimeout": 300,
+    "memory": 2047,
+    "libraries" : [
+        {"name":"lodash",   "path":"Libraries/lodash/",     "mainFilePath":"Libraries/lodash/lodash.js" }
+    ],
+    "trialsConfiguration":[ 
+        {
+            "nodesSelectionApproach":"ByFunction", 
+            "especific": {
+                "neighborApproach":"LastAscent", 
+                "neighborsToProcess": 3,
+                "trials": 50,
+                "nodesType": ["CallExpression", "IfStatement"], 
+                "individuals": 50, 
+                "generations": 100,
+                "crossoverProbability": 75,
+                "mutationProbability": 10,
+                "elitism": true,
+                "elitismPercentual": 30
+            }
+        }  
+    ]
+}
