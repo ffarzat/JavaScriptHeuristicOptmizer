@@ -40,6 +40,7 @@ abstract class IHeuristic extends events.EventEmitter {
     public crossOverTrials: number;
 
     public nodesSelectionApproach: string;
+    public byFunctionType: string;
 
     public Original: Individual;
 
@@ -374,17 +375,25 @@ abstract class IHeuristic extends events.EventEmitter {
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
         this.bestIndividual = this.Original;
 
-        //ByFunction, Global, ByFunctionDinamyc
-
+        //ByFunction, Global, static and dynamic
         if (this.nodesSelectionApproach == "ByFunction") {
 
-            
+            if (this.byFunctionType == "dynamic") {
+                var list = this.getFunctionStaticList();
+                var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
+                for (let element in keysSorted) {
+                    console.log(`Função ${keysSorted[element]}: ${element}`);
+                    this.functionStack.push(keysSorted[element]);
+                }
+            }
+            else {
 
-            var list = this.getFunctionStaticList();
-            var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
-            for (let element in keysSorted) {
-                console.log(`Função ${keysSorted[element]}: ${element}`);
-                this.functionStack.push(keysSorted[element]);
+                var list = this.getFunctionStaticList();
+                var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
+                for (let element in keysSorted) {
+                    console.log(`Função ${keysSorted[element]}: ${element}`);
+                    this.functionStack.push(keysSorted[element]);
+                }
             }
             this._logger.Write(`Funções para Otimizar: ${this.functionStack.length}`);
         }
