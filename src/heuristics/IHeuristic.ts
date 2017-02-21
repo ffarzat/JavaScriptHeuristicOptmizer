@@ -378,6 +378,8 @@ abstract class IHeuristic extends events.EventEmitter {
 
         if (this.nodesSelectionApproach == "ByFunction") {
 
+            
+
             var list = this.getFunctionStaticList();
             var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
             for (let element in keysSorted) {

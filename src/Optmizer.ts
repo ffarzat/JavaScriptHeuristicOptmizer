@@ -28,6 +28,7 @@ export default class Optmizer {
     tester: ITester;
     outter: IOutWriter;
     nodesSelectionApproach: string;
+    byFunctionType :string;
     nodesType: string[] = [];
     heuristics: IHeuristic[] = [];
 
@@ -57,6 +58,7 @@ export default class Optmizer {
         this.heuristicTrial = HeuristicTrial;
 
         this.nodesSelectionApproach = this.configuration.trialsConfiguration[this.heuristicTrial].nodesSelectionApproach;
+        this.byFunctionType = this.configuration.trialsConfiguration[this.heuristicTrial].ByFunctionType;
         this.nodesType = this.configuration.trialsConfiguration[this.heuristicTrial].nodesType;
 
         this.InitializeLogger();

@@ -30,6 +30,7 @@
     "trialsConfiguration":[
         {
             "nodesSelectionApproach":"ByFunction", 
+            "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach":"LastAscent", 
                 "restart":true, 
