@@ -251,5 +251,25 @@ describe('ASTExplorer Tests', function () {
 
     });
 
+    it('Should run AspectForTest', () => {
+
+        var astExplorer: ASTExplorer = new ASTExplorer();
+
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var lib = configuration.libraries[2];
+        var libFile: string = lib.mainFilePath;
+        var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
+
+        var functionAST = astExplorer.GetFunctionAstByName(generatedIndividual, 'lazyValue');
+        expect(functionAST).not.be(undefined);
+
+        var novaFuncao = astExplorer.AspectForTest(functionAST);
+        expect(functionAST).not.be(undefined);
+
+    });
+
+
+
 
 });

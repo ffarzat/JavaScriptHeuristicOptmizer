@@ -442,4 +442,29 @@ export default class ASTExplorer {
 
         return novoIndividuo;
     }
+
+    /**
+     * Orquestra o código para contar a chamada de cada função durante a execução dos testes
+     */
+    AspectForTest(individuo: Individual): Individual {
+        var types = require("ast-types");
+        var n = types.namedTypes;
+
+        types.visit(individuo.AST, {
+            // This method will be called for any node whose type is a subtype of
+            // Function (e.g., FunctionDeclaration, FunctionExpression, and
+            // ArrowFunctionExpression)
+            visitFunction: function (path) {
+                var node = path.node;
+                var body = node.body;
+
+                //console.log(` ${JSON.stringify(body)}`);
+
+                this.traverse(path);
+            }
+        });
+
+        return individuo;
+
+    }
 }

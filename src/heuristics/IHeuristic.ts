@@ -379,15 +379,16 @@ abstract class IHeuristic extends events.EventEmitter {
         if (this.nodesSelectionApproach == "ByFunction") {
 
             if (this.byFunctionType == "dynamic") {
-                var list = this.getFunctionStaticList();
-                var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
-                for (let element in keysSorted) {
-                    console.log(`Função ${keysSorted[element]}: ${element}`);
-                    this.functionStack.push(keysSorted[element]);
-                }
+                this._logger.Write(`Otimização por função (dinâmica)`);
+
+                //orquestrar o código
+                var novoOriginalOrquestrado = this._astExplorer.AspectForTest(this.Original.Clone());
+
+
+                //deixar executar os testes e incluir uma captura do ranking pós execução
             }
             else {
-
+                this._logger.Write(`Otimização por função (estática)`);
                 var list = this.getFunctionStaticList();
                 var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
                 for (let element in keysSorted) {
@@ -396,6 +397,9 @@ abstract class IHeuristic extends events.EventEmitter {
                 }
             }
             this._logger.Write(`Funções para Otimizar: ${this.functionStack.length}`);
+        }
+        else {
+            this._logger.Write(`Otimização global (todo o código da biblioteca)!`);
         }
 
         this.Test(this.Original, (testedOriginal) => {
