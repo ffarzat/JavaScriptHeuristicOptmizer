@@ -137,14 +137,14 @@ abstract class IHeuristic extends events.EventEmitter {
         context.First = first;
         context.Second = second;
         var msg: Message = new Message();
-        
+
         this.IncluirParametrosPorFuncao(context);
         msg.ctx = context;
 
         this.getResponse(msg, (newMsg) => {
             var bestForAMoment = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
             if (newMsg == undefined) {
-                
+
                 cb([bestForAMoment, bestForAMoment]);
                 return;
             }
@@ -298,7 +298,7 @@ abstract class IHeuristic extends events.EventEmitter {
         ctx.Original = this.Original;
         ctx.Operation = "MutationByIndex";
         ctx.MutationTrials = this._globalConfig.mutationTrials;
-        
+
         this.IncluirParametrosPorFuncao(ctx);
 
         var msg: Message = new Message();
@@ -307,13 +307,13 @@ abstract class IHeuristic extends events.EventEmitter {
         this.getResponse(msg, (newMsg) => {
             //this._logger.Write(`[HC] newMsg: ${newMsg ==undefined}`);
             //this._logger.Write(`[HC] newMsg.ctx.First: ${newMsg.ctx.First.testResults ==undefined}`);
-            
+
             var bestForAMoment = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
             if (newMsg == undefined) {
                 cb(bestForAMoment);
                 return;
             }
-            
+
             cb(newMsg.ctx.First);
         });
     }
@@ -321,8 +321,7 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
      * Caso seja necessário incluir os parametros para execução por Função
      */
-    IncluirParametrosPorFuncao(ctx: OperatorContext)
-    {
+    IncluirParametrosPorFuncao(ctx: OperatorContext) {
         if (this.nodesSelectionApproach == "ByFunction") {
             ctx.nodesSelectionApproach = this.nodesSelectionApproach;
             ctx.ActualBestForFunctionScope = this.ActualBestForFunctionScope;
