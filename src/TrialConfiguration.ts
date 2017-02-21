@@ -12,11 +12,18 @@ export default class TrialConfiguration {
      * 
      * By now can be:
      * 
-     * [Global, NodeType]
+     * [Global, ByFunction]
      * 
      */
     nodesSelectionApproach: string;
     
+    /**
+     * Determina se a execução por função é dinâmica ou estática
+     * 
+     * Isso modifica o comportamento da composição do Ranking e não da otimização em si
+     */
+    ByFunctionType: string;
+
     /**
      * List of Esprima nodes Type for select inside every Heuristic
      * 
