@@ -36,13 +36,6 @@ exectimerL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exec
 exectimerL.mainFilePath = "/index.js"
 libs.push(exectimerL);
 
-//Jade
-//var JadeL = new Library();
-//JadeL.name = "Jade";
-//JadeL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/Jade"
-//JadeL.mainFilePath = "/lib/index.js"
-//libs.push(JadeL);
-
 //lodash
 var lodashL = new Library();
 lodashL.name = "lodash";
@@ -77,6 +70,62 @@ xml2jsL.name = "xml2js";
 xml2jsL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/xml2js"
 xml2jsL.mainFilePath = "/lib/xml2js.js"
 libs.push(xml2jsL);
+
+//express-ifttt-webhook
+var expressL = new Library();
+expressL.name = "express-ifttt-webhook";
+expressL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/express-ifttt-webhook"
+expressL.mainFilePath = "/index.js"
+libs.push(expressL);
+
+//gulp-ccr-browserify
+var gulpL = new Library();
+gulpL.name = "gulp-ccr-browserify";
+gulpL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/gulp-ccr-browserify"
+gulpL.mainFilePath = "/index.js"
+libs.push(gulpL);
+
+//bower
+var bowerL = new Library();
+bowerL.name = "bower";
+bowerL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/bower"
+bowerL.mainFilePath = "/lib/index.js"
+libs.push(bowerL);
+
+//plivo-node
+var plivoL = new Library();
+plivoL.name = "plivo-node";
+plivoL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/plivo-node"
+plivoL.mainFilePath = "/lib/plivo.js"
+libs.push(plivoL);
+
+//node-browserify
+var browserifyL = new Library();
+browserifyL.name = "bower";
+browserifyL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/node-browserify"
+browserifyL.mainFilePath = "/index.js"
+libs.push(browserifyL);
+
+//tleaf
+var tleafL = new Library();
+tleafL.name = "tleaf";
+tleafL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/tleaf"
+tleafL.mainFilePath = "/index.js"
+libs.push(tleafL);
+
+//pug
+var pugL = new Library();
+pugL.name = "pug";
+pugL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug"
+pugL.mainFilePath = "/packages/pug/lib/index.js"
+libs.push(pugL);
+
+//jquery
+var jqueryL = new Library();
+jqueryL.name = "jquery";
+jqueryL.path = "/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/jquery"
+jqueryL.mainFilePath = "/dist/jquery.js"
+libs.push(jqueryL);
 
 
 

@@ -1,0 +1,3 @@
+$provide.service('{{name}}', function () {
+
+});

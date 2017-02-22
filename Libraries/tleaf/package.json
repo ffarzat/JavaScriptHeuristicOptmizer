@@ -1,0 +1,46 @@
+{
+  "name": "tleaf",
+  "version": "0.2.0",
+  "description": "AngularJS unit test generator",
+  "author": "Michael Radionov (https://github.com/mradionov)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mradionov/tleaf"
+  },
+  "main": "index.js",
+  "bin": "bin/tleaf",
+  "preferGlobal": true,
+  "dependencies": {
+    "escope": "^3.2.0",
+    "esprima": "^2.4.0",
+    "estraverse": "^4.1.0",
+    "fs-extra": "^0.23.1",
+    "handlebars": "^4.0.2",
+    "inquirer": "^0.9.0",
+    "lodash": "^3.10.0",
+    "xdg-basedir": "^2.0.0"
+  },
+  "devDependencies": {
+    "angular": "^1.5.0",
+    "angular-mocks": "^1.5.0",
+    "chai": "^3.2.0",
+    "karma": "^0.13.9",
+    "karma-chai": "^0.1.0",
+    "karma-mocha": "^0.2.0",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "mocha": "^2.2.5",
+    "phantomjs-prebuilt": "^2.1.4",
+    "proxyquire": "^1.6.0",
+    "sinon": "^1.16.1"
+  },
+  "scripts": {
+    "test": "npm run test:unit && npm run test:app",
+    "test:unit": "./node_modules/mocha/bin/mocha 'test/specs/**/*.spec.js'",
+    "test:app": "npm run test:app:init && npm run test:app:run && npm run test:app:tear",
+    "test:app:init": "node test/app/init.js",
+    "test:app:run": "./node_modules/karma/bin/karma start test/support/karma.conf.js",
+    "test:app:tear": "node test/app/teardown.js",
+    "test:debug": "./node_modules/node-inspector/bin/node-debug.js _mocha 'test/specs/**/*.spec.js'"
+  }
+}

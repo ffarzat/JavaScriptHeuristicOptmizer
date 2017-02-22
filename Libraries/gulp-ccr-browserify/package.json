@@ -1,0 +1,51 @@
+{
+  "name": "gulp-ccr-browserify",
+  "version": "0.1.3",
+  "description": "Bundle JavaScript things with Browserify. A cascading configurable gulp recipe for gulp-chef.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gulp-cookery/gulp-ccr-browserify.git"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "gulp",
+    "gulp 4.0",
+	"gulp-cookery",
+    "gulp-ccr",
+	"gulp-chef",
+    "recipes",
+    "browserify",
+	"uglify",
+	"sourcemaps",
+    "configure",
+    "configurable",
+    "configuration",
+    "plugin"
+  ],
+  "peerDependencies": {
+    "gulp-chef": "^0.1.0"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4",
+    "mocha-cases": "^0.1.4"
+  },
+  "dependencies": {
+    "browser-sync": "^2.10.1",
+    "browserify": "^11.2.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.7",
+    "lodash": "^3.10.1",
+    "merge-stream": "^0.1.8",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.6.1"
+  },
+  "author": "Amobiz",
+  "license": "MIT"
+}

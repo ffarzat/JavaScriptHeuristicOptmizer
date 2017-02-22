@@ -1,0 +1,1 @@
+$provide.constant('{{name}}', '');
