@@ -22,7 +22,7 @@
     "copyFileTimeout": 14400,
     "clientsTotal": 40,
     "libraries" : [
-        {"name":"pug",       "path":"Libraries/jade/",         "mainFilePath":"Libraries/pug/packages/jade/lib/index.js" }
+        {"name":"pug",       "path":"Libraries/jade/",         "mainFilePath":"Libraries/jade/lib/index.js" }
     ],
     "trialsConfiguration":[
         {
