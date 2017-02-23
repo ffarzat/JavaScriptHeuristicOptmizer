@@ -44,17 +44,19 @@ var localClient = new Client();
 var loki = require('lokijs')
 var db = new loki('build/loki.json');
 
+var nn = Math.floor(Math.random() * 5) + 1  ;
+
+var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec(`sleep ${nn}`, { silent: true }) as Shell.ExecOutputReturnValue);
 
 loadCollection('Clientes', function (lista) {
-    //show the users
-    //console.log(lista.data);
-
+    
     var novoClienteId = lista.data.length;
+    lista.insert({ name: 'Cliente', id: novoClienteId, path: clientDir });
+     //save 
+    db.saveDatabase();
+
     //logger.Write(`[Child]   Cliente ${novoClienteId}`);
     var clientDir = path.join(clientWorkDir, novoClienteId.toString());
-
-    lista.insert({ name: 'Cliente', id: novoClienteId, path: clientDir });
-    
 
     localClient.id = novoClienteId;
     localClient.logger = logger;
@@ -64,10 +66,7 @@ loadCollection('Clientes', function (lista) {
     //ParseConfigAndLibs(clientDir);
 
     logger.Write(`[Client:${novoClienteId}] ready`);
-
-
-    //save 
-    db.saveDatabase();
+   
 });
 
 
