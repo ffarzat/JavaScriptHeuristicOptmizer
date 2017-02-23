@@ -76,7 +76,8 @@ if (hostfile == undefined || hostfile == null || hostfile == "undefined" || host
 
 logger.Write(`clientOptions: ${clientOptions}`);
 
-var pool = require('fork-pool');
+var caminhodopool = __dirname.replace('build', '');
+var pool = require(caminhodopool + '/fork-pool.js');
 var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
 //=========================================================================================== Server!

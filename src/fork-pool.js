@@ -8,26 +8,26 @@
 /**
  * Dependencies
  */
-var _               = require('lodash');
-var childProcess    = require('child_process');
-var generic         = require('generic-pool');
+var _ = require('lodash');
+var childProcess = require('child_process');
+var generic = require('generic-pool');
 
 /**
  * Constructor
  */
-function Pool (path, args, options, settings) {
+function Pool(path, args, options, settings) {
     _.defaults(settings, {
-        name:       'fork-pool',
-        size:       require('os').cpus().length,
-        log:        false,
-        timeout:    30000,
-        debug:		false,
-        debugPort:	process.debugPort	// Default debugging port for the main process. Skip from here.
+        name: 'fork-pool',
+        size: require('os').cpus().length,
+        log: false,
+        timeout: 30000,
+        debug: false,
+        debugPort: process.debugPort	// Default debugging port for the main process. Skip from here.
     });
 
     //
 
-    this.pool       = generic.Pool({
+    this.pool = generic.Pool({
         settings: settings,
         name: settings.name,
         create: function (callback) {
@@ -41,7 +41,11 @@ function Pool (path, args, options, settings) {
                 // This only works if idle processes stay alive (long timeout), or you will run out of ports eventually.
                 process.execArgv.push('--debug=' + (++this.settings.debugPort));
             }
-            var childNode = childProcess.fork(path, args, options);
+            var newArgs = args.slice(0);
+            newArgs.push(this.actual);
+            var childNode = childProcess.fork(path,newArgs, options);
+            //console.log(`Seria o cliente ${this.actual}`);
+            this.actual++;
             callback(null, childNode);
         },
         destroy: function (client) {
@@ -50,7 +54,8 @@ function Pool (path, args, options, settings) {
         max: settings.size,
         min: settings.size - 1,
         idleTimeoutMillis: settings.timeout,
-        log: settings.log
+        log: settings.log,
+        actual: 0
     });
 };
 
@@ -63,7 +68,7 @@ Pool.prototype.enqueue = function (data, callback) {
             client.send(data);
             client.once('message', function (message) {
                 var a = {
-                    pid:    client.pid,
+                    pid: client.pid,
                     stdout: message
                 };
 
@@ -76,7 +81,7 @@ Pool.prototype.enqueue = function (data, callback) {
 
 Pool.prototype.drain = function (callback) {
     var instance = this.pool;
-    instance.drain(function() {
+    instance.drain(function () {
         instance.destroyAllNow();
         callback(null);
     });

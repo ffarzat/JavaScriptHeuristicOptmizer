@@ -23,8 +23,7 @@
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries" : [
-        {"name":"uuid",   "path":"Libraries/uuid/",     "mainFilePath":"Libraries/uuid/lib/uuid.js" },
-        {"name":"lodash",   "path":"Libraries/lodash/",     "mainFilePath":"Libraries/lodash/lodash.js" }
+        {"name":"uuid",   "path":"Libraries/uuid/",     "mainFilePath":"Libraries/uuid/lib/uuid.js" }
     ],
     "trialsConfiguration":[ 
         {

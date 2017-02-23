@@ -21,11 +21,11 @@ var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration
 var configurationFile: string = path.join(process.cwd(), configFile);
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 
-var clientPath = process.argv[3] != undefined ? process.argv[3] : 'src/client.js';
+//console.log(process.argv);
+var novoClienteId = process.argv[3];
+var clientPath = 'src/client.js';
 var testOldDirectory: string = process.cwd();
 var clientWorkDir = configuration.tmpDirectory; //Diretorio para execução dos testes
-
-
 
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
@@ -41,37 +41,23 @@ var clientId = uuid.v4();
 var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
 var localClient = new Client();
 
-var loki = require('lokijs')
-var db = new loki('build/loki.json');
 
-var nn = Math.floor(Math.random() * 120) + 1;
 
-setTimeout(function () {
+//logger.Write(`[Child]   Cliente ${novoClienteId}`);
+var clientDir = path.join(clientWorkDir, novoClienteId.toString());
 
-    loadCollection('Clientes', function (lista) {
+localClient.id = novoClienteId;
+localClient.logger = logger;
+localClient.clientPath = clientPath;
+localClient.Setup(configuration, clientDir);
 
-        var novoClienteId = lista.data.length;
-        lista.insert({ name: 'Cliente', id: novoClienteId, path: clientDir });
-        //save 
-        db.saveDatabase();
+//ParseConfigAndLibs(clientDir);
 
-        //logger.Write(`[Child]   Cliente ${novoClienteId}`);
-        var clientDir = path.join(clientWorkDir, novoClienteId.toString());
+logger.Write(`[Client:${novoClienteId}] ready on ${clientDir}`);
 
-        localClient.id = novoClienteId;
-        localClient.logger = logger;
-        localClient.clientPath = clientPath;
-        localClient.Setup(configuration, clientDir);
+Configurar();
 
-        //ParseConfigAndLibs(clientDir);
 
-        logger.Write(`[Client:${novoClienteId}] ready`);
-
-        Configurar();
-
-    });
-
-}, nn * 1000);
 
 
 
@@ -188,18 +174,4 @@ function ParseConfigAndLibs(workDir: string) {
             process.chdir(testOldDirectory);
         }
     }
-}
-
-
-function loadCollection(colName, callback) {
-    db.loadDatabase({}, function () {
-        var _collection = db.getCollection(colName);
-
-        if (!_collection) {
-            console.log("Collection %s does not exit. Creating ...", colName);
-            _collection = db.addCollection(colName);
-        }
-        db.saveDatabase();
-        callback(_collection);
-    });
 }
