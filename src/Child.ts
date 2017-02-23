@@ -44,15 +44,15 @@ var localClient = new Client();
 var loki = require('lokijs')
 var db = new loki('build/loki.json');
 
-var nn = Math.floor(Math.random() * 60) + 0  ;
+var nn = Math.floor(Math.random() * 30) + 0;
 
 var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec(`sleep ${nn}`, { silent: true }) as Shell.ExecOutputReturnValue);
 
 loadCollection('Clientes', function (lista) {
-    
+
     var novoClienteId = lista.data.length;
     lista.insert({ name: 'Cliente', id: novoClienteId, path: clientDir });
-     //save 
+    //save 
     db.saveDatabase();
 
     //logger.Write(`[Child]   Cliente ${novoClienteId}`);
@@ -66,80 +66,69 @@ loadCollection('Clientes', function (lista) {
     //ParseConfigAndLibs(clientDir);
 
     logger.Write(`[Client:${novoClienteId}] ready`);
-   
-});
 
-
-
-
-
-
-
-
-//========================================================================================== fork-poll handling
-process.on('message', function (message) {
-
-    try {
-        var msg: Message = JSON.parse(message);
-
-        var exectimer = require('exectimer');
-        var Tick = new exectimer.Tick(msg.id);
-        Tick.start();
-
-        localClient.SetHosts(msg.Hosts);
-
-        msg.ctx = localClient.Reload(msg.ctx);
-
-        //logger.Write(`[runClient]   Client ${localClient.id} processing message ${msg.id}`);
-        logger.Write(`[runClient]   Processing message ${msg.id}`);
-
-        /*
-        if (message.id == 5) {
-            throw new Error("Just for test");
-        }
-    
-        if (message.id == 20) {
-            RecursivaInfinita();
-            return;
-        }
-        */
-
-        //Forçando o caminho correto nos testes unitários
-        msg.ctx.clientPath = localClient.clientPath;
-
-        if (msg.ctx.Operation == "Mutation") {
-            //logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant`);
-            msg.ctx = localClient.Mutate(msg.ctx);
-        }
-
-        if (msg.ctx.Operation == "MutationByIndex") {
-            //logger.Write(`[runClient]processing ${msg.ActualLibrary} new mutant by node index`);
-            msg.ctx = localClient.MutateBy(msg.ctx);
-        }
-
-        if (msg.ctx.Operation == "CrossOver") {
-            //logger.Write(`[runClient]processing ${msg.ActualLibrary} new crossover`);
-            msg.ctx = localClient.CrossOver(msg.ctx);
-        }
-
-        if (msg.ctx.Operation == "Test") {
-            //logger.Write(`[runClient]processing ${msg.ActualLibrary} tests`);
-            msg.ctx = localClient.Test(msg.ctx);
-        }
-
-        Tick.stop();
-        var trialTimer = exectimer.timers[msg.id];
-        msg.ProcessedTime = ToNanosecondsToSeconds(trialTimer.duration());
-
-        //var msgProcessada = JSON.stringify(msg);
-
-        process.send(msg);
-        logger.Write(`[runClients] Msg ${msg.id} sent back.`);
-    } catch (error) {
-        process.send(message);
-    }
+    Configurar();
 
 });
+
+
+function Configurar() {
+    //========================================================================================== fork-poll handling
+    process.on('message', function (message) {
+
+        try {
+            var msg: Message = JSON.parse(message);
+
+            var exectimer = require('exectimer');
+            var Tick = new exectimer.Tick(msg.id);
+            Tick.start();
+
+            localClient.SetHosts(msg.Hosts);
+
+            msg.ctx = localClient.Reload(msg.ctx);
+
+            //logger.Write(`[Child]   Client ${localClient.id} processing message ${msg.id}`);
+            logger.Write(`[Child]   Processing message ${msg.id} with Client: ${localClient.id}`);
+
+            //Forçando o caminho correto nos testes unitários
+            msg.ctx.clientPath = localClient.clientPath;
+
+            if (msg.ctx.Operation == "Mutation") {
+                //logger.Write(`[Child]processing ${msg.ActualLibrary} new mutant`);
+                msg.ctx = localClient.Mutate(msg.ctx);
+            }
+
+            if (msg.ctx.Operation == "MutationByIndex") {
+                //logger.Write(`[Child]processing ${msg.ActualLibrary} new mutant by node index`);
+                msg.ctx = localClient.MutateBy(msg.ctx);
+            }
+
+            if (msg.ctx.Operation == "CrossOver") {
+                //logger.Write(`[Child]processing ${msg.ActualLibrary} new crossover`);
+                msg.ctx = localClient.CrossOver(msg.ctx);
+            }
+
+            if (msg.ctx.Operation == "Test") {
+                //logger.Write(`[Child]processing ${msg.ActualLibrary} tests`);
+                msg.ctx = localClient.Test(msg.ctx);
+            }
+
+            Tick.stop();
+            var trialTimer = exectimer.timers[msg.id];
+            msg.ProcessedTime = ToNanosecondsToSeconds(trialTimer.duration());
+
+            //var msgProcessada = JSON.stringify(msg);
+
+            process.send(msg);
+            logger.Write(`[Childs] Msg ${msg.id} sent back.`);
+        } catch (error) {
+            process.send(message);
+        }
+
+    });
+
+}
+
 
 function RecursivaInfinita() {
     RecursivaInfinita();
@@ -167,17 +156,17 @@ function ParseConfigAndLibs(workDir: string) {
                 var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec(`npm install`, { silent: true }) as Shell.ExecOutputReturnValue);
 
                 if (returnedOutput.code > 0) {
-                    logger.Write(`[runClient] Library ${element.name} has error to execute npm install. It will be out of improvement process.`);
+                    logger.Write(`[Child] Library ${element.name} has error to execute npm install. It will be out of improvement process.`);
                     configuration.libraries.splice(libIndex, 1);
                 }
                 else {
-                    logger.Write(`[runClient] Library ${element.name} instaled successfully`);
+                    logger.Write(`[Child] Library ${element.name} instaled successfully`);
                 }
             }
 
             if (!fs.existsSync(tempLibPath)) {
-                //logger.Write(`[runClient] Copying ${element.name} to ${tempLibPath}`);
-                //logger.Write(`[runClient] Copying ${element.name}`);
+                //logger.Write(`[Child] Copying ${element.name} to ${tempLibPath}`);
+                //logger.Write(`[Child] Copying ${element.name}`);
                 //fs.mkdirSync(tempLibPath);
                 //fse.copySync(libDirectoryPath, tempLibPath, { "clobber": true, "filter": function () { return true; } });
                 //in order to test
