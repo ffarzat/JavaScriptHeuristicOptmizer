@@ -172,8 +172,6 @@ export default class Optmizer {
             //this.logger.Write(`   [Optmizer].executeHeuristicOverLib LIBS TOTAL: ${this.configuration.libraries.length}`);
             //this.logger.Write(`   [Optmizer].executeHeuristicOverLib LIBS index: ${libIndex}`);
 
-
-
             var actualLibrary = this.configuration.libraries[libIndex];
             this.actualHeuristic = this.heuristics[heuristicIndex];
             this.logger.Write(` [Optmizer] Executing global trial ${this.trialIndex} for ${actualLibrary.name} with ${this.actualHeuristic.Name} over heuristic trial ${this.heuristicTrial}`);

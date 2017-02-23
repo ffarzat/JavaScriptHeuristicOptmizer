@@ -1,3 +1,5 @@
+
+
 /**
  * Starts the Improvment Process based on cofigFile [Configuration.Json]
  */
@@ -7,6 +9,7 @@ import LogFactory from './LogFactory';
 
 import Server from './Sockets/Server';
 import Message from './Sockets/Message';
+
 
 import cluster = require('cluster');
 import fs = require('fs');
@@ -27,6 +30,10 @@ var clientOptions = '--max-old-space-size=512000';
 var allHosts: Array<string> = [];
 
 
+const Shared = require('mmap-object');
+const shared_object = new Shared.Create('contador');
+shared_object['total'] = 0;
+shared_object.close()
 
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
@@ -81,7 +88,7 @@ var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [cl
 logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
 logger.Write(`Preparing libs environment`);
 
-ParseConfigAndLibs();
+//ParseConfigAndLibs();
 DisplayConfig();
 ExecuteTrials(configuration.startTrial);
 

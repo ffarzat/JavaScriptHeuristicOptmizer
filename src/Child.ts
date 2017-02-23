@@ -1,10 +1,11 @@
-
 //Child fork test
 import Message from './Sockets/Message';
 import Client from './Sockets/Client';
 import OperatorContext from './OperatorContext';
 import IConfiguration from './IConfiguration';
 import LogFactory from './LogFactory';
+
+
 
 import fs = require('fs');
 import path = require('path');
@@ -14,15 +15,17 @@ var uuid = require('node-uuid');
 var tmp = require('temporary');
 var fse = require('fs-extra');
 var rmdir = require('rmdir');
-var clientWorkDir = new tmp.Dir();
+//var clientWorkDir = new tmp.Dir();
 //=========================================================================================== Read Configuration values
 var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';
 var configurationFile: string = path.join(process.cwd(), configFile);
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 
 var clientPath = process.argv[3] != undefined ? process.argv[3] : 'src/client.js';
-
 var testOldDirectory: string = process.cwd();
+var clientWorkDir = configuration.tmpDirectory; //Diretorio para execução dos testes
+
+
 
 //========================================================================================== Logger
 var logger = new LogFactory().CreateByName(configuration.logWritter);
@@ -37,18 +40,28 @@ if (process.platform !== "win32") {
 var clientId = uuid.v4();
 var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
 
-//logger.Write(`[Child]   configurationFile ${configurationFile}`);
+const Shared = require('mmap-object');
+const shared_object = new Shared.Create('contador');
+var contador = shared_object['total'] === undefined? 0 :shared_object['total'];
+
+var novoClienteId = contador.toString();
+
+shared_object['total'] = contador +1;
+shared_object.close()
+
+//logger.Write(`[Child]   Cliente ${novoClienteId}`);
+var clientDir = path.join(clientWorkDir, novoClienteId);
 
 var localClient = new Client();
-localClient.id = clientId;
+localClient.id = novoClienteId;
 localClient.logger = logger;
 localClient.clientPath = clientPath;
+localClient.Setup(configuration, clientDir); 
 
-localClient.Setup(configuration, clientWorkDir);
+//ParseConfigAndLibs(clientDir);
 
-ParseConfigAndLibs(clientWorkDir.path);
 
-logger.Write(`[Client:${clientId}] ready`);
+logger.Write(`[Client:${novoClienteId}] ready`);
 
 //========================================================================================== fork-poll handling
 process.on('message', function (message) {
@@ -152,8 +165,8 @@ function ParseConfigAndLibs(workDir: string) {
             if (!fs.existsSync(tempLibPath)) {
                 //logger.Write(`[runClient] Copying ${element.name} to ${tempLibPath}`);
                 //logger.Write(`[runClient] Copying ${element.name}`);
-                fs.mkdirSync(tempLibPath);
-                fse.copySync(libDirectoryPath, tempLibPath, { "clobber": true, "filter": function () { return true; } });
+                //fs.mkdirSync(tempLibPath);
+                //fse.copySync(libDirectoryPath, tempLibPath, { "clobber": true, "filter": function () { return true; } });
                 //in order to test
 
                 element.mainFilePath = path.join(tempLibPath, JSON.parse(fs.readFileSync(path.join(tempLibPath, "package.json")).toString()).main); //new main file path

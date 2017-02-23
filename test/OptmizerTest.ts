@@ -1,4 +1,5 @@
 /// <reference path="../src/typings/tsd.d.ts" />
+/// <reference path="../src/typings/tsd.d.ts" />
 
 import fs = require('fs');
 import path = require('path');
@@ -9,11 +10,15 @@ import ASTExplorer from '../src/ASTExplorer';
 import Individual from '../src/Individual';
 import Optmizer from '../src/Optmizer';
 
-import SingletonCounter from '../src/SingletonCounter';
+const Shared = require('mmap-object');
+const shared_object = new Shared.Create('contador');
 
 describe('Optmizer Tests', function () {
 
     this.timeout(60 * 10 * 1000); //10 minutes
+
+    shared_object['total'] = 25;
+
     /*
         it('Should Run Setup from configuration ', () => {
             var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
@@ -37,15 +42,13 @@ describe('Optmizer Tests', function () {
         });
     */
 
+
+
     it('Should unique Count ', function () {
         
-        var contador = new SingletonCounter();
-        expect(contador.Get()).to.be(0);
-        expect(contador.Get()).to.be(1);
-        expect(contador.Get()).to.be(2);
-        
-
-        
+        var contador = shared_object['total']
+        expect(contador).to.be(25);
+        shared_object.close()
     });
 
 });
