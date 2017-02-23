@@ -19,7 +19,7 @@ import Shell = require('shelljs');
 var optmizer: Optmizer = undefined;
 
 //=========================================================================================== Reads config
-console.log(process.argv);
+//console.log(process.argv);
 
 var configFile = process.argv[2] != undefined ? process.argv[2] : 'Configuration.json';
 var configurationFile: string = path.join(process.cwd(), configFile);

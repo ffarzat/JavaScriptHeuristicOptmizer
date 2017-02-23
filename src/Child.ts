@@ -40,8 +40,10 @@ if (process.platform !== "win32") {
 var clientId = uuid.v4();
 var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
 
+var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec(`sleep 2`, { silent: true }) as Shell.ExecOutputReturnValue);
+
 const Shared = require('mmap-object');
-const shared_object = new Shared.Open('build/contador.binary');
+const shared_object = new Shared.Create('build/contador.binary');
 var contador = shared_object['total'] === undefined? 0 :shared_object['total'];
 
 var novoClienteId = contador.toString();
