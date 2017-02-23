@@ -13,6 +13,7 @@ import Message from './Sockets/Message';
 
 import cluster = require('cluster');
 import fs = require('fs');
+var fse = require('fs-extra');
 import path = require('path');
 import Shell = require('shelljs');
 var optmizer: Optmizer = undefined;
@@ -46,7 +47,7 @@ if (process.platform !== "win32") {
 //Patch for parallel from PSB command line
 if (retrial != undefined) {
     var intStartTrial = parseInt(retrial);
-    configuration.trials = intStartTrial +1;
+    configuration.trials = intStartTrial + 1;
     configuration.startTrial = intStartTrial;
     configuration.logFilePath = configuration.logFilePath.replace("build/", `build/${retrial}-`);
     configuration.trialResultsFile = `${retrial}-` + configuration.trialResultsFile;
@@ -57,7 +58,7 @@ var logger = new LogFactory().CreateByName(configuration.logWritter);
 logger.Initialize(configuration);
 
 if (hostfile == undefined || hostfile == null || hostfile == "undefined" || hostfile == "null") {
-    clientOptions = '--max-old-space-size=' + (configuration.memory == undefined? 2047: configuration.memory);
+    clientOptions = '--max-old-space-size=' + (configuration.memory == undefined ? 2047 : configuration.memory);
 } else {
     var allHostsList = fs.readFileSync(hostfile).toString().split("\n");
 
@@ -88,7 +89,7 @@ var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [cl
 logger.Write(`Initializing Optmizer for ${configuration.libraries.length} libraries`);
 logger.Write(`Preparing libs environment`);
 
-//ParseConfigAndLibs();
+ParseConfigAndLibs();
 DisplayConfig();
 ExecuteTrials(configuration.startTrial);
 
@@ -156,6 +157,33 @@ function ParseConfigAndLibs() {
             process.chdir(testOldDirectory);
         }
     }
+
+
+    //Para cada lib instalada
+    for (var libIndex = 0; libIndex < configuration.libraries.length; libIndex++) {
+        var element = configuration.libraries[libIndex];
+        var libDirectoryPath = path.join(process.cwd(), element.path);
+        var libNodeModules = path.join(libDirectoryPath, "node_modules");
+
+        //Verifca se já existem os clients necessários no scratch
+        for (var clientIndex = 0; clientIndex < configuration.clientsTotal; clientIndex++) {
+            var tempClientpath = path.join(configuration.tmpDirectory, clientIndex.toString());
+            var tempLibPath = path.join(tempClientpath, element.name);
+
+            if (!fs.existsSync(tempLibPath)) {
+                logger.Write(`[index] Criando o client ${clientIndex} em ${tempLibPath}`);
+                
+                if (!fs.existsSync(tempClientpath)) {
+                    fs.mkdirSync(tempClientpath);
+                }
+
+                fs.mkdirSync(tempLibPath);
+                fse.copySync(libDirectoryPath, tempLibPath, { "clobber": true, "filter": function () { return true; } });
+            }
+        }
+
+    }
+
 }
 
 function DisplayConfig() {
