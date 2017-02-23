@@ -7,7 +7,7 @@
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/pug.log",
-    "tmpDirectory": "/scratch/41061a/ffarzat1981/libstemp/pug",
+    "tmpDirectory": "/scratch/41061a/ffarzat1981/libstemp",
     "logCategory":"optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
