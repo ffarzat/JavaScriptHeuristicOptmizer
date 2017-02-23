@@ -242,7 +242,7 @@ export default class CommandTester implements ITester {
      * Writes the new code Over old Main File of the lib over tests
      */
     private WriteCodeToFile(individual: Individual) {
-        //this.logger.Write(`Saving over file ${this.libMainFilePath}`);
+        this.logger.Write(`Saving over file ${this.libMainFilePath}`);
         fs.writeFileSync(this.libMainFilePath, individual.ToCode());
     }
 
