@@ -44,7 +44,7 @@ var localClient = new Client();
 var loki = require('lokijs')
 var db = new loki('build/loki.json');
 
-var nn = Math.floor(Math.random() * 30) + 1;
+var nn = Math.floor(Math.random() * 120) + 1;
 
 setTimeout(function () {
 
