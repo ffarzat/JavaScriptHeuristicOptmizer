@@ -19,7 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":20,
-    "copyFileTimeout": 14400,
+    "copyFileTimeout": 10,
     "clientsTotal": 40,
     "libraries" : [
         {"name":"pug",       "path":"Libraries/pug/",         "mainFilePath":"Libraries/pug/packages/pug/lib/index.js" }
