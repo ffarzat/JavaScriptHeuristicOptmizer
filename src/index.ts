@@ -32,7 +32,7 @@ var allHosts: Array<string> = [];
 
 
 const Shared = require('mmap-object');
-const shared_object = new Shared.Create('contador');
+const shared_object = new Shared.Create('build/contador.binary');
 shared_object['total'] = 0;
 shared_object.close()
 

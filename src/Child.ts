@@ -41,7 +41,7 @@ var clientId = uuid.v4();
 var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
 
 const Shared = require('mmap-object');
-const shared_object = new Shared.Create('contador');
+const shared_object = new Shared.Create('build/contador.binary');
 var contador = shared_object['total'] === undefined? 0 :shared_object['total'];
 
 var novoClienteId = contador.toString();
