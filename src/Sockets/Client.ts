@@ -202,6 +202,7 @@ export default class Client {
             if (element.name === context.LibrarieOverTest.name) {
                 context.LibrarieOverTest = element;
                 context.LibrarieOverTest.path = `${this.TempDirectory}/${context.LibrarieOverTest.name}`;
+                context.LibrarieOverTest.mainFilePath = `${this.TempDirectory}/${context.LibrarieOverTest.name}/${context.LibrarieOverTest.mainFilePath}`;
             }
         });
 
