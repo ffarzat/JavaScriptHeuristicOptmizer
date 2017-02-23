@@ -19,7 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":20,
-    "copyFileTimeout": 10,
+    "copyFileTimeout": 300,
     "clientsTotal": 40,
     "libraries" : [
         {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" }
