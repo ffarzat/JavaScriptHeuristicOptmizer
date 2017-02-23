@@ -19,7 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":2,
-    "copyFileTimeout": 60,
+    "copyFileTimeout": 300,
     "clientsTotal": 20,
     "libraries" : [
         {"name":"uuid",       "path":"Libraries/uuid/",         "mainFilePath":"Libraries/uuid/lib/uuid.js" }

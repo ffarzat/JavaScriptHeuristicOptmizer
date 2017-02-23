@@ -44,32 +44,36 @@ var localClient = new Client();
 var loki = require('lokijs')
 var db = new loki('build/loki.json');
 
-var nn = Math.floor(Math.random() * 60) + 0;
+var nn = Math.floor(Math.random() * 30) + 1;
 
-var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec(`sleep ${nn}`, { silent: true }) as Shell.ExecOutputReturnValue);
+setTimeout(function () {
 
-loadCollection('Clientes', function (lista) {
+    loadCollection('Clientes', function (lista) {
 
-    var novoClienteId = lista.data.length;
-    lista.insert({ name: 'Cliente', id: novoClienteId, path: clientDir });
-    //save 
-    db.saveDatabase();
+        var novoClienteId = lista.data.length;
+        lista.insert({ name: 'Cliente', id: novoClienteId, path: clientDir });
+        //save 
+        db.saveDatabase();
 
-    //logger.Write(`[Child]   Cliente ${novoClienteId}`);
-    var clientDir = path.join(clientWorkDir, novoClienteId.toString());
+        //logger.Write(`[Child]   Cliente ${novoClienteId}`);
+        var clientDir = path.join(clientWorkDir, novoClienteId.toString());
 
-    localClient.id = novoClienteId;
-    localClient.logger = logger;
-    localClient.clientPath = clientPath;
-    localClient.Setup(configuration, clientDir);
+        localClient.id = novoClienteId;
+        localClient.logger = logger;
+        localClient.clientPath = clientPath;
+        localClient.Setup(configuration, clientDir);
 
-    //ParseConfigAndLibs(clientDir);
+        //ParseConfigAndLibs(clientDir);
 
-    logger.Write(`[Client:${novoClienteId}] ready`);
+        logger.Write(`[Client:${novoClienteId}] ready`);
 
-    Configurar();
+        Configurar();
 
-});
+    });
+
+}, nn * 1000);
+
+
 
 
 function Configurar() {
