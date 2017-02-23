@@ -10,14 +10,12 @@ import ASTExplorer from '../src/ASTExplorer';
 import Individual from '../src/Individual';
 import Optmizer from '../src/Optmizer';
 
-const Shared = require('mmap-object');
-const shared_object = new Shared.Create('contador');
 
 describe('Optmizer Tests', function () {
 
     this.timeout(60 * 10 * 1000); //10 minutes
 
-    shared_object['total'] = 25;
+
 
     /*
         it('Should Run Setup from configuration ', () => {
@@ -42,13 +40,5 @@ describe('Optmizer Tests', function () {
         });
     */
 
-
-
-    it('Should unique Count ', function () {
-        
-        var contador = shared_object['total']
-        expect(contador).to.be(25);
-        shared_object.close()
-    });
 
 });

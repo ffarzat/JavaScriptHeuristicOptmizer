@@ -29,7 +29,7 @@
     "function-extractor": "0.0.5",
     "http": "0.0.0",
     "log4js": "0.6.33",
-    "mmap-object": "^1.3.2",
+    "lokijs": "^1.4.3",
     "ng-admin": "^1.0.0-alpha2",
     "node-uuid": "1.4.7",
     "nodemailer": "0.7.1",

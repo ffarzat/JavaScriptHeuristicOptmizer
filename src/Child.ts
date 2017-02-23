@@ -39,31 +39,43 @@ if (process.platform !== "win32") {
 //========================================================================================== Client initialization
 var clientId = uuid.v4();
 var serverUrl = configuration.url + ':' + configuration.port + "/ID=" + clientId;
-
-var returnedOutput: Shell.ExecOutputReturnValue = (Shell.exec(`sleep 2`, { silent: true }) as Shell.ExecOutputReturnValue);
-
-const Shared = require('mmap-object');
-const shared_object = new Shared.Create('build/contador.binary');
-var contador = shared_object['total'] === undefined? 0 :shared_object['total'];
-
-var novoClienteId = contador.toString();
-
-shared_object['total'] = contador +1;
-shared_object.close()
-
-//logger.Write(`[Child]   Cliente ${novoClienteId}`);
-var clientDir = path.join(clientWorkDir, novoClienteId);
-
 var localClient = new Client();
-localClient.id = novoClienteId;
-localClient.logger = logger;
-localClient.clientPath = clientPath;
-localClient.Setup(configuration, clientDir); 
 
-//ParseConfigAndLibs(clientDir);
+var loki = require('lokijs')
+var db = new loki('build/loki.json');
 
 
-logger.Write(`[Client:${novoClienteId}] ready`);
+loadCollection('Clientes', function (lista) {
+    //show the users
+    //console.log(lista.data);
+
+    var novoClienteId = lista.data.length;
+    //logger.Write(`[Child]   Cliente ${novoClienteId}`);
+    var clientDir = path.join(clientWorkDir, novoClienteId.toString());
+
+    lista.insert({ name: 'Cliente', id: novoClienteId, path: clientDir });
+    
+
+    localClient.id = novoClienteId;
+    localClient.logger = logger;
+    localClient.clientPath = clientPath;
+    localClient.Setup(configuration, clientDir);
+
+    //ParseConfigAndLibs(clientDir);
+
+    logger.Write(`[Client:${novoClienteId}] ready`);
+
+
+    //save 
+    db.saveDatabase();
+});
+
+
+
+
+
+
+
 
 //========================================================================================== fork-poll handling
 process.on('message', function (message) {
@@ -187,4 +199,15 @@ function ParseConfigAndLibs(workDir: string) {
 }
 
 
+function loadCollection(colName, callback) {
+    db.loadDatabase({}, function () {
+        var _collection = db.getCollection(colName);
 
+        if (!_collection) {
+            console.log("Collection %s does not exit. Creating ...", colName);
+            _collection = db.addCollection(colName);
+        }
+        db.saveDatabase();
+        callback(_collection);
+    });
+}

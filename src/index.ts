@@ -31,11 +31,6 @@ var clientOptions = '--max-old-space-size=512000';
 var allHosts: Array<string> = [];
 
 
-const Shared = require('mmap-object');
-const shared_object = new Shared.Create('build/contador.binary');
-shared_object['total'] = 0;
-shared_object.close()
-
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 var testOldDirectory: string = process.cwd();
 
