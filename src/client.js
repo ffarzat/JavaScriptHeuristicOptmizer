@@ -22,9 +22,9 @@ var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption
     clearTimeout(timeoutId);
 
     if (error) {
-        //console.log(error.stack);
-        //console.log('MPN Error code: ' + error.code);
-        //console.log('MPNSignal received: ' + error.signal);
+        console.log(error.stack);
+        console.log('MPN Error code: ' + error.code);
+        console.log('MPNSignal received: ' + error.signal);
         console.log(`{"id":"${id}", "sucess":"false", "host":"${os.hostname()}", "duration":"${clock(start)}", "error": "${error}"}`);
         process.exit(error.code);
     }
