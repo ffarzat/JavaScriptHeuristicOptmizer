@@ -18,7 +18,7 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":20,
+    "clientTimeout":60,
     "copyFileTimeout": 300,
     "clientsTotal": 40,
     "libraries" : [
