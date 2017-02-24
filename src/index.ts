@@ -158,7 +158,7 @@ function ParseConfigAndLibs() {
     //Para cada lib instalada
     for (var libIndex = 0; libIndex < configuration.libraries.length; libIndex++) {
         var element = configuration.libraries[libIndex];
-        var libDirectoryPath = path.join(process.cwd(), 'libraries', element.name);
+        var libDirectoryPath = path.join(process.cwd(), 'Libraries', element.name);
         var libNodeModules = path.join(libDirectoryPath, "node_modules");
 
         //Verifca se já existem os clients necessários no scratch
