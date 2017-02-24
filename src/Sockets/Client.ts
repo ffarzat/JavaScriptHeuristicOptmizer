@@ -196,19 +196,25 @@ export default class Client {
     private InitializeTester(context: OperatorContext) {
 
         this._tester = null; //ensure GC can pass
+        var ctx = new OperatorContext();
+
+        
+
 
         //change lib path for clientWorkDir!
         this._config.libraries.forEach(element => {
             if (element.name === context.LibrarieOverTest.name) {
-                context.LibrarieOverTest = element;
-                context.LibrarieOverTest.path = `${this.TempDirectory}/${context.LibrarieOverTest.name}`;
-                context.LibrarieOverTest.mainFilePath = `${this.TempDirectory}/${context.LibrarieOverTest.name}/${context.LibrarieOverTest.mainFilePath}`;
+                ctx.LibrarieOverTest = element;
+                ctx.LibrarieOverTest.path = `${this.TempDirectory}/${context.LibrarieOverTest.name}`;
+                ctx.LibrarieOverTest.mainFilePath = `${this.TempDirectory}/${context.LibrarieOverTest.name}/${context.LibrarieOverTest.mainFilePath}`;
+                ctx.MemoryToUse = context.MemoryToUse;
+                ctx.clientPath = context.clientPath;
             }
         });
 
-        this.logger.Write(`[Client ${this.id}] Test lib environment: ${context.LibrarieOverTest.name}`)
+        this.logger.Write(`[Client ${this.id}] Test lib environment: ${ctx.LibrarieOverTest.mainFilePath}`)
         this._tester = new TesterFactory().CreateByName(this._config.tester);
-        this._tester.Setup(this._config.testUntil, context.LibrarieOverTest, this._config.fitType, this._config.clientTimeout * 1000, this.HostsAvailable, context.MemoryToUse, context.clientPath);
+        this._tester.Setup(this._config.testUntil, ctx.LibrarieOverTest, this._config.fitType, this._config.clientTimeout * 1000, this.HostsAvailable, ctx.MemoryToUse, ctx.clientPath);
         this._tester.SetLogger(this.logger);
     }
 }
