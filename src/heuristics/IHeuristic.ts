@@ -195,7 +195,7 @@ abstract class IHeuristic extends events.EventEmitter {
     * Calculate results for a trial
     */
     ProcessResult(trialIndex: number, original: Individual, bestIndividual: Individual): TrialResults {
-
+        
         this.WriteCodeToFile(this.Original, this._lib); //back original Code to lib
 
         var results: TrialResults = new TrialResults();
@@ -342,7 +342,8 @@ abstract class IHeuristic extends events.EventEmitter {
     * Util for Winmerge comparsions
     */
     private WriteCodeToFile(individual: Individual, lib: Library) {
-        fs.writeFileSync(lib.mainFilePath, individual.ToCode());
+        var file = `Libraries/${this._lib.name}/${this._lib.mainFilePath}`;
+        fs.writeFileSync(file, individual.ToCode());
     }
 
     /**

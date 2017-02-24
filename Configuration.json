@@ -18,12 +18,12 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":15,
-    "clientsTotal": 3,
+    "clientTimeout":30,
+    "clientsTotal": 10,
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries" : [
-        {"name":"uuid",   "path":"",     "mainFilePath":"lib/uuid.js" }
+        {"name":"pug",       "path":"",         "mainFilePath":"packages/pug/lib/index.js" }
     ],
     "trialsConfiguration":[ 
         {
@@ -31,7 +31,7 @@
             "ByFunctionType": "static", 
             "especific": {
                 "neighborApproach":"LastAscent", 
-                "neighborsToProcess": 3,
+                "neighborsToProcess": 10,
                 "trials": 50,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 50, 
