@@ -20,7 +20,7 @@
     "url": "ws://localhost",
     "clientTimeout":10,
     "copyFileTimeout": 300,
-    "clientsTotal": 20,
+    "clientsTotal": 40,
     "libraries" : [
         {"name":"uuid",       "path":"",         "mainFilePath":"lib/uuid.js" }
     ],
