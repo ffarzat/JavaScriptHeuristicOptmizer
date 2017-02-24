@@ -21,6 +21,7 @@
     "clientTimeout":10,
     "copyFileTimeout": 300,
     "clientsTotal": 40,
+    "memory": 2408000,
     "libraries" : [
         {"name":"uuid",       "path":"",         "mainFilePath":"lib/uuid.js" }
     ],

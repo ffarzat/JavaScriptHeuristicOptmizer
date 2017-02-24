@@ -90,6 +90,7 @@ export default class CommandTester implements ITester {
         var min;
         var avg;
         var median;
+        var errorCMD;
 
         try {
             //output new code over main file js
@@ -155,6 +156,7 @@ export default class CommandTester implements ITester {
             min = Math.min.apply(null, numbers);
             avg = this.mean(numbers);
             median = this.median(numbers);
+            errorCMD = list['error'];
             passedAllTests =  (list[0].sucess === "true");
 
             //console.log(`Min: ${ToSecs(min)}`);
@@ -162,6 +164,7 @@ export default class CommandTester implements ITester {
             //console.log(`Mean: ${ToSecs(avg)}`);
             //console.log(`Median: ${ToSecs(median)}`);
             //console.log(`Duration: ${ToSecs(max)}`); // Now is Max
+            console.log(`Erro: ${errorCMD}`);
 
             /* FOR MPIRUN using */
 
@@ -171,7 +174,7 @@ export default class CommandTester implements ITester {
             passedAllTests = false;
         }
         finally {
-            fse.copySync(this.oldLibFilePath, this.libMainFilePath, { "clobber": true });
+            //fse.copySync(this.oldLibFilePath, this.libMainFilePath, { "clobber": true });
         }
 
         if (passedAllTests) {

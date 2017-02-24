@@ -212,7 +212,7 @@ export default class Client {
             }
         });
 
-        this.logger.Write(`[Client ${this.id}] Test lib environment: ${ctx.LibrarieOverTest.mainFilePath}`)
+        this.logger.Write(`[Client ${this.id}] Test lib environment: ${ctx.LibrarieOverTest.path}`)
         this._tester = new TesterFactory().CreateByName(this._config.tester);
         this._tester.Setup(this._config.testUntil, ctx.LibrarieOverTest, this._config.fitType, this._config.clientTimeout * 1000, this.HostsAvailable, ctx.MemoryToUse, ctx.clientPath);
         this._tester.SetLogger(this.logger);
