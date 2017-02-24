@@ -68,6 +68,7 @@ abstract class IHeuristic extends events.EventEmitter {
     ActualBestForFunctionScope: Individual;
     ActualFunction: string;
 
+    FoundedAnyBetter: boolean;
 
     /**
     * Forces the Heuristic to validate config
@@ -84,6 +85,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this.Hosts = allHosts;
         this.Messages = {};
         this.functionStack = [];
+        this.FoundedAnyBetter = false;
     }
 
     public Start() {
@@ -198,6 +200,12 @@ abstract class IHeuristic extends events.EventEmitter {
         
         this.WriteCodeToFile(this.Original, this._lib); //back original Code to lib
 
+        if(this.nodesSelectionApproach == 'ByFunction' && !this.FoundedAnyBetter){
+            //Se for por função pode n]ao ter encontrado nada e preciso reverter o melhor (está só a função e sem fit)
+            bestIndividual = this.Original.Clone();
+        }
+
+
         var results: TrialResults = new TrialResults();
         var bestCode = bestIndividual.ToCode();
         var originalCode = original.ToCode();
@@ -262,6 +270,7 @@ abstract class IHeuristic extends events.EventEmitter {
                 this._logger.Write(`New Best Fit ${this.bestFit}`);
                 this._logger.Write('=================================');
                 found = true;
+                this.FoundedAnyBetter = found;
             }
         }
         catch (err) {

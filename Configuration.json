@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials":10,
+    "trials":1,
     "startTrial": 0,
     "fitType":"median",
     "testUntil": 1,
@@ -19,10 +19,11 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":30,
-    "clientsTotal": 10,
+    "clientsTotal": 5,
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries" : [
+        {"name":"uuid",       "path":"",         "mainFilePath":"lib/uuid.js" },
         {"name":"pug",       "path":"",         "mainFilePath":"packages/pug/lib/index.js" }
     ],
     "trialsConfiguration":[ 
@@ -31,8 +32,8 @@
             "ByFunctionType": "static", 
             "especific": {
                 "neighborApproach":"LastAscent", 
-                "neighborsToProcess": 10,
-                "trials": 50,
+                "neighborsToProcess": 5,
+                "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 50, 
                 "generations": 100,
