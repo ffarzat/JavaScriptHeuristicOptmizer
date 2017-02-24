@@ -78,7 +78,7 @@ logger.Write(`clientOptions: ${clientOptions}`);
 
 var caminhodopool = __dirname.replace('build', '');
 var pool = require(caminhodopool + '/fork-pool.js');
-var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
+var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal , log: false, timeout: configuration.copyFileTimeout * 1000 });
 
 //=========================================================================================== Server!
 
