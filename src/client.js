@@ -26,7 +26,11 @@ var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption
         console.log('MPN Error code: ' + error.code);
         console.log('MPNSignal received: ' + error.signal);
         console.log(`{"id":"${id}", "sucess":"false", "host":"${os.hostname()}", "duration":"${clock(start)}", "error": "${error}"}`);
+        var fs = require('fs');
+        fs.writeFileSync("~/log-client.txt", error);
+
         process.exit(error.code);
+        
     }
     //console.log('MPN stdout: ' + stdout);
     //console.log('MPNstderr: ' + stderr);
