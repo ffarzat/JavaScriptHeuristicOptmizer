@@ -22,7 +22,7 @@
     "copyFileTimeout": 300,
     "clientsTotal": 20,
     "libraries" : [
-        {"name":"uuid",       "path":"Libraries/uuid/",         "mainFilePath":"Libraries/uuid/lib/uuid.js" }
+        {"name":"uuid",       "path":"",         "mainFilePath":"lib/uuid.js" }
     ],
     "trialsConfiguration":[
         {

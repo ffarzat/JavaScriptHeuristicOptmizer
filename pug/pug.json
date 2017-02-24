@@ -22,7 +22,7 @@
     "copyFileTimeout": 300,
     "clientsTotal": 40,
     "libraries" : [
-        {"name":"pug",       "path":"Libraries/pug/",         "mainFilePath":"Libraries/pug/packages/pug/lib/index.js" }
+        {"name":"pug",       "path":"",         "mainFilePath":"packages/pug/lib/index.js" }
     ],
     "trialsConfiguration":[
         {
