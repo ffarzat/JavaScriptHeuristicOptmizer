@@ -1,5 +1,5 @@
 /// <reference path="./typings/tsd.d.ts" />
-//	node build/src/AnaliseTempo.js D:\GitHub\JavaScriptHeuristicOptmizer\Libraries\uuid lib\uuid.js D:\Dropbox\Doutorado\2016\Experimento\NACAD\Resultados\uuid 2
+//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/uuid' 30 5
 
 import TestResults from './TestResults';
 
@@ -14,11 +14,13 @@ const child_process = require('child_process');
 var uuid = require('node-uuid');
 var bufferOption = { maxBuffer: 1024 * 5000 }
 
-var heuristicas = ['RD', 'HC', 'GA'];
-var DiretorioBiblioteca = process.argv[2];
-var arquivoRootBiblioteca = process.argv[3];
-var DiretorioResultados = process.argv[4];
-var Quantidade = parseInt(process.argv[5]);
+//var heuristicas = ['RD', 'HC', 'GA'];
+var heuristicas = ['HC'];
+var DiretorioBiblioteca = process.argv[2].replace("'", "");
+var arquivoRootBiblioteca = process.argv[3].replace("'", "");
+var DiretorioResultados = process.argv[4].replace("'", "");
+var QuantidadeRodadas = parseInt(process.argv[5]);
+var Quantidade = parseInt(process.argv[6]);
 var resultadosProcessados = [];
 var os = require("os");
 
@@ -27,6 +29,7 @@ arquivoRootBiblioteca = path.join(DiretorioBiblioteca, arquivoRootBiblioteca);
 console.log(`${DiretorioBiblioteca}`);
 console.log(`${arquivoRootBiblioteca}`);
 console.log(`${DiretorioResultados}`);
+console.log(`Verificar as ${QuantidadeRodadas} rodadas existentes`);
 console.log(`Executar os testes ${Quantidade} vezes`);
 
 
@@ -38,7 +41,7 @@ if (!fs.existsSync(oldLibFilePath))
 
 //============================================================================================ Original //>
 
-var caminhoOriginal = DiretorioResultados + '/RD/original.js';
+var caminhoOriginal = DiretorioResultados + `/${heuristicas[0]}/original.js`;
 var codigoOriginal = fs.readFileSync(caminhoOriginal, 'UTF8');
 WriteCodeToFile(arquivoRootBiblioteca, codigoOriginal);
 
@@ -50,7 +53,7 @@ resultadosProcessados.push(resultadoOriginal);
 //============================================================================================ Rodadas //>
 
 heuristicas.forEach(heuristica => {
-    for (var index = 0; index < 59; index++) {
+    for (var index = 0; index < QuantidadeRodadas; index++) {
         console.log(`Executando rodada ${index} da heuristica ${heuristica}`);
 
         var caminhoArquivoRodada = DiretorioResultados + "/" + heuristica + "/" + index + ".js";
