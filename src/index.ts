@@ -46,6 +46,7 @@ if (retrial != undefined) {
     configuration.startTrial = intStartTrial;
     configuration.logFilePath = configuration.logFilePath.replace("build/", `build/${retrial}-`);
     configuration.trialResultsFile = `${retrial}-` + configuration.trialResultsFile;
+    configuration.retrial = intStartTrial;
 }
 
 //=========================================================================================== Logger

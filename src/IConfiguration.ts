@@ -152,6 +152,11 @@ interface IConfiguration {
      */
     memory: number;
 
+    /**
+     * Determina a chamada realizada pelo LoboC e muda o diretório dos clientes para permitir várias execuções em paralelo
+     */
+    retrial: number;
+
 }
 
 export default IConfiguration;
