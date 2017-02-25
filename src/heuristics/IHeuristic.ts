@@ -202,8 +202,7 @@ abstract class IHeuristic extends events.EventEmitter {
         
         this.WriteCodeToFile(this.Original, this._lib); //back original Code to lib
 
-        if(this.nodesSelectionApproach == 'ByFunction' && !this.FoundedAnyBetter){
-            //Se for por função pode n]ao ter encontrado nada e preciso reverter o melhor (está só a função e sem fit)
+        if(this.nodesSelectionApproach == 'ByFunction' && !bestIndividual.testResults && !bestIndividual.testResults.fit){
             bestIndividual = this.Original.Clone();
         }
 
