@@ -1,11 +1,11 @@
-var Directory = "D:/Dropbox/Doutorado/2016/Experimento/NACAD/Resultados/minimist/GA";
+var Directory = "/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/pug/HC";
 var FileResults = "Results-grouped.csv";
 //====================================================================================//>
 var fs = require('fs');
 var runResult = "";
 runResult += "sep=,\ntrial,originalIndividualAvgTime,originalIndividualLOC,originalIndividualCharacters,bestIndividualAvgTime,bestIndividualLOC,bestIndividualCharacters,time,better\n";
 
-for (var index = 0; index < 60; index++) {
+for (var index = 0; index < 30; index++) {
 
     var text = fs.readFileSync(`${Directory}/${index}-Results.csv`,'utf8');
     var arr = text.split("\n");  
