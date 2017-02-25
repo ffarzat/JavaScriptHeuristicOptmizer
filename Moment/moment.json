@@ -7,7 +7,7 @@
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/moment.log",
-    "tmpDirectory": "/scratch/41061a/ffarzat1981/libstemp",
+    "tmpDirectory": "/scratch/41061a/ffarzat1981/clients",
     "logCategory":"optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
@@ -20,17 +20,17 @@
     "url": "ws://localhost",
     "clientTimeout":20,
     "copyFileTimeout": 14400,
-    "clientsTotal": 40,
+    "clientsTotal": 20,
     "libraries" : [
-        {"name":"moment",       "path":"Libraries/moment/",         "mainFilePath":"Libraries/moment/global.js" }
+        {"name":"moment",       "path":"",         "mainFilePath":"global.js" }
     ],
     "trialsConfiguration":[
         {
             "nodesSelectionApproach":"ByFunction",
-            "ByFunctionType": "dynamic", 
+            "ByFunctionType": "static", 
             "especific": {
                 "neighborApproach":"LastAscent", 
-                "neighborsToProcess": 40,
+                "neighborsToProcess": 20,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
