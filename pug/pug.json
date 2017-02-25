@@ -20,7 +20,7 @@
     "url": "ws://localhost",
     "clientTimeout":60,
     "copyFileTimeout": 300,
-    "clientsTotal": 40,
+    "clientsTotal": 20,
     "memory": 2408000,
     "libraries" : [
         {"name":"pug",       "path":"",         "mainFilePath":"packages/pug/lib/index.js" }
@@ -31,7 +31,7 @@
             "ByFunctionType": "static", 
             "especific": {
                 "neighborApproach":"LastAscent", 
-                "neighborsToProcess": 40,
+                "neighborsToProcess": 20,
                 "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 

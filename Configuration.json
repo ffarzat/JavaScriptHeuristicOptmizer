@@ -23,7 +23,7 @@
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries" : [
-        {"name":"pug",       "path":"",         "mainFilePath":"packages/pug/lib/index.js" }
+        {"name":"uuid",       "path":"",         "mainFilePath":"lib/uuid.js" }
     ],
     "trialsConfiguration":[ 
         {
