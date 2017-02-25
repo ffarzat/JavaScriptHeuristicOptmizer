@@ -23,7 +23,6 @@
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries" : [
-        {"name":"uuid",       "path":"",         "mainFilePath":"lib/uuid.js" },
         {"name":"pug",       "path":"",         "mainFilePath":"packages/pug/lib/index.js" }
     ],
     "trialsConfiguration":[ 
@@ -33,7 +32,7 @@
             "especific": {
                 "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 5,
-                "trials": 5000,
+                "trials": 10,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 50, 
                 "generations": 100,

@@ -26,7 +26,7 @@ export default class HC extends IHeuristic {
     operationsCount: number;
     typeIndexCounter: number;
 
-    totalOperationsCounter: number;
+    neighbors: Individual[];
 
     /**
     * Especific Setup
@@ -39,6 +39,8 @@ export default class HC extends IHeuristic {
         this.trials = config.trials;
         this.nodesType = config.nodesType;
         this.typeIndexCounter = 0;
+        this.totalOperationsCounter = 0;
+        this.neighbors = [];
 
     }
 
@@ -46,6 +48,8 @@ export default class HC extends IHeuristic {
     * Run the trial
     */
     RunTrial(trialIndex: number, library: Library, cb: (results: TrialResults) => void) {
+        this.totalOperationsCounter = 0;
+        this.neighbors = [];
         this._logger.Write(`[HC] Starting  Trial ${trialIndex}`);
         this._logger.Write(`[HC] Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`[HC] Using nodesType: ${this.nodesType}`);
@@ -54,7 +58,6 @@ export default class HC extends IHeuristic {
         this.SetLibrary(library, (sucess: boolean) => {
             if (sucess) {
                 this.Start();
-
                 var totalTrials = this.trials;
                 this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
                 this._logger.Write(`[HC] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
@@ -107,10 +110,7 @@ export default class HC extends IHeuristic {
     }
 
 
-    /**
-     * Surrogate para a runByFunction
-     */
-    private ExecutarPorFuncao(trialIndex: number, cb: (results: TrialResults) => void) {
+    TrocarFuncao(trialIndex: number, cb: (results: TrialResults) => void) {
         var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
 
         if (funcaoAtual == undefined || funcaoAtual == "undefined") {
@@ -122,7 +122,14 @@ export default class HC extends IHeuristic {
         }
         //Seta a fução atual
         this.ActualFunction = funcaoAtual;
-        this._logger.Write(`[HC] Otimizando a função ${this.ActualFunction}! ${typeof this.ActualFunction}`);
+        this._logger.Write(`[HC] Otimizando a função ${this.ActualFunction}!`);
+    }
+
+    /**
+     * Surrogate para a runByFunction
+     */
+    private ExecutarPorFuncao(trialIndex: number, cb: (results: TrialResults) => void) {
+        this.TrocarFuncao(trialIndex, cb);
         //Array com todos os indices de nó
         let nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
         this.typeIndexCounter = 0;
@@ -139,10 +146,10 @@ export default class HC extends IHeuristic {
         //this._logger.Write(`[HC] Orçamento: ${this.trials - this.operationsCount}`);
         this.operationsCount = 0;
 
-
+        this.neighbors = []
 
         process.nextTick(() => {
-            this.ExecutarMutacoesConfiguradas(0, [], indexes, nodesIndexList, (mutants, updatedIndexes, finish) => {
+            this.ExecutarMutacoesConfiguradas(0, indexes, nodesIndexList, (mutants, updatedIndexes, finish) => {
 
                 if (time == this.howManyTimes || finish) { //Done!
                     this.Stop();
@@ -160,30 +167,60 @@ export default class HC extends IHeuristic {
     /**
     * Do N mutants per time
     */
-    private ExecutarMutacoesConfiguradas(counter: number, neighbors: Individual[], indexes: NodeIndex, nodesIndexList: NodeIndex[], cb: (mutants: Individual[], indexes: NodeIndex, done: boolean) => void) {
+    private ExecutarMutacoesConfiguradas(counter: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], cb: (mutants: Individual[], indexes: NodeIndex, done: boolean) => void) {
         let itsover: boolean = false;
 
+
+        //Waiting to be done!
+        if (!this.intervalId) {
+
+            this.intervalId = setInterval(() => {
+                this._logger.Write(`[HC] setInterval -> Neighbors ${this.neighbors.length}, Operations ${this.operationsCount}`);
+                //, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
+
+                if (this.neighbors.length >= this.operationsCount) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = undefined;
+
+                    //Acabou a farra
+                    if (this.totalOperationsCounter >= this.trials) {
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
+                        cb(this.neighbors, indexes, true);
+                    }
+
+                    if (this.typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
+                        clearInterval(this.intervalId);
+                        this.intervalId = undefined;
+                        cb(this.neighbors, indexes, true);
+                    }
+                    else {
+                        cb(this.neighbors, indexes, false);
+                    }
+                }
+            }, 1 * 1000); //each ten secs
+        }
+
         if (this.totalOperationsCounter >= this.trials) {
-            this._logger.Write(`[HC] Orçamento Esgotado ${this.trials}`);
-            itsover = true
+            this._logger.Write(`[HC] Orçamento Esgotado ${this.trials}. Aguardando`);
+            return;
         }
         else {
             this._logger.Write(`[HC] Orçamento atual ${this.trials - this.totalOperationsCounter}`);
+            //this._logger.Write(`[HC] vizinho ${counter}`);
         }
-
 
         //Rest some mutant to process?
         if (counter < this._config.neighborsToProcess) {
             // its over actual index? (IF, CALL, etc)
             if (indexes.Indexes[indexes.ActualIndex] == undefined) {
+                //acabou? Tenta o próximo
+                this.typeIndexCounter++;
                 indexes = nodesIndexList[this.typeIndexCounter];
                 this._logger.Write(`[HC] Tentando mudar de indice [${this.typeIndexCounter}]`);
 
-
                 if (indexes == undefined || indexes.Indexes.length == 0) {
-                    this._logger.Write(`[HC] Todos os vizinhos foram visitados`);
-                    itsover = true;
-                    cb(neighbors, indexes, (this.functionStack.length == 0));
+                    this._logger.Write(`[HC] Todos os vizinhos foram visitados. Aguardando.`);
                     return;
                 }
             }
@@ -192,45 +229,26 @@ export default class HC extends IHeuristic {
             if (!itsover) {
                 this.totalOperationsCounter++;
                 this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
-                    neighbors.push(mutant);
+                    //this._logger.Write(`[HC] Voltando... neighbors: ${this.neighbors.length} `);
+                    try {
+                        this.neighbors.push(mutant);
+                    }
+                    catch(error){
+                        this._logger.Write(`[HC] MutateBy error: ${error} `);
+                        this.neighbors.push(this.ActualBestForFunctionScope.Clone());
+                    }
+
+                    ///this._logger.Write(`[HC] Voltando... neighbors: ${this.neighbors.length} `);
+                    
                 });
 
                 counter++;
                 this.operationsCount = counter;
                 process.nextTick(() => {
-                    this.ExecutarMutacoesConfiguradas(counter++, neighbors, indexes, nodesIndexList, cb);
+                    this.ExecutarMutacoesConfiguradas(counter++, indexes, nodesIndexList, cb);
                 });
             }
 
-        }
-
-        //Process all neighbors?
-        if (neighbors.length == this.operationsCount) {
-            cb(neighbors, indexes, false);
-            return;
-        }
-
-        //Waiting to be done!
-        if (!this.intervalId) {
-
-            this.intervalId = setInterval(() => {
-                //this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}`);
-                //, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
-
-                if (neighbors.length == this.operationsCount) {
-                    clearInterval(this.intervalId);
-                    this.intervalId = undefined;
-
-                    if (this.typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
-                        clearInterval(this.intervalId);
-                        this.intervalId = undefined;
-                        cb(neighbors, indexes, true);
-                    }
-                    else {
-                        cb(neighbors, indexes, false);
-                    }
-                }
-            }, 1 * 1000); //each ten secs
         }
     }
 

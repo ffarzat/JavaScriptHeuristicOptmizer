@@ -28,7 +28,7 @@ export default class Optmizer {
     tester: ITester;
     outter: IOutWriter;
     nodesSelectionApproach: string;
-    byFunctionType :string;
+    byFunctionType: string;
     nodesType: string[] = [];
     heuristics: IHeuristic[] = [];
 
@@ -185,14 +185,14 @@ export default class Optmizer {
             this.actualHeuristic.ActualInternalTrial = this.heuristicTrial;
             this.actualHeuristic.ActualLibrary = actualLibrary.name;
             this.actualHeuristic.CleanServer = true;
+            this.actualHeuristic.totalOperationsCounter = 0
 
             //this.logger.Write(`   [Optmizer] Setting Status data for ${actualHeuristic.Name}`);
 
             this.actualHeuristic.RunTrial(this.trialIndex, actualLibrary, (resultaForTrial) => {
                 if (resultaForTrial == undefined) {
                     this.logger.Write(` [Optmizer] Fail to execute test for  ${actualLibrary.name} original code.`);
-                } else 
-                {
+                } else {
                     this.outter.WriteTrialResults(resultaForTrial);
                     this.outter.Finish();
                     this.Notify(resultaForTrial);
@@ -245,13 +245,21 @@ export default class Optmizer {
 
         try {
             this.runLibOverHeuristic(libIndex, 0, () => {
-                this.logger.Write(` [Optmizer] libIndex ${libIndex}`);
                 var element = this.configuration.libraries[libIndex];
-                this.logger.Write(` [Optmizer] Trial ${this.trialIndex} for Library ${element.name} done.`);
-                
+
+                if (element) {
+                    this.logger.Write(` [Optmizer] libIndex ${libIndex}`);
+                    this.logger.Write(` [Optmizer] Trial ${this.trialIndex} for Library ${element.name} done.`);
+                }
+                else {
+                    this.logger.Write(` [Optmizer] Encerrando por motivo de falha [Farzat]`);
+                    DoOptmizationcb();
+                    return;
+                }
+
                 libIndex++;
 
-                if (this.configuration.libraries.length == libIndex) {
+                if (this.configuration.libraries.length == libIndex || element == undefined) {
                     DoOptmizationcb();
                     return;
                 }

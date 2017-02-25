@@ -70,6 +70,8 @@ abstract class IHeuristic extends events.EventEmitter {
 
     FoundedAnyBetter: boolean;
 
+    totalOperationsCounter: number;
+
     /**
     * Forces the Heuristic to validate config
     */
