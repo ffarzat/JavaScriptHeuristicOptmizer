@@ -466,6 +466,7 @@ abstract class IHeuristic extends events.EventEmitter {
     */
     CreateOriginalFromLibraryConfiguration(library: Library): Individual {
         var file = `Libraries/${library.name}/${library.mainFilePath}`;
+        this._logger.Write(`Arquivo Original: ${file}`);
         return this._astExplorer.GenerateFromFile(file);
     }
 
