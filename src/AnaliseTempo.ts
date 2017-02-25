@@ -1,5 +1,5 @@
 /// <reference path="./typings/tsd.d.ts" />
-//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/uuid' 30 5
+//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/lodash' 'lodash.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/lodash' 30 5
 
 import TestResults from './TestResults';
 
@@ -66,7 +66,7 @@ heuristicas.forEach(heuristica => {
             resultadosProcessados.push(ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade, `${index}`, heuristica));
         }
         else {
-
+            console.log(`   O código é igual ao original`);
             var resultadoFinal: TestResults = new TestResults();
 
             resultadoFinal.rounds = Quantidade;
