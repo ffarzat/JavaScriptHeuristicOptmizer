@@ -1,6 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
+#PBS -l walltime=20:00:00
 #PBS -N pug-30x
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
