@@ -1,4 +1,4 @@
-var Directory = "/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/pug/HC";
+var Directory = "/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/uuid/RD";
 var FileResults = "Results-grouped.csv";
 //====================================================================================//>
 var fs = require('fs');

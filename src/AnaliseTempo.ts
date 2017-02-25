@@ -1,5 +1,5 @@
 /// <reference path="./typings/tsd.d.ts" />
-//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/lodash' 'lodash.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/lodash' 30 5
+//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/uuid' 30 5
 
 import TestResults from './TestResults';
 
@@ -15,7 +15,7 @@ var uuid = require('node-uuid');
 var bufferOption = { maxBuffer: 1024 * 5000 }
 
 //var heuristicas = ['RD', 'HC', 'GA'];
-var heuristicas = ['HC'];
+var heuristicas = ['HC', 'RD'];
 var DiretorioBiblioteca = process.argv[2].replace("'", "");
 var arquivoRootBiblioteca = process.argv[3].replace("'", "");
 var DiretorioResultados = process.argv[4].replace("'", "");
