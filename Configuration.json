@@ -19,7 +19,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":30,
-    "clientsTotal": 5,
+    "clientsTotal": 2,
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries" : [
@@ -31,8 +31,8 @@
             "ByFunctionType": "static", 
             "especific": {
                 "neighborApproach":"LastAscent", 
-                "neighborsToProcess": 5,
-                "trials": 10,
+                "neighborsToProcess": 2,
+                "trials": 100,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 50, 
                 "generations": 100,

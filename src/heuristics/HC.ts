@@ -157,6 +157,11 @@ export default class HC extends IHeuristic {
                     cb(results);
                     return;
                 } else {
+
+                    mutants.forEach(element => {
+                        this.UpdateBest(element);
+                    });
+
                     this.ExecutarPorFuncao(trialIndex, cb); //recursivo
                 }
 
