@@ -74,12 +74,11 @@ if (hostfile == undefined || hostfile == null || hostfile == "undefined" || host
 
     clientOptions = '--max-old-space-size=512000';
 }
-
 logger.Write(`clientOptions: ${clientOptions}`);
 
 var caminhodopool = __dirname.replace('build', '');
 var pool = require(caminhodopool + '/fork-pool.js');
-var uniquePool = new pool(__dirname + '/Child.js', [configFile], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
+var uniquePool = new pool(__dirname + '/Child.js', [configFile, retrial], { execArgv: [clientOptions] }, { size: configuration.clientsTotal + 1, log: false, timeout: configuration.copyFileTimeout * 1000 });
 
 //=========================================================================================== Server!
 
@@ -167,9 +166,23 @@ function ParseConfigAndLibs() {
             var tempClientpath = path.join(configuration.tmpDirectory, clientIndex.toString());
             var tempLibPath = path.join(tempClientpath, element.name);
 
+            //Patch for parallel from PSB command line
+            if (retrial != undefined) {
+                tempClientpath = path.join(configuration.tmpDirectory, `rodada${retrial}`, clientIndex.toString());
+                tempLibPath = path.join(tempClientpath, element.name);
+            }
+
             if (!fs.existsSync(tempLibPath)) {
                 logger.Write(`[index] Criando o client ${clientIndex} em ${tempLibPath}`);
-                
+
+                if (retrial != undefined) {
+                    var pathRodada = path.join(configuration.tmpDirectory, `rodada${retrial}`);
+                    
+                    if (!fs.existsSync(pathRodada)) {
+                        fs.mkdirSync(pathRodada);
+                    }
+                }
+
                 if (!fs.existsSync(tempClientpath)) {
                     fs.mkdirSync(tempClientpath);
                 }

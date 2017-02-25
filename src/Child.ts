@@ -22,7 +22,8 @@ var configurationFile: string = path.join(process.cwd(), configFile);
 var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
 
 //console.log(process.argv);
-var novoClienteId = process.argv[3];
+var retrial = process.argv[3];
+var novoClienteId = process.argv[4];
 var clientPath = 'src/client.js';
 var testOldDirectory: string = process.cwd();
 var clientWorkDir = configuration.tmpDirectory; //Diretorio para execução dos testes
@@ -45,6 +46,11 @@ var localClient = new Client();
 
 //logger.Write(`[Child]   Cliente ${novoClienteId}`);
 var clientDir = path.join(clientWorkDir, novoClienteId.toString());
+
+if(retrial != undefined)
+{
+    clientDir = path.join(clientWorkDir, `rodada${retrial}`, novoClienteId.toString());
+}
 
 localClient.id = novoClienteId;
 localClient.logger = logger;
