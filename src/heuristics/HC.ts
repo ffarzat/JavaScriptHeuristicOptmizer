@@ -131,7 +131,7 @@ export default class HC extends IHeuristic {
     private ExecutarPorFuncao(trialIndex: number, cb: (results: TrialResults) => void) {
         this.TrocarFuncao(trialIndex, cb);
         //Array com todos os indices de nó
-        let nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
+        let nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual.Clone());
         this.typeIndexCounter = 0;
         //Indice atual
         let indexes: NodeIndex = nodesIndexList[this.typeIndexCounter];
@@ -153,14 +153,15 @@ export default class HC extends IHeuristic {
 
                 if (time == this.howManyTimes || finish) { //Done!
                     this.Stop();
-                    var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+                    var results = this.ProcessResult(trialIndex, this.Original, this.ActualBestForFunctionScope);
                     cb(results);
                     return;
                 } else {
 
-                    mutants.forEach(element => {
+                    for (var z = 0; z < mutants.length; z++) {
+                        var element = mutants[z];
                         this.UpdateBest(element);
-                    });
+                    }
 
                     this.ExecutarPorFuncao(trialIndex, cb); //recursivo
                 }
@@ -233,18 +234,20 @@ export default class HC extends IHeuristic {
             //All neighbors were visited?
             if (!itsover) {
                 this.totalOperationsCounter++;
+                //Entra a AST da Função atual sendo otimizada
                 this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
                     //this._logger.Write(`[HC] Voltando... neighbors: ${this.neighbors.length} `);
                     try {
+                        //Volta um mutante completo e testado
                         this.neighbors.push(mutant);
                     }
-                    catch(error){
+                    catch (error) {
                         this._logger.Write(`[HC] MutateBy error: ${error} `);
-                        this.neighbors.push(this.ActualBestForFunctionScope.Clone());
+                        this.neighbors.push(this.Original.Clone());
                     }
 
                     ///this._logger.Write(`[HC] Voltando... neighbors: ${this.neighbors.length} `);
-                    
+
                 });
 
                 counter++;

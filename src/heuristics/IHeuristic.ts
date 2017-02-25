@@ -174,7 +174,7 @@ abstract class IHeuristic extends events.EventEmitter {
         var context = new OperatorContext();
         context.Operation = "Test";
         context.First = individual;
-        context.Original = this.bestIndividual; //is usual to be the original
+        context.Original = this.bestIndividual.Clone(); //is usual to be the original
         context.LibrarieOverTest = this._lib;
         context.MemoryToUse = this._globalConfig.memory == undefined ? 2047 : this._globalConfig.memory;
 
@@ -200,9 +200,12 @@ abstract class IHeuristic extends events.EventEmitter {
     */
     ProcessResult(trialIndex: number, original: Individual, bestIndividual: Individual): TrialResults {
         
-        this.WriteCodeToFile(this.Original, this._lib); //back original Code to lib
+        //this.WriteCodeToFile(this.Original, this._lib); //back original Code to lib
 
-        if(this.nodesSelectionApproach == 'ByFunction' && !bestIndividual.testResults && !bestIndividual.testResults.fit){
+        this._logger.Write(`[IHeuristic] bestIndividual.testResults = ${bestIndividual.testResults == undefined}`);
+
+        if(this.nodesSelectionApproach == 'ByFunction' && bestIndividual.testResults == undefined){
+            this._logger.Write(`[IHeuristic] Não encontrou melhor. Voltando ao original...`);
             bestIndividual = this.Original.Clone();
         }
 
@@ -263,11 +266,14 @@ abstract class IHeuristic extends events.EventEmitter {
         var found: boolean = false;
         var newCode = newBest.ToCode();
         try {
-            if (newBest.testResults && newBest.testResults.passedAllTests && (parseInt(newBest.testResults.fit.toString()) < parseInt(this.bestFit.toString())) && (newCode != "") && (newCode != this.bestIndividual.ToCode())) {
+            var localBest: Individual = this.nodesSelectionApproach == "ByFunction"? this.ActualBestForFunctionScope.Clone() :this.bestIndividual.Clone() ;
+            
+            if (newBest.testResults && newBest.testResults.passedAllTests && (parseInt(newBest.testResults.fit.toString()) < parseInt(this.bestFit.toString())) && (newCode != "") && (newCode != localBest.ToCode())) {
                 this._logger.Write('=================================');
                 this._logger.Write(`Older Fit ${this.bestFit}`);
                 this.bestFit = newBest.testResults.fit;
-                this.bestIndividual = newBest;
+                this.ActualBestForFunctionScope = newBest.Clone();
+                this.bestIndividual = this.nodesSelectionApproach == "ByFunction" ? this.bestIndividual : newBest.Clone();
                 this._logger.Write(`New Best Fit ${this.bestFit}`);
                 this._logger.Write('=================================');
                 found = true;
@@ -384,7 +390,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
-        this.bestIndividual = this.Original;
+        this.bestIndividual = this.Original.Clone();
 
         //ByFunction, Global, static and dynamic
         if (this.nodesSelectionApproach == "ByFunction") {
@@ -425,7 +431,7 @@ abstract class IHeuristic extends events.EventEmitter {
             else {
                 //Force Best
                 this.bestFit = this.Original.testResults.fit;
-                this.bestIndividual = this.Original;
+                this.bestIndividual = this.Original.Clone();
 
                 this._logger.Write(`[IHeuristic] Original Fit ${this.bestFit}`);
                 this._logger.Write('=================================');
