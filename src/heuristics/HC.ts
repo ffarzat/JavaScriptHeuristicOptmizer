@@ -23,10 +23,8 @@ export default class HC extends IHeuristic {
     howManyTimes: number;
 
     intervalId;
-    operationsCount: number;
     typeIndexCounter: number;
-
-    neighbors: Individual[];
+    
 
     /**
     * Especific Setup

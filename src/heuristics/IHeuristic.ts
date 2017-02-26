@@ -72,6 +72,10 @@ abstract class IHeuristic extends events.EventEmitter {
 
     totalOperationsCounter: number;
 
+
+    operationsCount: number;
+    neighbors: Individual[];
+
     /**
     * Forces the Heuristic to validate config
     */
@@ -199,12 +203,12 @@ abstract class IHeuristic extends events.EventEmitter {
     * Calculate results for a trial
     */
     ProcessResult(trialIndex: number, original: Individual, bestIndividual: Individual): TrialResults {
-        
+
         //this.WriteCodeToFile(this.Original, this._lib); //back original Code to lib
 
         this._logger.Write(`[IHeuristic] bestIndividual.testResults = ${bestIndividual.testResults == undefined}`);
 
-        if(this.nodesSelectionApproach == 'ByFunction' && bestIndividual.testResults == undefined){
+        if (this.nodesSelectionApproach == 'ByFunction' && bestIndividual.testResults == undefined) {
             this._logger.Write(`[IHeuristic] Não encontrou melhor. Voltando ao original...`);
             bestIndividual = this.Original.Clone();
         }
@@ -266,8 +270,8 @@ abstract class IHeuristic extends events.EventEmitter {
         var found: boolean = false;
         var newCode = newBest.ToCode();
         try {
-            var localBest: Individual = this.nodesSelectionApproach == "ByFunction"? this.ActualBestForFunctionScope.Clone() :this.bestIndividual.Clone() ;
-            
+            var localBest: Individual = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
+
             if (newBest.testResults && newBest.testResults.passedAllTests && (parseInt(newBest.testResults.fit.toString()) < parseInt(this.bestFit.toString())) && (newCode != "") && (newCode != localBest.ToCode())) {
                 this._logger.Write('=================================');
                 this._logger.Write(`Older Fit ${this.bestFit}`);

@@ -47,7 +47,7 @@ var localClient = new Client();
 //logger.Write(`[Child]   Cliente ${novoClienteId}`);
 var clientDir = path.join(clientWorkDir, novoClienteId.toString());
 
-if(retrial != undefined)
+if(retrial !== undefined && retrial !== "undefined")
 {
     clientDir = path.join(clientWorkDir, `rodada${retrial}`, novoClienteId.toString());
 }
