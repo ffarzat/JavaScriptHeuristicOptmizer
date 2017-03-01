@@ -162,7 +162,8 @@ function ParseConfigAndLibs() {
         var libNodeModules = path.join(libDirectoryPath, "node_modules");
 
         //Verifca se já existem os clients necessários no scratch
-        for (var clientIndex = 0; clientIndex < configuration.clientsTotal; clientIndex++) {
+        //for (var clientIndex = 0; clientIndex < configuration.clientsTotal; clientIndex++) {
+        for (var clientIndex = 0; clientIndex < 40; clientIndex++) {
             var tempClientpath = path.join(configuration.tmpDirectory, clientIndex.toString());
             var tempLibPath = path.join(tempClientpath, element.name);
 
@@ -177,7 +178,7 @@ function ParseConfigAndLibs() {
 
                 if (retrial != undefined) {
                     var pathRodada = path.join(configuration.tmpDirectory, `rodada${retrial}`);
-                    
+
                     if (!fs.existsSync(pathRodada)) {
                         fs.mkdirSync(pathRodada);
                     }
