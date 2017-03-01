@@ -20,6 +20,8 @@
     "qunitjs": "^1.20.0"
   },
   "dependencies": {
-    "phantomjs-prebuilt": "^2.1.7"
+    "asset": "^0.4.13",
+    "phantomjs-prebuilt": "^2.1.7",
+    "qunitjs": "^1.23.1"
   }
 }

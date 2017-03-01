@@ -91,7 +91,7 @@
       result = params;
     }
     var last = result[result.length - 1];
-    result = (result.length > min && !/test(?:\.js)?$/.test(last)) ? last : '../lodash.js';
+    result = (result.length > min && !/test(?:\.js)?$/.test(last)) ? last : './lodash.js';
 
     if (!amd) {
       try {
@@ -205,16 +205,16 @@
 
   /** The unit testing framework. */
   var QUnit = root.QUnit || (root.QUnit = (
-    QUnit = load('../node_modules/qunitjs/qunit/qunit.js') || root.QUnit,
+    QUnit = load('./node_modules/qunitjs/qunit/qunit.js') || root.QUnit,
     QUnit = QUnit.QUnit || QUnit
   ));
 
   /** Load QUnit Extras and ES6 Set/WeakMap shims. */
   (function() {
     var paths = [
-      './asset/set.js',
-      './asset/weakmap.js',
-      '../node_modules/qunit-extras/qunit-extras.js'
+//      './asset/set.js',
+//      './asset/weakmap.js',
+      './node_modules/qunit-extras/qunit-extras.js'
     ];
 
     var index = -1,
