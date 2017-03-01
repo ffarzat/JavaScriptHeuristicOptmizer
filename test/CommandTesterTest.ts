@@ -56,7 +56,7 @@ describe('CommandTester Tests', function () {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[3]; //Libraries/exectimer
+        var lib = configuration.libraries[4]; //Libraries/pug
 
         //Creates the Inidividual for tests
         var astExplorer: ASTExplorer = new ASTExplorer();
@@ -78,7 +78,7 @@ describe('CommandTester Tests', function () {
         var optmizerFunctionsInternalList = {};
 
         function Enter(details){
-            console.log(details.name + ' + 1!');
+            //console.log(details.name + ' + 1!');
 
             if(optmizerFunctionsInternalList === undefined)
             {
