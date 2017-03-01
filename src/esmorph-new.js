@@ -94,7 +94,7 @@
         function isFunction(node) {
             return node.type && node.range &&
                 (node.type === esprima.Syntax.FunctionDeclaration ||
-                node.type === esprima.Syntax.FunctionExpression);
+                    node.type === esprima.Syntax.FunctionExpression);
         }
 
         traverse(functionNode, function (node, path) {
@@ -121,36 +121,14 @@
     function collectFunction(code, tree) {
         var functionList = [];
 
-        traverse(tree, function (node, path) {
-            var name, parent;
+        //var caminho = __dirname.replace('build', '');
+        //console.log(__dirname);
+        var functionExtractor = require('./heuristics/function-extractor.js');
+        var functions = functionExtractor.interpret(tree);
 
-            if (node.type === esprima.Syntax.FunctionDeclaration) {
-                name = node.id.name;
-            } else if (node.type === esprima.Syntax.FunctionExpression) {
-                parent = path[0];
-                if (parent.type === esprima.Syntax.AssignmentExpression) {
-                    if (typeof parent.left.range !== 'undefined') {
-                        name = code.slice(parent.left.range[0], parent.left.range[1]).replace(/"/g, '\\"');
-                    }
-                } else if (parent.type === esprima.Syntax.VariableDeclarator) {
-                    name = parent.id.name;
-                } else if (parent.type === esprima.Syntax.CallExpression) {
-                    name = parent.callee.id ? parent.callee.id.name : '[Anonymous]';
-                } else if (typeof parent.length === 'number') {
-                    name = parent.id ? parent.id.name : '[Anonymous]';
-                } else if (typeof parent.key !== 'undefined') {
-                    if (parent.key.type === 'Identifier') {
-                        if (parent.value === node && parent.key.name) {
-                            name = parent.key.name;
-                        }
-                    }
-                }
-            }
-            if (name) {
-                name = name.replace(/'/g, "\\'");
-                functionList.push({ name: name, node: node, exit: findExit(node) });
-            }
-        });
+        for (var i = 0; i < functions.length; i++) {
+            functionList.push({ name: functions[i].name, node: functions[i].node, exit: findExit(functions[i].node) });
+        }
 
         return functionList;
     }
@@ -192,14 +170,14 @@
                 range = functionList[i].node.range;
                 pos = functionList[i].node.body.range[0] + 1;
                 var params = functionList[i].node.params;
-		        var body = functionList[i].node.body;
+                var body = functionList[i].node.body;
                 if (typeof traceName === 'function') {
                     signature = traceName.call(null, {
                         name: name,
                         line: line,
                         range: range,
                         paramData: params,  // Added for flagger.js
-			            body: body, // Added for flagger.js field mod check
+                        body: body, // Added for flagger.js field mod check
                     });
                 } else {
                     signature = traceName + '({ ';
@@ -217,7 +195,7 @@
 
             return fragments;
         };
-    } 
+    }
 
     function traceFunctionExit(traceName) {
 
@@ -299,8 +277,8 @@
             var name, parent;
 
             if (node.type === esprima.Syntax.VariableDeclaration && node.kind === "var") {
-                var names = node.declarations.map(function(val) { return val.id.name});
-                declarationList.push({names: names, node: node });
+                var names = node.declarations.map(function (val) { return val.id.name });
+                declarationList.push({ names: names, node: node });
             }
         });
 
@@ -336,9 +314,9 @@
                         names: names,
                         line: line,
                         range: range,
-                        declarations: declarations,  
+                        declarations: declarations,
                     });
-                } 
+                }
                 signature = '\n' + signature;
                 fragments.push({
                     index: pos,
@@ -348,55 +326,55 @@
 
             return fragments;
         };
-    } 
+    }
 
     /* Find every object of the genericType and return it. -- Sophia
        Each object must also pass the optional filter function  */
     function collectGenericObjects(code, tree, genericType, optionalFilter) {
         var objs = [];
         if (!optionalFilter) {
-            optionalFilter = function(node) {
+            optionalFilter = function (node) {
                 return true;
             }
         }
         traverse(tree, function (node, path) {
             var name, parent;
             if (node.type === genericType && optionalFilter(node)) {
-                objs.push({node: node });
+                objs.push({ node: node });
             }
         });
         return objs;
     }
 
     var InstrumentableLine = {
-      BreakStatement: 'BreakStatement',
-      ContinueStatement: 'ContinueStatement',
-      EmptyStatement: 'EmptyStatement', 
-      ExpressionStatement: 'ExpressionStatement',  
-      ReturnStatement: 'ReturnStatement',
-      ThrowStatement: 'ThrowStatement', 
-      VariableDeclaration: 'VariableDeclaration'
+        BreakStatement: 'BreakStatement',
+        ContinueStatement: 'ContinueStatement',
+        EmptyStatement: 'EmptyStatement',
+        ExpressionStatement: 'ExpressionStatement',
+        ReturnStatement: 'ReturnStatement',
+        ThrowStatement: 'ThrowStatement',
+        VariableDeclaration: 'VariableDeclaration'
     }
 
     var InstrumentableBlock = {
-      CatchClause: 'CatchClause', 
-      ForStatement: 'ForStatement',
-      ForInStatement: 'ForInStatement',
-      FunctionDeclaration: 'FunctionDeclaration', // function a() { }
-      FunctionExpression: 'FunctionExpression', // anonymous function. function() { … }
-      IfStatement: 'IfStatement', // if statement
-      SwitchStatement: 'SwitchStatement', // switch statement
-      TryStatement: 'TryStatement',
-      WhileStatement: 'WhileStatement',
-      WithStatement: 'WithStatement'
+        CatchClause: 'CatchClause',
+        ForStatement: 'ForStatement',
+        ForInStatement: 'ForInStatement',
+        FunctionDeclaration: 'FunctionDeclaration', // function a() { }
+        FunctionExpression: 'FunctionExpression', // anonymous function. function() { … }
+        IfStatement: 'IfStatement', // if statement
+        SwitchStatement: 'SwitchStatement', // switch statement
+        TryStatement: 'TryStatement',
+        WhileStatement: 'WhileStatement',
+        WithStatement: 'WithStatement'
     }
 
 
     var WhereEnum = {
         BEFORE: "before",
-        AFTER: "after", 
-        START: "start", 
-        END: "end", 
+        AFTER: "after",
+        START: "start",
+        END: "end",
     }
 
 
@@ -437,7 +415,7 @@
                     pos = lines[i].node.range[0];
                     signature = signature + '\n';
                 } else {
-                    console.log("ERROR: illegal enum type " + whereEnum + ", must be either before or after." )
+                    console.log("ERROR: illegal enum type " + whereEnum + ", must be either before or after.")
                     return
                 }
 
@@ -487,7 +465,7 @@
                 } else if (whereEnum === WhereEnum.END) {
                     pos = blocks[i].node.body.range[1] - 1;
                     console.log(blocks[i].node.body.range)
-                    signature =  signature + '\n';
+                    signature = signature + '\n';
                 } else if (whereEnum === WhereEnum.AFTER) {
                     pos = blocks[i].node.range[1];
                     signature = '\n' + signature;
@@ -515,7 +493,7 @@
         if (Object.prototype.toString.call(modifier) === '[object Array]') {
             morphers = modifier;
         } else if (typeof modifier === 'function') {
-            morphers = [ modifier ];
+            morphers = [modifier];
         } else {
             throw new Error('Wrong use of esmorph.modify() function');
         }
@@ -535,7 +513,7 @@
 
     exports.modify = modify;
 
-    exports.Where = WhereEnum; 
+    exports.Where = WhereEnum;
     exports.Tracer = {
         FunctionEntrance: traceFunctionEntrance,
         FunctionExit: traceFunctionExit,
