@@ -52,6 +52,8 @@ describe('CommandTester Tests', function () {
         expect(individualOverTests.testResults.rounds).not.to.be(undefined);
     });
 
+    /*
+
     it('Should making dynamic ranking of functions', () => {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
@@ -79,7 +81,7 @@ describe('CommandTester Tests', function () {
 
         function Enter(details){
             //console.log(details.name + ' + 1!');
-
+            
             if(optmizerFunctionsInternalList === undefined)
             {
                 optmizerFunctionsInternalList = {};
@@ -96,7 +98,7 @@ describe('CommandTester Tests', function () {
         };`
 
         //Copia de segurança 
-        
+
         var oldLibFilePath = path.join(libraryPath, 'old.js');
         if (!fse.existsSync(oldLibFilePath))
             fse.copySync(lib.mainFilePath, oldLibFilePath, { "clobber": true });
@@ -108,12 +110,13 @@ describe('CommandTester Tests', function () {
         const execSync = require('child_process').execSync;
         var output = execSync(`cd '${libraryPath}' && npm test`);
         //console.log(output);
-        
+
         //recupera o arquivo json com os dados computados
 
         //volta ao arquivo original
         fse.copySync(oldLibFilePath, lib.mainFilePath, { "clobber": true });
 
     });
+    */
 
 });
