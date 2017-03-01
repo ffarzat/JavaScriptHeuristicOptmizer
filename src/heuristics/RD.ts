@@ -119,7 +119,8 @@ export default class RD extends IHeuristic {
         //Conta e escolhe aleatoriamente quantas instruções causar mutação nessa função
         var rndNodes = this._astExplorer.CountNodes(this.bestIndividual);
         this._logger.Write(`[RD] ${this.ActualFunction} possui ${rndNodes} nós`);
-        //rndNodes = rndNodes > this._globalConfig.clientsTotal ? this._globalConfig.clientsTotal : rndNodes;
+        var vizinhosAoMesmoTempo = (this._globalConfig.clientsTotal * 2);
+        rndNodes = rndNodes > vizinhosAoMesmoTempo ? vizinhosAoMesmoTempo : rndNodes;
         this.qtdMutacoesNaFuncaoAtual = this._astExplorer.GenereateRandom(1, rndNodes);
         this.qtdMutantesAtuais = 0;
         this._logger.Write(`[RD] Otimizando a função ${this.ActualFunction}. ${this.qtdMutacoesNaFuncaoAtual} instrução(ões) sofrerá(ão) mutação!`);
