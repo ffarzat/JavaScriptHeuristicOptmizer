@@ -4,7 +4,7 @@
   "description": "",
   "main": "lodash.js",
   "scripts": {
-    "test": "karma start"
+    "test": "node lodashTest.js"
   },
   "author": "",
   "license": "ISC",
