@@ -1,0 +1,13 @@
+{
+    "exports.compile": 114,
+    "compileBody": 456,
+    "lex": 640,
+    "[Anonymous]": 23828,
+    "applyPlugins": 5968,
+    "parse": 640,
+    "exports.compileClient": 342,
+    "exports.compileClientWithDependenciesTracked": 342,
+    "resolve": 216,
+    "findReplacementFunc": 432,
+    "read": 216
+}
