@@ -91,8 +91,8 @@ describe('CommandTester Tests', function () {
 
             optmizerFunctionsInternalList[details.name] += 1;
             //save Json file
-            let fsOPTINT = require('fs');
-            fsOPTINT.writeFileSync('resultados.json', JSON.stringify(optmizerFunctionsInternalList, null, 4));
+            var fs = require("fs");
+            fs.writeFileSync('resultados.json', JSON.stringify(optmizerFunctionsInternalList, null, 4));
         };`
 
         //Copia de segurança 
