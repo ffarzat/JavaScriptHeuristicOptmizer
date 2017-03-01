@@ -52,13 +52,13 @@ describe('CommandTester Tests', function () {
         expect(individualOverTests.testResults.rounds).not.to.be(undefined);
     });
 
-    /*
+    
 
     it('Should making dynamic ranking of functions', () => {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[3]; //Libraries/lodash
+        var lib = configuration.libraries[4]; //Libraries/pug
 
         //Creates the Inidividual for tests
         var astExplorer: ASTExplorer = new ASTExplorer();
@@ -88,14 +88,19 @@ describe('CommandTester Tests', function () {
             }
 
             if(optmizerFunctionsInternalList[details.name] == undefined){
-                optmizerFunctionsInternalList[details.name] = 0;
+                optmizerFunctionsInternalList[details.name] = parseInt(0);
             }
-
-            optmizerFunctionsInternalList[details.name] += 1;
+            
+            optmizerFunctionsInternalList[details.name] = isNaN(optmizerFunctionsInternalList[details.name])? 0 : parseInt(optmizerFunctionsInternalList[details.name]) + parseInt(1);
             //save Json file
+            
             var fs = require("fs");
             fs.writeFileSync('resultados.json', JSON.stringify(optmizerFunctionsInternalList, null, 4));
         };`
+
+        
+
+        //console.log(morphed);
 
         //Copia de segurança 
 
@@ -114,9 +119,9 @@ describe('CommandTester Tests', function () {
         //recupera o arquivo json com os dados computados
 
         //volta ao arquivo original
-        fse.copySync(oldLibFilePath, lib.mainFilePath, { "clobber": true });
+        //fse.copySync(oldLibFilePath, lib.mainFilePath, { "clobber": true });
 
     });
-    */
+    
 
 });
