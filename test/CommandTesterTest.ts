@@ -120,6 +120,7 @@ describe('CommandTester Tests', function () {
     });
     */
 
+    /*
     it('Should making dynamic timming list of functions', () => {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
@@ -179,9 +180,6 @@ describe('CommandTester Tests', function () {
             }
         };
         
-        /**
-         * Transform nano secs in secs
-         */
         function ToNanosecondsToSeconds(nanovalue) {
             return parseFloat((nanovalue / 1000000000.0).toFixed(3));
         }
@@ -213,7 +211,7 @@ describe('CommandTester Tests', function () {
         //volta ao arquivo original
         fse.copySync(oldLibFilePath, lib.mainFilePath, { "clobber": true });
     });
-
+    */
 
 });
 
