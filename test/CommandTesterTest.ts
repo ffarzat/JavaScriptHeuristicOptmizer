@@ -16,7 +16,7 @@ describe('CommandTester Tests', function () {
 
     this.timeout(60 * 10 * 1000); //10 minutes
 
-    it('Should execute Tests from uuid Lib', function () {
+    it('Should execute Tests from uuid Lib', () => {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
@@ -52,8 +52,7 @@ describe('CommandTester Tests', function () {
         expect(individualOverTests.testResults.rounds).not.to.be(undefined);
     });
 
-    
-
+    /*
     it('Should making dynamic ranking of functions', () => {
 
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
@@ -98,8 +97,6 @@ describe('CommandTester Tests', function () {
             fs.writeFileSync('resultados.json', JSON.stringify(optmizerFunctionsInternalList, null, 4));
         };`
 
-        
-
         //console.log(morphed);
 
         //Copia de segurança 
@@ -119,9 +116,111 @@ describe('CommandTester Tests', function () {
         //recupera o arquivo json com os dados computados
 
         //volta ao arquivo original
-        //fse.copySync(oldLibFilePath, lib.mainFilePath, { "clobber": true });
-
+        fse.copySync(oldLibFilePath, lib.mainFilePath, { "clobber": true });
     });
-    
+    */
+
+    it('Should making dynamic timming list of functions', () => {
+
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var lib = configuration.libraries[1]; //Libraries/uuid
+
+        //Creates the Inidividual for tests
+        var astExplorer: ASTExplorer = new ASTExplorer();
+        var individualOverTests: Individual = astExplorer.GenerateFromFile(lib.mainFilePath);
+
+        var libraryPath = `Libraries/${lib.name}`;
+
+        var caminho = __dirname.replace('build', '');
+        var esmorph = require(caminho + '/../src/esmorph-new.js');
+
+        var modifiers;
+        modifiers = [];
+        modifiers.push(esmorph.Tracer.FunctionEntrance('Enter'));
+        modifiers.push(esmorph.Tracer.FunctionExit('Exit'));
+
+        var globalName = `__${lib.name}_time`;
+
+        //{ name: 'test', lineNumber: 1, range: [11, 49] }
+        var morphed = esmorph.modify(individualOverTests.ToCode(), modifiers);
+        morphed += `\n\n 
+        
+        
+
+        function Enter(details){
+
+            if(details.name == "toString")
+                return;
+
+            if(global['${globalName}'] == undefined)
+                global['${globalName}'] = {};
+
+            if(global.t == undefined)    
+                global.t = require('exectimer');
+            
+            global[details.name] = new global.t.Tick(details.name);
+            global[details.name].start();
+        }
+
+        function Exit(details){
+            
+            if(details.name == "toString")
+                return;
+
+            if(global[details.name] != undefined)
+                global[details.name].stop();
+
+            if(global['${globalName}'] != undefined)
+            {
+                global['${globalName}'][details.name] = ToNanosecondsToSeconds(global.t.timers[details.name].duration());
+                var fs = require("fs");
+                fs.writeFileSync('resultados-time.json', JSON.stringify(global['${globalName}'], null, 4));
+            }
+        };
+        
+        /**
+         * Transform nano secs in secs
+         */
+        function ToNanosecondsToSeconds(nanovalue) {
+            return parseFloat((nanovalue / 1000000000.0).toFixed(3));
+        }
+        
+        `
+
+        //console.log(morphed);
+
+        //Copia de segurança 
+
+        var oldLibFilePath = path.join(libraryPath, 'old.js');
+        if (!fse.existsSync(oldLibFilePath))
+            fse.copySync(lib.mainFilePath, oldLibFilePath, { "clobber": true });
+
+        //Salva o código modificado
+        fs.writeFileSync(lib.mainFilePath, morphed);
+
+        //executa os testes
+        var start = process.hrtime();
+        const execSync = require('child_process').execSync;
+        var output = execSync(`cd '${libraryPath}' && npm test`);
+        var total = clock(start);
+
+        //recupera o arquivo json com os dados computados e adiciona o tempo total
+        var objeto = JSON.parse(fse.readFileSync(`${libraryPath}/resultados-time.json`).toString());
+        objeto['total'] = total;
+        fse.writeFileSync(`${libraryPath}/resultados-time.json`, JSON.stringify(objeto, null, 4));
+
+        //volta ao arquivo original
+        fse.copySync(oldLibFilePath, lib.mainFilePath, { "clobber": true });
+    });
+
 
 });
+
+
+/** Calculo to tempo em ms */
+function clock(startTime): any {
+    if (!startTime) return process.hrtime();
+    var end = process.hrtime(startTime);
+    return Math.round((end[0] * 1000) + (end[1] / 1000000));
+}
