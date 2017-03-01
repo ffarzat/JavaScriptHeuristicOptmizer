@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":30,
@@ -32,7 +32,7 @@
             "especific": {
                 "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 5,
-                "trials": 100,
+                "trials": 5000,
                 "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 50, 
                 "generations": 100,
