@@ -25,7 +25,7 @@ export default class RD extends IHeuristic {
     qtdMutantesAtuais: number;
     qtdMutacoesNaFuncaoAtual: number;
 
-    mutantesDaFuncao: Individual[];
+    //mutantesDaFuncao: Individual[];
 
     /**
      * Especific Setup
@@ -34,7 +34,7 @@ export default class RD extends IHeuristic {
         super.Setup(config, globalConfig, allHosts);
 
         this.trials = config.trials;
-        this.mutantesDaFuncao = []
+        //this.mutantesDaFuncao = []
     }
 
 
@@ -119,8 +119,8 @@ export default class RD extends IHeuristic {
         //Conta e escolhe aleatoriamente quantas instruções causar mutação nessa função
         var rndNodes = this._astExplorer.CountNodes(this.bestIndividual);
         this._logger.Write(`[RD] ${this.ActualFunction} possui ${rndNodes} nós`);
-        var vizinhosAoMesmoTempo = (this._globalConfig.clientsTotal * 2);
-        rndNodes = rndNodes > vizinhosAoMesmoTempo ? vizinhosAoMesmoTempo : rndNodes;
+        //var vizinhosAoMesmoTempo = (this._globalConfig.clientsTotal * 2);
+        //rndNodes = rndNodes > vizinhosAoMesmoTempo ? vizinhosAoMesmoTempo : rndNodes;
         this.qtdMutacoesNaFuncaoAtual = this._astExplorer.GenereateRandom(1, rndNodes);
         this.qtdMutantesAtuais = 0;
         this._logger.Write(`[RD] Otimizando a função ${this.ActualFunction}. ${this.qtdMutacoesNaFuncaoAtual} instrução(ões) sofrerá(ão) mutação!`);
@@ -150,11 +150,6 @@ export default class RD extends IHeuristic {
                     return;
                 } else {
 
-                    for (var z = 0; z < mutants.length; z++) {
-                        var element = mutants[z];
-                        this.UpdateBest(element);
-                    }
-
                     this.ExecutarPorFuncao(trialIndex, cb); //recursivo
                 }
 
@@ -182,6 +177,7 @@ export default class RD extends IHeuristic {
 
                     //Acabou a farra
                     if (this.totalOperationsCounter >= this.trials) {
+                        this._logger.Write(`[RD] Orçamento total de rodadas consumido [${this.trials}] `);
                         cb(this.neighbors, true);
                     }
                     else {
@@ -191,21 +187,22 @@ export default class RD extends IHeuristic {
                         if (this.qtdMutacoesNaFuncaoAtual > this.qtdMutantesAtuais) {
                             //salva os mutantes
                             for (var n = 0; n < this.neighbors.length; n++) {
-                                this.mutantesDaFuncao.push(this.neighbors[n].Clone());
+                                
+                                this.UpdateBest(this.neighbors[n].Clone());
                             }
 
                             //Recomeça por que a função ainda tem vizinhos aleatórios
                             this.operationsCount = 0;
                             this.neighbors = []
 
-                            this._logger.Write(`[RD] this.mutantesDaFuncao [${this.mutantesDaFuncao.length}] `);
+                            //this._logger.Write(`[RD] this.mutantesDaFuncao [${this.neighbors.length}] `);
                             this._logger.Write(`[RD] this.neighbors [${this.neighbors.length}] `);
 
                             this.ExecutarMutacoesConfiguradas(0, cb);
                         }
                         else {
                             this._logger.Write(`[RD] Tentando avançar para próxima função...`);
-                            cb(this.mutantesDaFuncao, false);
+                            cb(this.neighbors, false);
                         }
                     }
                     return;
@@ -223,8 +220,7 @@ export default class RD extends IHeuristic {
             //this._logger.Write(`[RD] vizinho ${counter}`);
         }
 
-        if(this.qtdMutacoesNaFuncaoAtual == this.qtdMutantesAtuais)
-        {
+        if (this.qtdMutacoesNaFuncaoAtual == this.qtdMutantesAtuais) {
             this._logger.Write(`[RD] Esgotado o orçamento aleatório [${this.qtdMutacoesNaFuncaoAtual}] da função ${this.ActualFunction}! Aguardando...`);
             itsover = true;
         }
