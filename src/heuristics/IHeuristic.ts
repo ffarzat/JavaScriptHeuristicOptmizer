@@ -386,6 +386,18 @@ abstract class IHeuristic extends events.EventEmitter {
         return melhorFuncao;
     }
 
+    /**
+     * Recupera a lista de funções (estática ou dinâmica) e a ordena de maior pra menor
+     */
+    MakeFunctionList() {
+        var list = this.byFunctionType == "dynamic" ? JSON.parse(fs.readFileSync(`Libraries/${this._lib.name}/resultados.json`).toString()) : this.getFunctionStaticList();
+        var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
+        for (let element in keysSorted) {
+            console.log(`Função ${keysSorted[element]}: ${element}`);
+            this.functionStack.push(keysSorted[element]);
+        }
+    }
+
 
     /**
     * Defines library and test original code
@@ -398,25 +410,7 @@ abstract class IHeuristic extends events.EventEmitter {
 
         //ByFunction, Global, static and dynamic
         if (this.nodesSelectionApproach == "ByFunction") {
-
-            if (this.byFunctionType == "dynamic") {
-                this._logger.Write(`Otimização por função (dinâmica)`);
-
-                //orquestrar o código
-                var novoOriginalOrquestrado = this._astExplorer.AspectForTest(this.Original.Clone());
-
-
-                //deixar executar os testes e incluir uma captura do ranking pós execução
-            }
-            else {
-                this._logger.Write(`Otimização por função (estática)`);
-                var list = this.getFunctionStaticList();
-                var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
-                for (let element in keysSorted) {
-                    console.log(`Função ${keysSorted[element]}: ${element}`);
-                    this.functionStack.push(keysSorted[element]);
-                }
-            }
+            this.MakeFunctionList();
             this._logger.Write(`Funções para Otimizar: ${this.functionStack.length}`);
         }
         else {

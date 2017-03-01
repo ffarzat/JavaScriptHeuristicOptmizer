@@ -442,34 +442,4 @@ export default class ASTExplorer {
 
         return novoIndividuo;
     }
-
-    /**
-     * Orquestra o código para contar a chamada de cada função durante a execução dos testes
-     */
-    AspectForTest(individuo: Individual): Individual {
-        var types = require("ast-types");
-        var n = types.namedTypes;
-
-        //Incluir a função contar como global
-
-
-        types.visit(individuo.AST, {
-            // This method will be called for any node whose type is a subtype of
-            // Function (e.g., FunctionDeclaration, FunctionExpression, and
-            // ArrowFunctionExpression)
-            visitFunction: function (path) {
-                var node = path.node;
-                var body = node.body;
-
-                //console.log(` ${JSON.stringify(body)}`);
-                //Incluir a chamada da função para contar a quantidade de vezes
-                //body.unshift(esprima.parse('start()'))
-
-                this.traverse(path);
-            }
-        });
-
-        return individuo;
-
-    }
 }
