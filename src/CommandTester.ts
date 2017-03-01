@@ -172,7 +172,7 @@ export default class CommandTester implements ITester {
             passedAllTests = false;
         }
         finally {
-            //fse.copySync(this.oldLibFilePath, this.libMainFilePath, { "clobber": true });
+            fse.copySync(this.oldLibFilePath, this.libMainFilePath, { "clobber": true });
         }
 
         if (passedAllTests) {
