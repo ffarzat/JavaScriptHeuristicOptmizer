@@ -189,7 +189,8 @@ function ShowConsoleResults(result: TestResults) {
 function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: TestResults[]) {
 
     var newLine: string = '\n';
-    var csvcontent = "sep=;" + newLine;
+    //var csvcontent = "sep=;" + newLine;
+    var csvcontent = "";
     csvcontent += "Rodada;Algoritmo;min;max;media;mediana;duracao" + newLine;
 
     listaResultados.forEach(element => {
