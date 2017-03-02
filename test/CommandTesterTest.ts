@@ -198,14 +198,18 @@ describe('CommandTester Tests', function () {
         fs.writeFileSync(lib.mainFilePath, morphed);
 
         //executa os testes
-        var start = process.hrtime();
+        const t = require('exectimer');
+        const Tick = t.Tick;
+        var tick = new Tick("testes");
+        tick.start();
+
         const execSync = require('child_process').execSync;
         var output = execSync(`cd '${libraryPath}' && npm test`);
-        var total = clock(start);
-
+        tick.stop();
+        var results = t.timers.testes;
         //recupera o arquivo json com os dados computados e adiciona o tempo total
         var objeto = JSON.parse(fse.readFileSync(`${libraryPath}/resultados-time.json`).toString());
-        objeto['total'] = total;
+        objeto['total'] = results.parse(results.duration());
         fse.writeFileSync(`${libraryPath}/resultados-time.json`, JSON.stringify(objeto, null, 4));
 
         //volta ao arquivo original
