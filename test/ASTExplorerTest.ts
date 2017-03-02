@@ -155,27 +155,6 @@ describe('ASTExplorer Tests', function () {
     });
     */
 
-    it('Should Making the Static Function Ranking', function () {
-
-        var astExplorer: ASTExplorer = new ASTExplorer();
-
-
-        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
-        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
-        var lib = configuration.libraries[0];
-        var libFile: string = lib.mainFilePath;
-        var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
-
-        var functionDic = astExplorer.MakeFunctionStaticRanking(generatedIndividual);
-
-        for (var functionName in functionDic) {
-            console.log(`${functionName}: ${functionDic[functionName]}`);
-        }
-        expect(Object.keys(functionDic).length).to.be(36);
-
-
-    });
-
     /*
     it('Should run ReplaceFunctionNode', (done) => {
 
