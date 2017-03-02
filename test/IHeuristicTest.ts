@@ -13,6 +13,7 @@ import HeuristicFactory from '../src/heuristics/HeuristicFactory';
 import GA from '../src/heuristics/GA';
 import RD from '../src/heuristics/RD';
 import HC from '../src/heuristics/HC';
+import LogFactory from '../src/LogFactory';
 
 describe('IHeuristic Tests', () => {
 
@@ -50,6 +51,27 @@ describe('IHeuristic Tests', () => {
 
         var ga = new HeuristicFactory().CreateByName(configuration.heuristics[0]);
         expect(ga).not.be.an('undefined');
+    });
+
+    it('Should Make static count of functons ', () => {
+
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var ga = new HeuristicFactory().CreateByName(configuration.heuristics[0]);
+        var astExplorer: ASTExplorer = new ASTExplorer();
+        var lib = configuration.libraries[4];
+        var libFile: string = lib.mainFilePath;
+        var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
+        var logger = new LogFactory().CreateByName(configuration.logWritter);
+        logger.Initialize(configuration);
+
+        ga.Original = generatedIndividual.Clone();
+        ga._logger = logger;
+        var dic = ga.getFunctionStaticList();
+
+        expect(ga).not.be.an('undefined');
+        fs.writeFileSync(`Libraries/${lib.name}/resultados-estatico.json`, JSON.stringify(dic, null, 4));
+
     });
 
 });
