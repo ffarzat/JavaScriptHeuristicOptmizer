@@ -1,0 +1,18 @@
+{
+    "extend": 0,
+    "ctor": 0,
+    "bind": 0,
+    "isEmpty": 0,
+    "processName": 0,
+    "requiresCDATA": 0,
+    "wrapCDATA": 0,
+    "escapeCDATA": 0,
+    "ValidationError": 1,
+    "Builder": 1,
+    "buildObject": 1,
+    "Parser": 4,
+    "processAsync": 5,
+    "assignOrPush": 5,
+    "reset": 6,
+    "parseString": 5
+}
