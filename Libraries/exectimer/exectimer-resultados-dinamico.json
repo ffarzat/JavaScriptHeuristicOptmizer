@@ -1,0 +1,17 @@
+{
+    "timer": 74,
+    "Exit": 167,
+    "median": 6,
+    "mean": 6,
+    "duration": 12,
+    "min": 6,
+    "max": 6,
+    "count": 6,
+    "wrap": 32,
+    "Tick": 36,
+    "start": 34,
+    "isGeneratorFunction": 32,
+    "done": 32,
+    "stop": 34,
+    "functionName": 26
+}
