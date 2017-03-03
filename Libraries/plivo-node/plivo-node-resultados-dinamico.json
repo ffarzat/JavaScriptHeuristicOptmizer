@@ -1,0 +1,13 @@
+{
+    "Response": 4,
+    "Exit": 34,
+    "RestAPI": 20,
+    "plivo": 20,
+    "get_cdrs": 4,
+    "request": 14,
+    "get_cdr": 4,
+    "callback": 2,
+    "make_call": 4,
+    "hangup_all_calls": 2,
+    "create_signature": 4
+}
