@@ -1,5 +1,9 @@
 /// <reference path="./typings/tsd.d.ts" />
-//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/uuid' 30 5
+
+//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/uuid' 30 5
+//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Dinamica/uuid' 30 5
+
+//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/pug' 30 5
 
 import TestResults from './TestResults';
 
@@ -137,6 +141,7 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
                 break;
             }
         } catch (error) {
+            console.log(`testCMD: ${testCMD}`);
             console.log(`stdout: ${stdout}`);
             console.log(`${error.stack}`);
 
