@@ -15,7 +15,9 @@ import RD from '../src/heuristics/RD';
 import HC from '../src/heuristics/HC';
 import LogFactory from '../src/LogFactory';
 
-describe('IHeuristic Tests', () => {
+describe('IHeuristic Tests', function() {
+
+    this.timeout(60 * 10 * 1000); //10 minutes
 
     it('Should Validate Configuration ', () => {
         var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
@@ -59,7 +61,7 @@ describe('IHeuristic Tests', () => {
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var ga = new HeuristicFactory().CreateByName(configuration.heuristics[0]);
         var astExplorer: ASTExplorer = new ASTExplorer();
-        var lib = configuration.libraries[4];
+        var lib = configuration.libraries[5];
         var libFile: string = lib.mainFilePath;
         var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
         var logger = new LogFactory().CreateByName(configuration.logWritter);
@@ -70,7 +72,7 @@ describe('IHeuristic Tests', () => {
         var dic = ga.getFunctionStaticList();
 
         expect(ga).not.be.an('undefined');
-        fs.writeFileSync(`Libraries/${lib.name}/resultados-estatico.json`, JSON.stringify(dic, null, 4));
+        fs.writeFileSync(`Libraries/${lib.name}/${lib.name}-resultados-estatico.json`, JSON.stringify(dic, null, 4));
 
     });
 
