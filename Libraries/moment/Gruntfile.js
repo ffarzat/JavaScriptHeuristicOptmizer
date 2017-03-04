@@ -188,8 +188,9 @@ module.exports = function (grunt) {
     grunt.registerTask('lint', ['jshint', 'jscs']);
 
     // test tasks
-    grunt.registerTask('test', ['test:node', 'test:typescript']);
-    grunt.registerTask('test:node', ['transpile', 'qtest']);
+    //grunt.registerTask('test', ['test:node', 'test:typescript']);
+grunt.registerTask('test', ['test:node']);
+    grunt.registerTask('test:node', ['qtest']);
     grunt.registerTask('test:typescript', ['exec:typescript-test']);
     // TODO: For some weird reason karma doesn't like the files in
     // build/umd/min/* but works with min/*, so update-index, then git checkout
