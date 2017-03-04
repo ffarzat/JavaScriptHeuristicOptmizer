@@ -18,7 +18,8 @@ var timeoutId = setTimeout(function () {
 }, timeoutMS);
 
 
-var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption, function (error, stdout, stderr) {
+//var workerProcess = child_process.exec(`cd ${libPath} && time npm test >/dev/null`, bufferOption, function (error, stdout, stderr) {
+var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption, function (error, stdout, stderr) {    
     clearTimeout(timeoutId);
 
     if (error) {
@@ -28,10 +29,13 @@ var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption
         console.log(`{"id":"${id}", "sucess":"false", "host":"${os.hostname()}", "duration":"${clock(start)}", "error": "${error}"}`);
         //var fs = require('fs');
         //fs.appendFileSync("/home/users/ffarzat1981/log-client.txt", error);
-
         process.exit(error.code);
-        
     }
+    
+    //recuperar o real do time
+    var indice = stdout.indexOf('')
+    
+    
     //console.log('MPN stdout: ' + stdout);
     //console.log('MPNstderr: ' + stderr);
     console.log(`{"id":"${id}", "sucess":"true", "host":"${os.hostname()}", "duration":"${clock(start)}"}`);

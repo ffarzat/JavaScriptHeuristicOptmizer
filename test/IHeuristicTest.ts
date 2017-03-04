@@ -72,7 +72,7 @@ describe('IHeuristic Tests', function() {
         var dic = ga.getFunctionStaticList();
 
         expect(ga).not.be.an('undefined');
-        fs.writeFileSync(`Libraries/${lib.name}/${lib.name}-resultados-estatico.json`, JSON.stringify(dic, null, 4));
+        //fs.writeFileSync(`Libraries/${lib.name}/${lib.name}-resultados-estatico.json`, JSON.stringify(dic, null, 4));
 
     });
 

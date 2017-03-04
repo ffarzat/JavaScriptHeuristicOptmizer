@@ -1,9 +1,9 @@
 /// <reference path="./typings/tsd.d.ts" />
-//node build/src/AnaliseTempo-Funcoes.js 'uuid' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/' 5
 
-/**
- * TODO: Ler os arquivos e gerar um csv
- */
+//node build/src/AnaliseTempo-Funcoes.js 'uuid' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/' 5
+//node build/src/AnaliseTempo-Funcoes.js 'pug' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/' 5
+//node build/src/AnaliseTempo-Funcoes.js 'exectimer' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/' 5
+
 import ASTExplorer from './ASTExplorer';
 import TestResults from './TestResults';
 
@@ -43,21 +43,44 @@ if (!fs.existsSync(oldLibFilePath))
 var caminhoOriginal = `${arquivoRootBiblioteca}`;
 var codigoOriginal = fs.readFileSync(caminhoOriginal, 'UTF8');
 //============================================================================================ Gera os Rankings //>
-//TODO: Executar o install o exectimer!!!!
+instalarExecTimerNaLib(DiretorioBiblioteca);
 gerarRankingEstatico(caminhoOriginal, DiretorioBiblioteca, arquivoEstaticoResultado);
 gerarRankingDinamico(nomeBiblioteca, caminhoOriginal, DiretorioBiblioteca, bufferOption, qtdTestes, arquivoDinamicoResultado, arquivoFuncoesResultado);
-//============================================================================================ Escreve os resultados //>
 //Volta a cópia de segurança
 fse.copySync(oldLibFilePath, arquivoRootBiblioteca, { "clobber": true });
+executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca, bufferOption, arquivoFuncoesResultado, qtdTestes);
+//============================================================================================ Escreve os resultados //>
 console.log(`Escrever csv com os resultados obtidos`);
 EscreverResultadoEmCsv(DiretorioResultados, DiretorioBiblioteca, nomeBiblioteca, arquivoEstaticoResultado, arquivoDinamicoResultado, arquivoFuncoesResultado);
 
 process.exit();
 
-
-
-
 //============================================================================================ Funcoes utilizadas //>
+function instalarExecTimerNaLib(diretorio: string) {
+    child_process.execSync(`cd ${diretorio} && npm install exectimer`, bufferOption).toString();
+}
+
+function executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca: string, bufferOption: Object, arquivoFuncoesResultado: string, qtd: number) {
+    //Desprezar a primeira execuçao (load de componentes e etc)
+    ExecutarTeste(DiretorioBiblioteca, bufferOption, 1);
+
+    //Executa a lib original sem alterações
+    var resultados = ExecutarTeste(DiretorioBiblioteca, bufferOption, qtd);
+
+    //Inclui o total observado da lib inteira
+    var objetoComResultados = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
+    objetoComResultados['total-testes'] = {
+        'name': 'total-testes',
+        'min': resultados.min,
+        'max': resultados.max,
+        'mean': resultados.mean,
+        'median': resultados.median,
+        'duration': resultados.duration,
+    };
+    fs.writeFileSync(arquivoFuncoesResultado, JSON.stringify(objetoComResultados, null, 4));
+}
+
+
 /**
  * Salva o código por cima do da Lib atual
  */
@@ -79,47 +102,54 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
     }
 
     var stdout = "";
+    var durations = [];
+
 
     for (var index = 0; index < quantidade; index++) {
 
         try {
-            var Tick = new exectimer.Tick(msgId);
-            Tick.start();
+            //var Tick = new exectimer.Tick(msgId);
+            //Tick.start();
             console.log(`   ${index}x`);
 
             stdout = child_process.execSync(testCMD, bufferOption).toString();
-            Tick.stop();
+            //Tick.stop();
 
             var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
             stringList = stringList.substring(0, stringList.length - 1);
             //console.log(`${stringList}`);
             var resultadoJson = JSON.parse(`${stringList}`);
+            durations.push(parseInt(resultadoJson.duration)/1000);
 
             if (resultadoJson.sucess == "false") {
                 passedAllTests = false;
                 break;
             }
+
         } catch (error) {
             console.log(`testCMD: ${testCMD}`);
             console.log(`stdout: ${stdout}`);
             console.log(`${error.stack}`);
 
-            Tick.stop();
+            //Tick.stop();
             passedAllTests = false;
             break;
         }
 
     }
 
-    var unitTestsTimer = exectimer.timers[msgId];
+    //var unitTestsTimer = exectimer.timers[msgId];
     var resultadoFinal: TestResults = new TestResults();
+   
+    var math = require('mathjs');
+
 
     resultadoFinal.rounds = quantidade;
-    resultadoFinal.min = ToNanosecondsToSeconds(unitTestsTimer.min());
-    resultadoFinal.max = ToNanosecondsToSeconds(unitTestsTimer.max());
-    resultadoFinal.mean = ToNanosecondsToSeconds(unitTestsTimer.mean());
-    resultadoFinal.median = ToNanosecondsToSeconds(unitTestsTimer.median());
-    resultadoFinal.duration = ToNanosecondsToSeconds(unitTestsTimer.duration());
+    resultadoFinal.min = math.min(durations);
+    resultadoFinal.max = math.max(durations);
+    resultadoFinal.mean = math.mean(durations);
+    resultadoFinal.median = math.median(durations);
+    resultadoFinal.duration = math.sum(durations);
     resultadoFinal.passedAllTests = passedAllTests
 
     return resultadoFinal;
@@ -147,7 +177,7 @@ function ShowConsoleResults(result: TestResults) {
 function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca: string, nomeBiblioteca: string, arquivoEstaticoResultado: string, arquivoDinamicoResultado: string, arquivoFuncoesResultado: string) {
     var newLine: string = '\n';
     var csvcontent = "";
-    csvcontent += "Funcao;qtdEstatico;qtdDinamico;min;max;media;mediana;duracao" + newLine;
+    csvcontent += "Name;Static-Calls;Dynamic-Calls;min;max;mean;median;duration" + newLine;
 
     //ler aquivo estatico
     var objetoEstatico = JSON.parse(fs.readFileSync(arquivoEstaticoResultado).toString());
@@ -161,18 +191,17 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
 
     for (var i = 0; i < functions.length; i++) {
         var nome = functions[i].name;
-        if(nome == 'toString')
-        {
+        if (nome == 'toString') {
             continue;
         }
 
-        var qtdEstatico = objetoEstatico[nome]? objetoEstatico[nome]: 0;
-        var qtdDinamico = objetoDinamico[nome]? objetoDinamico[nome] : 0;
-        var min = objetoTempo[nome]? objetoTempo[nome].min: 0;
-        var max = objetoTempo[nome]? objetoTempo[nome].max: 0;
-        var median = objetoTempo[nome]? objetoTempo[nome].median: 0;
-        var mean = objetoTempo[nome]? objetoTempo[nome].mean: 0;
-        var duration = objetoTempo[nome]? objetoTempo[nome].duration: 0;
+        var qtdEstatico = objetoEstatico[nome] ? objetoEstatico[nome] : 0;
+        var qtdDinamico = objetoDinamico[nome] ? objetoDinamico[nome] : 0;
+        var min = objetoTempo[nome] ? objetoTempo[nome].min : 0;
+        var max = objetoTempo[nome] ? objetoTempo[nome].max : 0;
+        var median = objetoTempo[nome] ? objetoTempo[nome].median : 0;
+        var mean = objetoTempo[nome] ? objetoTempo[nome].mean : 0;
+        var duration = objetoTempo[nome] ? objetoTempo[nome].duration : 0;
 
         csvcontent += `${nome};${qtdEstatico};${qtdDinamico};${min};${max};${median};${mean};${duration}` + newLine;
     }
@@ -324,22 +353,6 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     fs.writeFileSync(caminhoOriginal, morphed);
     fs.writeFileSync(caminhoOriginal + '.txt', morphed); //copia para debug
 
-    //Despreza a primeira execuçao
-    ExecutarTeste(diretorioBiblioteca, buffer, 1);
-
     //executa os testes
     var resultados = ExecutarTeste(diretorioBiblioteca, buffer, qtd);
-
-    //Inclui o total observado da lib inteira
-    var objetoComResultados = JSON.parse(fs.readFileSync(arquivoJsonComResultadosFuncoes).toString());
-    objetoComResultados['total-testes'] = {
-        'name': 'total-testes',
-        'min': resultados.min,
-        'max': resultados.max,
-        'mean': resultados.mean,
-        'median': resultados.median,
-        'duration': resultados.duration,
-    };
-
-    fs.writeFileSync(arquivoJsonComResultadosFuncoes, JSON.stringify(objetoComResultados, null, 4));
 }
