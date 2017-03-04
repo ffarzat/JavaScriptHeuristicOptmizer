@@ -1,0 +1,130 @@
+{
+    "timer": {
+        "name": "timer",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "median": {
+        "name": "median",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "[Anonymous]": {
+        "name": "[Anonymous]",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "mean": {
+        "name": "mean",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "duration": {
+        "name": "duration",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "min": {
+        "name": "min",
+        "min": 0.001,
+        "max": 0.002,
+        "mean": 0.001,
+        "median": 0.001,
+        "duration": 0.004
+    },
+    "max": {
+        "name": "max",
+        "min": 0,
+        "max": 0.002,
+        "mean": 0.001,
+        "median": 0.001,
+        "duration": 0.003
+    },
+    "count": {
+        "name": "count",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "Tick": {
+        "name": "Tick",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "start": {
+        "name": "start",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "wrap": {
+        "name": "wrap",
+        "min": 0.002,
+        "max": 0.003,
+        "mean": 0.002,
+        "median": 0.002,
+        "duration": 0.037
+    },
+    "stop": {
+        "name": "stop",
+        "min": 0,
+        "max": 0.001,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.006
+    },
+    "done": {
+        "name": "done",
+        "min": 0,
+        "max": 0.001,
+        "mean": 0.001,
+        "median": 0.001,
+        "duration": 0.01
+    },
+    "functionName": {
+        "name": "functionName",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "isGeneratorFunction": {
+        "name": "isGeneratorFunction",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "total-testes": {
+        "name": "total-testes",
+        "min": 0.622,
+        "max": 0.622,
+        "mean": 0.622,
+        "median": 0.622,
+        "duration": 0.622
+    }
+}
