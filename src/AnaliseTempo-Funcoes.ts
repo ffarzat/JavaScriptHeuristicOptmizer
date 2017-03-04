@@ -233,6 +233,10 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
 
         csvcontent += `${nome};${qtdEstatico};${qtdDinamico};${min};${max};${median};${mean};${duration}` + newLine;
     }
+
+    //Corpo da Lib
+    csvcontent += `${objetoTempo['Corpo-Lib'].name};0;0;${objetoTempo['Corpo-Lib'].min};${objetoTempo['Corpo-Lib'].max};${objetoTempo['Corpo-Lib'].median};${objetoTempo['Corpo-Lib'].mean};${objetoTempo['Corpo-Lib'].duration}` + newLine;
+
     //tempo total com a instrumentação
     csvcontent += `${objetoTempo['total-Instrumentado'].name};0;0;${objetoTempo['total-Instrumentado'].min};${objetoTempo['total-Instrumentado'].max};${objetoTempo['total-Instrumentado'].median};${objetoTempo['total-Instrumentado'].mean};${objetoTempo['total-Instrumentado'].duration}` + newLine;
 
@@ -362,6 +366,22 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
                 resultadoFinal${globalName}_${listaDeFuncoes[i]}.duration = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].duration())
                 global['${globalName}']['${listaDeFuncoes[i]}'] = resultadoFinal${globalName}_${listaDeFuncoes[i]};
             }
+
+            if(global['${globalName}_Corpo-Lib'].length > 0)
+            {
+                global['${globalName}_Corpo-Lib'][0].stop();
+                var resultadoFinal${globalName}_Corpo_Lib = {'name': 'Corpo-Lib'};
+                if(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'])
+                {
+                    resultadoFinal${globalName}_Corpo_Lib.min = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].min()); 
+                    resultadoFinal${globalName}_Corpo_Lib.max = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].max()); 
+                    resultadoFinal${globalName}_Corpo_Lib.mean = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].mean()); 
+                    resultadoFinal${globalName}_Corpo_Lib.median = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].median()); 
+                    resultadoFinal${globalName}_Corpo_Lib.duration = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].duration())
+                    global['${globalName}']['Corpo-Lib'] = resultadoFinal${globalName}_Corpo_Lib;
+                }
+            }
+
         `
         codigoInicializacao += encerramento;
     }
@@ -391,6 +411,10 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
         var inicializacaoFuncao = `global['${globalName}_${listaDeFuncoes[i]}'] = []; \n`;
         codigoInicializacao += `${inicializacaoFuncao}`;
     }
+    
+    var inicializacaoCorpo = `global['${globalName}_Corpo-Lib'] = []; \n`;
+    codigoInicializacao += `${inicializacaoCorpo}`;
+
 
     var caminho = __dirname.replace('build', '');
     var esmorph = require(caminho + '/../src/esmorph-new.js');
