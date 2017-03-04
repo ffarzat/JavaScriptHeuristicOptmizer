@@ -1,8 +1,8 @@
 /// <reference path="./typings/tsd.d.ts" />
 
-//node build/src/AnaliseTempo-Funcoes.js 'uuid' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/' 5
-//node build/src/AnaliseTempo-Funcoes.js 'pug' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/' 5
-//node build/src/AnaliseTempo-Funcoes.js 'exectimer' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/' 5
+//node build/src/AnaliseTempo-Funcoes.js 'uuid' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 5
+//node build/src/AnaliseTempo-Funcoes.js 'pug' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 5
+//node build/src/AnaliseTempo-Funcoes.js 'exectimer' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 5
 
 import ASTExplorer from './ASTExplorer';
 import TestResults from './TestResults';
@@ -43,7 +43,7 @@ if (!fs.existsSync(oldLibFilePath))
 var caminhoOriginal = `${arquivoRootBiblioteca}`;
 var codigoOriginal = fs.readFileSync(caminhoOriginal, 'UTF8');
 //============================================================================================ Gera os Rankings //>
-instalarExecTimerNaLib(DiretorioBiblioteca);
+instalarExecTimerNaLib(DiretorioBiblioteca, nomeBiblioteca);
 gerarRankingEstatico(caminhoOriginal, DiretorioBiblioteca, arquivoEstaticoResultado);
 gerarRankingDinamico(nomeBiblioteca, caminhoOriginal, DiretorioBiblioteca, bufferOption, qtdTestes, arquivoDinamicoResultado, arquivoFuncoesResultado);
 //Volta a cópia de segurança
@@ -56,7 +56,9 @@ EscreverResultadoEmCsv(DiretorioResultados, DiretorioBiblioteca, nomeBiblioteca,
 process.exit();
 
 //============================================================================================ Funcoes utilizadas //>
-function instalarExecTimerNaLib(diretorio: string) {
+function instalarExecTimerNaLib(diretorio: string, nomeBiblioteca: string) {
+    if (nomeBiblioteca === "exectimer")
+        return;
     child_process.execSync(`cd ${diretorio} && npm install exectimer`, bufferOption).toString();
 }
 
@@ -190,7 +192,7 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
     var functions = ExtrairListaDeFuncoes(caminhoOriginal);
 
     for (var i = 0; i < functions.length; i++) {
-        var nome = functions[i].name;
+        var nome = functions[i];
         if (nome == 'toString') {
             continue;
         }
@@ -247,7 +249,7 @@ function gerarRankingEstatico(caminhoOriginal: string, diretorioBiblioteca: stri
     var temp = individuo.ToCode();
 
     for (var i = 0; i < functions.length; i++) {
-        var nome = functions[i].name;
+        var nome = functions[i];
         var total = temp.split('.' + nome).length;
         localCount[nome] = total;
     }
@@ -264,7 +266,22 @@ function ExtrairListaDeFuncoes(caminhoOriginal: string) {
     var functionExtractor = require(caminho + '/heuristics/function-extractor.js');
     var astExplorer = new ASTExplorer();
     var individuo = astExplorer.GenerateFromFile(caminhoOriginal);
-    return functionExtractor.interpret(individuo.AST);
+    var lista = functionExtractor.interpret(individuo.AST);
+    var listaApenasComNomes = [];
+
+    lista.forEach(element => {
+        listaApenasComNomes.indexOf(element.name == -1)
+        listaApenasComNomes.push(element.name);
+    });
+
+    var unique = listaApenasComNomes.filter(function (elem, index, self) {
+        return index == self.indexOf(elem);
+    })
+
+    //console.log(JSON.stringify(unique));
+
+    return unique;
+
 }
 
 /**
@@ -293,7 +310,7 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     codigoInicializacao += `global['optmizerFunctionsInternalList'] = {};\n`;
 
     for (var i = 0; i < listaDeFuncoes.length; i++) {
-        var inicializacaoFuncao = `global['${globalName}_${listaDeFuncoes[i].name}'] = []; \n`;
+        var inicializacaoFuncao = `global['${globalName}_${listaDeFuncoes[i]}'] = []; \n`;
         codigoInicializacao += `${inicializacaoFuncao}`;
     }
 
