@@ -185,9 +185,9 @@
 
     var functions = getFunctions(tree);
 
-    functions = functions.filter(function(fn) {
-      return fn.name !== '[Anonymous]';
-    });
+    //functions = functions.filter(function(fn) {
+      //return fn.name !== '[Anonymous]';
+    //});
 
     return functions;
   };
@@ -195,9 +195,9 @@
   exports.interpret = function(tree) {
     var functions = getFunctions(tree);
 
-    functions = functions.filter(function(fn) {
-      return fn.name !== '[Anonymous]';
-    });
+    //functions = functions.filter(function(fn) {
+      //return fn.name !== '[Anonymous]';
+    //});
     
     return functions;
   };
