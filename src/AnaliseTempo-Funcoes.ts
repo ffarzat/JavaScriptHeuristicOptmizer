@@ -1,9 +1,17 @@
 /// <reference path="./typings/tsd.d.ts" />
 
 //node build/src/AnaliseTempo-Funcoes.js 'uuid' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
-//node build/src/AnaliseTempo-Funcoes.js 'pug' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
 //node build/src/AnaliseTempo-Funcoes.js 'exectimer' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
 //node build/src/AnaliseTempo-Funcoes.js 'bower' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/bower' 'lib/core/Manager.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
+
+//node build/src/AnaliseTempo-Funcoes.js 'plivo-node' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/plivo-node' 'lib/plivo.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
+
+//node build/src/AnaliseTempo-Funcoes.js 'jquery' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/jquery' 'dist/jquery.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
+//node build/src/AnaliseTempo-Funcoes.js 'moment' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/moment' 'moment.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
+//node build/src/AnaliseTempo-Funcoes.js 'lodash' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/lodash' 'lodash.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
+//node build/src/AnaliseTempo-Funcoes.js 'pug' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
+//node build/src/AnaliseTempo-Funcoes.js 'minimist' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/minimist' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
+//node build/src/AnaliseTempo-Funcoes.js 'node-browserify' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/node-browserify' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
 
 //Não vai de jeito nenhum
 //node build/src/AnaliseTempo-Funcoes.js 'express-ifttt-webhook' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/express-ifttt-webhook' 'lib/webhook.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
@@ -108,7 +116,7 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
     var msgId = uuid.v4();
     var passedAllTests = true;
 
-    var testCMD = `node --expose-gc --max-old-space-size=512000  src/client.js 0 ${DiretorioBiblioteca} ${1800000}`; //timeout bem grande (30 minutos)
+    var testCMD = `node --expose-gc --max-old-space-size=512000  src/client.js 0 ${DiretorioBiblioteca} ${7200000}`; //timeout bem grande (2 horas)
 
     if (os.hostname() != "Optmus") {
         child_process.execSync("sleep 1", bufferOption).toString();
@@ -116,7 +124,11 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
 
     var stdout = "";
     var durations = [];
+    var start = process.hrtime();
 
+    setTimeout(function () {
+        console.log(`Ainda Testando [${parseMillisecondsIntoReadableTime(clock(start))}]`)
+    }, (5 * 60) * 100); //cinco minutos
 
     for (var index = 0; index < quantidade; index++) {
 
@@ -314,6 +326,7 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     var arquivoJsonComResultadosFuncoes = arquivoFuncoesResultado;
     var arquivoJsonComResultadosContagemFuncoes = arquivoDinamicoResultado;
 
+
     //Monta o Código para inserir na Lib
     var globalName = `__${nomeLib}_counter_object`;
     var codigoInicializacao = `function ToNanosecondsToSeconds_Optmizer(nanovalue) {return parseFloat((nanovalue / 1000000000.0).toFixed(3));}\n`
@@ -321,6 +334,16 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     codigoInicializacao += `global['__objeto_raiz_exectimer_Tick'] = global['__objeto_raiz_exectimer'].Tick; \n`;
     codigoInicializacao += `global['${globalName}'] = {};\n`;
     codigoInicializacao += `global['optmizerFunctionsInternalList'] = {};\n`;
+    /*
+    codigoInicializacao += `
+    process.once('exit', function (code) { 
+        Exit({ name: 'Corpo-Lib' });
+        var fs = require('fs');
+        fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['${globalName}'], null, 4));
+        fs.writeFileSync('${arquivoJsonComResultadosContagemFuncoes}', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
+    });
+    `
+    */
     /*
     codigoInicializacao += `var fs = require("fs"); 
     var objetoComResultadosNoDisco = {};
@@ -394,7 +417,7 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
         Enter({ name: 'Corpo-Lib' });
         ` + morphed;
 
-    var codigoAoFinal = `Exit({ name: 'Corpo-Lib' });`;
+    var codigoAoFinal = ``;
     morphed = morphed + '\n \n \n' + codigoAoFinal;
 
     //Salva o código modificado
@@ -402,7 +425,11 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     fs.writeFileSync(caminhoOriginal + '.txt', morphed); //copia para debug
 
     //executa os testes
-    var resultados = ExecutarTeste(diretorioBiblioteca, buffer, qtd);
+    try {
+        ExecutarTeste(diretorioBiblioteca, buffer, qtd);
+    } catch (error) {
+        console.log('Deu ruim:' + error);
+    }
 }
 
 function limparArquivo(caminhoArquivo) {
@@ -411,4 +438,13 @@ function limparArquivo(caminhoArquivo) {
         fs.unlinkSync(caminhoArquivo)
         console.log(`Excluindo arquivo ${caminhoArquivo}...`)
     }
+}
+
+/**
+ * Milisecs F
+ */
+function clock(startTime): any {
+    if (!startTime) return process.hrtime();
+    var end = process.hrtime(startTime);
+    return Math.round((end[0] * 1000) + (end[1] / 1000000));
 }
