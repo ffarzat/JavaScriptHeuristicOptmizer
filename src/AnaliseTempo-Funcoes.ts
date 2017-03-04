@@ -337,8 +337,8 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
             }
         }
 
-        function Exit(details){
-            if(details.name == "toString")
+        function Exit(details, final){
+            if(details.name == "toString" || final)
                 return;
                
 

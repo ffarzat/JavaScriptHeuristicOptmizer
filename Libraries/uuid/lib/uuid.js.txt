@@ -1,0 +1,436 @@
+function ToNanosecondsToSeconds_Optmizer(nanovalue) {return parseFloat((nanovalue / 1000000000.0).toFixed(3));}
+global['__objeto_raiz_exectimer'] = require('exectimer'); 
+global['__objeto_raiz_exectimer_Tick'] = global['__objeto_raiz_exectimer'].Tick; 
+global['__uuid_counter_object'] = {};
+global['optmizerFunctionsInternalList'] = {};
+global['__uuid_counter_object_UUIDjs'] = []; 
+global['__uuid_counter_object_maxFromBits'] = []; 
+global['__uuid_counter_object_getRandomInt'] = []; 
+global['__uuid_counter_object_randomUI04'] = []; 
+global['__uuid_counter_object_randomUI06'] = []; 
+global['__uuid_counter_object_randomUI08'] = []; 
+global['__uuid_counter_object_randomUI12'] = []; 
+global['__uuid_counter_object_randomUI14'] = []; 
+global['__uuid_counter_object_randomUI16'] = []; 
+global['__uuid_counter_object_randomUI32'] = []; 
+global['__uuid_counter_object_randomUI40'] = []; 
+global['__uuid_counter_object_randomUI48'] = []; 
+global['__uuid_counter_object_paddedString'] = []; 
+global['__uuid_counter_object_fromParts'] = []; 
+global['__uuid_counter_object_toString'] = []; 
+global['__uuid_counter_object_toURN'] = []; 
+global['__uuid_counter_object_toBytes'] = []; 
+global['__uuid_counter_object_equals'] = []; 
+global['__uuid_counter_object_getTimeFieldValues'] = []; 
+global['__uuid_counter_object__create4'] = []; 
+global['__uuid_counter_object__create1'] = []; 
+global['__uuid_counter_object_create'] = []; 
+global['__uuid_counter_object_fromTime'] = []; 
+global['__uuid_counter_object_firstFromTime'] = []; 
+global['__uuid_counter_object_lastFromTime'] = []; 
+global['__uuid_counter_object_fromURN'] = []; 
+global['__uuid_counter_object_fromBytes'] = []; 
+global['__uuid_counter_object_fromBinary'] = []; 
+global['__uuid_counter_object_new'] = []; 
+global['__uuid_counter_object_newTS'] = []; 
+
+/*
+ * UUID-js: A js library to generate and parse UUIDs, TimeUUIDs and generate
+ * TimeUUID based on dates for range selections.
+ * @see http://www.ietf.org/rfc/rfc4122.txt
+ **/
+function UUIDjs() {
+Enter({ name: 'UUIDjs', lineNumber: 6, range: [178, 199] });
+
+Exit({ name: 'UUIDjs', lineNumber: 6, range: [178, 199] });
+}
+;
+UUIDjs.maxFromBits = function (bits) {
+Enter({ name: 'maxFromBits', lineNumber: 9, range: [223, 272] });
+    
+Exit({ name: 'maxFromBits', lineNumber: 10, range: [223, 272], return: true });
+   return Math.pow(2, bits);
+
+Exit({ name: 'maxFromBits', lineNumber: 9, range: [223, 272] });
+};
+UUIDjs.limitUI04 = UUIDjs.maxFromBits(4);
+UUIDjs.limitUI06 = UUIDjs.maxFromBits(6);
+UUIDjs.limitUI08 = UUIDjs.maxFromBits(8);
+UUIDjs.limitUI12 = UUIDjs.maxFromBits(12);
+UUIDjs.limitUI14 = UUIDjs.maxFromBits(14);
+UUIDjs.limitUI16 = UUIDjs.maxFromBits(16);
+UUIDjs.limitUI32 = UUIDjs.maxFromBits(32);
+UUIDjs.limitUI40 = UUIDjs.maxFromBits(40);
+UUIDjs.limitUI48 = UUIDjs.maxFromBits(48);
+// Returns a random integer between min and max
+// Using Math.round() will give you a non-uniform distribution!
+// @see https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Math/random
+function getRandomInt(min, max) {
+Enter({ name: 'getRandomInt', lineNumber: 24, range: [867, 964] });
+    
+Exit({ name: 'getRandomInt', lineNumber: 25, range: [867, 964], return: true });
+   return Math.floor(Math.random() * (max - min + 1)) + min;
+
+Exit({ name: 'getRandomInt', lineNumber: 24, range: [867, 964] });
+}
+UUIDjs.randomUI04 = function () {
+Enter({ name: 'randomUI04', lineNumber: 27, range: [985, 1050] });
+    
+Exit({ name: 'randomUI04', lineNumber: 28, range: [985, 1050], return: true });
+   return getRandomInt(0, UUIDjs.limitUI04 - 1);
+
+Exit({ name: 'randomUI04', lineNumber: 27, range: [985, 1050] });
+};
+UUIDjs.randomUI06 = function () {
+Enter({ name: 'randomUI06', lineNumber: 30, range: [1072, 1137] });
+    
+Exit({ name: 'randomUI06', lineNumber: 31, range: [1072, 1137], return: true });
+   return getRandomInt(0, UUIDjs.limitUI06 - 1);
+
+Exit({ name: 'randomUI06', lineNumber: 30, range: [1072, 1137] });
+};
+UUIDjs.randomUI08 = function () {
+Enter({ name: 'randomUI08', lineNumber: 33, range: [1159, 1224] });
+    
+Exit({ name: 'randomUI08', lineNumber: 34, range: [1159, 1224], return: true });
+   return getRandomInt(0, UUIDjs.limitUI08 - 1);
+
+Exit({ name: 'randomUI08', lineNumber: 33, range: [1159, 1224] });
+};
+UUIDjs.randomUI12 = function () {
+Enter({ name: 'randomUI12', lineNumber: 36, range: [1246, 1311] });
+    
+Exit({ name: 'randomUI12', lineNumber: 37, range: [1246, 1311], return: true });
+   return getRandomInt(0, UUIDjs.limitUI12 - 1);
+
+Exit({ name: 'randomUI12', lineNumber: 36, range: [1246, 1311] });
+};
+UUIDjs.randomUI14 = function () {
+Enter({ name: 'randomUI14', lineNumber: 39, range: [1333, 1398] });
+    
+Exit({ name: 'randomUI14', lineNumber: 40, range: [1333, 1398], return: true });
+   return getRandomInt(0, UUIDjs.limitUI14 - 1);
+
+Exit({ name: 'randomUI14', lineNumber: 39, range: [1333, 1398] });
+};
+UUIDjs.randomUI16 = function () {
+Enter({ name: 'randomUI16', lineNumber: 42, range: [1420, 1485] });
+    
+Exit({ name: 'randomUI16', lineNumber: 43, range: [1420, 1485], return: true });
+   return getRandomInt(0, UUIDjs.limitUI16 - 1);
+
+Exit({ name: 'randomUI16', lineNumber: 42, range: [1420, 1485] });
+};
+UUIDjs.randomUI32 = function () {
+Enter({ name: 'randomUI32', lineNumber: 45, range: [1507, 1572] });
+    
+Exit({ name: 'randomUI32', lineNumber: 46, range: [1507, 1572], return: true });
+   return getRandomInt(0, UUIDjs.limitUI32 - 1);
+
+Exit({ name: 'randomUI32', lineNumber: 45, range: [1507, 1572] });
+};
+UUIDjs.randomUI40 = function () {
+Enter({ name: 'randomUI40', lineNumber: 48, range: [1594, 1704] });
+    
+Exit({ name: 'randomUI40', lineNumber: 49, range: [1594, 1704], return: true });
+   return (0 | Math.random() * (1 << 30)) + (0 | Math.random() * (1 << 40 - 30)) * (1 << 30);
+
+Exit({ name: 'randomUI40', lineNumber: 48, range: [1594, 1704] });
+};
+UUIDjs.randomUI48 = function () {
+Enter({ name: 'randomUI48', lineNumber: 51, range: [1726, 1836] });
+    
+Exit({ name: 'randomUI48', lineNumber: 52, range: [1726, 1836], return: true });
+   return (0 | Math.random() * (1 << 30)) + (0 | Math.random() * (1 << 48 - 30)) * (1 << 30);
+
+Exit({ name: 'randomUI48', lineNumber: 51, range: [1726, 1836] });
+};
+UUIDjs.paddedString = function (string, length, z) {
+Enter({ name: 'paddedString', lineNumber: 54, range: [1860, 2106] });
+    string = String(string);
+    z = !z ? '0' : z;
+    var i = length - string.length;
+    for (; i > 0; i >>>= 1, z += z) {
+        if (i & 1) {
+            string = z + string;
+        }
+    }
+    
+Exit({ name: 'paddedString', lineNumber: 63, range: [1860, 2106], return: true });
+   return string;
+
+Exit({ name: 'paddedString', lineNumber: 54, range: [1860, 2106] });
+};
+UUIDjs.prototype.fromParts = function (timeLow, timeMid, timeHiAndVersion, clockSeqHiAndReserved, clockSeqLow, node) {
+Enter({ name: 'fromParts', lineNumber: 65, range: [2137, 2638] });
+    this.version = timeHiAndVersion >> 12 & 15;
+    this.hex = UUIDjs.paddedString(timeLow.toString(16), 8) + '-' + UUIDjs.paddedString(timeMid.toString(16), 4) + '-' + UUIDjs.paddedString(timeHiAndVersion.toString(16), 4) + '-' + UUIDjs.paddedString(clockSeqHiAndReserved.toString(16), 2) + UUIDjs.paddedString(clockSeqLow.toString(16), 2) + '-' + UUIDjs.paddedString(node.toString(16), 12);
+    
+Exit({ name: 'fromParts', lineNumber: 68, range: [2137, 2638], return: true });
+   return this;
+
+Exit({ name: 'fromParts', lineNumber: 65, range: [2137, 2638] });
+};
+UUIDjs.prototype.toString = function () {
+Enter({ name: 'toString', lineNumber: 70, range: [2668, 2704] });
+    
+Exit({ name: 'toString', lineNumber: 71, range: [2668, 2704], return: true });
+   return this.hex;
+
+Exit({ name: 'toString', lineNumber: 70, range: [2668, 2704] });
+};
+UUIDjs.prototype.toURN = function () {
+Enter({ name: 'toURN', lineNumber: 73, range: [2731, 2781] });
+    
+Exit({ name: 'toURN', lineNumber: 74, range: [2731, 2781], return: true });
+   return 'urn:uuid:' + this.hex;
+
+Exit({ name: 'toURN', lineNumber: 73, range: [2731, 2781] });
+};
+UUIDjs.prototype.toBytes = function () {
+Enter({ name: 'toBytes', lineNumber: 76, range: [2810, 3100] });
+    var parts = this.hex.split('-');
+    var ints = [];
+    var intPos = 0;
+    for (var i = 0; i < parts.length; i++) {
+        for (var j = 0; j < parts[i].length; j += 2) {
+            ints[intPos++] = parseInt(parts[i].substr(j, 2), 16);
+        }
+    }
+    
+Exit({ name: 'toBytes', lineNumber: 85, range: [2810, 3100], return: true });
+   return ints;
+
+Exit({ name: 'toBytes', lineNumber: 76, range: [2810, 3100] });
+};
+UUIDjs.prototype.equals = function (uuid) {
+Enter({ name: 'equals', lineNumber: 87, range: [3128, 3288] });
+    if (!(uuid instanceof UUID)) {
+        return false;
+    }
+    if (this.hex !== uuid.hex) {
+        return false;
+    }
+    
+Exit({ name: 'equals', lineNumber: 94, range: [3128, 3288], return: true });
+   return true;
+
+Exit({ name: 'equals', lineNumber: 87, range: [3128, 3288] });
+};
+UUIDjs.getTimeFieldValues = function (time) {
+Enter({ name: 'getTimeFieldValues', lineNumber: 96, range: [3318, 3572] });
+    var ts = time - Date.UTC(1582, 9, 15);
+    var hm = ts / 4294967296 * 10000 & 268435455;
+    
+Exit({ name: 'getTimeFieldValues', lineNumber: 99, range: [3318, 3572], return: true });
+   return {
+        low: (ts & 268435455) * 10000 % 4294967296,
+        mid: hm & 65535,
+        hi: hm >>> 16,
+        timestamp: ts
+    };
+
+Exit({ name: 'getTimeFieldValues', lineNumber: 96, range: [3318, 3572] });
+};
+UUIDjs._create4 = function () {
+Enter({ name: '_create4', lineNumber: 106, range: [3592, 3782] });
+    
+Exit({ name: '_create4', lineNumber: 107, range: [3592, 3782], return: true });
+   return new UUIDjs().fromParts(UUIDjs.randomUI32(), UUIDjs.randomUI16(), 16384 | UUIDjs.randomUI12(), 128 | UUIDjs.randomUI06(), UUIDjs.randomUI08(), UUIDjs.randomUI48());
+
+Exit({ name: '_create4', lineNumber: 106, range: [3592, 3782] });
+};
+UUIDjs._create1 = function () {
+Enter({ name: '_create1', lineNumber: 109, range: [3802, 4639] });
+    var now = new Date().getTime();
+    var sequence = UUIDjs.randomUI14();
+    var node = (UUIDjs.randomUI08() | 1) * 1099511627776 + UUIDjs.randomUI40();
+    var tick = UUIDjs.randomUI04();
+    var timestamp = 0;
+    var timestampRatio = 1 / 4;
+    if (now != timestamp) {
+        if (now < timestamp) {
+            sequence++;
+        }
+        timestamp = now;
+        tick = UUIDjs.randomUI04();
+    } else if (Math.random() < timestampRatio && tick < 9984) {
+        tick += 1 + UUIDjs.randomUI04();
+    } else {
+        sequence++;
+    }
+    var tf = UUIDjs.getTimeFieldValues(timestamp);
+    var tl = tf.low + tick;
+    var thav = tf.hi & 4095 | 4096;
+    sequence &= 16383;
+    var cshar = sequence >>> 8 | 128;
+    var csl = sequence & 255;
+    
+Exit({ name: '_create1', lineNumber: 133, range: [3802, 4639], return: true });
+   return new UUIDjs().fromParts(tl, tf.mid, thav, cshar, csl, node);
+
+Exit({ name: '_create1', lineNumber: 109, range: [3802, 4639] });
+};
+UUIDjs.create = function (version) {
+Enter({ name: 'create', lineNumber: 135, range: [4657, 4747] });
+    version = version || 4;
+    
+Exit({ name: 'create', lineNumber: 137, range: [4657, 4747], return: true });
+   return this['_create' + version]();
+
+Exit({ name: 'create', lineNumber: 135, range: [4657, 4747] });
+};
+UUIDjs.fromTime = function (time, last) {
+Enter({ name: 'fromTime', lineNumber: 139, range: [4767, 5190] });
+    last = !last ? false : last;
+    var tf = UUIDjs.getTimeFieldValues(time);
+    var tl = tf.low;
+    var thav = tf.hi & 4095 | 4096;
+    // set version '0001'
+    if (last === false) {
+        return new UUIDjs().fromParts(tl, tf.mid, thav, 0, 0, 0);
+    } else {
+        
+Exit({ name: 'fromTime', lineNumber: 148, range: [4767, 5190], return: true });
+       return new UUIDjs().fromParts(tl, tf.mid, thav, 128 | UUIDjs.limitUI06, UUIDjs.limitUI08 - 1, UUIDjs.limitUI48 - 1);
+    }
+
+Exit({ name: 'fromTime', lineNumber: 139, range: [4767, 5190] });
+};
+UUIDjs.firstFromTime = function (time) {
+Enter({ name: 'firstFromTime', lineNumber: 151, range: [5215, 5275] });
+    
+Exit({ name: 'firstFromTime', lineNumber: 152, range: [5215, 5275], return: true });
+   return UUIDjs.fromTime(time, false);
+
+Exit({ name: 'firstFromTime', lineNumber: 151, range: [5215, 5275] });
+};
+UUIDjs.lastFromTime = function (time) {
+Enter({ name: 'lastFromTime', lineNumber: 154, range: [5299, 5358] });
+    
+Exit({ name: 'lastFromTime', lineNumber: 155, range: [5299, 5358], return: true });
+   return UUIDjs.fromTime(time, true);
+
+Exit({ name: 'lastFromTime', lineNumber: 154, range: [5299, 5358] });
+};
+UUIDjs.fromURN = function (strId) {
+Enter({ name: 'fromURN', lineNumber: 157, range: [5377, 5737] });
+    var r, p = /^(?:urn:uuid:|\{)?([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{2})([0-9a-f]{2})-([0-9a-f]{12})(?:\})?$/i;
+    if (r = p.exec(strId)) {
+        return new UUIDjs().fromParts(parseInt(r[1], 16), parseInt(r[2], 16), parseInt(r[3], 16), parseInt(r[4], 16), parseInt(r[5], 16), parseInt(r[6], 16));
+    }
+    
+Exit({ name: 'fromURN', lineNumber: 162, range: [5377, 5737], return: true });
+   return null;
+
+Exit({ name: 'fromURN', lineNumber: 157, range: [5377, 5737] });
+};
+UUIDjs.fromBytes = function (ints) {
+Enter({ name: 'fromBytes', lineNumber: 164, range: [5758, 6311] });
+    if (ints.length < 5) {
+        return null;
+    }
+    var str = '';
+    var pos = 0;
+    var parts = [
+        4,
+        2,
+        2,
+        2,
+        6
+    ];
+    for (var i = 0; i < parts.length; i++) {
+        for (var j = 0; j < parts[i]; j++) {
+            var octet = ints[pos++].toString(16);
+            if (octet.length == 1) {
+                octet = '0' + octet;
+            }
+            str += octet;
+        }
+        if (parts[i] !== 6) {
+            str += '-';
+        }
+    }
+    
+Exit({ name: 'fromBytes', lineNumber: 189, range: [5758, 6311], return: true });
+   return UUIDjs.fromURN(str);
+
+Exit({ name: 'fromBytes', lineNumber: 164, range: [5758, 6311] });
+};
+UUIDjs.fromBinary = function (binary) {
+Enter({ name: 'fromBinary', lineNumber: 191, range: [6333, 6618] });
+    var ints = [];
+    for (var i = 0; i < binary.length; i++) {
+        ints[i] = binary.charCodeAt(i);
+        if (ints[i] > 255 || ints[i] < 0) {
+            throw new Error('Unexpected byte in binary data.');
+        }
+    }
+    
+Exit({ name: 'fromBinary', lineNumber: 199, range: [6333, 6618], return: true });
+   return UUIDjs.fromBytes(ints);
+
+Exit({ name: 'fromBinary', lineNumber: 191, range: [6333, 6618] });
+};
+// Aliases to support legacy code. Do not use these when writing new code as
+// they may be removed in future versions!
+UUIDjs['new'] = function () {
+Enter({ name: 'new', lineNumber: 203, range: [6756, 6798] });
+    
+Exit({ name: 'new', lineNumber: 204, range: [6756, 6798], return: true });
+   return this.create(4);
+
+Exit({ name: 'new', lineNumber: 203, range: [6756, 6798] });
+};
+UUIDjs.newTS = function () {
+Enter({ name: 'newTS', lineNumber: 206, range: [6815, 6857] });
+    
+Exit({ name: 'newTS', lineNumber: 207, range: [6815, 6857], return: true });
+   return this.create(1);
+
+Exit({ name: 'newTS', lineNumber: 206, range: [6815, 6857] });
+};
+module.exports = UUIDjs;
+
+ 
+        function Enter(details){
+            if(details.name == "toString")
+                return;
+
+            if(global['__uuid_counter_object_'+details.name])
+            {
+                var p = new global['__objeto_raiz_exectimer_Tick'](details.name);
+                p.start();
+                global['__uuid_counter_object_'+details.name].push(p);
+            }
+        }
+
+        function Exit(details, final){
+            if(details.name == "toString" || final)
+                return;
+               
+
+            if(global['__uuid_counter_object']  && global['__uuid_counter_object_' + details.name])
+            {
+                var p = global['__uuid_counter_object_'+details.name].pop();
+                p.stop();
+                var resultadoFinal = {'name': details.name};
+                resultadoFinal.min = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].min()); 
+                resultadoFinal.max = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].max()); 
+                resultadoFinal.mean = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].mean()); 
+                resultadoFinal.median = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].median()); 
+                resultadoFinal.duration = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].duration())
+
+                global['__uuid_counter_object'][details.name] = resultadoFinal;
+            }
+
+            global['optmizerFunctionsInternalList'][details.name] = isNaN(global['optmizerFunctionsInternalList'][details.name])? 0 : parseInt(global['optmizerFunctionsInternalList'][details.name]) + parseInt(1);
+
+            var fs = require("fs");
+            fs.writeFileSync('/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid/resultados-funcoes.json', JSON.stringify(global['__uuid_counter_object'], null, 4));
+            fs.writeFileSync('/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid/resultados-dinamico.json', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
+
+        } 
+;
+ 
+ 

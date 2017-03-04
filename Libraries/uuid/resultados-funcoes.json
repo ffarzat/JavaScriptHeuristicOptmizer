@@ -1,0 +1,202 @@
+{
+    "maxFromBits": {
+        "name": "maxFromBits",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "create": {
+        "name": "create",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "_create4": {
+        "name": "_create4",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "UUIDjs": {
+        "name": "UUIDjs",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "randomUI32": {
+        "name": "randomUI32",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "getRandomInt": {
+        "name": "getRandomInt",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.002
+    },
+    "randomUI16": {
+        "name": "randomUI16",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "randomUI12": {
+        "name": "randomUI12",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "randomUI06": {
+        "name": "randomUI06",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "randomUI08": {
+        "name": "randomUI08",
+        "min": 0,
+        "max": 0.001,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "randomUI48": {
+        "name": "randomUI48",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.001
+    },
+    "paddedString": {
+        "name": "paddedString",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0.004
+    },
+    "fromParts": {
+        "name": "fromParts",
+        "min": 0.002,
+        "max": 0.03,
+        "mean": 0.003,
+        "median": 0.003,
+        "duration": 0.397
+    },
+    "toURN": {
+        "name": "toURN",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "toBytes": {
+        "name": "toBytes",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "randomUI14": {
+        "name": "randomUI14",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "randomUI40": {
+        "name": "randomUI40",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "randomUI04": {
+        "name": "randomUI04",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "getTimeFieldValues": {
+        "name": "getTimeFieldValues",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "_create1": {
+        "name": "_create1",
+        "min": 0.004,
+        "max": 0.005,
+        "mean": 0.004,
+        "median": 0.004,
+        "duration": 0.026
+    },
+    "firstFromTime": {
+        "name": "firstFromTime",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "lastFromTime": {
+        "name": "lastFromTime",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "fromTime": {
+        "name": "fromTime",
+        "min": 0,
+        "max": 0.007,
+        "mean": 0.003,
+        "median": 0.003,
+        "duration": 0.013
+    },
+    "new": {
+        "name": "new",
+        "min": 0,
+        "max": 0,
+        "mean": 0,
+        "median": 0,
+        "duration": 0
+    },
+    "total-testes": {
+        "name": "total-testes",
+        "min": 0.561,
+        "max": 0.568,
+        "mean": 0.5648,
+        "median": 0.565,
+        "duration": 2.824
+    }
+}
