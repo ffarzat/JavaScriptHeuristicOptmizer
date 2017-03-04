@@ -133,7 +133,7 @@
           });
         } else if (parent.type === 'CallExpression') {
           return list.push({
-            name: parent.id ? parent.id.name : '[Anonymous]',
+            name: parent.id ? parent.id.name : 'Anonymous',
             params: node.params,
             range: node.range,
             blockStart: node.body.range[0],
@@ -143,7 +143,7 @@
           });
         } else if (typeof parent.length === 'number') {
           return list.push({
-            name: parent.id ? parent.id.name : '[Anonymous]',
+            name: parent.id ? parent.id.name : 'Anonymous',
             params: node.params,
             range: node.range,
             blockStart: node.body.range[0],
@@ -186,7 +186,7 @@
     var functions = getFunctions(tree);
 
     //functions = functions.filter(function(fn) {
-      //return fn.name !== '[Anonymous]';
+      //return fn.name !== 'Anonymous';
     //});
 
     return functions;
@@ -196,7 +196,7 @@
     var functions = getFunctions(tree);
 
     //functions = functions.filter(function(fn) {
-      //return fn.name !== '[Anonymous]';
+      //return fn.name !== 'Anonymous';
     //});
     
     return functions;

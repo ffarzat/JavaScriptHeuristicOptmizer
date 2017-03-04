@@ -37,7 +37,7 @@ var arquivoRootBiblioteca = process.argv[4].replace("'", "");
 var DiretorioResultados = process.argv[5].replace("'", "");
 var qtdTestes = parseInt(process.argv[6].replace("'", ""));
 var os = require("os");
-
+nomeBiblioteca = nomeBiblioteca.replace("-", "_");
 arquivoRootBiblioteca = path.join(DiretorioBiblioteca, arquivoRootBiblioteca);
 
 var arquivoEstaticoResultado = path.join(DiretorioBiblioteca, 'resultados-estatico.json');
@@ -91,8 +91,8 @@ function executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca: string, b
 
     //Inclui o total observado da lib inteira
     var objetoComResultados = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
-    objetoComResultados['total-testes'] = {
-        'name': 'total-testes',
+    objetoComResultados['total-original'] = {
+        'name': 'total-original',
         'min': resultados.min,
         'max': resultados.max,
         'mean': resultados.mean,
@@ -233,9 +233,11 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
 
         csvcontent += `${nome};${qtdEstatico};${qtdDinamico};${min};${max};${median};${mean};${duration}` + newLine;
     }
+    //tempo total com a instrumentação
+    csvcontent += `${objetoTempo['total-Instrumentado'].name};0;0;${objetoTempo['total-Instrumentado'].min};${objetoTempo['total-Instrumentado'].max};${objetoTempo['total-Instrumentado'].median};${objetoTempo['total-Instrumentado'].mean};${objetoTempo['total-Instrumentado'].duration}` + newLine;
 
-    //tempo total
-    csvcontent += `${objetoTempo['total-testes'].name};0;0;${objetoTempo['total-testes'].min};${objetoTempo['total-testes'].max};${objetoTempo['total-testes'].median};${objetoTempo['total-testes'].mean};${objetoTempo['total-testes'].duration}` + newLine;
+    //tempo total Original
+    csvcontent += `${objetoTempo['total-original'].name};0;0;${objetoTempo['total-original'].min};${objetoTempo['total-original'].max};${objetoTempo['total-original'].median};${objetoTempo['total-original'].mean};${objetoTempo['total-original'].duration}` + newLine;
 
     fs.writeFileSync(path.join(DiretorioResultados, `${nomeBiblioteca}-analiseTempoFuncoes.csv`), csvcontent);
 }
@@ -335,16 +337,42 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     codigoInicializacao += `global['__objeto_raiz_exectimer_Tick'] = global['__objeto_raiz_exectimer'].Tick; \n`;
     codigoInicializacao += `global['${globalName}'] = {};\n`;
     codigoInicializacao += `global['optmizerFunctionsInternalList'] = {};\n`;
-    /*
-    codigoInicializacao += `
-    process.once('exit', function (code) { 
+
+    codigoInicializacao += `process.once('exit', function (code) { 
         Exit({ name: 'Corpo-Lib' });
+    `;
+
+    for (var i = 0; i < listaDeFuncoes.length; i++) {
+
+        if (listaDeFuncoes[i] == "toString")
+            continue;
+
+        var encerramento = `
+            for (var i = 0; i < global['${globalName}_${listaDeFuncoes[i]}'].length; i++) {
+                global['${globalName}_${listaDeFuncoes[i]}'][i].stop();
+            }
+
+            var resultadoFinal${globalName}_${listaDeFuncoes[i]} = {'name': '${listaDeFuncoes[i]}'};
+            if(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'])
+            {
+                resultadoFinal${globalName}_${listaDeFuncoes[i]}.min = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].min()); 
+                resultadoFinal${globalName}_${listaDeFuncoes[i]}.max = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].max()); 
+                resultadoFinal${globalName}_${listaDeFuncoes[i]}.mean = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].mean()); 
+                resultadoFinal${globalName}_${listaDeFuncoes[i]}.median = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].median()); 
+                resultadoFinal${globalName}_${listaDeFuncoes[i]}.duration = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].duration())
+                global['${globalName}']['${listaDeFuncoes[i]}'] = resultadoFinal${globalName}_${listaDeFuncoes[i]};
+            }
+        `
+        codigoInicializacao += encerramento;
+    }
+
+    codigoInicializacao += `
         var fs = require('fs');
         fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['${globalName}'], null, 4));
         fs.writeFileSync('${arquivoJsonComResultadosContagemFuncoes}', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
     });
     `
-    */
+
     /*
     codigoInicializacao += `var fs = require("fs"); 
     var objetoComResultadosNoDisco = {};
@@ -427,7 +455,18 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
 
     //executa os testes
     try {
-        ExecutarTeste(diretorioBiblioteca, buffer, qtd);
+        var resultados = ExecutarTeste(diretorioBiblioteca, buffer, qtd);
+        var objetoComResultados = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
+        objetoComResultados['total-Instrumentado'] = {
+            'name': 'total-Instrumentado',
+            'min': resultados.min,
+            'max': resultados.max,
+            'mean': resultados.mean,
+            'median': resultados.median,
+            'duration': resultados.duration,
+        };
+        fs.writeFileSync(arquivoFuncoesResultado, JSON.stringify(objetoComResultados, null, 4));
+
     } catch (error) {
         console.log('Deu ruim:' + error);
     }
