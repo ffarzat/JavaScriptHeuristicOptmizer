@@ -4,6 +4,8 @@ import moment from '../../moment';
 
 module('deprecate');
 
+
+
 test('deprecate', function (assert) {
     // NOTE: hooks inside deprecate.js and moment are different, so this is can
     // not be test.expectedDeprecations(...)
@@ -13,3 +15,5 @@ test('deprecate', function (assert) {
 
     expect(0);
 });
+
+
