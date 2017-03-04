@@ -1,8 +1,8 @@
 /// <reference path="./typings/tsd.d.ts" />
 
-//node build/src/AnaliseTempo-Funcoes.js 'uuid' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 5
-//node build/src/AnaliseTempo-Funcoes.js 'pug' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 5
-//node build/src/AnaliseTempo-Funcoes.js 'exectimer' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 5
+//node build/src/AnaliseTempo-Funcoes.js 'uuid' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
+//node build/src/AnaliseTempo-Funcoes.js 'pug' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
+//node build/src/AnaliseTempo-Funcoes.js 'exectimer' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
 
 import ASTExplorer from './ASTExplorer';
 import TestResults from './TestResults';
@@ -29,7 +29,7 @@ arquivoRootBiblioteca = path.join(DiretorioBiblioteca, arquivoRootBiblioteca);
 var arquivoEstaticoResultado = path.join(DiretorioBiblioteca, 'resultados-estatico.json');
 var arquivoDinamicoResultado = path.join(DiretorioBiblioteca, 'resultados-dinamico.json');
 var arquivoFuncoesResultado = path.join(DiretorioBiblioteca, 'resultados-funcoes.json');
-
+var arquivoGlobalBiblioteca = path.join(DiretorioBiblioteca, 'resultados.json');
 
 console.log(`${DiretorioBiblioteca}`);
 console.log(`${arquivoRootBiblioteca}`);
@@ -38,6 +38,12 @@ console.log(`${arquivoRootBiblioteca}`);
 var oldLibFilePath = path.join(DiretorioBiblioteca, 'old.js');
 if (!fs.existsSync(oldLibFilePath))
     fse.copySync(arquivoRootBiblioteca, oldLibFilePath, { "clobber": true });
+
+//Caso os arquivos existam limpa eles
+limparArquivo(arquivoEstaticoResultado);
+limparArquivo(arquivoDinamicoResultado);
+limparArquivo(arquivoFuncoesResultado);
+limparArquivo(arquivoGlobalBiblioteca);
 //============================================================================================ Original //>
 
 var caminhoOriginal = `${arquivoRootBiblioteca}`;
@@ -202,7 +208,9 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
         var min = objetoTempo[nome] ? objetoTempo[nome].min : 0;
         var max = objetoTempo[nome] ? objetoTempo[nome].max : 0;
         var median = objetoTempo[nome] ? objetoTempo[nome].median : 0;
+        //var median  =  0;
         var mean = objetoTempo[nome] ? objetoTempo[nome].mean : 0;
+        //var mean    = 0;
         var duration = objetoTempo[nome] ? objetoTempo[nome].duration : 0;
 
         csvcontent += `${nome};${qtdEstatico};${qtdDinamico};${min};${max};${median};${mean};${duration}` + newLine;
@@ -308,6 +316,19 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     codigoInicializacao += `global['__objeto_raiz_exectimer_Tick'] = global['__objeto_raiz_exectimer'].Tick; \n`;
     codigoInicializacao += `global['${globalName}'] = {};\n`;
     codigoInicializacao += `global['optmizerFunctionsInternalList'] = {};\n`;
+    /*
+    codigoInicializacao += `var fs = require("fs"); 
+    var objetoComResultadosNoDisco = {};
+    if(fs.existsSync('${arquivoGlobalBiblioteca}')){
+        objetoComResultadosNoDisco = JSON.parse(fs.readFileSync('${arquivoGlobalBiblioteca}').toString());
+        objetoComResultadosNoDisco['total'] = parseInt(objetoComResultadosNoDisco['total']) + 1;
+    }
+    else{
+        objetoComResultadosNoDisco['total'] = 1;
+    }
+    fs.writeFileSync('${arquivoGlobalBiblioteca}', JSON.stringify(objetoComResultadosNoDisco, null, 4));
+    `;
+    */
 
     for (var i = 0; i < listaDeFuncoes.length; i++) {
         var inicializacaoFuncao = `global['${globalName}_${listaDeFuncoes[i]}'] = []; \n`;
@@ -357,8 +378,7 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
             }
 
             global['optmizerFunctionsInternalList'][details.name] = isNaN(global['optmizerFunctionsInternalList'][details.name])? 0 : parseInt(global['optmizerFunctionsInternalList'][details.name]) + parseInt(1);
-
-            var fs = require("fs");
+            var fs = require('fs');
             fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['${globalName}'], null, 4));
             fs.writeFileSync('${arquivoJsonComResultadosContagemFuncoes}', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
 
@@ -377,4 +397,12 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
 
     //executa os testes
     var resultados = ExecutarTeste(diretorioBiblioteca, buffer, qtd);
+}
+
+function limparArquivo(caminhoArquivo) {
+
+    if (fs.existsSync(caminhoArquivo)) {
+        fs.unlinkSync(caminhoArquivo)
+        console.log(`Excluindo arquivo ${caminhoArquivo}...`)
+    }
 }
