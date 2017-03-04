@@ -1,9 +1,0 @@
-{
-    "Parser": 1,
-    "bind": 4,
-    "reset": 1,
-    "parseString": 1,
-    "processName": 48,
-    "isEmpty": 48,
-    "assignOrPush": 47
-}
