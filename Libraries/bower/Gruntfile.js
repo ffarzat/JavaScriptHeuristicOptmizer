@@ -64,7 +64,8 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('assets', ['exec:assets-force']);
-    grunt.registerTask('test', ['eslint', 'exec:assets', 'simplemocha:full']);
+    //grunt.registerTask('test', ['eslint', 'exec:assets', 'simplemocha:full']);
+    grunt.registerTask('test', ['exec:assets', 'simplemocha:full']);
     grunt.registerTask('cover', 'exec:cover');
     grunt.registerTask('travis', ['eslint', 'exec:assets', 'exec:cover', 'exec:coveralls']);
     grunt.registerTask('default', 'test');
