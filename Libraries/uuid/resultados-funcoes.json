@@ -98,10 +98,10 @@
     "fromParts": {
         "name": "fromParts",
         "min": 0.002,
-        "max": 0.03,
+        "max": 0.013,
         "mean": 0.003,
         "median": 0.003,
-        "duration": 0.397
+        "duration": 0.376
     },
     "toURN": {
         "name": "toURN",
@@ -153,11 +153,11 @@
     },
     "_create1": {
         "name": "_create1",
-        "min": 0.004,
-        "max": 0.005,
-        "mean": 0.004,
+        "min": 0.003,
+        "max": 0.008,
+        "mean": 0.005,
         "median": 0.004,
-        "duration": 0.026
+        "duration": 0.03
     },
     "firstFromTime": {
         "name": "firstFromTime",
@@ -178,10 +178,10 @@
     "fromTime": {
         "name": "fromTime",
         "min": 0,
-        "max": 0.007,
+        "max": 0.006,
         "mean": 0.003,
-        "median": 0.003,
-        "duration": 0.013
+        "median": 0.002,
+        "duration": 0.011
     },
     "new": {
         "name": "new",
@@ -193,10 +193,10 @@
     },
     "total-testes": {
         "name": "total-testes",
-        "min": 0.561,
-        "max": 0.568,
-        "mean": 0.5648,
-        "median": 0.565,
-        "duration": 2.824
+        "min": 0.567,
+        "max": 0.567,
+        "mean": 0.567,
+        "median": 0.567,
+        "duration": 0.567
     }
 }

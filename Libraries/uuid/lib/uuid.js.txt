@@ -34,7 +34,49 @@ global['__uuid_counter_object_fromBinary'] = [];
 global['__uuid_counter_object_new'] = []; 
 global['__uuid_counter_object_newTS'] = []; 
 
-/*
+
+
+
+ 
+        function Enter(details){
+            if(details.name == "toString")
+                return;
+
+            if(global['__uuid_counter_object_'+details.name])
+            {
+                var p = new global['__objeto_raiz_exectimer_Tick'](details.name);
+                p.start();
+                global['__uuid_counter_object_'+details.name].push(p);
+            }
+        }
+
+        function Exit(details){
+            if(details.name == "toString")
+                return;
+               
+
+            if(global['__uuid_counter_object']  && global['__uuid_counter_object_' + details.name])
+            {
+                var p = global['__uuid_counter_object_'+details.name].pop();
+                p.stop();
+                var resultadoFinal = {'name': details.name};
+                resultadoFinal.min = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].min()); 
+                resultadoFinal.max = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].max()); 
+                resultadoFinal.mean = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].mean()); 
+                resultadoFinal.median = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].median()); 
+                resultadoFinal.duration = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].duration())
+
+                global['__uuid_counter_object'][details.name] = resultadoFinal;
+            }
+
+            global['optmizerFunctionsInternalList'][details.name] = isNaN(global['optmizerFunctionsInternalList'][details.name])? 0 : parseInt(global['optmizerFunctionsInternalList'][details.name]) + parseInt(1);
+            var fs = require('fs');
+            fs.writeFileSync('/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid/resultados-funcoes.json', JSON.stringify(global['__uuid_counter_object'], null, 4));
+            fs.writeFileSync('/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid/resultados-dinamico.json', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
+
+        }
+        Enter({ name: 'Corpo-Lib' });
+        /*
  * UUID-js: A js library to generate and parse UUIDs, TimeUUIDs and generate
  * TimeUUID based on dates for range selections.
  * @see http://www.ietf.org/rfc/rfc4122.txt
@@ -391,46 +433,6 @@ Exit({ name: 'newTS', lineNumber: 207, range: [6815, 6857], return: true });
 Exit({ name: 'newTS', lineNumber: 206, range: [6815, 6857] });
 };
 module.exports = UUIDjs;
-
- 
-        function Enter(details){
-            if(details.name == "toString")
-                return;
-
-            if(global['__uuid_counter_object_'+details.name])
-            {
-                var p = new global['__objeto_raiz_exectimer_Tick'](details.name);
-                p.start();
-                global['__uuid_counter_object_'+details.name].push(p);
-            }
-        }
-
-        function Exit(details, final){
-            if(details.name == "toString" || final)
-                return;
-               
-
-            if(global['__uuid_counter_object']  && global['__uuid_counter_object_' + details.name])
-            {
-                var p = global['__uuid_counter_object_'+details.name].pop();
-                p.stop();
-                var resultadoFinal = {'name': details.name};
-                resultadoFinal.min = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].min()); 
-                resultadoFinal.max = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].max()); 
-                resultadoFinal.mean = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].mean()); 
-                resultadoFinal.median = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].median()); 
-                resultadoFinal.duration = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].duration())
-
-                global['__uuid_counter_object'][details.name] = resultadoFinal;
-            }
-
-            global['optmizerFunctionsInternalList'][details.name] = isNaN(global['optmizerFunctionsInternalList'][details.name])? 0 : parseInt(global['optmizerFunctionsInternalList'][details.name]) + parseInt(1);
-
-            var fs = require("fs");
-            fs.writeFileSync('/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid/resultados-funcoes.json', JSON.stringify(global['__uuid_counter_object'], null, 4));
-            fs.writeFileSync('/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid/resultados-dinamico.json', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
-
-        } 
-;
  
  
+Exit({ name: 'Corpo-Lib' });

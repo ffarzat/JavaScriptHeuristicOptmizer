@@ -5,6 +5,10 @@
 //node build/src/AnaliseTempo-Funcoes.js 'exectimer' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
 //node build/src/AnaliseTempo-Funcoes.js 'bower' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/bower' 'lib/core/Manager.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
 
+//Não vai de jeito nenhum
+//node build/src/AnaliseTempo-Funcoes.js 'express-ifttt-webhook' '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/express-ifttt-webhook' 'lib/webhook.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Tempo-Funcoes/' 1
+
+
 import ASTExplorer from './ASTExplorer';
 import TestResults from './TestResults';
 
@@ -346,7 +350,10 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
 
     var morphed = esmorph.modify(codigoDoOriginal, modifiers);
 
-    morphed += `\n\n 
+    morphed += "";
+
+    //Jogo a inicializacao no começo de todo o código
+    morphed = codigoInicializacao + '\n\n' + `\n\n 
         function Enter(details){
             if(details.name == "toString")
                 return;
@@ -359,8 +366,8 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
             }
         }
 
-        function Exit(details, final){
-            if(details.name == "toString" || final)
+        function Exit(details){
+            if(details.name == "toString")
                 return;
                
 
@@ -383,13 +390,11 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
             fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['${globalName}'], null, 4));
             fs.writeFileSync('${arquivoJsonComResultadosContagemFuncoes}', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
 
-        } \n;`
+        }
+        Enter({ name: 'Corpo-Lib' });
+        ` + morphed;
 
-
-    //Jogo a inicializacao no começo de todo o código
-    morphed = codigoInicializacao + '\n' + morphed;
-
-    var codigoAoFinal = ``;
+    var codigoAoFinal = `Exit({ name: 'Corpo-Lib' });`;
     morphed = morphed + '\n \n \n' + codigoAoFinal;
 
     //Salva o código modificado
