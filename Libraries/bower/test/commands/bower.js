@@ -4,6 +4,8 @@ var runBin = require('../helpers').runBin;
 describe('bower', function () {
     process.env.CI = '1';
 
+    /*
+
     it('runs bower installation', function () {
         var result = runBin();
         var text = result.stdout.toString();
@@ -11,6 +13,8 @@ describe('bower', function () {
         expect(text).to.contain('Usage:');
         expect(text).to.contain('Commands:');
     });
+
+    */
 });
 
 describe('abbreviations', function () {
