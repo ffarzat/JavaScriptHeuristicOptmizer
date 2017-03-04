@@ -119,7 +119,7 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
             stringList = stringList.substring(0, stringList.length - 1);
             //console.log(`${stringList}`);
             var resultadoJson = JSON.parse(`${stringList}`);
-            durations.push(parseInt(resultadoJson.duration)/1000);
+            durations.push(parseInt(resultadoJson.duration) / 1000);
 
             if (resultadoJson.sucess == "false") {
                 passedAllTests = false;
@@ -140,7 +140,7 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
 
     //var unitTestsTimer = exectimer.timers[msgId];
     var resultadoFinal: TestResults = new TestResults();
-   
+
     var math = require('mathjs');
 
 
@@ -293,7 +293,7 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     codigoInicializacao += `global['optmizerFunctionsInternalList'] = {};\n`;
 
     for (var i = 0; i < listaDeFuncoes.length; i++) {
-        var inicializacaoFuncao = `global['${globalName}_${listaDeFuncoes[i].name}'] = new global['__objeto_raiz_exectimer_Tick']('${listaDeFuncoes[i].name}');\n`;
+        var inicializacaoFuncao = `global['${globalName}_${listaDeFuncoes[i].name}'] = []; \n`;
         codigoInicializacao += `${inicializacaoFuncao}`;
     }
 
@@ -313,7 +313,11 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
                 return;
 
             if(global['${globalName}_'+details.name])
-                global['${globalName}_'+details.name].start();
+            {
+                var p = new global['__objeto_raiz_exectimer_Tick'](details.name);
+                p.start();
+                global['${globalName}_'+details.name].push(p);
+            }
         }
 
         function Exit(details){
@@ -323,7 +327,8 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
 
             if(global['${globalName}']  && global['${globalName}_' + details.name])
             {
-                global['${globalName}_'+details.name].stop();
+                var p = global['${globalName}_'+details.name].pop();
+                p.stop();
                 var resultadoFinal = {'name': details.name};
                 resultadoFinal.min = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].min()); 
                 resultadoFinal.max = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].max()); 
