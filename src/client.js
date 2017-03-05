@@ -31,10 +31,7 @@ var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption
         //fs.appendFileSync("/home/users/ffarzat1981/log-client.txt", error);
         process.exit(error.code);
     }
-    
-    //recuperar o real do time
-    var indice = stdout.indexOf('')
-    
+  
     
     //console.log('MPN stdout: ' + stdout);
     //console.log('MPNstderr: ' + stderr);
