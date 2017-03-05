@@ -282,8 +282,9 @@ function gerarRankingEstatico(caminhoOriginal: string, diretorioBiblioteca: stri
 
     for (var i = 0; i < functions.length; i++) {
         var nome = functions[i];
-        var total = temp.split('.' + nome).length;
-        localCount[nome] = total;
+        var totalPonto = temp.split('.' + nome).length;
+        var totalReturn = temp.split(' ' + nome + '(').length;
+        localCount[nome] = totalPonto + totalReturn;
     }
 
     fs.writeFileSync(arquivoEstaticoResultado, JSON.stringify(localCount, null, 4));
