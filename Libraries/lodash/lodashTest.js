@@ -4514,6 +4514,8 @@
       deepEqual(_.flatten(array), [['a'], ['b']]);
     });
 
+    /*
+
     test('should flatten `arguments` objects', 2, function() {
       var array = [args, [args]];
 
@@ -4595,6 +4597,9 @@
         skipTest(4);
       }
     });
+
+    */
+
   }(1, 2, 3));
 
   /*--------------------------------------------------------------------------*/
@@ -10718,6 +10723,7 @@
 
   QUnit.module('extremum methods');
 
+  /*
   _.each(['max', 'maxBy', 'min', 'minBy'], function(methodName) {
     var array = [1, 2, 3],
         func = _[methodName],
@@ -10782,6 +10788,8 @@
       strictEqual(actual, object);
     });
   });
+
+  */
 
   /*--------------------------------------------------------------------------*/
 
@@ -11109,6 +11117,7 @@
       }
     });
 
+    /*
     test('should work with a `root` of `this`', 2, function() {
       if (!isModularize && !document && _._object) {
         var fs = require('fs'),
@@ -11126,6 +11135,7 @@
         skipTest(2);
       }
     });
+    */
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -11730,6 +11740,8 @@
       deepEqual(c(1), expected);
     });
 
+    
+    /*
     test('should work with recursively bound functions', 1, function() {
       var fn = function() {
         return this.a;
@@ -11813,6 +11825,7 @@
         deepEqual(actual, expected);
       });
     });
+    */
   }());
 
   /*--------------------------------------------------------------------------*/
@@ -13316,7 +13329,7 @@
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.runInContext');
-
+/*
   (function() {
     test('should not require a fully populated `context` object', 1, function() {
       if (!isModularize) {
@@ -13353,7 +13366,7 @@
       }
     });
   }());
-
+*/
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.sample');
@@ -14967,8 +14980,9 @@
 
   /*--------------------------------------------------------------------------*/
 
+  
   QUnit.module('lodash.throttle');
-
+  /*
   (function() {
     asyncTest('should throttle a function', 2, function() {
       if (!(isRhino && isModularize)) {
@@ -15196,7 +15210,7 @@
       }
     });
   }());
-
+  */
   /*--------------------------------------------------------------------------*/
 
   QUnit.module('lodash.debounce and lodash.throttle');
@@ -17417,7 +17431,7 @@
   /*--------------------------------------------------------------------------*/
 
   QUnit.config.asyncRetries = 10;
-  QUnit.config.hidepassed = true;
+  QUnit.config.hidepassed = false;
 
   if (!document) {
     QUnit.config.noglobals = true;
