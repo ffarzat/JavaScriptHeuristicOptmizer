@@ -45,7 +45,7 @@ export default class GA extends IHeuristic {
         this.elitismPercentual = config.elitismPercentual;
         this.totalCallBack = 0;
         this.operationsCounter = 0;
-        this.proximaGeracaoDeTroca = 0;
+        this.proximaGeracaoDeTroca = 1;
     }
 
     /**
@@ -113,6 +113,19 @@ export default class GA extends IHeuristic {
     }
 
 
+    TrocarFuncao(cb: () => void) {
+        var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
+
+        if (funcaoAtual == undefined || funcaoAtual == "undefined") {
+            this._logger.Write(`[GA] Não há mais funções para otimizar!`);
+            cb();
+            return;
+        }
+        //Seta a fução atual
+        this.ActualFunction = funcaoAtual;
+        this._logger.Write(`[GA] Otimizando a função ${this.ActualFunction}!`);
+    }
+
     /**
      * Repeat recursively crossover, mutant e cutoff
      */
@@ -122,18 +135,13 @@ export default class GA extends IHeuristic {
             cb(); //Done!
         } else {
             this._logger.Write(`[GA] Starting generation ${generationIndex}`);
+            this._logger.Write(`[GA] A função ${this.ActualFunction} será otimizada por ${qtdGeracoes} gerações`);
 
             //Determina quantas execuções para troca de função
-            if (this.proximaGeracaoDeTroca == 0 || this.proximaGeracaoDeTroca == generationIndex) {
-                var qtdGeracoes = this._astExplorer.GenereateRandom(generationIndex, (this._config.generations));
-                this._logger.Write(`[GA] A função ${this.ActualFunction} será otimizada por ${qtdGeracoes} gerações`);
-                this.proximaGeracaoDeTroca = qtdGeracoes;
-
-                if (generationIndex > 1) //caso nao seja a primeira, pode trocar de função
-                {
-                    var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
-                    this.ActualFunction = funcaoAtual;
-                }
+            if (this.proximaGeracaoDeTroca === generationIndex) {
+                this.TrocarFuncao(cb);
+                var qtdGeracoes = 1; //this._astExplorer.GenereateRandom(generationIndex, (this._config.generations));
+                this.proximaGeracaoDeTroca = (generationIndex + qtdGeracoes);
             }
 
             this.DoCrossovers(population, () => {
