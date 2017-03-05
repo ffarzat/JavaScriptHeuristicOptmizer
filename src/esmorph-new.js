@@ -181,9 +181,9 @@
                     });
                 } else {
                     signature = traceName + '({ ';
-                    signature += 'name: \'' + name + '\', ';
-                    signature += 'lineNumber: ' + line + ', ';
-                    signature += 'range: [' + range[0] + ', ' + range[1] + '] ';
+                    signature += '"name": \'' + name + '\', ';
+                    signature += '"lineNumber": ' + line + ', ';
+                    signature += '"range": [' + range[0] + ', ' + range[1] + '] ';
                     signature += '});';
                 }
                 signature = '\n' + signature;
@@ -224,9 +224,9 @@
                     });
                 } else {
                     signature = traceName + '({ ';
-                    signature += 'name: \'' + name + '\', ';
-                    signature += 'lineNumber: ' + line + ', ';
-                    signature += 'range: [' + range[0] + ', ' + range[1] + '] ';
+                    signature += '"name": \'' + name + '\', ';
+                    signature += '"lineNumber": ' + line + ', ';
+                    signature += '"range": [' + range[0] + ', ' + range[1] + '] ';
                     signature += '});';
                 }
                 signature = '\n' + signature + '\n';
@@ -248,10 +248,10 @@
                         });
                     } else {
                         signature = traceName + '({ ';
-                        signature += 'name: \'' + name + '\', ';
-                        signature += 'lineNumber: ' + exit.loc.start.line + ', ';
-                        signature += 'range: [' + range[0] + ', ' + range[1] + '], ';
-                        signature += 'return: true ';
+                        signature += '"name": \'' + name + '\', ';
+                        signature += '"lineNumber": ' + exit.loc.start.line + ', ';
+                        signature += '"range": [' + range[0] + ', ' + range[1] + '], ';
+                        signature += '"return": true ';
                         signature += '});';
                     }
                     signature = '\n' + signature + '\n';
