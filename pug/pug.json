@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD"],
+    "heuristics": ["GA"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":120,
@@ -28,7 +28,7 @@
     "trialsConfiguration":[
         {
             "nodesSelectionApproach":"ByFunction",
-            "ByFunctionType": "dynamic", 
+            "ByFunctionType": "static", 
             "especific": {
                 "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 20,
