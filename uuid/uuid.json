@@ -28,7 +28,7 @@
     "trialsConfiguration":[
         {
             "nodesSelectionApproach":"ByFunction",
-            "ByFunctionType": "static", 
+            "ByFunctionType": "dynamic", 
             "especific": {
                 "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 20,
