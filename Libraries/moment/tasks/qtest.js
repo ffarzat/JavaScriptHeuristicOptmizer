@@ -4,11 +4,12 @@ module.exports = function (grunt) {
 
         var testrunner = require('qunit');
 
-        testrunner.options.log.assertions = false;
-        testrunner.options.log.tests = false;
-        testrunner.options.log.summary = false;
-        testrunner.options.log.testing = false;
-        testrunner.options.maxBlockDuration = 120000;
+        testrunner.options.log.assertions = true;
+        testrunner.options.log.tests = true;
+        testrunner.options.log.summary = true;
+        testrunner.options.log.testing = true;
+        testrunner.options.log.errors = true,
+        testrunner.options.maxBlockDuration = 7200000;
 
         var tests;
 
