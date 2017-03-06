@@ -98,6 +98,7 @@ function executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca: string, b
         'mean': resultados.mean,
         'median': resultados.median,
         'duration': resultados.duration,
+        'count': resultados.rounds,
     };
     fs.writeFileSync(arquivoFuncoesResultado, JSON.stringify(objetoComResultados, null, 4));
 }
@@ -176,7 +177,8 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
     resultadoFinal.mean = math.mean(durations);
     resultadoFinal.median = math.median(durations);
     resultadoFinal.duration = math.sum(durations);
-    resultadoFinal.passedAllTests = passedAllTests
+    resultadoFinal.rounds = quantidade;
+    resultadoFinal.passedAllTests = passedAllTests;
 
     return resultadoFinal;
 }
@@ -203,12 +205,12 @@ function ShowConsoleResults(result: TestResults) {
 function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca: string, nomeBiblioteca: string, arquivoEstaticoResultado: string, arquivoDinamicoResultado: string, arquivoFuncoesResultado: string) {
     var newLine: string = '\n';
     var csvcontent = "";
-    csvcontent += "Name;Static-Calls;Dynamic-Calls;min;max;mean;median;duration" + newLine;
+    //csvcontent += "Name;Static-Calls;Dynamic-Calls;min;max;mean;median;duration;count" + newLine;
+    csvcontent += "Name;Static-Calls;Dynamic-Calls;min;max;duration;count" + newLine;
 
     //ler aquivo estatico
     var objetoEstatico = JSON.parse(fs.readFileSync(arquivoEstaticoResultado).toString());
-    //ler arquivo dinamico
-    var objetoDinamico = JSON.parse(fs.readFileSync(arquivoDinamicoResultado).toString());
+    
     //ler arquivo com o tempo
     var objetoTempo = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
 
@@ -222,7 +224,7 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
         }
 
         var qtdEstatico = objetoEstatico[nome] ? objetoEstatico[nome] : 0;
-        var qtdDinamico = objetoDinamico[nome] ? objetoDinamico[nome] : 0;
+        var qtdDinamico = objetoTempo[nome] ? objetoTempo[nome].count : 0;
         var min = objetoTempo[nome] ? objetoTempo[nome].min : 0;
         var max = objetoTempo[nome] ? objetoTempo[nome].max : 0;
         var median = objetoTempo[nome] ? objetoTempo[nome].median : 0;
@@ -230,18 +232,21 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
         var mean = objetoTempo[nome] ? objetoTempo[nome].mean : 0;
         //var mean    = 0;
         var duration = objetoTempo[nome] ? objetoTempo[nome].duration : 0;
+        var count = objetoTempo[nome] ? objetoTempo[nome].count : 0;
 
-        csvcontent += `${nome};${qtdEstatico};${qtdDinamico};${min};${max};${median};${mean};${duration}` + newLine;
+        csvcontent += `${nome};${qtdEstatico};${qtdDinamico};${ToNanosecondsToSeconds(min)};${ToNanosecondsToSeconds(max)};${ToNanosecondsToSeconds(duration)};${count}` + newLine;
     }
 
     //Corpo da Lib
-    csvcontent += `${objetoTempo['Corpo-Lib'].name};0;0;${objetoTempo['Corpo-Lib'].min};${objetoTempo['Corpo-Lib'].max};${objetoTempo['Corpo-Lib'].median};${objetoTempo['Corpo-Lib'].mean};${objetoTempo['Corpo-Lib'].duration}` + newLine;
+    //csvcontent += `${objetoTempo['Corpo-Lib'].name};0;0;${ToNanosecondsToSeconds(objetoTempo['Corpo-Lib'].min)};${ToNanosecondsToSeconds(objetoTempo['Corpo-Lib'].max)};${ToNanosecondsToSeconds(objetoTempo['Corpo-Lib'].duration)};${objetoTempo['Corpo-Lib'].count}` + newLine;
 
     //tempo total com a instrumentação
-    csvcontent += `${objetoTempo['total-Instrumentado'].name};0;0;${objetoTempo['total-Instrumentado'].min};${objetoTempo['total-Instrumentado'].max};${objetoTempo['total-Instrumentado'].median};${objetoTempo['total-Instrumentado'].mean};${objetoTempo['total-Instrumentado'].duration}` + newLine;
+    if(objetoTempo['total-Instrumentado'])
+        csvcontent += `${objetoTempo['total-Instrumentado'].name};0;0;${objetoTempo['total-Instrumentado'].min};${objetoTempo['total-Instrumentado'].max};${objetoTempo['total-Instrumentado'].duration};${objetoTempo['total-Instrumentado'].count}` + newLine;
 
     //tempo total Original
-    csvcontent += `${objetoTempo['total-original'].name};0;0;${objetoTempo['total-original'].min};${objetoTempo['total-original'].max};${objetoTempo['total-original'].median};${objetoTempo['total-original'].mean};${objetoTempo['total-original'].duration}` + newLine;
+    if(objetoTempo['total-original'])
+        csvcontent += `${objetoTempo['total-original'].name};0;0;${objetoTempo['total-original'].min};${objetoTempo['total-original'].max};${objetoTempo['total-original'].duration};${objetoTempo['total-original'].count}` + newLine;
 
     fs.writeFileSync(path.join(DiretorioResultados, `${nomeBiblioteca}-analiseTempoFuncoes.csv`), csvcontent);
 }
@@ -282,8 +287,8 @@ function gerarRankingEstatico(caminhoOriginal: string, diretorioBiblioteca: stri
 
     for (var i = 0; i < functions.length; i++) {
         var nome = functions[i];
-        var totalPonto = temp.split('.' + nome).length;
-        var totalReturn = temp.split(' ' + nome + '(').length;
+        var totalPonto = temp.split('.' + nome).length - 1;
+        var totalReturn = temp.split(' ' + nome + '(').length - 1;
         localCount[nome] = totalPonto + totalReturn;
     }
 
@@ -337,15 +342,21 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
 
     //Monta o Código para inserir na Lib
     var globalName = `__${nomeLib}_counter_object`;
-    var codigoInicializacao = `function ToNanosecondsToSeconds_Optmizer(nanovalue) {return parseFloat((nanovalue / 1000000000.0).toFixed(3));}\n`
+    var codigoInicializacao = `function ToNanosecondsToSeconds_Optmizer(nanovalue) {return parseFloat((nanovalue / 1000000.0).toFixed(5));}\n`
     codigoInicializacao += `global['__objeto_raiz_exectimer'] = require('exectimer'); \n`;
     codigoInicializacao += `global['__objeto_raiz_exectimer_Tick'] = global['__objeto_raiz_exectimer'].Tick; \n`;
     codigoInicializacao += `global['${globalName}'] = {};\n`;
     codigoInicializacao += `global['optmizerFunctionsInternalList'] = {};\n`;
 
-    codigoInicializacao += `process.once('exit', function (code) { 
+
+    codigoInicializacao += `
+    process.once('exit', function (code) { 
         Exit({ name: 'Corpo-Lib' });
+    });
     `;
+
+    //Retirando o process.once exit
+    /*
 
     for (var i = 0; i < listaDeFuncoes.length; i++) {
 
@@ -387,14 +398,6 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
         codigoInicializacao += encerramento;
     }
 
-    codigoInicializacao += `
-        var fs = require('fs');
-        fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['${globalName}'], null, 4));
-        fs.writeFileSync('${arquivoJsonComResultadosContagemFuncoes}', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
-    });
-    `
-
-    /*
     codigoInicializacao += `var fs = require("fs"); 
     var objetoComResultadosNoDisco = {};
     if(fs.existsSync('${arquivoGlobalBiblioteca}')){
@@ -406,16 +409,23 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     }
     fs.writeFileSync('${arquivoGlobalBiblioteca}', JSON.stringify(objetoComResultadosNoDisco, null, 4));
     `;
+    
+
+    codigoInicializacao += `
+        var fs = require('fs');
+        fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['${globalName}'], null, 4));
+        fs.writeFileSync('${arquivoJsonComResultadosContagemFuncoes}', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
+    });
+    `
     */
 
     for (var i = 0; i < listaDeFuncoes.length; i++) {
         var inicializacaoFuncao = `global['${globalName}_${listaDeFuncoes[i]}'] = []; \n`;
         codigoInicializacao += `${inicializacaoFuncao}`;
     }
-    
+
     var inicializacaoCorpo = `global['${globalName}_Corpo-Lib'] = []; \n`;
     codigoInicializacao += `${inicializacaoCorpo}`;
-
 
     var caminho = __dirname.replace('build', '');
     var esmorph = require(caminho + '/../src/esmorph-new.js');
@@ -427,7 +437,59 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
 
     var morphed = esmorph.modify(codigoDoOriginal, modifiers);
 
-    morphed += "";
+    var ifFinal = `if( global['${globalName}_${listaDeFuncoes[0]}'].length == 0`;
+    for (var i = 1; i < listaDeFuncoes.length; i++) {
+        ifFinal += ` && global['${globalName}_${listaDeFuncoes[i]}'].length == 0`;
+    }
+    ifFinal += `){
+
+                    if(global['${globalName}_Corpo-Lib'][0])
+                    {
+                        global['${globalName}_Corpo-Lib'][0].stop();
+                        var resultadoFinal${globalName}_Corpo_Lib = {'name': 'Corpo-Lib'};
+                        
+                        if(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'])
+                        {
+                            resultadoFinal${globalName}_Corpo_Lib.min = (global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].min()); 
+                            resultadoFinal${globalName}_Corpo_Lib.max = (global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].max()); 
+                            resultadoFinal${globalName}_Corpo_Lib.mean = (global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].mean()); 
+                            resultadoFinal${globalName}_Corpo_Lib.median = (global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].median()); 
+                            resultadoFinal${globalName}_Corpo_Lib.duration = (global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].duration())
+                            resultadoFinal${globalName}_Corpo_Lib.count = parseInt(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].count())
+                            global['${globalName}']['Corpo-Lib'] = resultadoFinal${globalName}_Corpo_Lib;
+                        }
+                    }
+                    var fs = require('fs');
+                    var objBDTempoFuncoes = {};
+
+                    if(fs.existsSync('${arquivoJsonComResultadosFuncoes}')){
+                        var conteudo = fs.readFileSync('${arquivoJsonComResultadosFuncoes}').toString();
+                        if(conteudo == "")
+                            conteudo = {};
+
+                        objBDTempoFuncoes = JSON.parse(conteudo);
+                        
+                        for (functionNameOptmizer in global['${globalName}'])
+                        {
+                            if(objBDTempoFuncoes[functionNameOptmizer])
+                            {
+                                objBDTempoFuncoes[functionNameOptmizer].min = parseFloat(objBDTempoFuncoes[functionNameOptmizer].min) < parseFloat(global['${globalName}'][functionNameOptmizer].min) ? parseFloat(objBDTempoFuncoes[functionNameOptmizer].min) :  parseFloat(global['${globalName}'][functionNameOptmizer].min) ;
+                                objBDTempoFuncoes[functionNameOptmizer].max = parseFloat(objBDTempoFuncoes[functionNameOptmizer].max) > parseFloat(global['${globalName}'][functionNameOptmizer].max) ? parseFloat(objBDTempoFuncoes[functionNameOptmizer].max): parseFloat(global['${globalName}'][functionNameOptmizer].max);
+                                objBDTempoFuncoes[functionNameOptmizer].mean = 0; //((parseFloat(objBDTempoFuncoes[functionNameOptmizer].mean) + parseFloat(global['${globalName}'][functionNameOptmizer].mean)) /2) / 1000;
+                                objBDTempoFuncoes[functionNameOptmizer].median = 0; //parseFloat(objBDTempoFuncoes[functionNameOptmizer].min) + parseFloat(global['${globalName}'][functionNameOptmizer].median);
+                                objBDTempoFuncoes[functionNameOptmizer].duration = (parseFloat(objBDTempoFuncoes[functionNameOptmizer].duration) + parseFloat(global['${globalName}'][functionNameOptmizer].duration) );
+                                objBDTempoFuncoes[functionNameOptmizer].count = parseInt(objBDTempoFuncoes[functionNameOptmizer].count) + parseInt(global['${globalName}'][functionNameOptmizer].count);
+                            }
+                            else{
+                                objBDTempoFuncoes[functionNameOptmizer] = global['${globalName}'][functionNameOptmizer];
+                            }
+                        }
+                    }
+                    
+                    fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(objBDTempoFuncoes, null, 4));
+                    
+        }`;
+
 
     //Jogo a inicializacao no começo de todo o código
     morphed = codigoInicializacao + '\n\n' + `\n\n 
@@ -447,32 +509,28 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
             if(details.name == "toString")
                 return;
                
-
             if(global['${globalName}']  && global['${globalName}_' + details.name])
             {
                 var p = global['${globalName}_'+details.name].pop();
                 p.stop();
                 var resultadoFinal = {'name': details.name};
-                resultadoFinal.min = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].min()); 
-                resultadoFinal.max = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].max()); 
-                resultadoFinal.mean = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].mean()); 
-                resultadoFinal.median = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].median()); 
-                resultadoFinal.duration = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].duration())
+                resultadoFinal.min = (global['__objeto_raiz_exectimer'].timers[details.name].min()); 
+                resultadoFinal.max = (global['__objeto_raiz_exectimer'].timers[details.name].max()); 
+                resultadoFinal.mean = (global['__objeto_raiz_exectimer'].timers[details.name].mean()); 
+                resultadoFinal.median = (global['__objeto_raiz_exectimer'].timers[details.name].median()); 
+                resultadoFinal.duration = (global['__objeto_raiz_exectimer'].timers[details.name].duration());
+                resultadoFinal.count = (global['__objeto_raiz_exectimer'].timers[details.name].count());
 
                 global['${globalName}'][details.name] = resultadoFinal;
+                            
+                global['optmizerFunctionsInternalList'][details.name] = isNaN(global['optmizerFunctionsInternalList'][details.name])? 0 : parseInt(global['optmizerFunctionsInternalList'][details.name]) + parseInt(1);
             }
 
-            global['optmizerFunctionsInternalList'][details.name] = isNaN(global['optmizerFunctionsInternalList'][details.name])? 0 : parseInt(global['optmizerFunctionsInternalList'][details.name]) + parseInt(1);
-            var fs = require('fs');
-            fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['${globalName}'], null, 4));
-            fs.writeFileSync('${arquivoJsonComResultadosContagemFuncoes}', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
-
+            ` + ifFinal + `            
         }
+        
         Enter({ name: 'Corpo-Lib' });
-        ` + morphed;
-
-    var codigoAoFinal = ``;
-    morphed = morphed + '\n \n \n' + codigoAoFinal;
+        \n\n\n` + morphed;
 
     //Salva o código modificado
     fs.writeFileSync(caminhoOriginal, morphed);
@@ -481,6 +539,8 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     //executa os testes
     try {
         var resultados = ExecutarTeste(diretorioBiblioteca, buffer, qtd);
+        console.log(`   Testes concluídos [${resultados.passedAllTests}]`);
+
         var objetoComResultados = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
         objetoComResultados['total-Instrumentado'] = {
             'name': 'total-Instrumentado',
@@ -489,11 +549,12 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
             'mean': resultados.mean,
             'median': resultados.median,
             'duration': resultados.duration,
+            'count': resultados.rounds,
         };
         fs.writeFileSync(arquivoFuncoesResultado, JSON.stringify(objetoComResultados, null, 4));
 
     } catch (error) {
-        console.log('Deu ruim:' + error);
+        console.log('Deu ruim:' + error.stack);
     }
 }
 
