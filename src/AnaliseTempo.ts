@@ -1,7 +1,6 @@
 /// <reference path="./typings/tsd.d.ts" />
 
 //node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/uuid' 30 5
-//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Dinamica/uuid' 30 5
 
 //node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Estatica/pug' 30 5
 
@@ -18,8 +17,8 @@ const child_process = require('child_process');
 var uuid = require('node-uuid');
 var bufferOption = { maxBuffer: 1024 * 5000 }
 
-//var heuristicas = ['RD', 'HC', 'GA'];
-var heuristicas = ['HC', 'RD'];
+var heuristicas = ['RD', 'HC', 'GA'];
+//var heuristicas = ['HC', 'RD'];
 var DiretorioBiblioteca = process.argv[2].replace("'", "");
 var arquivoRootBiblioteca = process.argv[3].replace("'", "");
 var DiretorioResultados = process.argv[4].replace("'", "");
@@ -61,6 +60,12 @@ heuristicas.forEach(heuristica => {
         console.log(`Executando rodada ${index} da heuristica ${heuristica}`);
 
         var caminhoArquivoRodada = DiretorioResultados + "/" + heuristica + "/" + index + ".js";
+        if (!fs.existsSync(caminhoArquivoRodada))
+        {
+            console.log(`Arquivo ${caminhoArquivoRodada} não existe!`);
+            continue;
+        }
+
         var CodigoDaRodada = fs.readFileSync(caminhoArquivoRodada, 'UTF8');
 
         if (CodigoDaRodada != codigoOriginal) {
