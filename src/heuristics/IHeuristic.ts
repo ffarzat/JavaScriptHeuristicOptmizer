@@ -390,7 +390,7 @@ abstract class IHeuristic extends events.EventEmitter {
      * Recupera a lista de funções (estática ou dinâmica) e a ordena de maior pra menor
      */
     MakeFunctionList() {
-        var list = this.byFunctionType == "dynamic" ? JSON.parse(fs.readFileSync(`Libraries/${this._lib.name}/resultados.json`).toString()) : this.getFunctionStaticList();
+        var list = this.byFunctionType == "dynamic" ? JSON.parse(fs.readFileSync(`Libraries/${this._lib.name}/resultados-dinamico.json`).toString()) : this.getFunctionStaticList();
         var keysSorted = Object.keys(list).sort((a, b) => { return list[b] - list[a] });
         for (let element in keysSorted) {
             console.log(`Função ${keysSorted[element]}: ${element}`);
