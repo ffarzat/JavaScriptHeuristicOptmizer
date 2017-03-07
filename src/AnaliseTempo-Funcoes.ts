@@ -74,20 +74,24 @@ gerarRankingDinamico(nomeBiblioteca, caminhoOriginal, DiretorioBiblioteca, buffe
 
     //Volta a cópia de segurança
     fse.copySync(oldLibFilePath, arquivoRootBiblioteca, { "clobber": true });
-    executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca, bufferOption, arquivoFuncoesResultado, qtdTestes);
+    executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca, bufferOption, arquivoFuncoesResultado, qtdTestes).then(() => {
+        //============================================================================================ Escreve os resultados //>
+        console.log(`Escrever csv com os resultados obtidos`);
+        EscreverResultadoEmCsv(DiretorioResultados, DiretorioBiblioteca, nomeBiblioteca, arquivoEstaticoResultado, arquivoDinamicoResultado, arquivoFuncoesResultado);
 
-    //============================================================================================ Escreve os resultados //>
-    console.log(`Escrever csv com os resultados obtidos`);
-    EscreverResultadoEmCsv(DiretorioResultados, DiretorioBiblioteca, nomeBiblioteca, arquivoEstaticoResultado, arquivoDinamicoResultado, arquivoFuncoesResultado);
+        process.exit();
+    }).catch((erro: any) => {
+        console.log(erro);
+    });
 
-    process.exit();
 
 }).catch((erro: any) => {
     console.log(erro);
 });
 
 //============================================================================================ Funcoes utilizadas //>
-async function executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca: string, bufferOption: Object, arquivoFuncoesResultado: string, qtd: number) {
+async function executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca: string, bufferOption: Object, arquivoFuncoesResultado: string, qtd: number): Promise<void> {
+
     //Desprezar a primeira execuçao (load de componentes e etc)
     ExecutarTeste(DiretorioBiblioteca, bufferOption, 1);
 
@@ -105,6 +109,8 @@ async function executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca: str
         'duration': resultados.duration,
         'count': resultados.rounds,
     };
+
+    //console.log(`total-original: ${objetoComResultados['total-original']['duration']}`);
     fs.writeFileSync(arquivoFuncoesResultado, JSON.stringify(objetoComResultados, null, 4));
 }
 
@@ -152,7 +158,6 @@ async function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, qua
             stringList = stringList.substring(0, stringList.length - 1);
             console.log(`${stringList}`);
             var resultadoJson = JSON.parse(`${stringList}`);
-            durations.push(parseInt(resultadoJson.duration) / 1000);
 
             if (resultadoJson.sucess == "false") {
                 passedAllTests = false;
@@ -168,6 +173,9 @@ async function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, qua
             passedAllTests = false;
             break;
         }
+        finally {
+            durations.push(clock(start));
+        }
 
     }
 
@@ -175,13 +183,13 @@ async function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, qua
     var resultadoFinal: TestResults = new TestResults();
 
     var math = require('mathjs');
-
+    
     resultadoFinal.rounds = quantidade;
     resultadoFinal.min = math.min(durations);
     resultadoFinal.max = math.max(durations);
-    resultadoFinal.mean = math.mean(durations);
+    resultadoFinal.mean = math.mean(durations);;
     resultadoFinal.median = math.median(durations);
-    resultadoFinal.duration = math.sum(durations);
+    resultadoFinal.duration = math.sum(durations);;
     resultadoFinal.rounds = quantidade;
     resultadoFinal.passedAllTests = passedAllTests;
 
@@ -227,14 +235,27 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
         //}
 
         var math = require('mathjs');
+
         var qtdEstatico = objetoEstatico[nome] ? objetoEstatico[nome] : 0;
         var qtdDinamico = objetoTempo[nome] ? objetoTempo[nome].length : 0;
+
         jsonResultadosDinamicos[nome] = qtdDinamico;
-        var min = objetoTempo[nome] ? math.min(objetoTempo[nome]) : -1;
-        var max = objetoTempo[nome] ? math.max(objetoTempo[nome]) : -1;
-        var mean = objetoTempo[nome] ? math.median(objetoTempo[nome]) : -1;
-        var median = objetoTempo[nome] ? math.mean(objetoTempo[nome]) : -1;
-        var duration = objetoTempo[nome] ? math.sum(objetoTempo[nome]) : -1;
+
+        var min = 0;
+        var max = 0;
+        var mean = 0;
+        var median = 0;
+        var duration = 0;
+
+
+        if (objetoTempo[nome]) {
+            min = objetoTempo[nome] ? math.min(objetoTempo[nome]) : 0;
+            max = objetoTempo[nome] ? math.max(objetoTempo[nome]) : 0;
+            mean = objetoTempo[nome] ? math.median(objetoTempo[nome]) : 0;
+            median = objetoTempo[nome] ? math.mean(objetoTempo[nome]) : 0;
+            duration = objetoTempo[nome] ? math.sum(objetoTempo[nome]) : 0;
+        }
+
         csvcontent += `${nome};${qtdEstatico};${qtdDinamico};${min};${max};${mean};${median};${duration}` + newLine;
     }
 
@@ -343,11 +364,11 @@ async function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, di
 
     //Monta o Código para inserir na Lib
     var globalName = `__dynamic_counters__`;
-    var codigoInicializacao = `function clock(startTime) {if (!startTime)return process.hrtime(); var end = process.hrtime(startTime);var nanoValue =  end[0]  + end[1] ;return parseFloat((nanoValue / 1000000.0).toFixed(3));}\n`;
-    //codigoInicializacao += `global['saveAllGlobalsOptmizer'] = saveAllGlobalsOptmizer \n`;
+    var codigoInicializacao = `function clock(startTime) {var end = process.hrtime(startTime);const convertHrtime = require('convert-hrtime');var resultado = convertHrtime(end);return resultado.ms;}\n`;
     codigoInicializacao += `process.once('exit', ()=>{ saveAllGlobalsOptmizer(); clearInterval(global['${globalName}__interval']);});  \n`;
     codigoInicializacao += `global['${globalName}'] = {};\n`;
     codigoInicializacao += `global['${globalName}__interval'] = setInterval(function() {console.log('Salvando...'); saveAllGlobalsOptmizer();}, 1000);
+    
 
 function saveAllGlobalsOptmizer(){
     var fs = require('fs');
@@ -428,11 +449,10 @@ function limparArquivo(caminhoArquivo) {
     }
 }
 
-/**
- * Milisecs F
- */
-function clock(startTime): any {
-    if (!startTime) return process.hrtime();
+//1 second is equal to 1000000000 nanoseconds, or 1000 milliseconds.
+function clock(startTime): number {
     var end = process.hrtime(startTime);
-    return Math.round((end[0] * 1000) + (end[1] / 1000000));
+    const convertHrtime = require('convert-hrtime');
+    var resultado = convertHrtime(end);
+    return resultado.ms;
 }
