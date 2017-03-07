@@ -262,20 +262,17 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
     //tempo total com a instrumentação
     if (objetoTempo['total']) {
         
-        var min_Total = objetoTempo[nome] ? math.min(objetoTempo['total']) : 0;
-        var max_total = objetoTempo[nome] ? math.max(objetoTempo['total']) : 0;
-        var mean_total = objetoTempo[nome] ? math.median(objetoTempo['total']) : 0;
-        var median_total = objetoTempo[nome] ? math.mean(objetoTempo['total']) : 0;
-        var duration_total = objetoTempo[nome] ? math.sum(objetoTempo['total']) : 0;
+        var min_Total = objetoTempo['total'] ? math.min(objetoTempo['total']) : 0;
+        var max_total = objetoTempo['total'] ? math.max(objetoTempo['total']) : 0;
+        var mean_total = objetoTempo['total'] ? math.median(objetoTempo['total']) : 0;
+        var median_total = objetoTempo['total'] ? math.mean(objetoTempo['total']) : 0;
+        var duration_total = objetoTempo['total'] ? math.sum(objetoTempo['total']) : 0;
 
         csvcontent += `Total-Interno-Lib;0;0;${min_Total};${max_total};${mean_total};${median_total};${duration_total}` + newLine;
     }
 
     if (objetoTempo['total-apos-arquivos'])
         csvcontent += `Total-Apos-Save;0;0;${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']}` + newLine;
-
-
-
 
     //tempo total com a instrumentação
     if (objetoTempo['total-Instrumentado'])
