@@ -197,6 +197,74 @@
         };
     }
 
+    function traceInstrumentableFunctionEntranceForTime(traceName) {
+
+        return function (code) {
+            var tree, i, functionList, fragments,
+                name, line, range, pos, signature;
+
+            tree = esprima.parse(code, { range: true, loc: true });
+            functionList = collectFunction(code, tree);
+
+            fragments = [];
+            for (i = 0; i < functionList.length; i += 1) {
+                name = functionList[i].name;
+                line = functionList[i].node.loc.start.line;
+                range = functionList[i].node.range;
+                pos = functionList[i].node.body.range[0] + 1;
+                var params = functionList[i].node.params;
+                var body = functionList[i].node.body;
+
+                signature = `var startCounterTimeForFunction` + name + `  = process.hrtime();`;
+
+                signature = '\n' + signature;
+                fragments.push({
+                    index: pos,
+                    text: signature
+                });
+            }
+
+            return fragments;
+        };
+    }
+
+    function traceInstrumentableFunctionExitForTime(traceName) {
+
+        return function (code) {
+            var tree, i, j, functionList, fragments,
+                name, line, range, pos, signature, exit;
+
+            tree = esprima.parse(code, { range: true, loc: true });
+            functionList = collectFunction(code, tree);
+
+            fragments = [];
+            for (i = 0; i < functionList.length; i += 1) {
+                name = functionList[i].name;
+                line = functionList[i].node.loc.start.line;
+                range = functionList[i].node.range;
+                pos = functionList[i].node.body.range[1] - 1;
+                exit = functionList[i].exit;
+
+                signature = `global['__dynamic_counters__']['${name}'] = !Array.isArray(global['__dynamic_counters__']['${name}']) ? []: global['__dynamic_counters__']['${name}'];\n`;
+                signature += `global['__dynamic_counters__']['${name}'].push(clock(startCounterTimeForFunction` + name + `)); \n`;
+                signature = '\n' + signature + '\n';
+
+                var coluna = exit ? exit.loc.start.column : functionList[i].node.loc.end.column;
+
+                for (j = 1; j < coluna; ++j) {
+                    signature += ' ';
+                }
+
+                fragments.push({
+                    index: exit ? exit.range[0] : pos + 0.2,
+                    text: signature
+                });
+            }
+
+            return fragments;
+        };
+    }
+
     function traceFunctionExit(traceName) {
 
         return function (code) {
@@ -519,7 +587,9 @@
         FunctionExit: traceFunctionExit,
         VariableDeclaratorAfter: traceVariableDeclaratorAfter,  // Added Sophia
         InstrumentableLine: traceInstrumentableLine, // Added Sophia
-        InstrumentableBlock: traceInstrumentableBlock // Added Sophia
+        InstrumentableBlock: traceInstrumentableBlock, // Added Sophia
+        InstrumentableFunctionEntranceForTime: traceInstrumentableFunctionEntranceForTime, // Added Fabio Farzat
+        InstrumentableFunctionExitForTime: traceInstrumentableFunctionExitForTime// Added Fabio Farzat
     };
 
 }));

@@ -21,13 +21,15 @@
 import ASTExplorer from './ASTExplorer';
 import TestResults from './TestResults';
 
+import * as child_process from 'child_process';
+
 import fs = require('fs');
 import fse = require('fs-extra');
 import path = require('path');
 
 
 var exectimer = require('exectimer');
-const child_process = require('child_process');
+
 var uuid = require('node-uuid');
 var bufferOption = { maxBuffer: 1024 * 5000 }
 
@@ -58,36 +60,39 @@ limparArquivo(arquivoEstaticoResultado);
 limparArquivo(arquivoDinamicoResultado);
 limparArquivo(arquivoFuncoesResultado);
 limparArquivo(arquivoGlobalBiblioteca);
+
 //============================================================================================ Original //>
 
 var caminhoOriginal = `${arquivoRootBiblioteca}`;
 var codigoOriginal = fs.readFileSync(caminhoOriginal, 'UTF8');
-//============================================================================================ Gera os Rankings //>
-instalarExecTimerNaLib(DiretorioBiblioteca, nomeBiblioteca);
-gerarRankingEstatico(caminhoOriginal, DiretorioBiblioteca, arquivoEstaticoResultado);
-gerarRankingDinamico(nomeBiblioteca, caminhoOriginal, DiretorioBiblioteca, bufferOption, qtdTestes, arquivoDinamicoResultado, arquivoFuncoesResultado);
-//Volta a cópia de segurança
-fse.copySync(oldLibFilePath, arquivoRootBiblioteca, { "clobber": true });
-executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca, bufferOption, arquivoFuncoesResultado, qtdTestes);
-//============================================================================================ Escreve os resultados //>
-console.log(`Escrever csv com os resultados obtidos`);
-EscreverResultadoEmCsv(DiretorioResultados, DiretorioBiblioteca, nomeBiblioteca, arquivoEstaticoResultado, arquivoDinamicoResultado, arquivoFuncoesResultado);
 
-process.exit();
+//============================================================================================ Gera os Rankings //>
+
+gerarRankingEstatico(caminhoOriginal, DiretorioBiblioteca, arquivoEstaticoResultado);
+
+gerarRankingDinamico(nomeBiblioteca, caminhoOriginal, DiretorioBiblioteca, bufferOption, qtdTestes, arquivoDinamicoResultado, arquivoFuncoesResultado).then(() => {
+
+    //Volta a cópia de segurança
+    fse.copySync(oldLibFilePath, arquivoRootBiblioteca, { "clobber": true });
+    executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca, bufferOption, arquivoFuncoesResultado, qtdTestes);
+
+    //============================================================================================ Escreve os resultados //>
+    console.log(`Escrever csv com os resultados obtidos`);
+    EscreverResultadoEmCsv(DiretorioResultados, DiretorioBiblioteca, nomeBiblioteca, arquivoEstaticoResultado, arquivoDinamicoResultado, arquivoFuncoesResultado);
+
+    process.exit();
+
+}).catch((erro: any) => {
+    console.log(erro);
+});
 
 //============================================================================================ Funcoes utilizadas //>
-function instalarExecTimerNaLib(diretorio: string, nomeBiblioteca: string) {
-    if (nomeBiblioteca === "exectimer")
-        return;
-    child_process.execSync(`cd ${diretorio} && npm install exectimer`, bufferOption).toString();
-}
-
-function executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca: string, bufferOption: Object, arquivoFuncoesResultado: string, qtd: number) {
+async function executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca: string, bufferOption: Object, arquivoFuncoesResultado: string, qtd: number) {
     //Desprezar a primeira execuçao (load de componentes e etc)
     ExecutarTeste(DiretorioBiblioteca, bufferOption, 1);
 
     //Executa a lib original sem alterações
-    var resultados = ExecutarTeste(DiretorioBiblioteca, bufferOption, qtd);
+    var resultados = await ExecutarTeste(DiretorioBiblioteca, bufferOption, qtd);
 
     //Inclui o total observado da lib inteira
     var objetoComResultados = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
@@ -114,11 +119,11 @@ function WriteCodeToFile(caminho: string, codigo: string) {
 /**
  * Executa os testes e recupera os valores
  */
-function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidade: number): TestResults {
+async function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidade: number): Promise<TestResults> {
     var msgId = uuid.v4();
     var passedAllTests = true;
 
-    var testCMD = `node --expose-gc --max-old-space-size=512000  src/client.js 0 ${DiretorioBiblioteca} ${7200000}`; //timeout bem grande (2 horas)
+    var testCMD = `node --expose-gc --max-old-space-size=2047 'src/client.js' ${msgId} ${DiretorioBiblioteca} 3600000`;
 
     if (os.hostname() != "Optmus") {
         child_process.execSync("sleep 1", bufferOption).toString();
@@ -128,23 +133,24 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
     var durations = [];
     var start = process.hrtime();
 
-    setTimeout(function () {
-        console.log(`Ainda Testando [${parseMillisecondsIntoReadableTime(clock(start))}]`)
-    }, (5 * 60) * 100); //cinco minutos
-
     for (var index = 0; index < quantidade; index++) {
 
         try {
-            //var Tick = new exectimer.Tick(msgId);
-            //Tick.start();
             console.log(`   ${index}x`);
 
-            stdout = child_process.execSync(testCMD, bufferOption).toString();
-            //Tick.stop();
+            var promessaDoBem = new Promise<string>((resolve, reject) => {
+                var processo = child_process.exec(testCMD, bufferOption, (erro: Error, stdout: string, stderr: string) => {
+                    processo.kill();
+                    erro ? reject(erro) : resolve(stdout);
+                });
+
+            });
+
+            stdout = await promessaDoBem;
 
             var stringList = stdout.replace(/(?:\r\n|\r|\n)/g, ',');;
             stringList = stringList.substring(0, stringList.length - 1);
-            //console.log(`${stringList}`);
+            console.log(`${stringList}`);
             var resultadoJson = JSON.parse(`${stringList}`);
             durations.push(parseInt(resultadoJson.duration) / 1000);
 
@@ -169,7 +175,6 @@ function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, quantidad
     var resultadoFinal: TestResults = new TestResults();
 
     var math = require('mathjs');
-
 
     resultadoFinal.rounds = quantidade;
     resultadoFinal.min = math.min(durations);
@@ -203,15 +208,13 @@ function ShowConsoleResults(result: TestResults) {
  * Salva os resultados na raiz
  */
 function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca: string, nomeBiblioteca: string, arquivoEstaticoResultado: string, arquivoDinamicoResultado: string, arquivoFuncoesResultado: string) {
+    var jsonResultadosDinamicos = {};
     var newLine: string = '\n';
     var csvcontent = "";
-    //csvcontent += "Name;Static-Calls;Dynamic-Calls;min;max;mean;median;duration;count" + newLine;
-    csvcontent += "Name;Static-Calls;Dynamic-Calls;min;max;duration;count" + newLine;
-
+    csvcontent += "Name;Static-Calls;Dynamic-Calls;min;max;mean;median;duration" + newLine;
     //ler aquivo estatico
     var objetoEstatico = JSON.parse(fs.readFileSync(arquivoEstaticoResultado).toString());
-    
-    //ler arquivo com o tempo
+    //ler arquivo dinamico
     var objetoTempo = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
 
     //for por função
@@ -219,36 +222,32 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
 
     for (var i = 0; i < functions.length; i++) {
         var nome = functions[i];
-        if (nome == 'toString') {
-            continue;
-        }
+        //if (nome == 'toString') {
+        //continue;
+        //}
 
+        var math = require('mathjs');
         var qtdEstatico = objetoEstatico[nome] ? objetoEstatico[nome] : 0;
-        var qtdDinamico = objetoTempo[nome] ? objetoTempo[nome].count : 0;
-        var min = objetoTempo[nome] ? objetoTempo[nome].min : 0;
-        var max = objetoTempo[nome] ? objetoTempo[nome].max : 0;
-        var median = objetoTempo[nome] ? objetoTempo[nome].median : 0;
-        //var median  =  0;
-        var mean = objetoTempo[nome] ? objetoTempo[nome].mean : 0;
-        //var mean    = 0;
-        var duration = objetoTempo[nome] ? objetoTempo[nome].duration : 0;
-        var count = objetoTempo[nome] ? objetoTempo[nome].count : 0;
-
-        csvcontent += `${nome};${qtdEstatico};${qtdDinamico};${ToNanosecondsToSeconds(min)};${ToNanosecondsToSeconds(max)};${ToNanosecondsToSeconds(duration)};${count}` + newLine;
+        var qtdDinamico = objetoTempo[nome] ? objetoTempo[nome].length : 0;
+        jsonResultadosDinamicos[nome] = qtdDinamico;
+        var min = objetoTempo[nome] ? math.min(objetoTempo[nome]) : -1;
+        var max = objetoTempo[nome] ? math.max(objetoTempo[nome]) : -1;
+        var mean = objetoTempo[nome] ? math.median(objetoTempo[nome]) : -1;
+        var median = objetoTempo[nome] ? math.mean(objetoTempo[nome]) : -1;
+        var duration = objetoTempo[nome] ? math.sum(objetoTempo[nome]) : -1;
+        csvcontent += `${nome};${qtdEstatico};${qtdDinamico};${min};${max};${mean};${median};${duration}` + newLine;
     }
 
-    //Corpo da Lib
-    //csvcontent += `${objetoTempo['Corpo-Lib'].name};0;0;${ToNanosecondsToSeconds(objetoTempo['Corpo-Lib'].min)};${ToNanosecondsToSeconds(objetoTempo['Corpo-Lib'].max)};${ToNanosecondsToSeconds(objetoTempo['Corpo-Lib'].duration)};${objetoTempo['Corpo-Lib'].count}` + newLine;
-
     //tempo total com a instrumentação
-    if(objetoTempo['total-Instrumentado'])
-        csvcontent += `${objetoTempo['total-Instrumentado'].name};0;0;${objetoTempo['total-Instrumentado'].min};${objetoTempo['total-Instrumentado'].max};${objetoTempo['total-Instrumentado'].duration};${objetoTempo['total-Instrumentado'].count}` + newLine;
+    if (objetoTempo['total-Instrumentado'])
+        csvcontent += `${objetoTempo['total-Instrumentado'].name};0;0;${objetoTempo['total-Instrumentado'].min};${objetoTempo['total-Instrumentado'].max};${objetoTempo['total-Instrumentado'].mean};${objetoTempo['total-Instrumentado'].median};${objetoTempo['total-Instrumentado'].duration}` + newLine;
 
     //tempo total Original
-    if(objetoTempo['total-original'])
-        csvcontent += `${objetoTempo['total-original'].name};0;0;${objetoTempo['total-original'].min};${objetoTempo['total-original'].max};${objetoTempo['total-original'].duration};${objetoTempo['total-original'].count}` + newLine;
+    if (objetoTempo['total-original'])
+        csvcontent += `${objetoTempo['total-original'].name};0;0;${objetoTempo['total-original'].min};${objetoTempo['total-original'].max};${objetoTempo['total-original'].mean};${objetoTempo['total-original'].median};${objetoTempo['total-original'].duration}` + newLine;
 
     fs.writeFileSync(path.join(DiretorioResultados, `${nomeBiblioteca}-analiseTempoFuncoes.csv`), csvcontent);
+    fs.writeFileSync(arquivoDinamicoResultado, JSON.stringify(jsonResultadosDinamicos, null, 4));
 }
 
 /**
@@ -330,7 +329,7 @@ function ExtrairListaDeFuncoes(caminhoOriginal: string) {
  * @param buffer 
  * @param qtd 
  */
-function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretorioBiblioteca: string, buffer: Object, qtd: number, arquivoDinamicoResultado: string, arquivoFuncoesResultado: string) {
+async function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretorioBiblioteca: string, buffer: Object, qtd: number, arquivoDinamicoResultado: string, arquivoFuncoesResultado: string) {
     //Creates the Inidividual for tests
     var astExplorer: ASTExplorer = new ASTExplorer();
     var individualOverTests = astExplorer.GenerateFromFile(caminhoOriginal);
@@ -340,197 +339,60 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
     var arquivoJsonComResultadosContagemFuncoes = arquivoDinamicoResultado;
 
 
+
+
     //Monta o Código para inserir na Lib
-    var globalName = `__${nomeLib}_counter_object`;
-    var codigoInicializacao = `function ToNanosecondsToSeconds_Optmizer(nanovalue) {return parseFloat((nanovalue / 1000000.0).toFixed(5));}\n`
-    codigoInicializacao += `global['__objeto_raiz_exectimer'] = require('exectimer'); \n`;
-    codigoInicializacao += `global['__objeto_raiz_exectimer_Tick'] = global['__objeto_raiz_exectimer'].Tick; \n`;
+    var globalName = `__dynamic_counters__`;
+    var codigoInicializacao = `function clock(startTime) {if (!startTime)return process.hrtime(); var end = process.hrtime(startTime);var nanoValue =  end[0]  + end[1] ;return parseFloat((nanoValue / 1000000.0).toFixed(3));}\n`;
+    //codigoInicializacao += `global['saveAllGlobalsOptmizer'] = saveAllGlobalsOptmizer \n`;
+    codigoInicializacao += `process.once('exit', ()=>{ saveAllGlobalsOptmizer(); clearInterval(global['${globalName}__interval']);});  \n`;
     codigoInicializacao += `global['${globalName}'] = {};\n`;
-    codigoInicializacao += `global['optmizerFunctionsInternalList'] = {};\n`;
+    codigoInicializacao += `global['${globalName}__interval'] = setInterval(function() {console.log('Salvando...'); saveAllGlobalsOptmizer();}, 1000);
 
+function saveAllGlobalsOptmizer(){
+    var fs = require('fs');
+    var objBDTempoFuncoes = {}; 
 
-    codigoInicializacao += `
-    process.once('exit', function (code) { 
-        Exit({ name: 'Corpo-Lib' });
-    });
-    `;
-
-    //Retirando o process.once exit
-    /*
-
-    for (var i = 0; i < listaDeFuncoes.length; i++) {
-
-        if (listaDeFuncoes[i] == "toString")
-            continue;
-
-        var encerramento = `
-            for (var i = 0; i < global['${globalName}_${listaDeFuncoes[i]}'].length; i++) {
-                global['${globalName}_${listaDeFuncoes[i]}'][i].stop();
-            }
-
-            var resultadoFinal${globalName}_${listaDeFuncoes[i]} = {'name': '${listaDeFuncoes[i]}'};
-            if(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'])
+    if(fs.existsSync('${arquivoJsonComResultadosFuncoes}')){
+ 
+        var conteudo = fs.readFileSync('${arquivoJsonComResultadosFuncoes}').toString();
+        objBDTempoFuncoes = JSON.parse(conteudo);
+                    
+        for (var functionNameOptmizer in global['${globalName}'])
+        {
+            if(objBDTempoFuncoes[functionNameOptmizer])
             {
-                resultadoFinal${globalName}_${listaDeFuncoes[i]}.min = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].min()); 
-                resultadoFinal${globalName}_${listaDeFuncoes[i]}.max = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].max()); 
-                resultadoFinal${globalName}_${listaDeFuncoes[i]}.mean = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].mean()); 
-                resultadoFinal${globalName}_${listaDeFuncoes[i]}.median = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].median()); 
-                resultadoFinal${globalName}_${listaDeFuncoes[i]}.duration = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['${listaDeFuncoes[i]}'].duration())
-                global['${globalName}']['${listaDeFuncoes[i]}'] = resultadoFinal${globalName}_${listaDeFuncoes[i]};
+                if(functionNameOptmizer === 'toString')
+                    continue;
+                    
+                objBDTempoFuncoes[functionNameOptmizer] = !Array.isArray(objBDTempoFuncoes[functionNameOptmizer]) ? [] : objBDTempoFuncoes[functionNameOptmizer];
+                objBDTempoFuncoes[functionNameOptmizer] = objBDTempoFuncoes[functionNameOptmizer].concat(global['__dynamic_counters__'][functionNameOptmizer]);
             }
-
-            if(global['${globalName}_Corpo-Lib'].length > 0)
-            {
-                global['${globalName}_Corpo-Lib'][0].stop();
-                var resultadoFinal${globalName}_Corpo_Lib = {'name': 'Corpo-Lib'};
-                if(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'])
-                {
-                    resultadoFinal${globalName}_Corpo_Lib.min = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].min()); 
-                    resultadoFinal${globalName}_Corpo_Lib.max = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].max()); 
-                    resultadoFinal${globalName}_Corpo_Lib.mean = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].mean()); 
-                    resultadoFinal${globalName}_Corpo_Lib.median = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].median()); 
-                    resultadoFinal${globalName}_Corpo_Lib.duration = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].duration())
-                    global['${globalName}']['Corpo-Lib'] = resultadoFinal${globalName}_Corpo_Lib;
-                }
+            else{
+                
+                objBDTempoFuncoes[functionNameOptmizer] = global['${globalName}'][functionNameOptmizer];
             }
-
-        `
-        codigoInicializacao += encerramento;
+        }
+        fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(objBDTempoFuncoes, null, 4));
     }
+    else {
 
-    codigoInicializacao += `var fs = require("fs"); 
-    var objetoComResultadosNoDisco = {};
-    if(fs.existsSync('${arquivoGlobalBiblioteca}')){
-        objetoComResultadosNoDisco = JSON.parse(fs.readFileSync('${arquivoGlobalBiblioteca}').toString());
-        objetoComResultadosNoDisco['total'] = parseInt(objetoComResultadosNoDisco['total']) + 1;
+        fs.writeFileSync('/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid/resultados-funcoes.json', JSON.stringify(global['__dynamic_counters__'], null, 4));
     }
-    else{
-        objetoComResultadosNoDisco['total'] = 1;
-    }
-    fs.writeFileSync('${arquivoGlobalBiblioteca}', JSON.stringify(objetoComResultadosNoDisco, null, 4));
-    `;
-    
+}`;
 
-    codigoInicializacao += `
-        var fs = require('fs');
-        fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['${globalName}'], null, 4));
-        fs.writeFileSync('${arquivoJsonComResultadosContagemFuncoes}', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
-    });
-    `
-    */
-
-    for (var i = 0; i < listaDeFuncoes.length; i++) {
-        var inicializacaoFuncao = `global['${globalName}_${listaDeFuncoes[i]}'] = []; \n`;
-        codigoInicializacao += `${inicializacaoFuncao}`;
-    }
-
-    var inicializacaoCorpo = `global['${globalName}_Corpo-Lib'] = []; \n`;
-    codigoInicializacao += `${inicializacaoCorpo}`;
 
     var caminho = __dirname.replace('build', '');
     var esmorph = require(caminho + '/../src/esmorph-new.js');
     var modifiers;
 
     modifiers = [];
-    modifiers.push(esmorph.Tracer.FunctionEntrance('Enter'));
-    modifiers.push(esmorph.Tracer.FunctionExit('Exit'));
+    modifiers.push(esmorph.Tracer.InstrumentableFunctionEntranceForTime(''));
+    modifiers.push(esmorph.Tracer.InstrumentableFunctionExitForTime(''));
 
     var morphed = esmorph.modify(codigoDoOriginal, modifiers);
-
-    var ifFinal = `if( global['${globalName}_${listaDeFuncoes[0]}'].length == 0`;
-    for (var i = 1; i < listaDeFuncoes.length; i++) {
-        ifFinal += ` && global['${globalName}_${listaDeFuncoes[i]}'].length == 0`;
-    }
-    ifFinal += `){
-
-                    if(global['${globalName}_Corpo-Lib'][0])
-                    {
-                        global['${globalName}_Corpo-Lib'][0].stop();
-                        var resultadoFinal${globalName}_Corpo_Lib = {'name': 'Corpo-Lib'};
-                        
-                        if(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'])
-                        {
-                            resultadoFinal${globalName}_Corpo_Lib.min = (global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].min()); 
-                            resultadoFinal${globalName}_Corpo_Lib.max = (global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].max()); 
-                            resultadoFinal${globalName}_Corpo_Lib.mean = (global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].mean()); 
-                            resultadoFinal${globalName}_Corpo_Lib.median = (global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].median()); 
-                            resultadoFinal${globalName}_Corpo_Lib.duration = (global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].duration())
-                            resultadoFinal${globalName}_Corpo_Lib.count = parseInt(global['__objeto_raiz_exectimer'].timers['Corpo-Lib'].count())
-                            global['${globalName}']['Corpo-Lib'] = resultadoFinal${globalName}_Corpo_Lib;
-                        }
-                    }
-                    var fs = require('fs');
-                    var objBDTempoFuncoes = {};
-
-                    if(fs.existsSync('${arquivoJsonComResultadosFuncoes}')){
-                        var conteudo = fs.readFileSync('${arquivoJsonComResultadosFuncoes}').toString();
-                        if(conteudo == "")
-                            conteudo = {};
-
-                        objBDTempoFuncoes = JSON.parse(conteudo);
-                        
-                        for (functionNameOptmizer in global['${globalName}'])
-                        {
-                            if(objBDTempoFuncoes[functionNameOptmizer])
-                            {
-                                objBDTempoFuncoes[functionNameOptmizer].min = parseFloat(objBDTempoFuncoes[functionNameOptmizer].min) < parseFloat(global['${globalName}'][functionNameOptmizer].min) ? parseFloat(objBDTempoFuncoes[functionNameOptmizer].min) :  parseFloat(global['${globalName}'][functionNameOptmizer].min) ;
-                                objBDTempoFuncoes[functionNameOptmizer].max = parseFloat(objBDTempoFuncoes[functionNameOptmizer].max) > parseFloat(global['${globalName}'][functionNameOptmizer].max) ? parseFloat(objBDTempoFuncoes[functionNameOptmizer].max): parseFloat(global['${globalName}'][functionNameOptmizer].max);
-                                objBDTempoFuncoes[functionNameOptmizer].mean = 0; //((parseFloat(objBDTempoFuncoes[functionNameOptmizer].mean) + parseFloat(global['${globalName}'][functionNameOptmizer].mean)) /2) / 1000;
-                                objBDTempoFuncoes[functionNameOptmizer].median = 0; //parseFloat(objBDTempoFuncoes[functionNameOptmizer].min) + parseFloat(global['${globalName}'][functionNameOptmizer].median);
-                                objBDTempoFuncoes[functionNameOptmizer].duration = (parseFloat(objBDTempoFuncoes[functionNameOptmizer].duration) + parseFloat(global['${globalName}'][functionNameOptmizer].duration) );
-                                objBDTempoFuncoes[functionNameOptmizer].count = parseInt(objBDTempoFuncoes[functionNameOptmizer].count) + parseInt(global['${globalName}'][functionNameOptmizer].count);
-                            }
-                            else{
-                                objBDTempoFuncoes[functionNameOptmizer] = global['${globalName}'][functionNameOptmizer];
-                            }
-                        }
-                    }
-                    
-                    fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(objBDTempoFuncoes, null, 4));
-                    
-        }`;
-
-
     //Jogo a inicializacao no começo de todo o código
-    morphed = codigoInicializacao + '\n\n' + `\n\n 
-        function Enter(details){
-            if(details.name == "toString")
-                return;
-
-            if(global['${globalName}_'+details.name])
-            {
-                var p = new global['__objeto_raiz_exectimer_Tick'](details.name);
-                p.start();
-                global['${globalName}_'+details.name].push(p);
-            }
-        }
-
-        function Exit(details){
-            if(details.name == "toString")
-                return;
-               
-            if(global['${globalName}']  && global['${globalName}_' + details.name])
-            {
-                var p = global['${globalName}_'+details.name].pop();
-                p.stop();
-                var resultadoFinal = {'name': details.name};
-                resultadoFinal.min = (global['__objeto_raiz_exectimer'].timers[details.name].min()); 
-                resultadoFinal.max = (global['__objeto_raiz_exectimer'].timers[details.name].max()); 
-                resultadoFinal.mean = (global['__objeto_raiz_exectimer'].timers[details.name].mean()); 
-                resultadoFinal.median = (global['__objeto_raiz_exectimer'].timers[details.name].median()); 
-                resultadoFinal.duration = (global['__objeto_raiz_exectimer'].timers[details.name].duration());
-                resultadoFinal.count = (global['__objeto_raiz_exectimer'].timers[details.name].count());
-
-                global['${globalName}'][details.name] = resultadoFinal;
-                            
-                global['optmizerFunctionsInternalList'][details.name] = isNaN(global['optmizerFunctionsInternalList'][details.name])? 0 : parseInt(global['optmizerFunctionsInternalList'][details.name]) + parseInt(1);
-            }
-
-            ` + ifFinal + `            
-        }
-        
-        Enter({ name: 'Corpo-Lib' });
-        \n\n\n` + morphed;
+    morphed = codigoInicializacao + `\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n //================================================================= \n` + morphed;
 
     //Salva o código modificado
     fs.writeFileSync(caminhoOriginal, morphed);
@@ -538,7 +400,7 @@ function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretori
 
     //executa os testes
     try {
-        var resultados = ExecutarTeste(diretorioBiblioteca, buffer, qtd);
+        var resultados = await ExecutarTeste(diretorioBiblioteca, buffer, qtd);
         console.log(`   Testes concluídos [${resultados.passedAllTests}]`);
 
         var objetoComResultados = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
