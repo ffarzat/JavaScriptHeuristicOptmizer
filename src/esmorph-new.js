@@ -247,6 +247,9 @@
 
                 signature = `global['__dynamic_counters__']['${name}'] = !Array.isArray(global['__dynamic_counters__']['${name}']) ? []: global['__dynamic_counters__']['${name}'];\n`;
                 signature += `global['__dynamic_counters__']['${name}'].push(clock(startCounterTimeForFunction` + name + `)); \n`;
+                signature += `global['__dynamic_counters__']['total'] = [(clock(global['__dynamic_counters___startTimeGlobal']))]; \n`;
+                
+                
                 signature = '\n' + signature + '\n';
 
                 var coluna = exit ? exit.loc.start.column : functionList[i].node.loc.end.column;

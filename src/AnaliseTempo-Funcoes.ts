@@ -183,7 +183,7 @@ async function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, qua
     var resultadoFinal: TestResults = new TestResults();
 
     var math = require('mathjs');
-    
+
     resultadoFinal.rounds = quantidade;
     resultadoFinal.min = math.min(durations);
     resultadoFinal.max = math.max(durations);
@@ -260,12 +260,30 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
     }
 
     //tempo total com a instrumentação
+    if (objetoTempo['total']) {
+        
+        var min_Total = objetoTempo[nome] ? math.min(objetoTempo['total']) : 0;
+        var max_total = objetoTempo[nome] ? math.max(objetoTempo['total']) : 0;
+        var mean_total = objetoTempo[nome] ? math.median(objetoTempo['total']) : 0;
+        var median_total = objetoTempo[nome] ? math.mean(objetoTempo['total']) : 0;
+        var duration_total = objetoTempo[nome] ? math.sum(objetoTempo['total']) : 0;
+
+        csvcontent += `Total-Interno-Lib;0;0;${min_Total};${max_total};${mean_total};${median_total};${duration_total}` + newLine;
+    }
+
+    if (objetoTempo['total-apos-arquivos'])
+        csvcontent += `Total-Apos-Save;0;0;${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']}` + newLine;
+
+
+
+
+    //tempo total com a instrumentação
     if (objetoTempo['total-Instrumentado'])
-        csvcontent += `${objetoTempo['total-Instrumentado'].name};0;0;${objetoTempo['total-Instrumentado'].min};${objetoTempo['total-Instrumentado'].max};${objetoTempo['total-Instrumentado'].mean};${objetoTempo['total-Instrumentado'].median};${objetoTempo['total-Instrumentado'].duration}` + newLine;
+        csvcontent += `Total NPM Instrumentado;0;0;${objetoTempo['total-Instrumentado'].min};${objetoTempo['total-Instrumentado'].max};${objetoTempo['total-Instrumentado'].mean};${objetoTempo['total-Instrumentado'].median};${objetoTempo['total-Instrumentado'].duration}` + newLine;
 
     //tempo total Original
     if (objetoTempo['total-original'])
-        csvcontent += `${objetoTempo['total-original'].name};0;0;${objetoTempo['total-original'].min};${objetoTempo['total-original'].max};${objetoTempo['total-original'].mean};${objetoTempo['total-original'].median};${objetoTempo['total-original'].duration}` + newLine;
+        csvcontent += `Total-NPM-Original;0;0;${objetoTempo['total-original'].min};${objetoTempo['total-original'].max};${objetoTempo['total-original'].mean};${objetoTempo['total-original'].median};${objetoTempo['total-original'].duration}` + newLine;
 
     fs.writeFileSync(path.join(DiretorioResultados, `${nomeBiblioteca}-analiseTempoFuncoes.csv`), csvcontent);
     fs.writeFileSync(arquivoDinamicoResultado, JSON.stringify(jsonResultadosDinamicos, null, 4));
@@ -364,15 +382,16 @@ async function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, di
 
     //Monta o Código para inserir na Lib
     var globalName = `__dynamic_counters__`;
-    var codigoInicializacao = `function clock(startTime) {var end = process.hrtime(startTime);const convertHrtime = require('convert-hrtime');var resultado = convertHrtime(end);return resultado.ms;}\n`;
-    codigoInicializacao += `process.once('exit', ()=>{ saveAllGlobalsOptmizer(); clearInterval(global['${globalName}__interval']);});  \n`;
+    var codigoInicializacao = `function clock(startTime) {var end = process.hrtime(startTime); const convertHrtime = require('convert-hrtime');var resultado = convertHrtime(end);return resultado.ms;}\n`;
+    codigoInicializacao += `process.once('exit', ()=>{ saveAllGlobalsOptmizer();}); \n`;
     codigoInicializacao += `global['${globalName}'] = {};\n`;
-    codigoInicializacao += `global['${globalName}__interval'] = setInterval(function() {console.log('Salvando...'); saveAllGlobalsOptmizer();}, 1000);
+    codigoInicializacao += `global['${globalName}_startTimeGlobal'] = process.hrtime();
     
 
 function saveAllGlobalsOptmizer(){
     var fs = require('fs');
     var objBDTempoFuncoes = {}; 
+    
 
     if(fs.existsSync('${arquivoJsonComResultadosFuncoes}')){
  
@@ -394,11 +413,14 @@ function saveAllGlobalsOptmizer(){
                 objBDTempoFuncoes[functionNameOptmizer] = global['${globalName}'][functionNameOptmizer];
             }
         }
+        var endSave = clock(global['${globalName}_startTimeGlobal']);
+        objBDTempoFuncoes['total-apos-arquivos'] = endSave;
         fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(objBDTempoFuncoes, null, 4));
     }
     else {
-
-        fs.writeFileSync('/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid/resultados-funcoes.json', JSON.stringify(global['__dynamic_counters__'], null, 4));
+        var endSave = clock(global['${globalName}_startTimeGlobal']);
+        global['__dynamic_counters__']['total-apos-arquivos'] = endSave;
+        fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['__dynamic_counters__'], null, 4));
     }
 }`;
 
