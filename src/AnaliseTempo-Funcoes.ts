@@ -100,6 +100,7 @@ async function executaTestesDoOriginalSemInstrumentacao(DiretorioBiblioteca: str
 
     //Inclui o total observado da lib inteira
     var objetoComResultados = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
+    
     objetoComResultados['total-original'] = {
         'name': 'total-original',
         'min': resultados.min,
@@ -178,14 +179,15 @@ async function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, qua
     //var unitTestsTimer = exectimer.timers[msgId];
     var resultadoFinal: TestResults = new TestResults();
 
-    var math = require('mathjs');
+    var sum = arraySUM(durations);
+    var avg = sum / durations.length;
 
     resultadoFinal.rounds = quantidade;
-    resultadoFinal.min = math.min(durations);
-    resultadoFinal.max = math.max(durations);
-    resultadoFinal.mean = math.mean(durations);;
-    resultadoFinal.median = math.median(durations);
-    resultadoFinal.duration = math.sum(durations);;
+    resultadoFinal.min = arrayMin(durations);
+    resultadoFinal.max = arrayMax(durations);
+    resultadoFinal.mean = avg;
+    resultadoFinal.median = getMedian(durations);
+    resultadoFinal.duration = sum;
     resultadoFinal.rounds = quantidade;
     resultadoFinal.passedAllTests = passedAllTests;
 
@@ -253,7 +255,7 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
             mean = objetoTempo[nome] ? avg : 0;
 
             median = objetoTempo[nome] ? getMedian(objetoTempo[nome]) : 0;
-            
+
             duration = objetoTempo[nome] ? sum : 0;
         }
 
@@ -270,13 +272,16 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, DiretorioBiblioteca
         var avg = sum / objetoTempo['total'].length;
 
         var mean_total = objetoTempo['total'] ? avg : 0;
-        
+
         var median_total = objetoTempo['total'] ? getMedian(objetoTempo['total']) : 0;
-        
+
         var duration_total = objetoTempo['total'] ? sum : 0;
 
         csvcontent += `Total-Interno-Lib;0;${count};${min_Total};${max_total};${mean_total};${median_total};${duration_total}` + newLine;
     }
+
+    if (objetoTempo['testes-unitarios'])
+        csvcontent += `testes-unitarios;0;0;${objetoTempo['testes-unitarios']};${objetoTempo['testes-unitarios']};${objetoTempo['testes-unitarios']};${objetoTempo['testes-unitarios']};${objetoTempo['testes-unitarios']}` + newLine;
 
     if (objetoTempo['total-apos-arquivos'])
         csvcontent += `Total-Apos-Save;0;0;${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']};${objetoTempo['total-apos-arquivos']}` + newLine;
@@ -513,9 +518,9 @@ function arraySUM(arr) {
 };
 
 function getMedian(args) {
-  if (!args.length) {return 0};
-  var numbers = args.slice(0).sort((a,b) => a - b);
-  var middle = Math.floor(numbers.length / 2);
-  var isEven = numbers.length % 2 === 0;
-  return isEven ? (numbers[middle] + numbers[middle - 1]) / 2 : numbers[middle];
+    if (!args.length) { return 0 };
+    var numbers = args.slice(0).sort((a, b) => a - b);
+    var middle = Math.floor(numbers.length / 2);
+    var isEven = numbers.length % 2 === 0;
+    return isEven ? (numbers[middle] + numbers[middle - 1]) / 2 : numbers[middle];
 }
