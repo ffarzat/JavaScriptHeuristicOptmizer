@@ -57,6 +57,7 @@ export default class TestResults {
      */
     Trial:string;
     Heuristic:string; 
+    Function: string;
     
     
     /**

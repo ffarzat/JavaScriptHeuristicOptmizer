@@ -1,7 +1,7 @@
 /// <reference path="./typings/tsd.d.ts" />
 
-//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Dinamica/uuid' 30 20
-//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Dinamica/pug' 30 20
+//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Dinamica/uuid' 30 20 'uuid'
+//node build/src/AnaliseTempo.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Funcao Dinamica/pug' 30 20 'pug'
 
 import ASTExplorer from './ASTExplorer';
 import TestResults from './TestResults';
@@ -24,6 +24,7 @@ var arquivoRootBiblioteca = process.argv[3].replace("'", "");
 var DiretorioResultados = process.argv[4].replace("'", "");
 var QuantidadeRodadas = parseInt(process.argv[5]);
 var Quantidade = parseInt(process.argv[6]);
+var libName = process.argv[7].replace("'", "");
 var resultadosProcessados = [];
 var os = require("os");
 
@@ -34,6 +35,7 @@ console.log(`${arquivoRootBiblioteca}`);
 console.log(`${DiretorioResultados}`);
 console.log(`Verificar as ${QuantidadeRodadas} rodadas existentes`);
 console.log(`Executar os testes ${Quantidade} vezes`);
+console.log(`Nome da Lib: ${libName}`);
 
 
 //Copia de segurança
@@ -46,27 +48,25 @@ Executar();
 //============================================================================================ Original //>
 async function Executar() {
     var caminhoOriginal = DiretorioResultados + `/${heuristicas[0]}/original.js`;
-    
+
     //instrumentar, executar, salvar
-    
+
     var codigoOriginal = fs.readFileSync(caminhoOriginal, 'UTF8');
     WriteCodeToFile(arquivoRootBiblioteca, codigoOriginal);
 
     //Despreza a primeira execuçao
     await ExecutarTeste(DiretorioBiblioteca, bufferOption, 1);
-    var resultadoOriginal = await ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade);
 
+    var arquivoDinamicoResultado = path.join(DiretorioBiblioteca, 'original-resultados-dinamico.json');
+    var arquivoFuncoesResultado = path.join(DiretorioBiblioteca, 'original-resultados-funcoes.json');
 
-    resultadoOriginal.Trial = "0";
-    resultadoOriginal.Heuristic = "original";
-    resultadosProcessados.push(resultadoOriginal);
+    await gerarRankingDinamico(libName, arquivoRootBiblioteca, DiretorioBiblioteca, bufferOption, Quantidade, arquivoDinamicoResultado, arquivoFuncoesResultado, 'original', 0);
 
     //============================================================================================ Rodadas //>
 
-    for(var j=0; j < heuristicas.length; j++)
-    {
+    for (var j = 0; j < heuristicas.length; j++) {
         var heuristica = heuristicas[j];
-        
+
         for (var index = 0; index < QuantidadeRodadas; index++) {
 
             console.log(`Executando rodada ${index} da heuristica ${heuristica}`);
@@ -84,29 +84,15 @@ async function Executar() {
                 WriteCodeToFile(arquivoRootBiblioteca, CodigoDaRodada);
 
                 //Instrumenta, executa os testes, avalia
+                arquivoDinamicoResultado = path.join(DiretorioBiblioteca, index + '-resultados-dinamico.json');
+                arquivoFuncoesResultado = path.join(DiretorioBiblioteca, index + '-resultados-funcoes.json');
+                await gerarRankingDinamico(libName, arquivoRootBiblioteca, DiretorioBiblioteca, bufferOption, Quantidade, arquivoDinamicoResultado, arquivoFuncoesResultado, heuristica, index);
 
-                var resultadosLocal = await ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade);
-                
-                resultadosLocal.Trial = `${index}`;
-                resultadosLocal.Heuristic = heuristica;
-                
-                resultadosProcessados.push(resultadosLocal);
+                //Volta a cópia de segurança
+                fse.copySync(oldLibFilePath, arquivoRootBiblioteca, { "clobber": true });
             }
             else {
                 console.log(`   O código é igual ao original`);
-                var resultadoFinal: TestResults = new TestResults();
-
-                resultadoFinal.rounds = Quantidade;
-                resultadoFinal.min = resultadoOriginal.min;
-                resultadoFinal.max = resultadoOriginal.max;
-                resultadoFinal.mean = resultadoOriginal.mean;
-                resultadoFinal.median = resultadoOriginal.median;
-                resultadoFinal.duration = resultadoOriginal.duration;
-                resultadoFinal.passedAllTests = true;
-
-                resultadoFinal.Trial = "0";
-
-                resultadosProcessados.push();
             }
         }
     }
@@ -121,11 +107,6 @@ async function Executar() {
 
     process.exit();
 }
-
-
-
-
-
 
 /**
  * Salva o código por cima do da Lib atual
@@ -256,11 +237,11 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
     var newLine: string = '\n';
     //var csvcontent = "sep=;" + newLine;
     var csvcontent = "";
-    csvcontent += "Rodada;Algoritmo;min;max;media;mediana;duracao" + newLine;
+    csvcontent += "Rodada;Algoritmo;Funcao;min;max;media;mediana;duracao" + newLine;
 
     listaResultados.forEach(element => {
         if (element.passedAllTests)
-            csvcontent += `${element.Trial};${element.Heuristic};${element.min};${element.max};${element.median};${element.mean};${element.duration}` + newLine;
+            csvcontent += `${element.Trial};${element.Heuristic};${element.Function};${element.min};${element.max};${element.median};${element.mean};${element.duration}` + newLine;
     });
 
     fs.writeFileSync(path.join(DiretorioResultados, 'analiseTempoExecucao.csv'), csvcontent);
@@ -328,4 +309,131 @@ function getMedian(args) {
     var middle = Math.floor(numbers.length / 2);
     var isEven = numbers.length % 2 === 0;
     return isEven ? (numbers[middle] + numbers[middle - 1]) / 2 : numbers[middle];
+}
+
+/**
+ * Instrumenta o código da lib, executa os testes e gera dois arquivos de saída com a contagem dinamica e o tempo de execucao de cada função
+ * @param nomeLib 
+ * @param caminhoOriginal 
+ * @param diretorioBiblioteca 
+ * @param buffer 
+ * @param qtd 
+ */
+async function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, diretorioBiblioteca: string, buffer: Object, qtd: number, arquivoDinamicoResultado: string, arquivoFuncoesResultado: string, heuristica: string, trial: number) {
+    //Creates the Inidividual for tests
+    var astExplorer: ASTExplorer = new ASTExplorer();
+    var individualOverTests = astExplorer.GenerateFromFile(caminhoOriginal);
+    var listaDeFuncoes = ExtrairListaDeFuncoes(caminhoOriginal);
+    var codigoDoOriginal = individualOverTests.ToCode();
+    var arquivoJsonComResultadosFuncoes = arquivoFuncoesResultado;
+    var arquivoJsonComResultadosContagemFuncoes = arquivoDinamicoResultado;
+
+
+
+
+    //Monta o Código para inserir na Lib
+    var globalName = `__dynamic_counters__`;
+    var codigoInicializacao = `function clock(startTime) {var end = process.hrtime(startTime); const convertHrtime = require('convert-hrtime');var resultado = convertHrtime(end);return resultado.ms;}\n`;
+    codigoInicializacao += `process.once('exit', ()=>{ saveAllGlobalsOptmizer();}); \n`;
+    codigoInicializacao += `global['${globalName}'] = {};\n`;
+    codigoInicializacao += `global['${globalName}_startTimeGlobal'] = process.hrtime();
+    
+
+function saveAllGlobalsOptmizer(){
+    var fs = require('fs');
+    var objBDTempoFuncoes = {}; 
+    
+
+    if(fs.existsSync('${arquivoJsonComResultadosFuncoes}')){
+ 
+        var conteudo = fs.readFileSync('${arquivoJsonComResultadosFuncoes}').toString();
+        objBDTempoFuncoes = JSON.parse(conteudo);
+                    
+        for (var functionNameOptmizer in global['${globalName}'])
+        {
+            if(objBDTempoFuncoes[functionNameOptmizer])
+            {
+                if(functionNameOptmizer === 'toString')
+                    continue;
+                    
+                objBDTempoFuncoes[functionNameOptmizer] = !Array.isArray(objBDTempoFuncoes[functionNameOptmizer]) ? [] : objBDTempoFuncoes[functionNameOptmizer];
+                objBDTempoFuncoes[functionNameOptmizer] = objBDTempoFuncoes[functionNameOptmizer].concat(global['__dynamic_counters__'][functionNameOptmizer]);
+            }
+            else{
+                
+                objBDTempoFuncoes[functionNameOptmizer] = global['${globalName}'][functionNameOptmizer];
+            }
+        }
+        //var endSave = clock(global['${globalName}_startTimeGlobal']);
+        //objBDTempoFuncoes['total-apos-arquivos'] = endSave;
+        fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(objBDTempoFuncoes, null, 4));
+    }
+    else {
+        //var endSave = clock(global['${globalName}_startTimeGlobal']);
+        //global['__dynamic_counters__']['total-apos-arquivos'] = endSave;
+        fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['__dynamic_counters__'], null, 4));
+    }
+}`;
+
+
+    var caminho = __dirname.replace('build', '');
+    var esmorph = require(caminho + '/../src/esmorph-new.js');
+    var modifiers;
+
+    modifiers = [];
+    modifiers.push(esmorph.Tracer.InstrumentableFunctionEntranceForTime(''));
+    modifiers.push(esmorph.Tracer.InstrumentableFunctionExitForTime(''));
+
+    var morphed = esmorph.modify(codigoDoOriginal, modifiers);
+    //Jogo a inicializacao no começo de todo o código
+    morphed = codigoInicializacao + `\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n //================================================================= \n` + morphed;
+
+    //Salva o código modificado
+    fs.writeFileSync(caminhoOriginal, morphed);
+    fs.writeFileSync(caminhoOriginal + '.txt', morphed); //copia para debug
+
+    //executa os testes
+    try {
+        var resultados = await ExecutarTeste(diretorioBiblioteca, buffer, qtd);
+        console.log(`   Testes concluídos [${resultados.passedAllTests}]`);
+
+        var objetoComResultados = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
+
+        /*
+        objetoComResultados['total-Instrumentado'] = {
+            'name': 'total-Instrumentado',
+            'min': resultados.min,
+            'max': resultados.max,
+            'mean': resultados.mean,
+            'median': resultados.median,
+            'duration': resultados.duration,
+            'count': resultados.rounds,
+        };
+        */
+
+        Object.keys(objetoComResultados).forEach(name => {
+            var resultadosInterno = new TestResults();
+            var sum = arraySUM(objetoComResultados[name]);
+            var avg = sum / objetoComResultados[name].length
+            resultadosInterno.Trial = trial.toString();
+            resultadosInterno.Function = name;
+            resultadosInterno.Heuristic = heuristica;
+            resultadosInterno.min = arrayMin(objetoComResultados[name]);
+            resultadosInterno.max = arrayMax(objetoComResultados[name]);
+            resultadosInterno.mean = avg;
+            resultadosInterno.median = getMedian(objetoComResultados[name]);
+            resultadosInterno.duration = sum;
+            resultadosInterno.rounds = objetoComResultados[name].length;
+            resultadosInterno.passedAllTests = true;
+
+            resultadosProcessados.push(resultadosInterno)
+
+            //console.log(arquivoFuncoesResultado);
+            if (fs.existsSync(arquivoFuncoesResultado))
+                fs.unlinkSync(arquivoFuncoesResultado); //se livra do arquivo
+
+        });
+    } catch (error) {
+        console.log('Deu ruim:' + error.stack);
+    }
 }
