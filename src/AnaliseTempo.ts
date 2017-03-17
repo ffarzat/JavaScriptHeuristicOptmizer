@@ -5,6 +5,7 @@
 
 import ASTExplorer from './ASTExplorer';
 import TestResults from './TestResults';
+import Individual from './Individual';
 
 
 import fs = require('fs');
@@ -27,6 +28,7 @@ var Quantidade = parseInt(process.argv[6]);
 var libName = process.argv[7].replace("'", "");
 var resultadosProcessados = [];
 var os = require("os");
+var listaDeFuncoesOriginal = [];
 
 arquivoRootBiblioteca = path.join(DiretorioBiblioteca, arquivoRootBiblioteca);
 
@@ -56,6 +58,8 @@ async function Executar() {
 
     //Despreza a primeira execuçao
     await ExecutarTeste(DiretorioBiblioteca, bufferOption, 1);
+
+    listaDeFuncoesOriginal = ExtrairListaDeFuncoesComNos(arquivoRootBiblioteca);
 
     var arquivoDinamicoResultado = path.join(DiretorioBiblioteca, 'original-resultados-dinamico.json');
     var arquivoFuncoesResultado = path.join(DiretorioBiblioteca, 'original-resultados-funcoes.json');
@@ -214,6 +218,28 @@ function ExtrairListaDeFuncoes(caminhoOriginal: string) {
 }
 
 /**
+ * Retorna a lista de funções de um arquivo Js
+ * @param caminhoOriginal 
+ */
+function ExtrairListaDeFuncoesComNos(caminhoOriginal: string) {
+    var caminho = __dirname.replace('build/', '');
+    var functionExtractor = require(caminho + '/heuristics/function-extractor.js');
+    var astExplorer = new ASTExplorer();
+    var individuo = astExplorer.GenerateFromFile(caminhoOriginal);
+    var lista = functionExtractor.interpret(individuo.AST);
+
+    var unique = lista.filter(function (elem, index, self) {
+        return index == self.indexOf(elem);
+    })
+
+    //console.log(JSON.stringify(unique));
+
+    return unique;
+
+}
+
+
+/**
  * Transform nano secs in secs
  */
 function ToNanosecondsToSeconds(nanovalue: number): number {
@@ -237,11 +263,11 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
     var newLine: string = '\n';
     //var csvcontent = "sep=;" + newLine;
     var csvcontent = "";
-    csvcontent += "Rodada;Algoritmo;Funcao;min;max;media;mediana;duracao" + newLine;
+    csvcontent += "Rodada;Algoritmo;Funcao;min;max;media;mediana;duracao;quantidade" + newLine;
 
     listaResultados.forEach(element => {
         if (element.passedAllTests)
-            csvcontent += `${element.Trial};${element.Heuristic};${element.Function};${element.min};${element.max};${element.median};${element.mean};${element.duration}` + newLine;
+            csvcontent += `${element.Trial};${element.Heuristic};${element.Function};${element.min};${element.max};${element.median};${element.mean};${element.duration};${element.rounds}` + newLine;
     });
 
     fs.writeFileSync(path.join(DiretorioResultados, 'analiseTempoExecucao.csv'), csvcontent);
@@ -328,7 +354,7 @@ async function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, di
     var arquivoJsonComResultadosFuncoes = arquivoFuncoesResultado;
     var arquivoJsonComResultadosContagemFuncoes = arquivoDinamicoResultado;
 
-
+    var listaDeFuncoesMutante = ExtrairListaDeFuncoesComNos(arquivoRootBiblioteca);
 
 
     //Monta o Código para inserir na Lib
@@ -397,6 +423,9 @@ function saveAllGlobalsOptmizer(){
         var resultados = await ExecutarTeste(diretorioBiblioteca, buffer, qtd);
         console.log(`   Testes concluídos [${resultados.passedAllTests}]`);
 
+        child_process.execSync('sleep 1');
+
+
         var objetoComResultados = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
 
         /*
@@ -411,29 +440,53 @@ function saveAllGlobalsOptmizer(){
         };
         */
 
+        delete objetoComResultados.total;
+
         Object.keys(objetoComResultados).forEach(name => {
-            var resultadosInterno = new TestResults();
-            var sum = arraySUM(objetoComResultados[name]);
-            var avg = sum / objetoComResultados[name].length
-            resultadosInterno.Trial = trial.toString();
-            resultadosInterno.Function = name;
-            resultadosInterno.Heuristic = heuristica;
-            resultadosInterno.min = arrayMin(objetoComResultados[name]);
-            resultadosInterno.max = arrayMax(objetoComResultados[name]);
-            resultadosInterno.mean = avg;
-            resultadosInterno.median = getMedian(objetoComResultados[name]);
-            resultadosInterno.duration = sum;
-            resultadosInterno.rounds = objetoComResultados[name].length;
-            resultadosInterno.passedAllTests = true;
 
-            resultadosProcessados.push(resultadosInterno)
+            var functionNodeMutante = listaDeFuncoesMutante.find((currentValue, index, arr) => { return currentValue.name == name; });
+            var functionNodeOriginal = listaDeFuncoesOriginal.find((currentValue, index, arr) => { return currentValue.name == name; });
 
-            //console.log(arquivoFuncoesResultado);
-            if (fs.existsSync(arquivoFuncoesResultado))
-                fs.unlinkSync(arquivoFuncoesResultado); //se livra do arquivo
+
+            var iFuncaoOriginal = new Individual();
+            iFuncaoOriginal.Options.comment = false;
+            iFuncaoOriginal.AST = functionNodeOriginal.node;
+
+            var iFuncaoMutante = new Individual();
+            iFuncaoMutante.Options.comment = false;
+            iFuncaoMutante.AST = functionNodeMutante.node;
+
+
+            if (heuristica === "original" || iFuncaoOriginal.ToCode() !== iFuncaoMutante.ToCode()) {
+                var resultadosInterno = new TestResults();
+                var sum = arraySUM(objetoComResultados[name]);
+                var avg = sum / objetoComResultados[name].length
+                resultadosInterno.Trial = trial.toString();
+                resultadosInterno.Function = name;
+                resultadosInterno.Heuristic = heuristica;
+                resultadosInterno.min = arrayMin(objetoComResultados[name]);
+                resultadosInterno.max = arrayMax(objetoComResultados[name]);
+                resultadosInterno.mean = avg;
+                resultadosInterno.median = getMedian(objetoComResultados[name]);
+                resultadosInterno.duration = sum;
+                resultadosInterno.rounds = objetoComResultados[name].length;
+                resultadosInterno.passedAllTests = true;
+
+                resultadosProcessados.push(resultadosInterno)
+            }
 
         });
+
+        //console.log(arquivoFuncoesResultado);
+        if (fs.existsSync(arquivoFuncoesResultado))
+            fs.unlinkSync(arquivoFuncoesResultado); //se livra do arquivo
+
     } catch (error) {
         console.log('Deu ruim:' + error.stack);
+
+        if (fs.existsSync(arquivoFuncoesResultado))
+            fs.unlinkSync(arquivoFuncoesResultado); //se livra do arquivo
     }
 }
+
+
