@@ -29,6 +29,7 @@ var libName = process.argv[7].replace("'", "");
 var resultadosProcessados = [];
 var os = require("os");
 var listaDeFuncoesOriginal = [];
+var tamanhoArquivoOriginalEmBytes = 0;
 
 arquivoRootBiblioteca = path.join(DiretorioBiblioteca, arquivoRootBiblioteca);
 
@@ -60,6 +61,7 @@ async function Executar() {
     await ExecutarTeste(DiretorioBiblioteca, bufferOption, 1);
 
     listaDeFuncoesOriginal = ExtrairListaDeFuncoesComNos(arquivoRootBiblioteca);
+    tamanhoArquivoOriginalEmBytes = getFilesizeInBytes(arquivoRootBiblioteca);
 
     var arquivoDinamicoResultado = path.join(DiretorioBiblioteca, 'original-resultados-dinamico.json');
     var arquivoFuncoesResultado = path.join(DiretorioBiblioteca, 'original-resultados-funcoes.json');
@@ -355,6 +357,7 @@ async function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, di
     var arquivoJsonComResultadosContagemFuncoes = arquivoDinamicoResultado;
 
     var listaDeFuncoesMutante = ExtrairListaDeFuncoesComNos(arquivoRootBiblioteca);
+    var tamanhoArquivoMutanteEmBytes = getFilesizeInBytes(arquivoRootBiblioteca);
 
 
     //Monta o Código para inserir na Lib
@@ -367,38 +370,16 @@ async function gerarRankingDinamico(nomeLib: string, caminhoOriginal: string, di
 
 function saveAllGlobalsOptmizer(){
     var fs = require('fs');
-    var objBDTempoFuncoes = {}; 
-    
-
-    if(fs.existsSync('${arquivoJsonComResultadosFuncoes}')){
- 
-        var conteudo = fs.readFileSync('${arquivoJsonComResultadosFuncoes}').toString();
-        objBDTempoFuncoes = JSON.parse(conteudo);
-                    
-        for (var functionNameOptmizer in global['${globalName}'])
-        {
-            if(objBDTempoFuncoes[functionNameOptmizer])
-            {
-                if(functionNameOptmizer === 'toString')
-                    continue;
-                    
-                objBDTempoFuncoes[functionNameOptmizer] = !Array.isArray(objBDTempoFuncoes[functionNameOptmizer]) ? [] : objBDTempoFuncoes[functionNameOptmizer];
-                objBDTempoFuncoes[functionNameOptmizer] = objBDTempoFuncoes[functionNameOptmizer].concat(global['__dynamic_counters__'][functionNameOptmizer]);
-            }
-            else{
-                
-                objBDTempoFuncoes[functionNameOptmizer] = global['${globalName}'][functionNameOptmizer];
-            }
-        }
-        //var endSave = clock(global['${globalName}_startTimeGlobal']);
-        //objBDTempoFuncoes['total-apos-arquivos'] = endSave;
-        fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(objBDTempoFuncoes, null, 4));
-    }
-    else {
+    try {
+        
         //var endSave = clock(global['${globalName}_startTimeGlobal']);
         //global['__dynamic_counters__']['total-apos-arquivos'] = endSave;
-        fs.writeFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['__dynamic_counters__'], null, 4));
+        fs.appendFileSync('${arquivoJsonComResultadosFuncoes}', JSON.stringify(global['__dynamic_counters__']) + "\\n");
+
+    } catch (error) {
+        fs.appendFileSync("log-client.txt", error);
     }
+
 }`;
 
 
@@ -426,7 +407,7 @@ function saveAllGlobalsOptmizer(){
         child_process.execSync('sleep 1');
 
 
-        var objetoComResultados = JSON.parse(fs.readFileSync(arquivoFuncoesResultado).toString());
+
 
         /*
         objetoComResultados['total-Instrumentado'] = {
@@ -439,6 +420,32 @@ function saveAllGlobalsOptmizer(){
             'count': resultados.rounds,
         };
         */
+
+        //Cada linha uma execucao. Somar tudo
+        var objetoComResultados = { total: 0 };
+        var totalLinhas = 0;
+        fs.readFileSync(arquivoFuncoesResultado).toString().split('\n').forEach(function (line) {
+            if (line !== "") {
+
+                totalLinhas++;
+                //console.log("linha " + totalLinhas);
+                var objBDTempoFuncoes = JSON.parse(line);
+
+                for (var functionNameOptmizer in objBDTempoFuncoes) {
+                    if (objetoComResultados[functionNameOptmizer]) {
+                        if (functionNameOptmizer === 'toString')
+                            continue;
+
+                        objetoComResultados[functionNameOptmizer] = !Array.isArray(objetoComResultados[functionNameOptmizer]) ? [] : objetoComResultados[functionNameOptmizer];
+                        objetoComResultados[functionNameOptmizer] = objetoComResultados[functionNameOptmizer].concat(objBDTempoFuncoes[functionNameOptmizer]);
+                    }
+                    else {
+
+                        objetoComResultados[functionNameOptmizer] = objBDTempoFuncoes[functionNameOptmizer];
+                    }
+                }
+            }
+        });
 
         delete objetoComResultados.total;
 
@@ -457,7 +464,8 @@ function saveAllGlobalsOptmizer(){
             iFuncaoMutante.AST = functionNodeMutante.node;
 
 
-            if (heuristica === "original" || iFuncaoOriginal.ToCode() !== iFuncaoMutante.ToCode()) {
+            //if (heuristica === "original" || (iFuncaoOriginal.ToCode() !== iFuncaoMutante.ToCode() && tamanhoArquivoMutanteEmBytes <= tamanhoArquivoOriginalEmBytes)) {
+            if (heuristica === "original" || (iFuncaoOriginal.ToCode() !== iFuncaoMutante.ToCode())) {
                 var resultadosInterno = new TestResults();
                 var sum = arraySUM(objetoComResultados[name]);
                 var avg = sum / objetoComResultados[name].length
@@ -489,4 +497,8 @@ function saveAllGlobalsOptmizer(){
     }
 }
 
-
+function getFilesizeInBytes(filename): number {
+    const stats = fs.statSync(filename)
+    const fileSizeInBytes = stats.size
+    return fileSizeInBytes
+}
