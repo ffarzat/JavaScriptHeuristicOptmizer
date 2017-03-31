@@ -23,7 +23,7 @@
     "clientsTotal": 20,
     "memory": 2408000,
     "libraries" : [
-        {"name":"exectimer",       "path":"exectimer",         "mainFilePath":"index.js" }
+        {"name":"exectimer",       "path":"Libraries/exectimer",         "mainFilePath":"index.js" }
     ],
     "trialsConfiguration":[
         {
