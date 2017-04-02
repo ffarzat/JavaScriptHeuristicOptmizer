@@ -111,7 +111,7 @@ export default class HC extends IHeuristic {
     TrocarFuncao(trialIndex: number, cb: (results: TrialResults) => void) {
         var funcaoAtual = this.RecuperarMelhorFuncaoAtual();
 
-        if (funcaoAtual == undefined || funcaoAtual == "undefined") {
+        if (funcaoAtual == undefined || funcaoAtual == "undefined" || this.bestIndividual == undefined) {
             this._logger.Write(`[HC] Não há mais funções para otimizar!`);
             this.Stop();
             var results = this.ProcessResult(trialIndex, this.Original, this.ActualBestForFunctionScope);
@@ -128,6 +128,9 @@ export default class HC extends IHeuristic {
      */
     private ExecutarPorFuncao(trialIndex: number, cb: (results: TrialResults) => void) {
         this.TrocarFuncao(trialIndex, cb);
+
+
+
         //Array com todos os indices de nó
         let nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual.Clone());
         this.typeIndexCounter = 0;
