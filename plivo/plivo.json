@@ -23,7 +23,7 @@
     "clientsTotal": 20,
     "memory": 2408000,
     "libraries" : [
-        {"name":"plivo",       "path":"Libraries/plivo-node",         "mainFilePath":"lib/plivo.js" }
+        {"name":"plivo-node",       "path":"Libraries/plivo-node",         "mainFilePath":"lib/plivo.js" }
     ],
     "trialsConfiguration":[
         {
