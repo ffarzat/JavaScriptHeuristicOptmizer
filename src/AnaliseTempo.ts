@@ -29,6 +29,7 @@ var libName = process.argv[7].replace("'", "");
 var resultadosProcessados = [];
 var os = require("os");
 var listaDeFuncoesOriginal = [];
+var rankingEstatico = {};
 var tamanhoArquivoOriginalEmBytes = 0;
 
 arquivoRootBiblioteca = path.join(DiretorioBiblioteca, arquivoRootBiblioteca);
@@ -65,6 +66,12 @@ async function Executar() {
 
     var arquivoDinamicoResultado = path.join(DiretorioBiblioteca, 'original-resultados-dinamico.json');
     var arquivoFuncoesResultado = path.join(DiretorioBiblioteca, 'original-resultados-funcoes.json');
+    var arquivoEstaticoResultado = path.join(DiretorioBiblioteca, 'original-resultados-estatico.json');
+
+    rankingEstatico = getFunctionStaticList(caminhoOriginal);
+
+    fs.writeFileSync(arquivoEstaticoResultado, JSON.stringify(rankingEstatico));
+
 
     await gerarRankingDinamico(libName, arquivoRootBiblioteca, DiretorioBiblioteca, bufferOption, Quantidade, arquivoDinamicoResultado, arquivoFuncoesResultado, 'original', 0);
 
@@ -242,6 +249,35 @@ function ExtrairListaDeFuncoesComNos(caminhoOriginal: string) {
 
 
 /**
+* Ranking estático de funções mais utilizadas no código
+*/
+function getFunctionStaticList(caminhoOriginal: string): Object {
+    //must determine ranking of most used functions
+    var types = require("ast-types");
+    var localCount = {};
+
+    var caminho = __dirname.replace('build', '');
+    var functionExtractor = require(caminho + '/heuristics/function-extractor.js');
+    var astExplorer = new ASTExplorer();
+    var individuo = astExplorer.GenerateFromFile(caminhoOriginal);
+    var functions = functionExtractor.interpret(individuo.AST);
+    var temp = individuo.ToCode();
+
+    for (var i = 0; i < functions.length; i++) {
+        var nome = functions[i].name;
+        var total = temp.split('.' + nome).length;
+        localCount[nome] = total - 1;
+    }
+
+    //console.log(`${JSON.stringify(localCount)}`);
+
+    return localCount;
+}
+
+
+
+
+/**
  * Transform nano secs in secs
  */
 function ToNanosecondsToSeconds(nanovalue: number): number {
@@ -265,11 +301,11 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
     var newLine: string = '\n';
     //var csvcontent = "sep=;" + newLine;
     var csvcontent = "";
-    csvcontent += "Rodada;Algoritmo;Funcao;min;max;media;mediana;duracao;quantidade" + newLine;
+    csvcontent += "Rodada;Algoritmo;Funcao;min;max;media;mediana;duracao;quantidade;estatico" + newLine;
 
     listaResultados.forEach(element => {
         if (element.passedAllTests)
-            csvcontent += `${element.Trial};${element.Heuristic};${element.Function};${element.min};${element.max};${element.median};${element.mean};${element.duration};${element.rounds}` + newLine;
+            csvcontent += `${element.Trial};${element.Heuristic};${element.Function};${element.min};${element.max};${element.median};${element.mean};${element.duration};${element.rounds};${rankingEstatico[element.Function]}` + newLine;
     });
 
     fs.writeFileSync(path.join(DiretorioResultados, 'analiseTempoExecucao.csv'), csvcontent);
