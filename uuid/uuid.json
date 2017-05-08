@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["GA"],
+    "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":10,
@@ -23,11 +23,11 @@
     "clientsTotal": 20,
     "memory": 2408000,
     "libraries" : [
-        {"name":"uuid",       "path":"",         "mainFilePath":"lib/uuid.js" }
+        {"name":"uuid",       "path":"Libraries/uuid",         "mainFilePath":"lib/uuid.js" }
     ],
     "trialsConfiguration":[
         {
-            "nodesSelectionApproach":"ByFunction",
+            "nodesSelectionApproach":"Global",
             "ByFunctionType": "dynamic", 
             "especific": {
                 "neighborApproach":"LastAscent", 
