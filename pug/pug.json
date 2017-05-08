@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["GA"],
+    "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":120,
@@ -23,11 +23,11 @@
     "clientsTotal": 20,
     "memory": 2408000,
     "libraries" : [
-        {"name":"pug",       "path":"",         "mainFilePath":"packages/pug/lib/index.js" }
+        {"name":"pug",       "path":"Libraries/pug",         "mainFilePath":"packages/pug/lib/index.js" }
     ],
     "trialsConfiguration":[
         {
-            "nodesSelectionApproach":"ByFunction",
+            "nodesSelectionApproach":"Global",
             "ByFunctionType": "dynamic", 
             "especific": {
                 "neighborApproach":"LastAscent", 
