@@ -7,6 +7,7 @@ import OperatorContext from './OperatorContext';
 import Library from './Library';
 import TestResults from './TestResults';
 import ILogger from './ILogger';
+import ASTExplorer from './ASTExplorer';
 
 import path = require('path');
 import Shell = require('shelljs');
@@ -46,6 +47,8 @@ export default class CommandTester implements ITester {
     
     clientInternalPath: string
 
+    _astExplorer: ASTExplorer;
+
     /**
      * Initializes NPM packages if necessary
      */
@@ -64,6 +67,8 @@ export default class CommandTester implements ITester {
         this.fitType = fitType;
         this.oldLibFilePath = path.join(this.libDirectoryPath, 'old.js');
 
+        this._astExplorer = new ASTExplorer();
+
         this.LibName = LibrarieOverTest.name;
 
         if (!fse.existsSync(this.oldLibFilePath))
@@ -75,7 +80,9 @@ export default class CommandTester implements ITester {
      * Knows what attribute uses for Fit evaluation
      */
     RetrieveConfiguratedFitFor(individual: Individual): number {
-        return individual.testResults[this.fitType];
+        //Contar as instrucoes. Nova Fit baseada na leitura do Survey do Harman sobre GI
+        return this._astExplorer.CountNodes(individual);
+        //return individual.testResults[this.fitType];
     }
 
     /**
