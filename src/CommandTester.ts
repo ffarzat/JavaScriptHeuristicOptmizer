@@ -40,11 +40,11 @@ export default class CommandTester implements ITester {
     testTimeout: number;
 
     LibName: string;
-    
+
     AvailableHosts: Array<string>
 
     memory: number;
-    
+
     clientInternalPath: string
 
     _astExplorer: ASTExplorer;
@@ -57,8 +57,8 @@ export default class CommandTester implements ITester {
         this.testUntil = testUntil;
         this.testTimeout = testTimeout;
         this.AvailableHosts = Hosts;
-        this.memory = memoryLimit == undefined? 2047: memoryLimit;
-        this.clientInternalPath = clientPath == undefined ? 'src/client.js': clientPath;
+        this.memory = memoryLimit == undefined ? 2047 : memoryLimit;
+        this.clientInternalPath = clientPath == undefined ? 'src/client.js' : clientPath;
 
         //Setup tests with Lib context
         this.libMainFilePath = LibrarieOverTest.mainFilePath;
@@ -76,12 +76,20 @@ export default class CommandTester implements ITester {
 
     }
 
+    getFilesizeInBytes(filename): number {
+        const stats = fs.statSync(filename)
+        const fileSizeInBytes = stats.size
+        return fileSizeInBytes
+    }
+
     /**
      * Knows what attribute uses for Fit evaluation
      */
     RetrieveConfiguratedFitFor(individual: Individual): number {
         //Contar as instrucoes. Nova Fit baseada na leitura do Survey do Harman sobre GI
-        return this._astExplorer.CountNodes(individual);
+        //return this._astExplorer.CountNodes(individual);
+        return this.getFilesizeInBytes(this.libMainFilePath);
+
         //return individual.testResults[this.fitType];
     }
 
@@ -110,7 +118,7 @@ export default class CommandTester implements ITester {
             //console.log(`Ncpus: ${this.Ncpus}`);
             //console.log(`hostfile: ${this.hostfile}`);
 
-          
+
             //var clientsTotal = 9;
             var libPath = this.libDirectoryPath;
             var timeoutMS = this.testTimeout;
@@ -130,8 +138,8 @@ export default class CommandTester implements ITester {
                 var hosts: string = ``;
                 this.AvailableHosts.forEach(host => {
                     hosts += `${host},`;
-                });                
-                
+                });
+
                 hosts = hosts.substring(0, hosts.length - 1);
 
                 testCMD = `mpirun -n ${testUntil} -host ${hosts} -x PATH=$PATH:node=/mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node:npm=/mnt/scratch/user8/nodev4/node-v4.4.7/out/bin/npm /mnt/scratch/user8/nodev4/node-v4.4.7/out/Release/node --expose-gc --max-old-space-size=102400 ${this.clientInternalPath} ${msgId} ${libPath} ${timeoutMS}`;
@@ -162,7 +170,7 @@ export default class CommandTester implements ITester {
             min = Math.min.apply(null, numbers);
             avg = this.mean(numbers);
             median = this.median(numbers);
-            passedAllTests =  (list[0].sucess === "true");
+            passedAllTests = (list[0].sucess === "true");
 
             //console.log(`Min: ${ToSecs(min)}`);
             //console.log(`Max: ${ToSecs(max)}`);
@@ -179,36 +187,36 @@ export default class CommandTester implements ITester {
             passedAllTests = false;
         }
         finally {
+            if (passedAllTests) {
+                var results: TestResults = new TestResults();
+                results.rounds = this.testUntil;
+                results.min = min;
+                results.max = max;
+                results.mean = avg;
+                results.median = median;
+                results.duration = max;
+                results.outputs = outputsFromCmd;
+                results.passedAllTests = passedAllTests
+
+                individual.testResults = results;
+                results.fit = this.RetrieveConfiguratedFitFor(individual);
+            }
+            else {
+                var results: TestResults = new TestResults();
+                results.rounds = this.testUntil;
+
+                results.min = 0;
+                results.max = 0;
+                results.mean = 0;
+                results.median = 0;
+                results.duration = 0;
+                results.outputs = outputsFromCmd;
+                results.fit = 0;
+                results.passedAllTests = passedAllTests
+                individual.testResults = results;
+            }
+
             fse.copySync(this.oldLibFilePath, this.libMainFilePath, { "clobber": true });
-        }
-
-        if (passedAllTests) {
-            var results: TestResults = new TestResults();
-            results.rounds = this.testUntil;
-            results.min = min;
-            results.max = max;
-            results.mean = avg;
-            results.median = median;
-            results.duration = max;
-            results.outputs = outputsFromCmd;
-            results.passedAllTests = passedAllTests
-
-            individual.testResults = results;
-            results.fit = this.RetrieveConfiguratedFitFor(individual);
-        }
-        else {
-            var results: TestResults = new TestResults();
-            results.rounds = this.testUntil;
-
-            results.min = 0;
-            results.max = 0;
-            results.mean = 0;
-            results.median = 0;
-            results.duration = 0;
-            results.outputs = outputsFromCmd;
-            results.fit = 0;
-            results.passedAllTests = passedAllTests
-            individual.testResults = results;
         }
 
         //this.ShowConsoleResults(results);
