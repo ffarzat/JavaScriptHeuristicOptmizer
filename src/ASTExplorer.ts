@@ -290,6 +290,7 @@ export default class ASTExplorer {
 
         mutant.AST = traverse(mutant.AST).map(function (node) {
             if (counter == indexes[randonNodeToPrune]) {
+                //fs.appendFileSync("mutante_excluidos.txt",JSON.stringify(node) + "\n");
                 this.remove();
                 this.stop();
             }
@@ -315,7 +316,7 @@ export default class ASTExplorer {
         var index: number = 0;
 
         traverse(individual.AST).forEach(function (node) {
-            if (node && node.type && (node.type != 'Line' || node.type != 'Block')) { //comments - Line and Block
+            if (node && node.type && (node.type != 'Line' && node.type != 'Block')) { //comments - Line and Block
                 //console.log('Indice: ' + index);
                 //console.log('Tipo ' + node.type);
                 nodesIndex.push(index);
