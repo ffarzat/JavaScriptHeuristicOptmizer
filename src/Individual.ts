@@ -34,6 +34,9 @@ export default class Individual {
         }
     };
 
+    typesRemoved: string[] = [];
+
+
     /**
      * Get parsed AST object
      *  */
@@ -81,6 +84,7 @@ export default class Individual {
      */
     Clone(): Individual {
         var newOne = new Individual();
+        newOne.typesRemoved = this.typesRemoved.slice();
         newOne.AST =   traverse(this.AST).clone();
         newOne.testResults = traverse(this.testResults).clone();
         return newOne;

@@ -54,6 +54,7 @@ export default class ASTExplorer {
             //newCtx.First.AST = JSON.parse(fs.readFileSync(oldFirst['_astFile'].path).toString());
             newCtx.First.AST = oldFirst.astObj;
             newCtx.First.testResults = oldFirst.testResults;
+            newCtx.First.typesRemoved = oldFirst.typesRemoved;
         }
 
         if (context.Second) {
@@ -63,6 +64,7 @@ export default class ASTExplorer {
             //newCtx.Second.AST = JSON.parse(fs.readFileSync(oldSecond['_astFile'].path).toString());
             newCtx.Second.AST = oldSecond.astObj;
             newCtx.Second.testResults = oldSecond.testResults;
+            newCtx.Second.typesRemoved = oldSecond.typesRemoved;
         }
 
         if (context.ActualBestForFunctionScope) {
@@ -70,6 +72,7 @@ export default class ASTExplorer {
             newCtx.ActualBestForFunctionScope = new Individual();
             newCtx.ActualBestForFunctionScope.AST = oldActualBestForFunctionScope.astObj;
             newCtx.ActualBestForFunctionScope.testResults = oldActualBestForFunctionScope.testResults;
+            newCtx.ActualBestForFunctionScope.typesRemoved = oldActualBestForFunctionScope.typesRemoved;
         }
 
         if (context.Original) {
@@ -79,6 +82,7 @@ export default class ASTExplorer {
             //newCtx.Original.AST = JSON.parse(fs.readFileSync(oldOriginal['_astFile'].path).toString());
             newCtx.Original.AST = oldOriginal.astObj;
             newCtx.Original.testResults = oldOriginal.testResults;
+            newCtx.Original.typesRemoved = oldOriginal.typesRemoved;
         }
 
         return newCtx;
@@ -291,6 +295,10 @@ export default class ASTExplorer {
         mutant.AST = traverse(mutant.AST).map(function (node) {
             if (counter == indexes[randonNodeToPrune]) {
                 //fs.appendFileSync("mutante_excluidos.txt",JSON.stringify(node) + "\n");
+                var tipo = ASTExplorer.extrairTipo(node);
+
+                //console.log(tipo);
+                mutant.typesRemoved.push(tipo);
                 this.remove();
                 this.stop();
             }
@@ -298,6 +306,19 @@ export default class ASTExplorer {
         });
 
         return mutant;
+    }
+
+    static extrairTipo(node: Object): string {
+        //var nodes = traverse(individual.AST).nodes();
+        var tipo = "";
+
+        traverse(node).forEach(function (internalNode) {
+            if (internalNode && internalNode.type ) { //comments - Line and Block
+                tipo = internalNode.type;
+            }
+        });
+
+        return tipo;
     }
 
     /**
