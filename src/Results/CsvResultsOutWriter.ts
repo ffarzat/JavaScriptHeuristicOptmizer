@@ -19,6 +19,7 @@ export default class CsvResultsOutWriter implements IOutWriter {
 
     directory: string;
     file: string;
+    typesRemovedFile: string;
 
     configuration: IConfiguration;
 
@@ -37,6 +38,7 @@ export default class CsvResultsOutWriter implements IOutWriter {
 
         this.directory = path.join(configuration.resultsDirectory, this.library.name, this.heuristic.Name);
         this.file = path.join(this.directory, configuration.trialResultsFile);
+        this.typesRemovedFile = path.join(this.directory, heuristic.Name + ".txt");
 
         this.MkDirs();
         this.MkFiles();
@@ -95,6 +97,12 @@ export default class CsvResultsOutWriter implements IOutWriter {
         );
 
         result.file = this.file;
+
+        for (let indice in result.best.typesRemoved) {
+            fs.appendFileSync(this.typesRemovedFile, result.best.typesRemoved[indice] + "\n");
+        }
+
+
 
         this.WriteCodeToFile(result);
     }
