@@ -16,7 +16,7 @@ const child_process = require('child_process');
 var uuid = require('node-uuid');
 var bufferOption = { maxBuffer: 1024 * 5000 }
 
-var heuristicas = ['HC', 'RD'];
+var heuristicas = ['GA', 'HC', 'RD'];
 var DiretorioBiblioteca = process.argv[2].replace("'", "");
 var arquivoRootBiblioteca = process.argv[3].replace("'", "");
 var DiretorioResultados = process.argv[4].replace("'", "");
@@ -69,6 +69,7 @@ async function Executar() {
     resultadoOriginal.Loc = codigoOriginal.split(/\r\n|\r|\n/).length;
     resultadoOriginal.Chars = codigoOriginal.length;
     resultadoOriginal.Trial = "-";
+    resultadoOriginal.duration = 0;
     originalLoc = resultadoOriginal.Loc;
     originalChar = resultadoOriginal.Chars;
 
@@ -80,15 +81,27 @@ async function Executar() {
         var heuristica = heuristicas[j];
         var BestLoc = originalLoc;
         var BestChars = originalChar;
-        var BestResult;
+        var BestResult: TestResults = JSON.parse(JSON.stringify(resultadoOriginal));
+
+        BestResult.Heuristic = heuristica;
+        BestResult.duration = 0;
+        BestResult.Trial = "N/A";
 
         for (var index = 0; index < QuantidadeRodadas; index++) {
 
             console.log(`Executando rodada ${index} da heuristica ${heuristica}`);
 
             var caminhoArquivoRodada = DiretorioResultados + "/" + heuristica + "/" + index + ".js";
+            var caminhoArquivoCVSRodada = DiretorioResultados + "/" + heuristica + "/" + index + "-Results.csv";
+            var caminhoArquivoCVSRodadaAlterado = DiretorioResultados + "/" + heuristica + "/Results_sep.csv";
+
             if (!fs.existsSync(caminhoArquivoRodada)) {
                 console.log(`Arquivo ${caminhoArquivoRodada} não existe!`);
+                continue;
+            }
+
+            if (!fs.existsSync(caminhoArquivoCVSRodada)) {
+                console.log(`Arquivo ${caminhoArquivoCVSRodada} não existe!`);
                 continue;
             }
 
@@ -103,7 +116,21 @@ async function Executar() {
                 resultadoFinal.Chars = CodigoDaRodada.length;
 
                 if (resultadoFinal.passedAllTests && resultadoFinal.Loc < BestLoc && resultadoFinal.Chars < BestChars) {
+
+                    var fileContents = fs.readFileSync(caminhoArquivoCVSRodada).toString().replace('sep=,\n', '');
+                    if (fileContents.length === 0) {
+                        console.log(`Arquivo ${caminhoArquivoCVSRodada} não possui registros!`);
+                        continue;
+                    }
+
+                    fs.writeFileSync(caminhoArquivoCVSRodadaAlterado, fileContents);
+                    var loader = require('csv-load-sync');
+                    var csv = loader(caminhoArquivoCVSRodadaAlterado, {
+                        getColumns: split
+                    });;
+
                     resultadoFinal.Trial = String(index);
+                    resultadoFinal.duration = csv[0].time;
                     BestResult = resultadoFinal;
                     BestChars = resultadoFinal.Chars;
                     BestLoc = resultadoFinal.Loc;
@@ -123,7 +150,7 @@ async function Executar() {
     //============================================================================================ Fim //>
     //Volta a cópia de segurança
     fse.copySync(oldLibFilePath, arquivoRootBiblioteca, { "clobber": true });
-
+    fse.unlinkSync(caminhoArquivoCVSRodadaAlterado);
     console.log(`Escrever csv com ${resultadosProcessados.length} resultados obtidos`);
 
     EscreverResultadoEmCsv(DiretorioResultados, resultadosProcessados);
@@ -233,7 +260,7 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
     var newLine: string = '\n';
     //var csvcontent = "sep=;" + newLine;
     var csvcontent = "";
-    csvcontent += "Lib;Heuristic;Trial;Lines;% Improved Loc;Chars;% Improved Chars;" + newLine;
+    csvcontent += "Lib;Heuristic;Trial;Lines;% Improved Loc;Chars;% Improved Chars;Time Spent" + newLine;
 
     listaResultados.forEach(element => {
         var improvedLoc = ((originalLoc - element.Loc) / originalLoc);
@@ -243,7 +270,8 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
         improvedChars = improvedChars < 0 ? improvedChars * -1 : improvedChars;
 
 
-        csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${String(improvedLoc).replace('.', ',')};${element.Chars};${String(improvedChars).replace('.', ',')}` + newLine;
+        csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${String(improvedLoc).replace('.', ',')};${element.Chars};${String(improvedChars).replace('.', ',')};${element.duration}` + newLine;
+
     });
 
     fs.writeFileSync(path.join(DiretorioResultados, 'analiseTempoExecucao.csv'), csvcontent);
@@ -317,4 +345,12 @@ function getFilesizeInBytes(filename): number {
     const stats = fs.statSync(filename)
     const fileSizeInBytes = stats.size
     return fileSizeInBytes
+}
+
+function split(line, lineNumber) {
+    if (lineNumber === 0) { // title line
+        return line.split(',')
+    }
+    var parts = line.split(',')
+    return [parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7] + ',' + parts[8], parts[9]];
 }
