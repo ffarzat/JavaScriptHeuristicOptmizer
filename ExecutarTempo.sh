@@ -11,9 +11,11 @@
 
 
 node build/src/GerarPlanilhaGlobal.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/uuid' 30 1 'uuid'
-#node build/src/GerarPlanilhaGlobal.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/exectimer' 30 1 'exectimer'
-#node build/src/GerarPlanilhaGlobal.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/tleaf' 'src/ask.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/tleaf' 30 1 'tleaf'
-#node build/src/GerarPlanilhaGlobal.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/plivo-node' 'lib/plivo.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/plivo-node' 30 1 'plivo-node'
-#node build/src/GerarPlanilhaGlobal.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/minimist' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/minimist' 30 1 'minimist'
+node build/src/GerarPlanilhaGlobal.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/exectimer' 30 1 'exectimer'
+node build/src/GerarPlanilhaGlobal.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/tleaf' 'src/ask.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/tleaf' 30 1 'tleaf'
+node build/src/GerarPlanilhaGlobal.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/plivo-node' 'lib/plivo.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/plivo-node' 30 1 'plivo-node'
+node build/src/GerarPlanilhaGlobal.js '/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/minimist' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/minimist' 30 1 'minimist'
 
 
+
+node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global
