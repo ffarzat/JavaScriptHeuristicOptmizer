@@ -24,7 +24,7 @@ export default class HC extends IHeuristic {
 
     intervalId;
     typeIndexCounter: number;
-    
+
 
     /**
     * Especific Setup
@@ -274,24 +274,30 @@ export default class HC extends IHeuristic {
             var foundNewBest = false;
 
             time++;
+            var BreakException = {};
+            try {
+                mutants.forEach(element => {
+                    foundNewBest = this.UpdateBest(element);
 
-            mutants.forEach(element => {
-                foundNewBest = this.UpdateBest(element);
+                    if (foundNewBest && this.neighborApproach === 'FirstAscent') {
+                        //Jump to first best founded
+                        nodesIndexList = this.DoIndexes(this.bestIndividual);
+                        updatedIndexes = nodesIndexList[0];
+                        throw BreakException;
+                    }
 
-                if (foundNewBest && this.neighborApproach === 'FirstAscent') {
-                    //Jump to first best founded
-                    nodesIndexList = this.DoIndexes(this.bestIndividual);
-                    indexes = nodesIndexList[0];
-                    return;
-                }
+                    if (foundNewBest && this.neighborApproach === 'LastAscent') {
+                        //Jump to best of all
+                        nodesIndexList = this.DoIndexes(this.bestIndividual);
+                        updatedIndexes = nodesIndexList[0];
+                    }
 
-                if (foundNewBest && this.neighborApproach === 'LastAscent') {
-                    //Jump to best of all
-                    nodesIndexList = this.DoIndexes(this.bestIndividual);
-                }
-
-            });
-
+                });
+            } catch (error) {
+                //Se não foi o break, sobe o erro
+                if (error !== BreakException) throw error;
+                this._logger.Write('First Ascent');
+            }
 
             if (time == this.howManyTimes || finish) { //Done!
                 cb();
