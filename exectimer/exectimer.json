@@ -30,7 +30,7 @@
             "nodesSelectionApproach":"Global",
             "ByFunctionType": "static", 
             "especific": {
-                "neighborApproach":"LastAscent", 
+                "neighborApproach":"FirstAscent", 
                 "neighborsToProcess": 20,
                 "trials": 5000,
                 "nodesType": ["Block", "BlockStatement", "Identifier", "Literal", "ReturnStatement","ThisExpression", "ObjectExpression", "CallExpression", "IfStatement", "FunctionExpression", "FunctionDeclaration", "ExpressionStatement"], 
