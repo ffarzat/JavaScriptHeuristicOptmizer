@@ -33,7 +33,7 @@
                 "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 20,
                 "trials": 5000,
-                "nodesType": ["Literal", "Identifier", "ReturnStatement", "ThisExpression", "AssignmentExpression", "CallExpression", "IfStatement", "FunctionExpression"], 
+                "nodesType": ["Literal", "Identifier", "ReturnStatement", "ThisExpression", "AssignmentExpression", "CallExpression", "IfStatement", "FunctionExpression", "FunctionDeclaration", "ExpressionStatement"], 
                 "individuals": 100, 
                 "generations": 50,
                 "crossoverProbability": 75,
