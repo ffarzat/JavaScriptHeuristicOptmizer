@@ -135,13 +135,15 @@ export default class GA extends IHeuristic {
             cb(); //Done!
         } else {
             this._logger.Write(`[GA] Starting generation ${generationIndex}`);
-            this._logger.Write(`[GA] A função ${this.ActualFunction} será otimizada por ${qtdGeracoes} gerações`);
+            if (this.nodesSelectionApproach == "ByFunction") {
+                this._logger.Write(`[GA] A função ${this.ActualFunction} será otimizada por ${qtdGeracoes} gerações`);
 
-            //Determina quantas execuções para troca de função
-            if (this.proximaGeracaoDeTroca === generationIndex) {
-                this.TrocarFuncao(cb);
-                var qtdGeracoes = 1; //this._astExplorer.GenereateRandom(generationIndex, (this._config.generations));
-                this.proximaGeracaoDeTroca = (generationIndex + qtdGeracoes);
+                //Determina quantas execuções para troca de função
+                if (this.proximaGeracaoDeTroca === generationIndex) {
+                    this.TrocarFuncao(cb);
+                    var qtdGeracoes = 1; //this._astExplorer.GenereateRandom(generationIndex, (this._config.generations));
+                    this.proximaGeracaoDeTroca = (generationIndex + qtdGeracoes);
+                }
             }
 
             this.DoCrossovers(population, () => {
