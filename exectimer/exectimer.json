@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": ["GA"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":10,
@@ -36,8 +36,8 @@
                 "nodesType": ["Block", "BlockStatement", "Identifier", "Literal", "ReturnStatement","ThisExpression", "ObjectExpression", "CallExpression", "IfStatement", "FunctionExpression", "FunctionDeclaration", "ExpressionStatement"], 
                 "individuals": 100, 
                 "generations": 50,
-                "crossoverProbability": 75,
-                "mutationProbability": 10,
+                "crossoverProbability": 0,
+                "mutationProbability": 75,
                 "elitism": true,
                 "elitismPercentual": 30
             }
