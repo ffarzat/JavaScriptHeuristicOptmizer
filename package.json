@@ -43,6 +43,7 @@
     "temporary": "0.0.8",
     "traverse": "0.6.6",
     "typescript": "1.8.10",
+    "uglify-js": "^3.0.4",
     "underscore": "^1.8.3",
     "websocket": "1.0.22",
     "ws": "1.1.0"

@@ -15,8 +15,9 @@ var exectimer = require('exectimer');
 const child_process = require('child_process');
 var uuid = require('node-uuid');
 var bufferOption = { maxBuffer: 1024 * 5000 }
+var UglifyJS = require("uglify-js");
 
-var heuristicas = ['GA', 'HC', 'RD'];
+var heuristicas = ['GA', 'HC', 'RD', 'GA2'];
 var DiretorioBiblioteca = process.argv[2].replace("'", "");
 var arquivoRootBiblioteca = process.argv[3].replace("'", "");
 var DiretorioResultados = process.argv[4].replace("'", "");
@@ -65,9 +66,16 @@ async function Executar() {
     tamanhoArquivoOriginalEmBytes = getFilesizeInBytes(arquivoRootBiblioteca);
 
     var resultadoOriginal = await ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade);
+
+    //Gerar versão minified
+
+
+    var result = UglifyJS.minify(codigoOriginal);
+    //console.log(result.code);
+
     resultadoOriginal.Heuristic = 'Original';
-    resultadoOriginal.Loc = codigoOriginal.split(/\r\n|\r|\n/).length;
-    resultadoOriginal.Chars = codigoOriginal.length;
+    resultadoOriginal.Loc = result.code.split(/\r\n|\r|\n/).length;
+    resultadoOriginal.Chars = result.code.length;
     resultadoOriginal.Trial = "-";
     resultadoOriginal.duration = 0;
     originalLoc = resultadoOriginal.Loc;
@@ -112,6 +120,9 @@ async function Executar() {
 
                 var resultadoFinal = await ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade);
                 resultadoFinal.Heuristic = heuristica;
+
+                var result = UglifyJS.minify(CodigoDaRodada);
+
                 resultadoFinal.Loc = CodigoDaRodada.split(/\r\n|\r|\n/).length;
                 resultadoFinal.Chars = CodigoDaRodada.length;
 
