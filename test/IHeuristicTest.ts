@@ -61,7 +61,7 @@ describe('IHeuristic Tests', function() {
         var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
         var ga = new HeuristicFactory().CreateByName(configuration.heuristics[0]);
         var astExplorer: ASTExplorer = new ASTExplorer();
-        var lib = configuration.libraries[5];
+        var lib = configuration.libraries[4];
         var libFile: string = lib.mainFilePath;
         var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
         var logger = new LogFactory().CreateByName(configuration.logWritter);

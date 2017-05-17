@@ -38,7 +38,7 @@ describe('ASTExplorer Tests', function () {
 
         var indexes: number[] = astExplorer.IndexNodes(generatedIndividual);
 
-        expect(indexes.length).to.be(2998);
+        expect(indexes.length).to.be(2984);
     });
 
 
@@ -229,4 +229,30 @@ describe('ASTExplorer Tests', function () {
         expect(functionAST).not.be(undefined);
 
     });
+
+    it('Should MutateBy ExpressionStatement Nodes only', () => {
+
+        var astExplorer: ASTExplorer = new ASTExplorer();
+
+        var configurationFile: string = path.join(process.cwd(), 'test', 'Configuration.json');
+        var configuration: IConfiguration = JSON.parse(fs.readFileSync(configurationFile, 'utf8'));
+        var lib = configuration.libraries[1]; //UUID
+        var libFile: string = lib.mainFilePath;
+        var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
+
+        var indices = astExplorer.IndexNodesBy("AssignmentExpression", generatedIndividual);
+
+        var ctx: OperatorContext = new OperatorContext();
+        ctx.First = generatedIndividual;
+        ctx.NodeIndex = indices[0];
+
+        var mutante = astExplorer.MutateBy(ctx);
+        
+        //fs.writeFileSync("original.js", generatedIndividual.ToCode());
+        //fs.writeFileSync("mutantIndexFromTests.js", mutante.ToCode());
+
+        expect(indices).not.be(undefined);
+
+    });
+
 });

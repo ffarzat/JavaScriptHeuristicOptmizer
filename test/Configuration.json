@@ -27,7 +27,6 @@
         {"name":"uuid",         "path":"Libraries/uuid/",           "mainFilePath":"Libraries/uuid/lib/uuid.js" },
         {"name":"lodash",   "path":"test/lodash-testes/",     "mainFilePath":"test/lodash-testes/lodash-testes.js" },
         {"name":"lodash",       "path":"Libraries/lodash/",         "mainFilePath":"Libraries/lodash/lodash.js" },
-        {"name":"pug",       "path":"Libraries/pug/",         "mainFilePath":"Libraries/pug/packages/pug/lib/index.js" },
         {"name":"xml2js",       "path":"Libraries/xml2js/",         "mainFilePath":"Libraries/xml2js/lib/xml2js.js" }
     ],
     "trialsConfiguration":[
@@ -55,7 +54,7 @@
                 "neighborApproach":"FirstAscent",
                 "neighborsToProcess": 5,
                 "trials": 1,
-                "nodesType": ["CallExpression", "IfStatement"], 
+                "nodesType": ["CallExpression", "IfStatement", "ExpressionStatement", "AssignmentExpression"], 
                 "individuals": 2, 
                 "generations": 1,
                 "crossoverProbability": 75,
