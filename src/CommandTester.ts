@@ -88,7 +88,8 @@ export default class CommandTester implements ITester {
     RetrieveConfiguratedFitFor(individual: Individual): number {
         //Contar as instrucoes. Nova Fit baseada na leitura do Survey do Harman sobre GI
         //return this._astExplorer.CountNodes(individual);
-        return this.getFilesizeInBytes(this.libMainFilePath);
+        //return this.getFilesizeInBytes(this.libMainFilePath);
+        return individual.ToCode().length; //qtd de caracteres
 
         //return individual.testResults[this.fitType];
     }

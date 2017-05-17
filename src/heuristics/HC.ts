@@ -282,9 +282,9 @@ export default class HC extends IHeuristic {
                     if (foundNewBest && this.neighborApproach === 'FirstAscent') {
                         //Jump to first best founded
                         var updatedIndexList = this.DoIndexes(this.bestIndividual);
-                        nodesIndexList = updatedIndexList.slice(); 
+                        nodesIndexList = updatedIndexList.slice();
                         updatedIndexes = updatedIndexList[this.typeIndexCounter];
-                        updatedIndexes.ActualIndex = (indexes.ActualIndex -1) < 0? 0: (indexes.ActualIndex -1); //continua de onde parou
+                        updatedIndexes.ActualIndex = (indexes.ActualIndex - 1) < 0 ? 0 : (indexes.ActualIndex - 5); //continua de onde parou (-2??)
                         throw BreakException;
                     }
 
@@ -293,7 +293,7 @@ export default class HC extends IHeuristic {
                         var updatedIndexList = this.DoIndexes(this.bestIndividual);
                         nodesIndexList = updatedIndexList.slice();
                         updatedIndexes = updatedIndexList[this.typeIndexCounter];
-                        updatedIndexes.ActualIndex = (indexes.ActualIndex -1) < 0? 0: (indexes.ActualIndex -1); //continua de onde parou
+                        updatedIndexes.ActualIndex = (indexes.ActualIndex - 1) < 0 ? 0 : (indexes.ActualIndex - 1); //continua de onde parou
                     }
 
                 });
@@ -307,6 +307,15 @@ export default class HC extends IHeuristic {
                 cb();
             } else {
                 process.nextTick(() => {
+
+                    //change node index?
+                    if (indexes.ActualIndex == indexes.Indexes.length - 1 && (this.typeIndexCounter < nodesIndexList.length - 1)) {
+                        this.typeIndexCounter++;
+                        updatedIndexes = nodesIndexList[this.typeIndexCounter];
+                        this._logger.Write(`[HC] Change index: ${indexes.Type}, ${indexes.Indexes.length}`);
+                    }
+
+
                     this.executeCalculatedTimes(time, updatedIndexes, nodesIndexList, cb);
                 });
             }
@@ -337,10 +346,6 @@ export default class HC extends IHeuristic {
                     itsover = true;
                     return;
                 } else {
-                    //change node index
-                    this.typeIndexCounter++;
-                    indexes = nodesIndexList[this.typeIndexCounter];
-                    this._logger.Write(`[HC] Change index: ${indexes.Type}, ${this.typeIndexCounter}`);
                     itsover = true;
                 }
             }

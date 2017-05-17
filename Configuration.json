@@ -1,46 +1,64 @@
 {
     "file": "Configuration.json",
-    "trials":1,
+    "trials": 10,
     "startTrial": 0,
-    "fitType":"median",
+    "fitType": "median",
     "testUntil": 1,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/optmization.log",
     "tmpDirectory": "/home/fabio/Documents/tmp",
-    "logCategory":"optmization",
+    "logCategory": "optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
     "trialResultsFile": "Results.csv",
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": [
+        "HC"
+    ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":30,
-    "clientsTotal": 4,
+    "clientTimeout": 30,
+    "clientsTotal": 5,
     "copyFileTimeout": 300,
     "memory": 2047,
-    "libraries" : [
-        {"name":"exectimer",       "path":"Libraries/exectimer",         "mainFilePath":"index.js" }
-    ],
-    "trialsConfiguration":[ 
+    "libraries": [
         {
-            "nodesSelectionApproach":"Global",
-            "ByFunctionType": "dynamic", 
+            "name": "exectimer",
+            "path": "Libraries/exectimer",
+            "mainFilePath": "index.js"
+        }
+    ],
+    "trialsConfiguration": [
+        {
+            "nodesSelectionApproach": "Global",
+            "ByFunctionType": "dynamic",
             "especific": {
-                "neighborApproach":"LastAscent", 
+                "neighborApproach": "FirstAscent",
                 "neighborsToProcess": 5,
                 "trials": 5000,
-                "nodesType": ["Block", "BlockStatement", "Identifier", "Literal", "ReturnStatement","ThisExpression", "ObjectExpression", "CallExpression", "IfStatement", "FunctionExpression", "FunctionDeclaration", "ExpressionStatement"], 
-                "individuals": 50, 
+                "nodesType": [
+                    "ThisExpression",
+                    "BlockStatement",
+                    "Identifier",
+                    "Literal",
+                    "ReturnStatement",
+                    "ObjectExpression",
+                    "CallExpression",
+                    "IfStatement",
+                    "FunctionExpression",
+                    "FunctionDeclaration",
+                    "ExpressionStatement"
+                ],
+                "individuals": 50,
                 "generations": 100,
                 "crossoverProbability": 75,
                 "mutationProbability": 10,
                 "elitism": true,
                 "elitismPercentual": 30
             }
-        }  
+        }
     ]
 }

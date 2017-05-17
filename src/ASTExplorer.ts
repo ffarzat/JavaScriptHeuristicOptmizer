@@ -241,7 +241,7 @@ export default class ASTExplorer {
         mutant.AST = traverse(mutant.AST).map(function (node) {
             if (counter == localNodeIndex) {
                 this.remove();
-                console.log(`[ASTExplorer.MutateBy] Node:${JSON.stringify(node)}`);
+                //console.log(`[ASTExplorer.MutateBy] Node:${JSON.stringify(node)}`);
                 this.stop();
             }
             counter++;
