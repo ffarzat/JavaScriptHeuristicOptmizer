@@ -15,25 +15,25 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD"],
+    "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":30,
-    "clientsTotal": 2,
+    "clientsTotal": 4,
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries" : [
-        {"name":"uuid",       "path":"",         "mainFilePath":"lib/uuid.js" }
+        {"name":"exectimer",       "path":"Libraries/exectimer",         "mainFilePath":"index.js" }
     ],
     "trialsConfiguration":[ 
         {
-            "nodesSelectionApproach":"ByFunction",
+            "nodesSelectionApproach":"Global",
             "ByFunctionType": "dynamic", 
             "especific": {
                 "neighborApproach":"LastAscent", 
                 "neighborsToProcess": 5,
                 "trials": 5000,
-                "nodesType": ["CallExpression", "IfStatement"], 
+                "nodesType": ["Block", "BlockStatement", "Identifier", "Literal", "ReturnStatement","ThisExpression", "ObjectExpression", "CallExpression", "IfStatement", "FunctionExpression", "FunctionDeclaration", "ExpressionStatement"], 
                 "individuals": 50, 
                 "generations": 100,
                 "crossoverProbability": 75,

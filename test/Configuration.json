@@ -54,7 +54,7 @@
                 "neighborApproach":"FirstAscent",
                 "neighborsToProcess": 5,
                 "trials": 1,
-                "nodesType": ["CallExpression", "IfStatement", "ExpressionStatement", "AssignmentExpression"], 
+                "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 2, 
                 "generations": 1,
                 "crossoverProbability": 75,
