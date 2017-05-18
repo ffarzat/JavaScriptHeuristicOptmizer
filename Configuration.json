@@ -36,7 +36,6 @@
                 "neighborsToProcess": 5,
                 "trials": 5000,
                 "nodesType": [
-                    "AssignmentExpression",
                     "FunctionDeclaration",
                     "FunctionExpression",
                     "BlockStatement",

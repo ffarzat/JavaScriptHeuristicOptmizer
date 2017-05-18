@@ -1,46 +1,69 @@
 {
     "file": "plivo.json",
-    "trials":60,
+    "trials": 60,
     "startTrial": 0,
-    "fitType":"median",
+    "fitType": "median",
     "testUntil": 1,
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/plivo.log",
     "tmpDirectory": "/scratch/41061a/ffarzat1981/clients",
-    "logCategory":"optmization",
+    "logCategory": "optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
     "trialResultsFile": "Results.csv",
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": [
+        "HC"
+    ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout":10,
+    "clientTimeout": 10,
     "copyFileTimeout": 300,
     "clientsTotal": 20,
     "memory": 2408000,
-    "libraries" : [
-        {"name":"plivo-node",       "path":"Libraries/plivo-node",         "mainFilePath":"lib/plivo.js" }
-    ],
-    "trialsConfiguration":[
+    "libraries": [
         {
-            "nodesSelectionApproach":"Global",
-            "ByFunctionType": "static", 
+            "name": "plivo-node",
+            "path": "Libraries/plivo-node",
+            "mainFilePath": "lib/plivo.js"
+        }
+    ],
+    "trialsConfiguration": [
+        {
+            "nodesSelectionApproach": "Global",
+            "ByFunctionType": "static",
             "especific": {
-                "neighborApproach":"FirstAscent", 
+                "neighborApproach": "FirstAscent",
                 "neighborsToProcess": 20,
                 "trials": 5000,
-                "nodesType": ["BlockStatement", "Identifier", "Literal", "ReturnStatement","ThisExpression", "ObjectExpression", "CallExpression", "IfStatement", "FunctionExpression", "FunctionDeclaration", "ExpressionStatement"], 
-                "individuals": 100, 
+                "nodesType": [
+                    "FunctionDeclaration",
+                    "FunctionExpression",
+                    "BlockStatement",
+                    "ObjectExpression",
+                    "ArrayExpression",
+                    "ExpressionStatement",
+                    "IfStatement",
+                    "MemberExpression",
+                    "BinaryExpression",
+                    "CallExpression",
+                    "ThisExpression",
+                    "VariableDeclarator",
+                    "Property",
+                    "Identifier",
+                    "Literal",
+                    "ReturnStatement"
+                ],
+                "individuals": 100,
                 "generations": 50,
                 "crossoverProbability": 0,
                 "mutationProbability": 75,
                 "elitism": true,
                 "elitismPercentual": 30
             }
-        }  
+        }
     ]
 }
