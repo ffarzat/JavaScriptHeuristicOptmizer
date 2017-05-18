@@ -237,15 +237,20 @@ export default class ASTExplorer {
 
         //console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
         //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/mutante-antes.txt`, mutant.ToCode());
+        
+        //fs.appendFileSync('/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/nos_excluidos.txt', localNodeIndex + ' = ' + escodegen.generate(this.GetNode(mutant, localNodeIndex)) + '\n\n\n');
 
-        mutant.AST = traverse(mutant.AST).map(function (node) {
+        mutant.AST = traverse(mutant.AST).forEach(function (node) {
             if (counter == localNodeIndex) {
                 this.remove();
+                //console.log(escodegen.generate(node));
                 //console.log(`[ASTExplorer.MutateBy] Node:${JSON.stringify(node)}`);
                 this.stop();
             }
             counter++;
         });
+        
+        //fs.writeFileSync(`/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/${localNodeIndex}_mutant.txt`, mutant.ToCode());
 
 
 
@@ -255,7 +260,7 @@ export default class ASTExplorer {
 
         mutant = this.ReconstruirIndividio(context, mutant);
 
-        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/mutante-final.txt`, mutant.ToCode());
+        
 
         return mutant;
     }
@@ -313,7 +318,7 @@ export default class ASTExplorer {
         var tipo = "";
 
         traverse(node).forEach(function (internalNode) {
-            if (internalNode && internalNode.type ) { //comments - Line and Block
+            if (internalNode && internalNode.type) { //comments - Line and Block
                 tipo = internalNode.type;
             }
         });

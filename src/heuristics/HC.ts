@@ -279,12 +279,14 @@ export default class HC extends IHeuristic {
                 mutants.forEach(element => {
                     foundNewBest = this.UpdateBest(element);
 
+                    var constante_quantas_voltar = 5;
+
                     if (foundNewBest && this.neighborApproach === 'FirstAscent') {
                         //Jump to first best founded
                         var updatedIndexList = this.DoIndexes(this.bestIndividual);
                         nodesIndexList = updatedIndexList.slice();
                         updatedIndexes = updatedIndexList[this.typeIndexCounter];
-                        updatedIndexes.ActualIndex = (indexes.ActualIndex - 1) < 0 ? 0 : (indexes.ActualIndex - 5); //continua de onde parou (-2??)
+                        updatedIndexes.ActualIndex = (indexes.ActualIndex - constante_quantas_voltar) < 0 ? 0 : (indexes.ActualIndex - constante_quantas_voltar); //continua de onde parou (-2??)
                         throw BreakException;
                     }
 
@@ -293,7 +295,7 @@ export default class HC extends IHeuristic {
                         var updatedIndexList = this.DoIndexes(this.bestIndividual);
                         nodesIndexList = updatedIndexList.slice();
                         updatedIndexes = updatedIndexList[this.typeIndexCounter];
-                        updatedIndexes.ActualIndex = (indexes.ActualIndex - 1) < 0 ? 0 : (indexes.ActualIndex - 1); //continua de onde parou
+                        updatedIndexes.ActualIndex = (indexes.ActualIndex - constante_quantas_voltar) < 0 ? 0 : (indexes.ActualIndex - constante_quantas_voltar); //continua de onde parou
                     }
 
                 });
@@ -301,6 +303,8 @@ export default class HC extends IHeuristic {
                 //Se não foi o break, sobe o erro
                 if (error !== BreakException) throw error;
                 this._logger.Write('First Ascent');
+                //force 
+                finish = false;
             }
 
             if (time == this.howManyTimes || finish) { //Done!
