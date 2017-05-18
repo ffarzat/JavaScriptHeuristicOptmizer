@@ -242,6 +242,14 @@ export default class ASTExplorer {
 
         mutant.AST = traverse(mutant.AST).forEach(function (node) {
             if (counter == localNodeIndex) {
+                if(node.type && node.type =="BlockStatement")
+                {
+                    //console.log("\n" + localNodeIndex + "\n");
+                    this.update({"type" : "BlockStatement", "body": []});
+                    this.stop();
+                    return;    
+                }
+
                 this.remove();
                 //console.log(escodegen.generate(node));
                 //console.log(`[ASTExplorer.MutateBy] Node:${JSON.stringify(node)}`);

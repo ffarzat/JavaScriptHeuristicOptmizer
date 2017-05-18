@@ -25,11 +25,7 @@
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries": [
-        {
-            "name": "exectimer",
-            "path": "Libraries/exectimer",
-            "mainFilePath": "index.js"
-        }
+        {"name":"uuid",       "path":"Libraries/uuid",         "mainFilePath":"lib/uuid.js" }
     ],
     "trialsConfiguration": [
         {
@@ -40,15 +36,20 @@
                 "neighborsToProcess": 5,
                 "trials": 5000,
                 "nodesType": [
+                    "AssignmentExpression",
                     "FunctionDeclaration",
                     "FunctionExpression",
                     "BlockStatement",
                     "ObjectExpression",
+                    "ArrayExpression",
                     "ExpressionStatement",
                     "IfStatement",
                     "MemberExpression",
+                    "BinaryExpression",
                     "CallExpression",
                     "ThisExpression",
+                    "VariableDeclarator",
+                    "Property",
                     "Identifier",
                     "Literal",
                     "ReturnStatement"

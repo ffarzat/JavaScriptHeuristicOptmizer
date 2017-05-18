@@ -268,6 +268,7 @@ export default class HC extends IHeuristic {
     private executeCalculatedTimes(time: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], cb: () => void) {
 
         this.operationsCount = 0;
+        var mudarIndiceQuandoEncontraMelhor = true;
 
         this.DoMutationsPerTime(0, [], indexes, nodesIndexList, (mutants, updatedIndexes, finish) => {
             this._logger.Write(`[HC]How Many: ${time}`);
@@ -305,6 +306,7 @@ export default class HC extends IHeuristic {
                 this._logger.Write('First Ascent');
                 //force 
                 finish = false;
+                mudarIndiceQuandoEncontraMelhor = false;
             }
 
             if (time == this.howManyTimes || finish) { //Done!
@@ -313,10 +315,10 @@ export default class HC extends IHeuristic {
                 process.nextTick(() => {
 
                     //change node index?
-                    if (indexes.ActualIndex == indexes.Indexes.length - 1 && (this.typeIndexCounter < nodesIndexList.length - 1)) {
+                    if (indexes.ActualIndex > indexes.Indexes.length - 1 && (this.typeIndexCounter < nodesIndexList.length - 1) && mudarIndiceQuandoEncontraMelhor) {
                         this.typeIndexCounter++;
                         updatedIndexes = nodesIndexList[this.typeIndexCounter];
-                        this._logger.Write(`[HC] Change index: ${indexes.Type}, ${indexes.Indexes.length}`);
+                        this._logger.Write(`[HC] Change index: ${updatedIndexes.Type}, ${updatedIndexes.Indexes.length}`);
                     }
 
 
@@ -338,19 +340,19 @@ export default class HC extends IHeuristic {
         //Rest some mutant to process?
         if (counter < this._config.neighborsToProcess) {
             // its over actual index? (IF, CALL, etc)
-            if (indexes.ActualIndex == indexes.Indexes.length - 1) {
+            if (indexes.ActualIndex > indexes.Indexes.length - 1) {
                 //Try change to next index
+                //acabaram os vizinhos do indice!
+                this._logger.Write(`[HC] All neighbors of ${indexes.Type} were visited`);
 
                 // its over all index?
-                console.log(`[HC] this.typeIndexCounter: ${this.typeIndexCounter}`);
-                console.log(`[HC] indexes.Indexes.length: ${indexes.Indexes.length}`);
+                //console.log(`[HC] this.typeIndexCounter: ${this.typeIndexCounter}`);
+                //console.log(`[HC] indexes.Indexes.length: ${indexes.Indexes.length}`);
 
                 if (this.typeIndexCounter >= nodesIndexList.length - 1) {
-                    this._logger.Write(`[HC] All neighbors were visited`);
+                    this._logger.Write(`[HC] All global neighbors were visited`);
                     itsover = true;
                     return;
-                } else {
-                    itsover = true;
                 }
             }
 
@@ -385,7 +387,7 @@ export default class HC extends IHeuristic {
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
 
-                    if (this.typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
+                    if (this.typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex > indexes.Indexes.length - 1)) {
                         clearInterval(this.intervalId);
                         this.intervalId = undefined;
                         cb(neighbors, indexes, true);
