@@ -22,7 +22,8 @@ export default class GA extends IHeuristic {
     elitism: boolean;
     elitismPercentual: number;
 
-    intervalId;
+    RepopulateIntervalId;
+    DoMutationsIntervalId;
     timeoutId;
     operationsCounter: number;
     totalCallBack: number;
@@ -57,6 +58,8 @@ export default class GA extends IHeuristic {
         this.SetLibrary(library, (sucess: boolean) => {
             if (sucess) {
                 this.Start();
+
+                this.RefreshIndexList();
 
                 switch (this.nodesSelectionApproach) {
                     case "Global":
@@ -199,6 +202,27 @@ export default class GA extends IHeuristic {
                 context.First = individual;
                 this.operationsCounter++
 
+                var indicesDoIndividuo = this.DoIndexes(individual).slice();
+                var indexes = indicesDoIndividuo[this._astExplorer.GenereateRandom(0, indicesDoIndividuo.length - 1)];
+                indexes.ActualIndex = this._astExplorer.GenereateRandom(0, indexes.Indexes.length - 1)
+
+                this.MutateBy(individual.Clone(), indexes, (mutant) => {
+                    //this._logger.Write(`[GA] Mutation ${this.totalCallBack} done`);
+                    this._logger.Write(`mutant tem resultados? ${mutant.testResults != undefined}`);
+                    try {
+                        this.totalCallBack++;
+                        if (mutant == undefined || mutant.testResults == undefined) {
+                            var localBest = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
+                            mutant = localBest.Clone();
+                        }
+                        population.push(mutant);
+                        this.UpdateBest(mutant);
+                    } catch (error) {
+                        this._logger.Write(`[GA] ProcessOperations/Mutate error: ${error.stack}`);
+                    }
+                });
+
+                /*
                 this.Mutate(context, (mutant) => {
                     //this._logger.Write(`[GA] Mutation ${this.totalCallBack} done`);
                     this._logger.Write(`mutant tem resultados? ${mutant.testResults != undefined}`);
@@ -210,6 +234,7 @@ export default class GA extends IHeuristic {
                         this._logger.Write(`[GA] ProcessOperations/Mutate error: ${error.stack}`);
                     }
                 });
+                */
             }
 
             if (elements.length > 0) {
@@ -218,15 +243,15 @@ export default class GA extends IHeuristic {
             else {
                 this._logger.Write(`[GA] Operation requests done. Just waiting for clients.`);
 
-                if (this.intervalId == undefined) {
+                if (this.RepopulateIntervalId == undefined) {
 
-                    this.intervalId = setInterval(() => {
+                    this.RepopulateIntervalId = setInterval(() => {
                         //this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
                         this._logger.Write(`[GA] ProcessOperations: ${this.totalCallBack}/${this.operationsCounter}`);
 
                         if (this.operationsCounter == this.totalCallBack) {
-                            clearInterval(this.intervalId);
-                            this.intervalId = undefined;
+                            clearInterval(this.RepopulateIntervalId);
+                            this.RepopulateIntervalId = undefined;
                             cb();
                         }
                     }, 1 * 1000);
@@ -246,7 +271,8 @@ export default class GA extends IHeuristic {
 
         for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
             var crossoverChance = this.GenereateRandom(0, 100);
-            if (this.crossoverProbability >= crossoverChance) {
+            if (this.crossoverProbability > crossoverChance) {
+                this._logger.Write(`[GA] CrossoverChance: ${crossoverChance}`);
                 try {
                     totalOperationsInternal++;
                     crossoverIndexes.push(individualIndex);
@@ -261,11 +287,17 @@ export default class GA extends IHeuristic {
         this.operationsCounter = 0;
         this.totalCallBack = 0;
 
+        if (totalOperationsInternal == 0) {
+            cb();
+            return;
+        }
+
         this.ProcessOperations(population, crossoverIndexes, 'c', () => {
             this._logger.Write(`[GA] CrossOvers done.`);
             this.operationsCounter = 0;
             this.totalCallBack = 0;
             cb();
+            return;
         });
     }
 
@@ -280,7 +312,7 @@ export default class GA extends IHeuristic {
 
         for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
             var chance = this.GenereateRandom(0, 100);
-            if (this.mutationProbability >= chance) {
+            if (this.mutationProbability > chance) {
                 totalOperationsInternal++;
                 crossoverIndexes.push(individualIndex);
             }
@@ -288,6 +320,11 @@ export default class GA extends IHeuristic {
 
         this.operationsCounter = 0;
         this.totalCallBack = 0;
+
+        if (totalOperationsInternal == 0) {
+            cb();
+            return;
+        }
 
         this.ProcessOperations(population, crossoverIndexes, 'm', () => {
             this._logger.Write(`[GA] Mutation done.`);
@@ -355,14 +392,16 @@ export default class GA extends IHeuristic {
                 population.push(element);
             });
 
+            this._logger.Write(`[GA] Population inside: ${population.length}`);
             cb(population);
+            return;
         });
 
 
-        if (this.intervalId == undefined) {
+        if (this.RepopulateIntervalId == undefined) {
             var start = new Date();
 
-            this.intervalId = setInterval(() => {
+            this.RepopulateIntervalId = setInterval(() => {
                 //this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
                 this._logger.Write(`[GA] Repopulate: ${this.totalCallBack}/${this.operationsCounter}`);
 
@@ -371,9 +410,14 @@ export default class GA extends IHeuristic {
 
                     this.operationsCounter = 0;
 
-                    clearInterval(this.intervalId);
-                    this.intervalId = undefined;
+                    clearInterval(this.RepopulateIntervalId);
+                    this.RepopulateIntervalId = undefined;
+                    
+                    this._logger.Write(`[GA] Population final: ${population.length}`);
+                    
+
                     cb(population);
+                    return;
                 }
 
             }, 1 * 1000);
@@ -390,6 +434,7 @@ export default class GA extends IHeuristic {
         if (counter == totalMutants) {
             this._logger.Write(`[GA] Done requests. Just waiting`);
 
+            //this._logger.Write(`[GA] Interval: this.timeoutId:${this.timeoutId}, this.intervalId ${this.intervalId}`);
 
             if (this.timeoutId == undefined) {
                 this.timeoutId = setTimeout(() => {
@@ -403,13 +448,13 @@ export default class GA extends IHeuristic {
                 }, this._globalConfig.clientTimeout * 1000);
             }
 
-            if (this.intervalId == undefined) {
-                this.intervalId = setInterval(() => {
+            if (this.DoMutationsIntervalId == undefined) {
+                this.DoMutationsIntervalId = setInterval(() => {
                     //this._logger.Write(`[GA] Interval: Neighbors:${neighbors.length}, Operations ${this.operationsCounter}`);
                     this._logger.Write(`[GA] DoMutationsPerTime: ${neighbors.length}[${this.operationsCounter}]`);
                     if (neighbors.length == this.operationsCounter) {
-                        clearInterval(this.intervalId);
-                        this.intervalId = undefined;
+                        clearInterval(this.DoMutationsIntervalId);
+                        this.DoMutationsIntervalId = undefined;
                         //this._logger.Write(`[GA] Interval: doing callback`);
                         cb(neighbors);
                     }
@@ -421,10 +466,29 @@ export default class GA extends IHeuristic {
         } else {
 
             //this._logger.Write(`[GA] Asking  mutant ${counter}`);
-            var context: OperatorContext = new OperatorContext();
-            context.First = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
+            var localBest = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
+            //var context: OperatorContext = new OperatorContext();
+            //context.First = localBest;
             this.operationsCounter++;
+            
+            var indexes = this.updatedIndexList[this._astExplorer.GenereateRandom(0, this.updatedIndexList.length - 1)];
+            indexes.ActualIndex = this._astExplorer.GenereateRandom(0, indexes.Indexes.length - 1)
 
+            this.MutateBy(localBest.Clone(), indexes, (mutant) => {
+                try {
+                    this.totalCallBack++;
+                    if (mutant == undefined) {
+                        mutant = localBest.Clone();
+                    }
+
+                    neighbors.push(mutant);
+                    
+                } catch (error) {
+                    this._logger.Write(`[GA] Mutant error: ${error.stack}`);
+                }
+            });
+
+            /*
             this.Mutate(context, (mutant) => {
 
                 try {
@@ -438,6 +502,7 @@ export default class GA extends IHeuristic {
                     this._logger.Write(`[GA] Mutant error: ${error.stack}`);
                 }
             });
+            */
 
             counter++;
 
@@ -446,7 +511,6 @@ export default class GA extends IHeuristic {
             });
         }
     }
-
 
     /**
      * Returns a list of Mutated new individuals

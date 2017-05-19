@@ -76,6 +76,10 @@ abstract class IHeuristic extends events.EventEmitter {
     operationsCount: number;
     neighbors: Individual[];
 
+    nodesType: string[];
+
+    updatedIndexList;
+
     /**
     * Forces the Heuristic to validate config
     */
@@ -92,6 +96,7 @@ abstract class IHeuristic extends events.EventEmitter {
         this.Messages = {};
         this.functionStack = [];
         this.FoundedAnyBetter = false;
+        this.nodesType = config.nodesType;
     }
 
     public Start() {
@@ -282,6 +287,8 @@ abstract class IHeuristic extends events.EventEmitter {
                 this._logger.Write('=================================');
                 found = true;
                 this.FoundedAnyBetter = found;
+                if (this.Name == "GA")
+                    this.RefreshIndexList();
             }
         }
         catch (err) {
@@ -289,6 +296,11 @@ abstract class IHeuristic extends events.EventEmitter {
         }
 
         return found;
+    }
+
+    RefreshIndexList() {
+        var localBest = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
+        this.updatedIndexList = this.DoIndexes(localBest).slice();
     }
 
     /**
@@ -329,13 +341,35 @@ abstract class IHeuristic extends events.EventEmitter {
             //this._logger.Write(`[HC] newMsg.ctx.First: ${newMsg.ctx.First.testResults ==undefined}`);
 
             var bestForAMoment = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
-            if (newMsg == undefined) {
+            if (newMsg == undefined || newMsg.ctx == undefined || newMsg.ctx.First) {
                 cb(bestForAMoment);
                 return;
             }
 
             cb(newMsg.ctx.First);
+            return;
         });
+    }
+
+    /**
+    * Populates the indexes for NodeType inside Code
+    */
+    DoIndexes(original: Individual): NodeIndex[] {
+        var nodesIndexList: NodeIndex[] = [];
+
+        if (this.nodesType.length > 0) {
+            this.nodesType.forEach(element => {
+                var nodeIndex = this.IndexBy(element, original);
+                nodesIndexList.push(nodeIndex);
+                this._logger.Write(`[IHeuristic] DoIndexes ${element}: ${nodeIndex.Indexes.length}`);
+            });
+        }
+        else {
+            this._logger.Write(`[IHeuristic] FATAL: There is no configuration for NodeType for Optmization`);
+            throw "[IHeuristic] There is no configuration for NodeType for Optmization";
+        }
+
+        return nodesIndexList;
     }
 
     /**

@@ -28,7 +28,9 @@ export default class TrialEspecificConfiguration {
      * 
      * By now can be:
      * 
-     * [CallExpression, IfStatement]
+     * "FunctionDeclaration","FunctionExpression", "BlockStatement", "ObjectExpression","ArrayExpression",
+     * "ExpressionStatement", "IfStatement","MemberExpression","BinaryExpression","CallExpression",
+     * "ThisExpression","VariableDeclarator","Property","Identifier","Literal","ReturnStatement"
      * 
      */
     nodesType: string [];

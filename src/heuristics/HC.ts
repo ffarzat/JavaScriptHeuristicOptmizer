@@ -19,7 +19,7 @@ export default class HC extends IHeuristic {
 
     neighborApproach: string;
     trials: number
-    nodesType: string[];
+    
     howManyTimes: number;
 
     intervalId;
@@ -35,7 +35,7 @@ export default class HC extends IHeuristic {
 
         this.neighborApproach = config.neighborApproach;
         this.trials = config.trials;
-        this.nodesType = config.nodesType;
+        
         this.typeIndexCounter = 0;
         this.totalOperationsCounter = 0;
         this.neighbors = [];
@@ -357,7 +357,7 @@ export default class HC extends IHeuristic {
             }
 
             //All neighbors were visited?
-            if (!itsover) {
+            if (!itsover) { 
                 this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
                     neighbors.push(mutant);
                 });
@@ -398,27 +398,6 @@ export default class HC extends IHeuristic {
                 }
             }, 1 * 1000); //each ten secs
         }
-    }
-
-    /**
-    * Populates the indexes for NodeType inside Code
-    */
-    DoIndexes(original: Individual): NodeIndex[] {
-        var nodesIndexList: NodeIndex[] = [];
-
-        if (this.nodesType.length > 0) {
-            this.nodesType.forEach(element => {
-                var nodeIndex = this.IndexBy(element, original);
-                nodesIndexList.push(nodeIndex);
-                this._logger.Write(`[HC] DoIndexes ${element}: ${nodeIndex.Indexes.length}`);
-            });
-        }
-        else {
-            this._logger.Write(`[HC] FATAL: There is no configuration for NodeType for HC Optmization`);
-            throw "[HC] There is no configuration for NodeType for HC Optmization";
-        }
-
-        return nodesIndexList;
     }
 
 }
