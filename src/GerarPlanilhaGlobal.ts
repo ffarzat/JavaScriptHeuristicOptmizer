@@ -15,9 +15,23 @@ var exectimer = require('exectimer');
 const child_process = require('child_process');
 var uuid = require('node-uuid');
 var bufferOption = { maxBuffer: 1024 * 5000 }
-var UglifyJS = require("uglify-js");
+var UglifyJS = require("uglify-es");
 
-var heuristicas = ['GA', 'HC', 'RD', 'GA2'];
+var uglifyOptions = {
+    mangle: true,
+    compress: {
+        sequences: true,
+        dead_code: true,
+        conditionals: true,
+        booleans: true,
+        unused: true,
+        if_return: true,
+        join_vars: true,
+        drop_console: true
+    }
+};
+
+var heuristicas = ['GA', 'HC', 'RD', 'HC2'];
 var DiretorioBiblioteca = process.argv[2].replace("'", "");
 var arquivoRootBiblioteca = process.argv[3].replace("'", "");
 var DiretorioResultados = process.argv[4].replace("'", "");
@@ -70,8 +84,7 @@ async function Executar() {
     //Gerar versão minified
 
 
-    var result = UglifyJS.minify(codigoOriginal);
-    //console.log(result.code);
+    var result = UglifyJS.minify(codigoOriginal, uglifyOptions);
 
     resultadoOriginal.Heuristic = 'Original';
     resultadoOriginal.Loc = result.code.split(/\r\n|\r|\n/).length;
@@ -119,14 +132,21 @@ async function Executar() {
                 WriteCodeToFile(arquivoRootBiblioteca, CodigoDaRodada);
 
                 var resultadoFinal = await ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade);
+                if(!resultadoFinal.passedAllTests){
+                    console.log("Falhou nos testes!")
+                    continue;
+                }
+                
                 resultadoFinal.Heuristic = heuristica;
 
-                var result = UglifyJS.minify(CodigoDaRodada);
+                var result = UglifyJS.minify(CodigoDaRodada, uglifyOptions);
+                if (result.code == undefined)
+                    console.log(result);
 
-                resultadoFinal.Loc = CodigoDaRodada.split(/\r\n|\r|\n/).length;
-                resultadoFinal.Chars = CodigoDaRodada.length;
+                resultadoFinal.Loc = result.code.split(/\r\n|\r|\n/).length;
+                resultadoFinal.Chars = result.code.length;
 
-                if (resultadoFinal.passedAllTests && resultadoFinal.Loc < BestLoc && resultadoFinal.Chars < BestChars) {
+                if (resultadoFinal.passedAllTests && resultadoFinal.Chars < BestChars) {
 
                     var fileContents = fs.readFileSync(caminhoArquivoCVSRodada).toString().replace('sep=,\n', '');
                     if (fileContents.length === 0) {
