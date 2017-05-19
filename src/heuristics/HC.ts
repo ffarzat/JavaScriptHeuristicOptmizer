@@ -280,7 +280,7 @@ export default class HC extends IHeuristic {
                 mutants.forEach(element => {
                     foundNewBest = this.UpdateBest(element);
 
-                    var constante_quantas_voltar = 5;
+                    var constante_quantas_voltar = this._config.neighborsToProcess;
 
                     if (foundNewBest && this.neighborApproach === 'FirstAscent') {
                         //Jump to first best founded
