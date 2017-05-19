@@ -237,17 +237,16 @@ export default class ASTExplorer {
 
         //console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
         //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/mutante-antes.txt`, mutant.ToCode());
-        
+
         //fs.appendFileSync('/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/nos_excluidos.txt', localNodeIndex + ' = ' + escodegen.generate(this.GetNode(mutant, localNodeIndex)) + '\n\n\n');
 
         mutant.AST = traverse(mutant.AST).forEach(function (node) {
             if (counter == localNodeIndex) {
-                if(node.type && node.type =="BlockStatement")
-                {
+                if (node.type && node.type == "BlockStatement") {
                     //console.log("\n" + localNodeIndex + "\n");
-                    this.update({"type" : "BlockStatement", "body": []});
+                    this.update({ "type": "BlockStatement", "body": [] });
                     this.stop();
-                    return;    
+                    return;
                 }
 
                 this.remove();
@@ -257,7 +256,7 @@ export default class ASTExplorer {
             }
             counter++;
         });
-        
+
         //fs.writeFileSync(`/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/${localNodeIndex}_mutant.txt`, mutant.ToCode());
 
 
@@ -268,7 +267,7 @@ export default class ASTExplorer {
 
         mutant = this.ReconstruirIndividio(context, mutant);
 
-        
+
 
         return mutant;
     }

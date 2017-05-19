@@ -287,6 +287,7 @@ abstract class IHeuristic extends events.EventEmitter {
                 this._logger.Write('=================================');
                 found = true;
                 this.FoundedAnyBetter = found;
+                
                 if (this.Name == "GA")
                     this.RefreshIndexList();
             }
@@ -341,7 +342,7 @@ abstract class IHeuristic extends events.EventEmitter {
             //this._logger.Write(`[HC] newMsg.ctx.First: ${newMsg.ctx.First.testResults ==undefined}`);
 
             var bestForAMoment = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
-            if (newMsg == undefined || newMsg.ctx == undefined || newMsg.ctx.First) {
+            if (newMsg == undefined) {
                 cb(bestForAMoment);
                 return;
             }
