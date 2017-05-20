@@ -86,13 +86,6 @@ export default class HC extends IHeuristic {
         this._logger.Write(`[HC] Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`[HC] Using nodesType: ${this.nodesType}`);
 
-        this._logger.Write(`[HC] Shuffle nodeTypes ${this.ramdonNodes}`);
-
-        if (this.ramdonNodes) {
-            this.shuffleNodeTypes();
-        }
-
-
         this.SetLibrary(library, (sucess: boolean) => {
             if (sucess) {
                 this.Start();
@@ -100,9 +93,18 @@ export default class HC extends IHeuristic {
                 this.howManyTimes = (totalTrials % this._config.neighborsToProcess) + (totalTrials / this._config.neighborsToProcess);
                 this._logger.Write(`[HC] It will run ${this.howManyTimes} times for ${this._config.neighborsToProcess} client calls`);
 
+
+                this._logger.Write(`[HC] Shuffle nodeTypes ${this.ramdonNodes}`);
+
+                if (this.ramdonNodes) {
+                    this.shuffleNodeTypes();
+                }
+
                 switch (this.nodesSelectionApproach) {
                     case "Global":
-                        this.runGlobal(trialIndex, cb);
+                        this.reRunGlobal(trialIndex, 0, (results) => {
+                            cb(results);
+                        });
                         break;
 
                     case "ByFunction":
@@ -122,18 +124,34 @@ export default class HC extends IHeuristic {
         });
     }
 
+    reRunGlobal(trialIndex: number, time: number, cb: (results: TrialResults) => void) {
+        
+        this.runGlobal(trialIndex, time, (contagem) => {
+            if (this.restartAtEnd && contagem < this.howManyTimes) {
+                this._logger.Write(`[HC] Restart! Actual internal trial: ${contagem}`);
+                this.typeIndexCounter = 0;
+                process.nextTick(() => {
+                    this.reRunGlobal(trialIndex, contagem + 1, cb);
+                });
+            } else {
+                this.Stop();
+                var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+                cb(results);
+                return;
+            }
+        })
+    }
+
     /**
      * Executa o HC de maneira clássica, usando todo o código da biblioteca
      */
-    runGlobal(trialIndex: number, cb: (results: TrialResults) => void): void {
+    runGlobal(trialIndex: number, time: number, cb: (internalTrialsCount: number) => void): void {
         var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
         var indexes: NodeIndex = nodesIndexList[0];
         this._logger.Write(`[HC] Initial index: ${indexes.Type}`);
 
-        this.executeCalculatedTimes(0, indexes, nodesIndexList, () => {
-            this.Stop();
-            var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
-            cb(results);
+        this.executeCalculatedTimes(time, indexes, nodesIndexList, (quantasVezesJaExecutou: number) => {
+            cb(quantasVezesJaExecutou);
             return;
         });
     }
@@ -305,13 +323,13 @@ export default class HC extends IHeuristic {
     /**
     * How many time to execute DoMutationsPerTime
     */
-    private executeCalculatedTimes(time: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], cb: () => void) {
+    private executeCalculatedTimes(time: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], cb: (time: number) => void) {
 
         this.operationsCount = 0;
         var mudarIndiceQuandoEncontraMelhor = true;
 
         this.DoMutationsPerTime(0, [], indexes, nodesIndexList, (mutants, updatedIndexes, finish) => {
-            this._logger.Write(`[HC]How Many: ${time}`);
+            this._logger.Write(`[HC]time: ${time}/${this.howManyTimes}`);
             var foundNewBest = false;
 
             time++;
@@ -350,7 +368,7 @@ export default class HC extends IHeuristic {
             }
 
             if (time == this.howManyTimes || finish) { //Done!
-                cb();
+                cb(time);
             } else {
                 process.nextTick(() => {
 
