@@ -19,11 +19,15 @@ export default class HC extends IHeuristic {
 
     neighborApproach: string;
     trials: number
-    
+
     howManyTimes: number;
 
     intervalId;
     typeIndexCounter: number;
+
+    ramdonRestart: boolean;
+    restartAtEnd: boolean;
+    ramdonNodes: boolean;
 
 
     /**
@@ -35,11 +39,41 @@ export default class HC extends IHeuristic {
 
         this.neighborApproach = config.neighborApproach;
         this.trials = config.trials;
-        
+        this.restartAtEnd = config.restartAtEnd;
+        this.ramdonRestart = config.ramdonRestart;
+        this.ramdonNodes = config.ramdonNodes;
+
         this.typeIndexCounter = 0;
         this.totalOperationsCounter = 0;
         this.neighbors = [];
 
+    }
+
+    /**
+     * Shuffle this.nodeTypes Array items
+     */
+    shuffleNodeTypes() {
+        var currentIndex = this.nodesType.length, temporaryValue, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            temporaryValue = this.nodesType[currentIndex];
+            this.nodesType[currentIndex] = this.nodesType[randomIndex];
+            this.nodesType[randomIndex] = temporaryValue;
+        }
+
+
+
+        for (var index = 0; index < this.nodesType.length; index++) {
+            var element = this.nodesType[index];
+            this._logger.Write(`    ${index} -> ${element}`);
+        }
     }
 
     /**
@@ -51,6 +85,12 @@ export default class HC extends IHeuristic {
         this._logger.Write(`[HC] Starting  Trial ${trialIndex}`);
         this._logger.Write(`[HC] Initializing HC ${this.neighborApproach}`);
         this._logger.Write(`[HC] Using nodesType: ${this.nodesType}`);
+
+        this._logger.Write(`[HC] Shuffle nodeTypes ${this.ramdonNodes}`);
+
+        if (this.ramdonNodes) {
+            this.shuffleNodeTypes();
+        }
 
 
         this.SetLibrary(library, (sucess: boolean) => {
@@ -357,7 +397,7 @@ export default class HC extends IHeuristic {
             }
 
             //All neighbors were visited?
-            if (!itsover) { 
+            if (!itsover) {
                 this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
                     neighbors.push(mutant);
                 });

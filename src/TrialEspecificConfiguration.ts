@@ -12,7 +12,17 @@ export default class TrialEspecificConfiguration {
      * [FirstAscent, LastAscent]
      */
     neighborApproach: string;
-    
+
+    /**
+     * Define se o HC deve reiniciar o processamento ao final, quando sobra orçamento
+     */
+    restartAtEnd: boolean;
+
+    /**
+     * Define se o HC deve reiniciar o processamento de forma aleatória, ou seja, escolhe qualquer tipo de instrução e e continua
+     */
+    ramdonRestart: boolean;
+  
     /**
      * How many neighbors resolve at once
      */
@@ -34,6 +44,11 @@ export default class TrialEspecificConfiguration {
      * 
      */
     nodesType: string [];
+
+    /**
+     * Define se o HC deve embaralhar os tipos de instrução. Isso altera a maneira como ele processa os vizinhos em casa execução.
+     */
+    ramdonNodes: boolean;
     
     //================================================================================================ GA =>
 
