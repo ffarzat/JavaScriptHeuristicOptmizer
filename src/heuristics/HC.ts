@@ -129,7 +129,18 @@ export default class HC extends IHeuristic {
         this.runGlobal(trialIndex, time, (contagem) => {
             if (this.restartAtEnd && contagem < this.howManyTimes) {
                 this._logger.Write(`[HC] Restart! Actual internal trial: ${contagem}`);
-                this.typeIndexCounter = 0;
+                
+                
+                if(this.ramdonRestart)
+                {
+                    this.typeIndexCounter = this._astExplorer.GenereateRandom(0, this.nodesType.length -1);
+                    this._logger.Write(`[HC] Its a ramdon restart! Back from ${this.nodesType[this.typeIndexCounter]} `);
+                }
+                else{
+                    this.typeIndexCounter = 0;
+                }
+                
+                
                 process.nextTick(() => {
                     this.reRunGlobal(trialIndex, contagem + 1, cb);
                 });
@@ -329,10 +340,11 @@ export default class HC extends IHeuristic {
         var mudarIndiceQuandoEncontraMelhor = true;
 
         this.DoMutationsPerTime(0, [], indexes, nodesIndexList, (mutants, updatedIndexes, finish) => {
+            time++;
             this._logger.Write(`[HC]time: ${time}/${this.howManyTimes}`);
             var foundNewBest = false;
 
-            time++;
+            
             var BreakException = {};
             try {
                 mutants.forEach(element => {
@@ -439,7 +451,7 @@ export default class HC extends IHeuristic {
         if (!this.intervalId) {
 
             this.intervalId = setInterval(() => {
-                //this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
+                this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
 
                 if (neighbors.length == this.operationsCount) {
                     clearInterval(this.intervalId);
