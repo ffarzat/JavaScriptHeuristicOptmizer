@@ -22,7 +22,7 @@
     "url": "ws://localhost",
     "clientTimeout": 10,
     "copyFileTimeout": 300,
-    "clientsTotal": 20,
+    "clientsTotal": 40,
     "memory": 2408000,
     "libraries": [
         {
@@ -37,7 +37,7 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 20,
+                "neighborsToProcess": 30,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
