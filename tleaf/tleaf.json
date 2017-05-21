@@ -58,8 +58,7 @@
                     "Property",
                     "Identifier",
                     "Literal",
-                    "ReturnStatement",
-                    "EmptyStatement"
+                    "ReturnStatement"
                 ],
                 "individuals": 100,
                 "generations": 50,
