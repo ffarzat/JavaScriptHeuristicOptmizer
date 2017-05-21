@@ -29,6 +29,9 @@ export default class HC extends IHeuristic {
     restartAtEnd: boolean;
     ramdonNodes: boolean;
 
+    restartCounter: number;
+    findBestInThisTrial: boolean;
+
 
     /**
     * Especific Setup
@@ -46,6 +49,8 @@ export default class HC extends IHeuristic {
         this.typeIndexCounter = 0;
         this.totalOperationsCounter = 0;
         this.neighbors = [];
+        this.findBestInThisTrial = false;
+        this.restartCounter = 0;
 
     }
 
@@ -125,23 +130,40 @@ export default class HC extends IHeuristic {
     }
 
     reRunGlobal(trialIndex: number, time: number, cb: (results: TrialResults) => void) {
-        
+
         this.runGlobal(trialIndex, time, (contagem) => {
             if (this.restartAtEnd && contagem < this.howManyTimes) {
+
+                this.restartCounter++;
+                
                 this._logger.Write(`[HC] Restart! Actual internal trial: ${contagem}`);
-                
-                
-                if(this.ramdonRestart)
-                {
-                    this.typeIndexCounter = this._astExplorer.GenereateRandom(0, this.nodesType.length -1);
+                this._logger.Write(`[HC] this.restartCounter: ${this.restartCounter}`);
+
+                if (this.findBestInThisTrial) {
+                    this.restartCounter = 0;
+                }
+
+                if (this.restartCounter > 1 && !this.ramdonNodes) { //se vai reiniciar pela segunda vez e não encontrou nada na última execução além de não embaralhar os nós, pode parar pois o resultado não mudará mais.
+                    this.Stop();
+                    var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
+                    cb(results);
+                    return;
+                }
+
+
+
+
+                if (this.ramdonRestart) {
+                    this.typeIndexCounter = this._astExplorer.GenereateRandom(0, this.nodesType.length - 1);
                     this._logger.Write(`[HC] Its a ramdon restart! Back from ${this.nodesType[this.typeIndexCounter]} `);
                 }
-                else{
+                else {
                     this.typeIndexCounter = 0;
                 }
-                
-                
+
+
                 process.nextTick(() => {
+                    this.findBestInThisTrial = false; //força o false antes de executar
                     this.reRunGlobal(trialIndex, contagem + 1, cb);
                 });
             } else {
@@ -344,15 +366,17 @@ export default class HC extends IHeuristic {
             this._logger.Write(`[HC]time: ${time}/${this.howManyTimes}`);
             var foundNewBest = false;
 
-            
+
             var BreakException = {};
             try {
                 mutants.forEach(element => {
                     foundNewBest = this.UpdateBest(element);
 
+
                     var constante_quantas_voltar = this._config.neighborsToProcess;
 
                     if (foundNewBest && this.neighborApproach === 'FirstAscent') {
+                        this.findBestInThisTrial = foundNewBest;
                         //Jump to first best founded
                         var updatedIndexList = this.DoIndexes(this.bestIndividual);
                         nodesIndexList = updatedIndexList.slice();
@@ -362,6 +386,7 @@ export default class HC extends IHeuristic {
                     }
 
                     if (foundNewBest && this.neighborApproach === 'LastAscent') {
+                        this.findBestInThisTrial = foundNewBest;
                         //Jump to best of all
                         var updatedIndexList = this.DoIndexes(this.bestIndividual);
                         nodesIndexList = updatedIndexList.slice();
