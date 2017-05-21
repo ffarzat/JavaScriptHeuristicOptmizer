@@ -287,7 +287,7 @@ abstract class IHeuristic extends events.EventEmitter {
                 this._logger.Write('=================================');
                 found = true;
                 this.FoundedAnyBetter = found;
-                
+
                 if (this.Name == "GA")
                     this.RefreshIndexList();
             }
@@ -361,8 +361,11 @@ abstract class IHeuristic extends events.EventEmitter {
         if (this.nodesType.length > 0) {
             this.nodesType.forEach(element => {
                 var nodeIndex = this.IndexBy(element, original);
-                nodesIndexList.push(nodeIndex);
-                this._logger.Write(`[IHeuristic] DoIndexes ${element}: ${nodeIndex.Indexes.length}`);
+                if (nodeIndex.Indexes.length > 0) {
+                    nodesIndexList.push(nodeIndex);
+                    this._logger.Write(`[IHeuristic] DoIndexes ${element}: ${nodeIndex.Indexes.length}`);
+                }
+
             });
         }
         else {
