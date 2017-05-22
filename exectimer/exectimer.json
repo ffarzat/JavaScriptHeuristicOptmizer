@@ -40,7 +40,7 @@
                 "neighborsToProcess": 40,
                 "trials": 5000,
                 "restartAtEnd": true,
-                "ramdonRestart": false,
+                "ramdonRestart": true,
                 "ramdonNodes": true,
                 "nodesType": [
                     "FunctionDeclaration",
