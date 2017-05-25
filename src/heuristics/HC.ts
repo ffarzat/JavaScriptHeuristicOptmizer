@@ -447,7 +447,6 @@ export default class HC extends IHeuristic {
                 if (this.typeIndexCounter >= nodesIndexList.length - 1) {
                     this._logger.Write(`[HC] All global neighbors were visited`);
                     itsover = true;
-                    return;
                 }
             }
 
