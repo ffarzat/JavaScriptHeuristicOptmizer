@@ -15,27 +15,27 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD"],
+    "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":120,
     "copyFileTimeout": 600,
-    "clientsTotal": 20,
+    "clientsTotal": 40,
     "memory": 2408000,
     "libraries" : [
-        {"name":"lodash",       "path":"",         "mainFilePath":"lodash.js" }
+        {"name":"lodash",       "path":"Libraries/lodash",         "mainFilePath":"lodash.js" }
     ],
     "trialsConfiguration":[
         {
-            "nodesSelectionApproach":"ByFunction",
+            "nodesSelectionApproach":"Global",
             "ByFunctionType": "static", 
             "especific": {
-                "neighborApproach":"LastAscent", 
+                "neighborApproach":"FirstAscent", 
                 "neighborsToProcess": 20,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart":false,
-                "ramdonNodes": true,
+                "ramdonNodes": false,
                 "nodesType": [
                     "FunctionDeclaration",
                     "FunctionExpression",
