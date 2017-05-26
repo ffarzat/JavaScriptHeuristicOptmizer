@@ -135,7 +135,7 @@ export default class HC extends IHeuristic {
             if (this.restartAtEnd && contagem < this.howManyTimes) {
 
                 this.restartCounter++;
-                
+
                 this._logger.Write(`[HC] Restart! Actual internal trial: ${contagem}`);
                 this._logger.Write(`[HC] this.restartCounter: ${this.restartCounter}`);
 
@@ -381,6 +381,8 @@ export default class HC extends IHeuristic {
                         var updatedIndexList = this.DoIndexes(this.bestIndividual);
                         nodesIndexList = updatedIndexList.slice();
                         updatedIndexes = updatedIndexList[this.typeIndexCounter];
+                        if (updatedIndexes == undefined)
+                            cb(time);
                         updatedIndexes.ActualIndex = (indexes.ActualIndex - constante_quantas_voltar) < 0 ? 0 : (indexes.ActualIndex - constante_quantas_voltar); //continua de onde parou (-2??)
                         throw BreakException;
                     }
@@ -391,6 +393,8 @@ export default class HC extends IHeuristic {
                         var updatedIndexList = this.DoIndexes(this.bestIndividual);
                         nodesIndexList = updatedIndexList.slice();
                         updatedIndexes = updatedIndexList[this.typeIndexCounter];
+                        if (updatedIndexes == undefined)
+                            cb(time);
                         updatedIndexes.ActualIndex = (indexes.ActualIndex - constante_quantas_voltar) < 0 ? 0 : (indexes.ActualIndex - constante_quantas_voltar); //continua de onde parou
                     }
 
