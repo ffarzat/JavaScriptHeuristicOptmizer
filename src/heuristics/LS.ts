@@ -231,6 +231,7 @@ export default class LS extends IHeuristic {
                             this._logger.Write(`Processar ${this.indicesParaRemover.length} indices`);
 
                             this.bestIndividual = this.ExcluirTodosOsNos(this.bestIndividual, this.indicesParaRemover);
+                            this.bestIndividual.testResults.fit -= this.indicesParaRemover.length;
 
                             foundNewBest = this.UpdateBest(this.bestIndividual);
 
