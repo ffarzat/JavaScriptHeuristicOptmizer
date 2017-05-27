@@ -35,7 +35,7 @@
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart":false,
-                "ramdonNodes": true,
+                "ramdonNodes": false,
                 "nodesType": [
                     "FunctionDeclaration",
                     "FunctionExpression",
