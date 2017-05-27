@@ -30,6 +30,8 @@ export default class LS extends IHeuristic {
     restartCounter: number;
     findBestInThisTrial: boolean;
 
+    indicesParaRemover: number[];
+
 
     /**
     * Especific Setup
@@ -49,6 +51,7 @@ export default class LS extends IHeuristic {
         this.neighbors = [];
         this.findBestInThisTrial = false;
         this.restartCounter = 0;
+        this.indicesParaRemover = [];
 
     }
 
@@ -183,96 +186,6 @@ export default class LS extends IHeuristic {
         });
     }
 
-    /**
-    * Do N mutants per time
-    */
-    private ExecutarMutacoesConfiguradas(counter: number, indexes: NodeIndex, nodesIndexList: NodeIndex[], cb: (mutants: Individual[], indexes: NodeIndex, done: boolean) => void) {
-        let itsover: boolean = false;
-
-
-        //Waiting to be done!
-        if (!this.intervalId) {
-
-            this.intervalId = setInterval(() => {
-                this._logger.Write(`[HC] setInterval -> Neighbors ${this.neighbors.length}, Operations ${this.operationsCount}`);
-                //, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
-
-                if (this.neighbors.length >= this.operationsCount) {
-                    clearInterval(this.intervalId);
-                    this.intervalId = undefined;
-
-                    //Acabou a farra
-                    if (this.totalOperationsCounter >= this.trials) {
-                        clearInterval(this.intervalId);
-                        this.intervalId = undefined;
-                        cb(this.neighbors, indexes, true);
-                    }
-
-                    if (this.typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex == indexes.Indexes.length - 1)) {
-                        clearInterval(this.intervalId);
-                        this.intervalId = undefined;
-                        cb(this.neighbors, indexes, true);
-                    }
-                    else {
-                        cb(this.neighbors, indexes, false);
-                    }
-                }
-            }, 1 * 1000); //each ten secs
-        }
-
-        if (this.totalOperationsCounter >= this.trials) {
-            this._logger.Write(`[HC] Orçamento Esgotado ${this.trials}. Aguardando`);
-            return;
-        }
-        else {
-            this._logger.Write(`[HC] Orçamento atual ${this.trials - this.totalOperationsCounter}`);
-            //this._logger.Write(`[HC] vizinho ${counter}`);
-        }
-
-        //Rest some mutant to process?
-        if (counter < this._config.neighborsToProcess) {
-            // its over actual index? (IF, CALL, etc)
-            if (indexes.Indexes[indexes.ActualIndex] == undefined) {
-                //acabou? Tenta o próximo
-                this.typeIndexCounter++;
-                indexes = nodesIndexList[this.typeIndexCounter];
-                this._logger.Write(`[HC] Tentando mudar de indice [${this.typeIndexCounter}]`);
-
-                if (indexes == undefined || indexes.Indexes.length == 0) {
-                    this._logger.Write(`[HC] Todos os vizinhos foram visitados. Aguardando.`);
-                    return;
-                }
-            }
-
-            //All neighbors were visited?
-            if (!itsover) {
-                this.totalOperationsCounter++;
-                //Entra a AST da Função atual sendo otimizada
-                this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
-                    //this._logger.Write(`[HC] Voltando... neighbors: ${this.neighbors.length} `);
-                    try {
-                        //Volta um mutante completo e testado
-                        this.neighbors.push(mutant);
-                    }
-                    catch (error) {
-                        this._logger.Write(`[HC] MutateBy error: ${error} `);
-                        this.neighbors.push(this.Original.Clone());
-                    }
-
-                    ///this._logger.Write(`[HC] Voltando... neighbors: ${this.neighbors.length} `);
-
-                });
-
-                counter++;
-                this.operationsCount = counter;
-                process.nextTick(() => {
-                    this.ExecutarMutacoesConfiguradas(counter++, indexes, nodesIndexList, cb);
-                });
-            }
-
-        }
-    }
-
 
     /**
     * How many time to execute DoMutationsPerTime
@@ -291,42 +204,16 @@ export default class LS extends IHeuristic {
             var BreakException = {};
             try {
                 mutants.forEach(element => {
-                    foundNewBest = this.UpdateBest(element);
 
-
-                    var constante_quantas_voltar = this._config.neighborsToProcess;
-
-                    if (foundNewBest && this.neighborApproach === 'FirstAscent') {
-                        this.findBestInThisTrial = foundNewBest;
-                        //Jump to first best founded
-                        var updatedIndexList = this.DoIndexes(this.bestIndividual);
-                        nodesIndexList = updatedIndexList.slice();
-                        updatedIndexes = updatedIndexList[this.typeIndexCounter];
-                        if (updatedIndexes == undefined)
-                            cb(time);
-                        updatedIndexes.ActualIndex = (indexes.ActualIndex - constante_quantas_voltar) < 0 ? 0 : (indexes.ActualIndex - constante_quantas_voltar); //continua de onde parou (-2??)
-                        throw BreakException;
+                    if (element.testResults.passedAllTests && element.indicesRemovidos.length > 0) {
+                        this._logger.Write(`Armazenar o indice ${element.indicesRemovidos[0]}`);
+                        this.indicesParaRemover.push(element.indicesRemovidos[0]);
                     }
-
-                    if (foundNewBest && this.neighborApproach === 'LastAscent') {
-                        this.findBestInThisTrial = foundNewBest;
-                        //Jump to best of all
-                        var updatedIndexList = this.DoIndexes(this.bestIndividual);
-                        nodesIndexList = updatedIndexList.slice();
-                        updatedIndexes = updatedIndexList[this.typeIndexCounter];
-                        if (updatedIndexes == undefined)
-                            cb(time);
-                        updatedIndexes.ActualIndex = (indexes.ActualIndex - constante_quantas_voltar) < 0 ? 0 : (indexes.ActualIndex - constante_quantas_voltar); //continua de onde parou
-                    }
-
                 });
+
             } catch (error) {
                 //Se não foi o break, sobe o erro
                 if (error !== BreakException) throw error;
-                this._logger.Write('First Ascent');
-                //force 
-                finish = false;
-                mudarIndiceQuandoEncontraMelhor = false;
             }
 
             if (time == this.howManyTimes || finish) { //Done!
@@ -336,6 +223,27 @@ export default class LS extends IHeuristic {
 
                     //change node index?
                     if (indexes.ActualIndex > indexes.Indexes.length - 1 && (this.typeIndexCounter < nodesIndexList.length - 1) && mudarIndiceQuandoEncontraMelhor) {
+
+
+                        this._logger.Write(`Processar ${this.indicesParaRemover.length} indices`);
+
+                        if (this.indicesParaRemover.length > 0) {
+                            this._logger.Write(`Processar ${this.indicesParaRemover.length} indices`);
+
+                            this.bestIndividual = this.ExcluirTodosOsNos(this.bestIndividual, this.indicesParaRemover);
+
+                            foundNewBest = this.UpdateBest(this.bestIndividual);
+
+                            this.indicesParaRemover = []; //limpa
+
+                            this.findBestInThisTrial = foundNewBest;
+
+                            var updatedIndexList = this.DoIndexes(this.bestIndividual);
+                            nodesIndexList = updatedIndexList.slice();
+                            updatedIndexes = updatedIndexList[this.typeIndexCounter];
+                        }
+
+
                         this.typeIndexCounter++;
                         updatedIndexes = nodesIndexList[this.typeIndexCounter];
                         this._logger.Write(`[HC] Change index: ${updatedIndexes.Type}, ${updatedIndexes.Indexes.length}`);
@@ -349,7 +257,14 @@ export default class LS extends IHeuristic {
         });
     }
 
-
+    /**
+     * Executa várias exclusões de uma única vez
+     * @param best Individuo
+     * @param indices Indices dos nos para exclusao
+     */
+    private ExcluirTodosOsNos(best: Individual, indices: number[]): Individual {
+        return this._astExplorer.ExcluirListaDeNos(best, indices);
+    }
 
     /**
     * Do N mutants per time

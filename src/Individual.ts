@@ -35,6 +35,7 @@ export default class Individual {
     };
 
     typesRemoved: string[] = [];
+    indicesRemovidos: number [] = [];
 
 
     /**
@@ -85,6 +86,7 @@ export default class Individual {
     Clone(): Individual {
         var newOne = new Individual();
         newOne.typesRemoved = this.typesRemoved.slice();
+        newOne.indicesRemovidos = this.indicesRemovidos.slice();
         newOne.AST =   traverse(this.AST).clone();
         newOne.testResults = traverse(this.testResults).clone();
         return newOne;

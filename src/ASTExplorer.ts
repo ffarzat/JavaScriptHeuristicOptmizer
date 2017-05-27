@@ -55,6 +55,7 @@ export default class ASTExplorer {
             newCtx.First.AST = oldFirst.astObj;
             newCtx.First.testResults = oldFirst.testResults;
             newCtx.First.typesRemoved = oldFirst.typesRemoved;
+            newCtx.First.indicesRemovidos = oldFirst.indicesRemovidos;
         }
 
         if (context.Second) {
@@ -65,6 +66,7 @@ export default class ASTExplorer {
             newCtx.Second.AST = oldSecond.astObj;
             newCtx.Second.testResults = oldSecond.testResults;
             newCtx.Second.typesRemoved = oldSecond.typesRemoved;
+            newCtx.Second.indicesRemovidos = oldSecond.indicesRemovidos;
         }
 
         if (context.ActualBestForFunctionScope) {
@@ -73,6 +75,7 @@ export default class ASTExplorer {
             newCtx.ActualBestForFunctionScope.AST = oldActualBestForFunctionScope.astObj;
             newCtx.ActualBestForFunctionScope.testResults = oldActualBestForFunctionScope.testResults;
             newCtx.ActualBestForFunctionScope.typesRemoved = oldActualBestForFunctionScope.typesRemoved;
+            newCtx.ActualBestForFunctionScope.indicesRemovidos = oldActualBestForFunctionScope.indicesRemovidos;
         }
 
         if (context.Original) {
@@ -83,6 +86,7 @@ export default class ASTExplorer {
             newCtx.Original.AST = oldOriginal.astObj;
             newCtx.Original.testResults = oldOriginal.testResults;
             newCtx.Original.typesRemoved = oldOriginal.typesRemoved;
+            newCtx.Original.indicesRemovidos = oldOriginal.indicesRemovidos;
         }
 
         return newCtx;
@@ -269,6 +273,48 @@ export default class ASTExplorer {
 
 
 
+        return mutant;
+    }
+
+    /**
+ * Releases a mutation over an AST  by node index
+ */
+    ExcluirListaDeNos(mutant: Individual, indicesExcluir: number[]): Individual {
+        const fs = require('fs');
+
+        var counter = 0;
+        var contador = indicesExcluir.length;
+
+
+        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/mutante-antes.txt`, mutant.ToCode());
+        //fs.appendFileSync('/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/nos_excluidos.txt', localNodeIndex + ' = ' + escodegen.generate(this.GetNode(mutant, localNodeIndex)) + '\n\n\n');
+
+        mutant.AST = traverse(mutant.AST).forEach(function (node) {
+            if (indicesExcluir.indexOf(counter) > 0) {
+                if (node.type && node.type == "BlockStatement") {
+                    //console.log("\n" + localNodeIndex + "\n");
+                    this.update({ "type": "BlockStatement", "body": [] });
+                    this.stop();
+                    return;
+                }
+
+                this.remove();
+                contador--;
+                //console.log(escodegen.generate(node));
+                //console.log(`[ASTExplorer.MutateBy] Node:${JSON.stringify(node)}`);
+            }
+
+            if (contador == 0) {
+                this.stop();
+            }
+
+
+            counter++;
+        });
+
+        //fs.writeFileSync(`/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/${localNodeIndex}_mutant.txt`, mutant.ToCode());
+        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, mutant.ToCode());
+        //console.log(`[ASTExplorer.MutateBy] Função: ${context.functionName}`);
         return mutant;
     }
 
