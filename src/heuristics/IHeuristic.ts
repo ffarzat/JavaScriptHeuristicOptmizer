@@ -307,10 +307,22 @@ abstract class IHeuristic extends events.EventEmitter {
     /**
     * Index By Node Type a individual code
     */
-    IndexBy(nodeType: string, individual: Individual): NodeIndex {
-        var index = this._astExplorer.IndexNodesBy(nodeType, individual);
-        var node = { "Type": nodeType, "ActualIndex": 0, "Indexes": index };
-        return node;
+    IndexBy(nodesType: string[], individual: Individual): NodeIndex[] {
+        var objIndices = this._astExplorer.IndexNodesBy(nodesType, individual);
+        var lista: NodeIndex[] = [];
+
+        for (var key in objIndices) {
+            if (objIndices.hasOwnProperty(key)) {
+                var element = objIndices[key];
+                if (element.Indexes.length > 0)
+                {
+                    this._logger.Write(`[IHeuristic] ${element.Type}: ${element.Indexes.length}`);
+                    lista.push(element);
+                }
+            }
+        }
+
+        return lista;
     }
 
 
@@ -359,14 +371,7 @@ abstract class IHeuristic extends events.EventEmitter {
         var nodesIndexList: NodeIndex[] = [];
 
         if (this.nodesType.length > 0) {
-            this.nodesType.forEach(element => {
-                var nodeIndex = this.IndexBy(element, original);
-                if (nodeIndex.Indexes.length > 0) {
-                    nodesIndexList.push(nodeIndex);
-                    this._logger.Write(`[IHeuristic] DoIndexes ${element}: ${nodeIndex.Indexes.length}`);
-                }
-
-            });
+            nodesIndexList = this.IndexBy(this.nodesType, original);
         }
         else {
             this._logger.Write(`[IHeuristic] FATAL: There is no configuration for NodeType for Optmization`);

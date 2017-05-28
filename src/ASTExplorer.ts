@@ -2,6 +2,7 @@ import esprima = require('esprima');
 import fs = require('fs');
 import Individual from './Individual';
 import OperatorContext from './OperatorContext';
+import NodeIndex from './heuristics/NodeIndex';
 
 import path = require('path');
 import traverse = require('traverse');
@@ -364,24 +365,31 @@ export default class ASTExplorer {
     /**
      * Creates a index map for especific node types
      */
-    IndexNodesBy(nodeType: string, individual: Individual): number[] {
+    IndexNodesBy(nodesType: string[], individual: Individual): Object {
 
         var nodes = traverse(individual.AST).nodes();
-        var nodesIndex: number[] = [];
+        
         var index: number = 0;
+        var objetoGlobal = {};
+        
+        //var node = { "Type": nodeType, "ActualIndex": 0, "Indexes": index };
 
         traverse(individual.AST).forEach(function (node) {
-            if (node && node.type && node.type === nodeType) {
-                nodesIndex.push(index);
+            if (node && node.type &&  nodesType.indexOf(node.type) != -1) {
+                
+                var indiceDoTipo = objetoGlobal[node.type] == undefined? { "Type": node.type, "ActualIndex": 0, "Indexes": [] } : objetoGlobal[node.type];
+                indiceDoTipo['Indexes'].push(index);
                 //console.log(`[ASTExplorer.IndexNodesBy]Tipo:${node.type}`);
                 //console.log(`[ASTExplorer.IndexNodesBy]Indice:${index}`);
+                //console.log(`[ASTExplorer.IndexNodesBy]total:${indiceDoTipo['Indexes'].length}`);
                 //console.log(`[ASTExplorer.IndexNodesBy]Nó:${JSON.stringify(node)}`);
+                objetoGlobal[node.type] = indiceDoTipo;
             }
 
             index++;
         });
 
-        return nodesIndex;
+        return objetoGlobal;
     }
 
 

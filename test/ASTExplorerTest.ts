@@ -240,11 +240,11 @@ describe('ASTExplorer Tests', function () {
         var libFile: string = lib.mainFilePath;
         var generatedIndividual: Individual = astExplorer.GenerateFromFile(libFile);
 
-        var indices = astExplorer.IndexNodesBy("AssignmentExpression", generatedIndividual);
+        var indices = astExplorer.IndexNodesBy(["AssignmentExpression"], generatedIndividual);
 
         var ctx: OperatorContext = new OperatorContext();
         ctx.First = generatedIndividual;
-        ctx.NodeIndex = indices[0];
+        ctx.NodeIndex = indices['AssignmentExpression'];
 
         var mutante = astExplorer.MutateBy(ctx);
         
@@ -252,6 +252,10 @@ describe('ASTExplorer Tests', function () {
         //fs.writeFileSync("mutantIndexFromTests.js", mutante.ToCode());
 
         expect(indices).not.be(undefined);
+        expect(indices['AssignmentExpression']).not.be(undefined);
+        expect(indices['AssignmentExpression']['Type']).to.be('AssignmentExpression');
+        expect(indices['AssignmentExpression']['ActualIndex']).to.be(0);
+        expect(indices['AssignmentExpression']['Indexes'].length).to.be(58);
 
     });
 
