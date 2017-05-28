@@ -41,6 +41,19 @@ export default class ASTExplorer {
         return newIndividual;
     }
 
+    GenerateFromString(sourceCode: string): Individual {
+
+        var generatedAST = esprima.parse(sourceCode, this.globalOptions) as any;
+
+        var newIndividual: Individual = new Individual();
+
+        var generatedAST = escodegen.attachComments(generatedAST, generatedAST.comments, generatedAST.tokens);
+
+        newIndividual.AST = generatedAST;
+
+        return newIndividual;
+    }
+
     /**
      * Over websockets objects loose instance methods
      */
@@ -279,48 +292,57 @@ export default class ASTExplorer {
     /**
  * Releases a mutation over an AST  by node index
  */
-    ExcluirListaDeNos(mutant: Individual, indicesExcluir: number[]): Individual {
-        const fs = require('fs');
+    ExcluirListaDeNos(mutant: Individual, indicesExcluir: Object[]): Individual {
 
-        var counter = 0;
-        var contador = indicesExcluir.length;
+        var tipo = indicesExcluir[0]['tipo'];
+        var indices = [];
 
-
-        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/mutante-antes.txt`, mutant.ToCode());
-        //fs.appendFileSync('/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/nos_excluidos.txt', localNodeIndex + ' = ' + escodegen.generate(this.GetNode(mutant, localNodeIndex)) + '\n\n\n');
-
-        mutant.AST = traverse(mutant.AST).forEach(function (node) {
-            if (indicesExcluir.indexOf(counter) > 0) {
-                if (node.type && node.type == "BlockStatement") {
-                    //console.log("\n" + localNodeIndex + "\n");
-                    this.update({ "type": "BlockStatement", "body": [] });
-                    this.stop();
-                    return;
-                }
-
-                this.remove();
-                contador--;
-                //console.log(escodegen.generate(node));
-                //console.log(`[ASTExplorer.MutateBy] Node:${JSON.stringify(node)}`);
-            }
-
-            if (contador == 0) {
-                this.stop();
-            }
-
-
-            counter++;
+        indicesExcluir.forEach(element => {
+            indices.push(element['indice']);
         });
 
-        //fs.writeFileSync(`/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/${localNodeIndex}_mutant.txt`, mutant.ToCode());
-        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, mutant.ToCode());
-        //console.log(`[ASTExplorer.MutateBy] Função: ${context.functionName}`);
+        indices.sort(this.sortNumber);
+
+        indices.forEach(element => {
+            console.log("\n" + tipo + ":" + element + "\n");
+            var contador = 0;
+
+            mutant.AST = traverse(mutant.AST).forEach(function (node) {
+                if (node && node.type && node.type == tipo) {
+                    if (contador == element) {
+                        console.log("\n     ->" + node.type + ":" + contador + "\n");
+
+                        if (node.type == "BlockStatement") {
+                            this.update({ "type": "BlockStatement", "body": [] });
+                        }
+                        else {
+                            this.remove();
+                        }
+                        this.stop();
+                    }
+                    contador++;
+                }
+
+            });
+
+        });
+
+
+
+        //const fs = require('fs');
+        //fs.writeFileSync(`novo-ls.txt`, mutant.ToCode());
+
+
         return mutant;
     }
 
+    private sortNumber(a, b) {
+        return b - a;
+    }
+
     /**
- * Reconstrói o código completo (Otimização por função)
- */
+    * Reconstrói o código completo (Otimização por função)
+    */
     ReconstruirIndividio(context: OperatorContext, mutant: Individual): Individual {
 
         if (context.nodesSelectionApproach == "ByFunction") {
@@ -494,8 +516,8 @@ export default class ASTExplorer {
     }
 
     /**
- * Recupera a AST da Função por nome
- */
+    * Recupera a AST da Função por nome
+    */
     GetFunctionAstByName(individuo: Individual, functionName: string): Individual {
         var traverse = require('traverse');
         var novoIndividuo = undefined;

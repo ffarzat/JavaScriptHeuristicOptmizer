@@ -30,7 +30,7 @@ export default class LS extends IHeuristic {
     restartCounter: number;
     findBestInThisTrial: boolean;
 
-    indicesParaRemover: number[];
+    indicesParaRemover: Object[];
 
 
     /**
@@ -200,20 +200,18 @@ export default class LS extends IHeuristic {
             this._logger.Write(`[HC]time: ${time}/${this.howManyTimes}`);
             var foundNewBest = false;
 
-
-            var BreakException = {};
             try {
                 mutants.forEach(element => {
 
                     if (element.testResults.passedAllTests && element.indicesRemovidos.length > 0) {
-                        this._logger.Write(`Armazenar o indice ${element.indicesRemovidos[0]}`);
+                        this._logger.Write(`Armazenar como melhor: ${element.indicesRemovidos[0]['tipo']}, ${element.indicesRemovidos[0]['indice']}`);
                         this.indicesParaRemover.push(element.indicesRemovidos[0]);
+                        element.indicesRemovidos = [];
                     }
                 });
 
             } catch (error) {
-                //Se não foi o break, sobe o erro
-                if (error !== BreakException) throw error;
+                this._logger.Write(`ERRO: ${error}`);
             }
 
             if (time == this.howManyTimes || finish) { //Done!
@@ -225,15 +223,14 @@ export default class LS extends IHeuristic {
                     if (indexes.ActualIndex > indexes.Indexes.length - 1 && (this.typeIndexCounter < nodesIndexList.length - 1) && mudarIndiceQuandoEncontraMelhor) {
 
 
-                        this._logger.Write(`Processar ${this.indicesParaRemover.length} indices`);
 
                         if (this.indicesParaRemover.length > 0) {
                             this._logger.Write(`Processar ${this.indicesParaRemover.length} indices`);
 
-                            this.bestIndividual = this.ExcluirTodosOsNos(this.bestIndividual, this.indicesParaRemover);
-                            this.bestIndividual.testResults.fit -= this.indicesParaRemover.length;
+                            var novoMelhor = this.ExcluirTodosOsNos(this.bestIndividual.Clone(), this.indicesParaRemover);
+                            novoMelhor.testResults.fit = (this.bestFit - this.indicesParaRemover.length);
 
-                            foundNewBest = this.UpdateBest(this.bestIndividual);
+                            foundNewBest = this.UpdateBest(novoMelhor);
 
                             this.indicesParaRemover = []; //limpa
 
@@ -263,7 +260,7 @@ export default class LS extends IHeuristic {
      * @param best Individuo
      * @param indices Indices dos nos para exclusao
      */
-    private ExcluirTodosOsNos(best: Individual, indices: number[]): Individual {
+    private ExcluirTodosOsNos(best: Individual, indices: Object[]): Individual {
         return this._astExplorer.ExcluirListaDeNos(best, indices);
     }
 

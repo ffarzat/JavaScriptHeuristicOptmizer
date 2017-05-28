@@ -35,7 +35,7 @@ export default class Individual {
     };
 
     typesRemoved: string[] = [];
-    indicesRemovidos: number [] = [];
+    indicesRemovidos: Object [] = [];
 
 
     /**

@@ -322,7 +322,8 @@ abstract class IHeuristic extends events.EventEmitter {
         var type = indexes.Type;
         var actualNodeIndex = indexes.Indexes[indexes.ActualIndex];
         this._logger.Write(`Mutant: [${type}, ${indexes.ActualIndex}]`);
-        clone.indicesRemovidos.push(actualNodeIndex);
+
+        clone.indicesRemovidos.push({"tipo": type, "indice":indexes.ActualIndex});
 
         var ctx: OperatorContext = new OperatorContext();
         ctx.First = clone;

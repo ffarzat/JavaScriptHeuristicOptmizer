@@ -15,7 +15,9 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["LS"],
+    "heuristics": [
+        "LS"
+    ],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout": 300,
@@ -23,7 +25,11 @@
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries": [
-        {"name":"lodash",       "path":"Libraries/lodash",         "mainFilePath":"lodash.js" }
+        {
+            "name": "uuid",
+            "path": "Libraries/uuid",
+            "mainFilePath": "lib/uuid.js"
+        }
     ],
     "trialsConfiguration": [
         {
@@ -34,13 +40,13 @@
                 "neighborsToProcess": 5,
                 "trials": 5000,
                 "restartAtEnd": true,
-                "ramdonRestart":false,
+                "ramdonRestart": false,
                 "ramdonNodes": false,
                 "nodesType": [
-                    "ObjectExpression",
                     "FunctionDeclaration",
                     "FunctionExpression",
                     "BlockStatement",
+                    "ObjectExpression",
                     "ArrayExpression",
                     "ExpressionStatement",
                     "IfStatement",
