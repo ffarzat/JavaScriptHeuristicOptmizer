@@ -283,7 +283,5 @@ $RECYCLE.BIN/
 # NodeJs
 node_modules/
 src/typings/
-Libraries/**
-Libraries/
 Libraries/**/node_modules/
 **results/**
