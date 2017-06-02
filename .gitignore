@@ -284,5 +284,6 @@ $RECYCLE.BIN/
 node_modules/
 src/typings/
 Libraries/**
+Libraries/
 Libraries/**/node_modules/
 **results/**
