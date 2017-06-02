@@ -26,10 +26,10 @@
     ],
     "trialsConfiguration":[
         {
-            "nodesSelectionApproach":"ByFunction",
+            "nodesSelectionApproach":"Global",
             "ByFunctionType": "static", 
             "especific": {
-                "neighborApproach":"LastAscent", 
+                "neighborApproach":"FirstAscent", 
                 "neighborsToProcess": 5,
                 "trials": 5000,
                 "restartAtEnd": false,
