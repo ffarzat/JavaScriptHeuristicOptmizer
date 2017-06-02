@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout": 300,
@@ -23,7 +23,7 @@
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries": [
-        {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"underscore.js" }
+        {"name":"moment",       "path":"Libraries/moment",         "mainFilePath":"build/umd/moment.js" }
     ],
     "trialsConfiguration": [
         {
@@ -33,9 +33,9 @@
                 "neighborApproach": "FirstAscent",
                 "neighborsToProcess": 5,
                 "trials": 5000,
-                "restartAtEnd": true,
-                "ramdonRestart":true,
-                "ramdonNodes": true,
+                "restartAtEnd": false,
+                "ramdonRestart":false,
+                "ramdonNodes": false,
                 "nodesType": [
                     "FunctionDeclaration",
                     "FunctionExpression",

@@ -3,7 +3,7 @@ const child_process = require('child_process');
 var id = process.argv[2];
 var libPath = process.argv[3];
 var timeoutMS = process.argv[4];
-var bufferOption = { maxBuffer: 500 * 1024 };
+var bufferOption = { maxBuffer: 10000000 * 1024 };
 
 
 

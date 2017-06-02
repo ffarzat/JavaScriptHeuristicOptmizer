@@ -15,14 +15,14 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":20,
     "copyFileTimeout": 14400,
-    "clientsTotal": 20,
+    "clientsTotal": 40,
     "libraries" : [
-        {"name":"moment",       "path":"",         "mainFilePath":"global.js" }
+        {"name":"moment",       "path":"Libraries/moment",         "mainFilePath":"build/umd/moment.js" }
     ],
     "trialsConfiguration":[
         {
@@ -30,9 +30,29 @@
             "ByFunctionType": "static", 
             "especific": {
                 "neighborApproach":"LastAscent", 
-                "neighborsToProcess": 20,
+                "neighborsToProcess": 5,
                 "trials": 5000,
-                "nodesType": ["CallExpression", "IfStatement"], 
+                "restartAtEnd": false,
+                "ramdonRestart":false,
+                "ramdonNodes": false,
+                "nodesType": [
+                    "FunctionDeclaration",
+                    "FunctionExpression",
+                    "BlockStatement",
+                    "ObjectExpression",
+                    "ArrayExpression",
+                    "ExpressionStatement",
+                    "IfStatement",
+                    "MemberExpression",
+                    "BinaryExpression",
+                    "CallExpression",
+                    "ThisExpression",
+                    "VariableDeclarator",
+                    "Property",
+                    "Identifier",
+                    "Literal",
+                    "ReturnStatement"
+                ],
                 "individuals": 100, 
                 "generations": 50,
                 "crossoverProbability": 75,
