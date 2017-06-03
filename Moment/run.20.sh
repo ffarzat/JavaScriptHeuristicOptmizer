@@ -4,6 +4,7 @@
 #PBS -N Moment-20
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
+#PBS -I walltime=500:00
 cd $PBS_O_WORKDIR
 echo "----------------"
 echo "PBS job running on: `hostname`"
