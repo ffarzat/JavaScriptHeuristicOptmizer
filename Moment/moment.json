@@ -21,6 +21,7 @@
     "clientTimeout":300,
     "copyFileTimeout": 14400,
     "clientsTotal": 40,
+    "memory": 512000,
     "libraries" : [
         {"name":"moment",       "path":"Libraries/moment",         "mainFilePath":"build/umd/moment.js" }
     ],
