@@ -28,7 +28,7 @@ var workerProcess = child_process.exec(`cd ${libPath} && npm test`, bufferOption
         console.log('MPNSignal received: ' + error.signal);
         console.log(`{"id":"${id}", "sucess":"false", "host":"${os.hostname()}", "duration":"${clock(start)}", "error": "${error}"}`);
         var fs = require('fs');
-        fs.appendFileSync("log-client.txt", error);
+        //fs.appendFileSync("log-client.txt", error);
         process.exit(error.code);
     }
   
