@@ -1,6 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
+#PBS -l walltime=48:00:00
 #PBS -N Moment-10
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
