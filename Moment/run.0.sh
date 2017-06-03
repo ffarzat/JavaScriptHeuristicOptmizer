@@ -1,10 +1,10 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
+#PBS -l walltime=48:00:00
 #PBS -N Moment-0
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
-#PBS -I walltime=48:00:00
 cd $PBS_O_WORKDIR
 echo "----------------"
 echo "PBS job running on: `hostname`"
