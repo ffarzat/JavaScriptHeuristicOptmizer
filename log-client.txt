@@ -1,0 +1,518 @@
+Error: Command failed: cd /home/fabio/Documents/tmp/1/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/2/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/4/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/5/moment && npm test
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/2/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/1/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/4/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/2/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/1/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/1/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/0/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/0/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/0/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/4/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/3/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/3/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/3/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/2/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/5/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/5/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/5/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/4/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/4/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/5/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/5/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/5/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/2/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/3/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/3/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/3/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/1/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/5/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/5/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/5/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/4/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/4/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/4/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/3/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/3/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/3/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/3/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/0/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/0/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/0/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/1/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/3/moment && npm test
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/3/moment && npm test
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/0/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/0/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/0/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/1/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/2/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/5/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/5/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/5/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/5/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/5/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/5/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/5/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/1/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/0/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/0/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/0/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/1/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/2/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/2/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/2/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/1/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/1/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/1/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/4/moment && npm test
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/4/moment && npm test
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/2/moment && npm test
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/3/moment && npm test
+npm ERR! Test failed.  See above for more details.
+Error: Command failed: cd /home/fabio/Documents/tmp/0/moment && npm test
+Deprecation warning: testing deprecation
+Arguments: 
+Error
+    at /home/fabio/Documents/tmp/0/moment/build/umd/test/moment/deprecate.js:154:94
+    at Object.<anonymous> (/home/fabio/Documents/tmp/0/moment/build/umd/test/moment/deprecate.js:173:5)
+    at Object.run (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:136:18)
+    at /home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:279:10
+    at process (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:1277:24)
+    at Timeout._onTimeout (/home/fabio/Documents/tmp/0/moment/node_modules/qunitjs/qunit/qunit.js:383:5)
+    at ontimeout (timers.js:386:14)
+    at tryOnTimeout (timers.js:250:5)
+    at Timer.listOnTimeout (timers.js:214:5)
+npm ERR! Test failed.  See above for more details.
