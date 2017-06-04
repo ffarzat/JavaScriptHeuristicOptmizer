@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
-#PBS -N xml2js-20
+#PBS -N xml2js-all
 #PBS -l walltime=500:00:00
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
