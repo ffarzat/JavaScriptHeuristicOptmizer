@@ -1,13 +1,13 @@
 {
-    "file": "Configuration.json",
-    "trials": 30,
+    "file": "xml2js.json",
+    "trials": 60,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
     "mutationTrials": 1,
     "crossOverTrials": 1,
-    "logFilePath": "build/optmization.log",
-    "tmpDirectory": "/home/fabio/Documents/tmp",
+    "logFilePath": "build/xml2js.log",
+    "tmpDirectory": "/scratch/41061a/ffarzat1981/clients",
     "logCategory": "optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
@@ -15,13 +15,15 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": [
+        "RD"
+    ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 30,
-    "clientsTotal": 5,
+    "clientTimeout": 20,
     "copyFileTimeout": 300,
-    "memory": 2047,
+    "clientsTotal": 40,
+    "memory": 2408000,
     "libraries": [
         {"name":"xml2js",       "path":"Libraries/xml2js/",         "mainFilePath":"lib/xml2js.js" }
     ],
@@ -31,11 +33,11 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 5,
+                "neighborsToProcess": 40,
                 "trials": 5000,
                 "restartAtEnd": true,
-                "ramdonRestart":false,
-                "ramdonNodes": false,
+                "ramdonRestart": true,
+                "ramdonNodes": true,
                 "nodesType": [
                     "FunctionDeclaration",
                     "FunctionExpression",
@@ -54,8 +56,8 @@
                     "Literal",
                     "ReturnStatement"
                 ],
-                "individuals": 50,
-                "generations": 100,
+                "individuals": 100,
+                "generations": 50,
                 "crossoverProbability": 0,
                 "mutationProbability": 75,
                 "elitism": true,
