@@ -25,8 +25,8 @@ node --max-old-space-size=2408000 build/src/index.js Moment/moment.json null nul
 
 node --max-old-space-size=2408000 build/src/index.js Moment/moment.json null null 6
 
-node --max-old-space-size=2408000 build/src/index.js Moment/moment.json null null 7
+#node --max-old-space-size=2408000 build/src/index.js Moment/moment.json null null 7
 
-node --max-old-space-size=2408000 build/src/index.js Moment/moment.json null null 8
+#node --max-old-space-size=2408000 build/src/index.js Moment/moment.json null null 8
 
-node --max-old-space-size=2408000 build/src/index.js Moment/moment.json null null 9
+#node --max-old-space-size=2408000 build/src/index.js Moment/moment.json null null 9
