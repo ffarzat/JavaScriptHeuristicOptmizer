@@ -18,12 +18,12 @@
     "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 30,
+    "clientTimeout": 60,
     "clientsTotal": 5,
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries": [
-        {"name":"xml2js",       "path":"Libraries/xml2js/",         "mainFilePath":"lib/xml2js.js" }
+        {"name":"jquery",       "path":"Libraries/jquery/",         "mainFilePath":"dist/jquery.js" }
     ],
     "trialsConfiguration": [
         {
