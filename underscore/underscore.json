@@ -35,7 +35,7 @@
                 "neighborApproach": "FirstAscent",
                 "neighborsToProcess": 5,
                 "trials": 5000,
-                "restartAtEnd": false,
+                "restartAtEnd": true,
                 "ramdonRestart": false,
                 "ramdonNodes": false,
                 "nodesType": [
