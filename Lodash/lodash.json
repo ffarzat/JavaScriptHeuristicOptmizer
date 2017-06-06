@@ -15,7 +15,7 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD"],
+    "heuristics": ["HC"],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout":10,
@@ -33,7 +33,7 @@
                 "neighborApproach":"FirstAscent", 
                 "neighborsToProcess": 5,
                 "trials": 5000,
-                "restartAtEnd": false,
+                "restartAtEnd": true,
                 "ramdonRestart":false,
                 "ramdonNodes": false,
                 "nodesType": [
