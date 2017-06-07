@@ -1,0 +1,68 @@
+{
+    "file": "jquery.json",
+    "trials": 60,
+    "startTrial": 0,
+    "fitType": "median",
+    "testUntil": 1,
+    "mutationTrials": 1,
+    "crossOverTrials": 1,
+    "logFilePath": "build/jquery.log",
+    "tmpDirectory": "/scratch/41061a/ffarzat1981/clients",
+    "logCategory": "optmization",
+    "logFileClearing": false,
+    "resultsDirectory": "build/results",
+    "trialResultsFile": "Results.csv",
+    "logWritter": "ConcreteLogger",
+    "tester": "CommandTester",
+    "outWriter": "CsvResultsOutWriter",
+    "heuristics": [
+        "RD"
+    ],
+    "port": 5000,
+    "url": "ws://localhost",
+    "clientTimeout": 30,
+    "copyFileTimeout": 300,
+    "clientsTotal": 40,
+    "memory": 2408000,
+    "libraries": [
+        {"name":"jquery",       "path":"Libraries/jquery/",         "mainFilePath":"dist/jquery.js" }
+    ],
+    "trialsConfiguration": [
+        {
+            "nodesSelectionApproach": "Global",
+            "ByFunctionType": "dynamic",
+            "especific": {
+                "neighborApproach": "FirstAscent",
+                "neighborsToProcess": 5,
+                "trials": 5000,
+                "restartAtEnd": true,
+                "ramdonRestart": false,
+                "ramdonNodes": false,
+                "nodesType": [
+                    "FunctionDeclaration",
+                    "FunctionExpression",
+                    "BlockStatement",
+                    "ObjectExpression",
+                    "ArrayExpression",
+                    "ExpressionStatement",
+                    "IfStatement",
+                    "MemberExpression",
+                    "BinaryExpression",
+                    "CallExpression",
+                    "ThisExpression",
+                    "VariableDeclarator",
+                    "Property",
+                    "Identifier",
+                    "Literal",
+                    "ReturnStatement"
+                ],
+                "individuals": 100,
+                "generations": 50,
+                "crossoverProbability": 0,
+                "mutationProbability": 75,
+                "elitism": true,
+                "elitismPercentual": 30
+            }
+        }
+    ]
+}
