@@ -1,12 +1,12 @@
 {
-    "file": "d3-node.json",
+    "file": "uglify.json",
     "trials": 60,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
     "mutationTrials": 1,
     "crossOverTrials": 1,
-    "logFilePath": "build/d3-node.log",
+    "logFilePath": "build/uglify.log",
     "tmpDirectory": "/scratch/41061a/ffarzat1981/clients",
     "logCategory": "optmization",
     "logFileClearing": false,
@@ -20,12 +20,12 @@
     ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 60,
+    "clientTimeout": 30,
     "copyFileTimeout": 300,
     "clientsTotal": 40,
     "memory": 2408000,
     "libraries": [
-        {"name":"d3-node",       "path":"Libraries/d3-node/",         "mainFilePath":"index.js" }
+        {"name":"uglify",       "path":"Libraries/UglifyJS2/",         "mainFilePath":"lib/compress.js" }
     ],
     "trialsConfiguration": [
         {
