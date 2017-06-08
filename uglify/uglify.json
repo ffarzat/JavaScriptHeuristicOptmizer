@@ -25,7 +25,7 @@
     "clientsTotal": 40,
     "memory": 2408000,
     "libraries": [
-        {"name":"uglify",       "path":"Libraries/UglifyJS2/",         "mainFilePath":"lib/compress.js" }
+        {"name":"UglifyJS2",       "path":"Libraries/UglifyJS2/",         "mainFilePath":"lib/compress.js" }
     ],
     "trialsConfiguration": [
         {
