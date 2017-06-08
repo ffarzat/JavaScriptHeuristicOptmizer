@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
-#PBS -N underscore-40
+#PBS -N vue-40
 #PBS -l walltime=500:00:00
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
@@ -11,22 +11,22 @@ echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
 echo "----------------"
-node --max-old-space-size=2408000 build/src/index.js underscore/underscore.json null null 40
+node --max-old-space-size=2408000 build/src/index.js vue/vue.json null null 40
 
-node --max-old-space-size=2408000 build/src/index.js underscore/underscore.json null null 41
+node --max-old-space-size=2408000 build/src/index.js vue/vue.json null null 41
 
-node --max-old-space-size=2408000 build/src/index.js underscore/underscore.json null null 42
+node --max-old-space-size=2408000 build/src/index.js vue/vue.json null null 42
 
-node --max-old-space-size=2408000 build/src/index.js underscore/underscore.json null null 43
+node --max-old-space-size=2408000 build/src/index.js vue/vue.json null null 43
 
-node --max-old-space-size=2408000 build/src/index.js underscore/underscore.json null null 44
+node --max-old-space-size=2408000 build/src/index.js vue/vue.json null null 44
 
-node --max-old-space-size=2408000 build/src/index.js underscore/underscore.json null null 45
+node --max-old-space-size=2408000 build/src/index.js vue/vue.json null null 45
 
-node --max-old-space-size=2408000 build/src/index.js underscore/underscore.json null null 46
+node --max-old-space-size=2408000 build/src/index.js vue/vue.json null null 46
 
-node --max-old-space-size=2408000 build/src/index.js underscore/underscore.json null null 47
+node --max-old-space-size=2408000 build/src/index.js vue/vue.json null null 47
 
-node --max-old-space-size=2408000 build/src/index.js underscore/underscore.json null null 48
+node --max-old-space-size=2408000 build/src/index.js vue/vue.json null null 48
 
-node --max-old-space-size=2408000 build/src/index.js underscore/underscore.json null null 49
+node --max-old-space-size=2408000 build/src/index.js vue/vue.json null null 49

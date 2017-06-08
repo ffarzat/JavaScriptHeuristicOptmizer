@@ -1,12 +1,12 @@
 {
-    "file": "underscore.json",
+    "file": "vue.json",
     "trials": 60,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
     "mutationTrials": 1,
     "crossOverTrials": 1,
-    "logFilePath": "build/underscore.log",
+    "logFilePath": "build/vue.log",
     "tmpDirectory": "/scratch/41061a/ffarzat1981/clients",
     "logCategory": "optmization",
     "logFileClearing": false,
@@ -16,16 +16,16 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "HC"
+        "RD"
     ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 40,
+    "clientTimeout": 120,
     "copyFileTimeout": 300,
     "clientsTotal": 40,
     "memory": 2408000,
     "libraries": [
-        {"name":"underscore",   "path":"Libraries/underscore/",     "mainFilePath":"underscore.js" }
+        {"name":"vue",   "path":"Libraries/vue/",     "mainFilePath":"dist/vue.runtime.common.js" }
     ],
     "trialsConfiguration": [
         {
