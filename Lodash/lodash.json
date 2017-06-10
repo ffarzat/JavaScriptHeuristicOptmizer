@@ -31,7 +31,7 @@
             "ByFunctionType": "static", 
             "especific": {
                 "neighborApproach":"FirstAscent", 
-                "neighborsToProcess": 5,
+                "neighborsToProcess": 1,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart":false,
