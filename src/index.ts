@@ -158,7 +158,7 @@ function ParseConfigAndLibs() {
     //Para cada lib instalada
     for (var libIndex = 0; libIndex < configuration.libraries.length; libIndex++) {
         var element = configuration.libraries[libIndex];
-        var libDirectoryPath = path.join(process.cwd(), 'Libraries', element.name);
+        var libDirectoryPath = path.join(process.cwd(), element.path);
         var libNodeModules = path.join(libDirectoryPath, "node_modules");
 
         //Verifca se já existem os clients necessários no scratch
@@ -174,7 +174,7 @@ function ParseConfigAndLibs() {
             }
 
             if (!fs.existsSync(tempLibPath)) {
-                logger.Write(`[index] Criando o client ${clientIndex} em ${tempLibPath}`);
+                logger.Write(`[index] Criando o client ${clientIndex} em ${tempLibPath} com ${libDirectoryPath}`);
 
                 if (retrial != undefined) {
                     var pathRodada = path.join(configuration.tmpDirectory, `rodada${retrial}`);
