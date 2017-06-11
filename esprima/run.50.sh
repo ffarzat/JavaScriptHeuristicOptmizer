@@ -13,21 +13,21 @@ echo "nodes: $NPROCS"
 echo "----------------"
 node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 50
 
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 51
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 51
 
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 52
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 52
 
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 53
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 53
 
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 54
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 54
 
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 55
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 55
 
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 56
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 56
 
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 57
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 57
 
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 58
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 58
 
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 59
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 59
 
