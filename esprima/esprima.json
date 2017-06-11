@@ -25,7 +25,7 @@
     "clientsTotal": 40,
     "memory": 2408000,
     "libraries": [
-        {"name":"esprima",   "path":"Libraries/esprimaLibrary/",     "mainFilePath":"dist/esprima.js" }
+        {"name":"esprima",   "path":"Libraries/esprima/",     "mainFilePath":"dist/esprima.js" }
     ],
     "trialsConfiguration": [
         {
