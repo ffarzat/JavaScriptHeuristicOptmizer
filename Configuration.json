@@ -15,15 +15,15 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["HC"],
+    "heuristics": ["RD"],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 60,
+    "clientTimeout": 120,
     "clientsTotal": 5,
-    "copyFileTimeout": 300,
+    "copyFileTimeout": 1728000,
     "memory": 2047,
     "libraries": [
-        {"name":"vue",   "path":"Libraries/vue/",     "mainFilePath":"src/compiler/parser/html-parser.js" }
+        {"name":"esprima",   "path":"../esprima",     "mainFilePath":"dist/esprima.js" }
     ],
     "trialsConfiguration": [
         {
@@ -31,7 +31,7 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 5,
+                "neighborsToProcess": 4,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart":false,
