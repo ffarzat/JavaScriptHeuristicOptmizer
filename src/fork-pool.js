@@ -52,7 +52,7 @@ function Pool(path, args, options, settings) {
             client.kill();
         },
         max: settings.size,
-        min: settings.size - 1,
+        min: 1,
         idleTimeoutMillis: settings.timeout,
         log: settings.log,
         actual: 0
