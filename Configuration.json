@@ -23,7 +23,7 @@
     "copyFileTimeout": 300,
     "memory": 2047,
     "libraries": [
-        {"name":"jquery",       "path":"Libraries/jquery/",         "mainFilePath":"dist/jquery.js" }
+        {"name":"vue",   "path":"Libraries/vue/",     "mainFilePath":"src/compiler/parser/html-parser.js" }
     ],
     "trialsConfiguration": [
         {
