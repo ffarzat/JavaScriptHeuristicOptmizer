@@ -72,6 +72,9 @@ export default class Individual {
             //console.log(`AST: ${this.AST}`);
             var generatedAST = this.AST;
             code = escodegen.generate(generatedAST, this.Options);
+            
+
+            code = code.replace('return /******/\n', 'return /******/ '); //Patch for Esprima
         } catch (error) {
             //console.error('Error regenerating code: ' + error);
         }
