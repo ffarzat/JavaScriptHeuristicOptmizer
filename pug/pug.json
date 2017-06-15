@@ -54,7 +54,6 @@
                     "Literal",
                     "ReturnStatement"
                 ],
-                "nodesType": ["CallExpression", "IfStatement"], 
                 "individuals": 100, 
                 "generations": 50,
                 "crossoverProbability": 75,
