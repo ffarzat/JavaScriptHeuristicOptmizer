@@ -1,7 +1,7 @@
 {
     "file": "esprima.json",
-    "trials": 60,
-    "startTrial": 0,
+    "trials": 30,
+    "startTrial": 2,
     "fitType": "median",
     "testUntil": 1,
     "mutationTrials": 1,
