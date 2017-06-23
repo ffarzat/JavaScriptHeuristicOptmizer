@@ -33,7 +33,7 @@ var uglifyOptions = {
     }
 };
 
-var heuristicas = ['RD', 'HC3', 'HC4', 'HC5'];
+var heuristicas = ['RD', 'GA', 'GA2', 'HC', 'HC2', 'HC3', 'HC4', 'HC5', 'HC52'];
 var DiretorioBiblioteca = process.argv[2].replace("'", "");
 var arquivoRootBiblioteca = process.argv[3].replace("'", "");
 var DiretorioResultados = process.argv[4].replace("'", "");
