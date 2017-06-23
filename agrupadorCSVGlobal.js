@@ -38,7 +38,7 @@ ListaDasBibliotecas.forEach(function (biblioteca) {
 
             var arr = text.split("\n");
 
-            if (arr[2].length === 0)
+            if (arr[2] && arr[2].length === 0)
                 continue;
 
             runResultBoxPlot += `${heuristica},${arr[2]}\n`;

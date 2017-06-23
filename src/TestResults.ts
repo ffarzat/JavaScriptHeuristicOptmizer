@@ -61,7 +61,7 @@ export default class TestResults {
     Changes: number;
     Loc: number;
     Chars: number;
-    
+    Instructions: number;
     
     /**
      * 
