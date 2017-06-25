@@ -99,6 +99,7 @@ async function Executar() {
 
     var generatedAST = esprima.parse(result.code) as any;
     originalIns = CountNodes(generatedAST);
+    resultadoOriginal.Instructions = originalIns;
 
     resultadosProcessados.push(resultadoOriginal);
 
@@ -151,21 +152,25 @@ async function Executar() {
                 resultadoFinal.Instructions = CountNodes(generatedAST);
 
                 if (resultadoFinal.passedAllTests && (resultadoFinal.Chars < BestChars || resultadoFinal.Instructions < BestInst)) {
+                    var tempo = 0;
+                    if (fs.existsSync(caminhoArquivoCVSRodada)) {
+                        var fileContents = fs.readFileSync(caminhoArquivoCVSRodada).toString().replace('sep=,\n', '');
+                        if (fileContents.length === 0) {
+                            console.log(`Arquivo ${caminhoArquivoCVSRodada} não possui registros!`);
+                            continue;
+                        }
 
-                    var fileContents = fs.readFileSync(caminhoArquivoCVSRodada).toString().replace('sep=,\n', '');
-                    if (fileContents.length === 0) {
-                        console.log(`Arquivo ${caminhoArquivoCVSRodada} não possui registros!`);
-                        continue;
+                        fs.writeFileSync(caminhoArquivoCVSRodadaAlterado, fileContents);
+                        var loader = require('csv-load-sync');
+                        var csv = loader(caminhoArquivoCVSRodadaAlterado, {
+                            getColumns: split
+                        });;
+
+                        tempo = csv[0].time;
                     }
 
-                    fs.writeFileSync(caminhoArquivoCVSRodadaAlterado, fileContents);
-                    var loader = require('csv-load-sync');
-                    var csv = loader(caminhoArquivoCVSRodadaAlterado, {
-                        getColumns: split
-                    });;
-
                     resultadoFinal.Trial = String(index);
-                    resultadoFinal.duration = csv[0].time;
+                    resultadoFinal.duration = tempo;
                     BestResult = resultadoFinal;
                     BestChars = resultadoFinal.Chars;
                     BestLoc = resultadoFinal.Loc;
@@ -311,7 +316,10 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
         var improvedInstructions = ((originalIns - element.Instructions) / originalIns);
         improvedInstructions = improvedInstructions < 0 ? improvedInstructions * -1 : improvedInstructions;
 
-        csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${String(improvedLoc).replace('.', ',')};${element.Chars};${String(improvedChars).replace('.', ',')};${element.Instructions};${String(improvedInstructions).replace('.', ',')};${element.duration}` + newLine;
+        var duracaoTotal = Math.round(element.duration / 60);
+
+        //csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${String(improvedLoc).replace('.', ',')};${element.Chars};${String(improvedChars).replace('.', ',')};${element.Instructions};${String(improvedInstructions).replace('.', ',')};${duracaoTotal}` + newLine;
+        csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${String(improvedLoc)};${element.Chars};${String(improvedChars)};${element.Instructions};${String(improvedInstructions)};${duracaoTotal}` + newLine;
 
     });
 
