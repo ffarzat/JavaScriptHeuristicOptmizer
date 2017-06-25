@@ -43,6 +43,20 @@ ListaDasBibliotecas.forEach(function (biblioteca) {
 
             runResultBoxPlot += `${heuristica},${arr[2]}\n`;
         }
+
+        //para libs antigas
+        if (fs.existsSync(`${diretorioBiblioteca}/${heuristica}/Results.csv`)) {
+            var text = fs.readFileSync(`${diretorioBiblioteca}/${heuristica}/Results.csv`, 'utf8');
+
+            if (text.length > 0) {
+                var arr = text.split("\n"); //30 ou 60 linhas
+
+                for (var index = 1; index < arr.length; index++) {
+                    var element = arr[index]; //linha
+                    runResultBoxPlot += `${heuristica},${element}\n`;
+                }
+            }
+        }
     });
 
     console.log(`Generated File: ${FileResultsBoxPlot}`);

@@ -68,4 +68,4 @@
 #node build/src/GerarPlanilhaGlobal.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/underscore' 'underscore.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_tempo_execucao/Resultados/Global/underscore' 60 1 'underscore'
 #node build/src/GerarPlanilhaGlobal.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/lodash' 'lodash.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_tempo_execucao/Resultados/Global/lodash' 60 1 'lodash'
 
-#node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_tempo_execucao/Resultados/Global/
+node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_tempo_execucao/Resultados/Global/
