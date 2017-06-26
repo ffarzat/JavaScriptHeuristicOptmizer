@@ -41,6 +41,7 @@ var QuantidadeRodadas = parseInt(process.argv[5]);
 var Quantidade = parseInt(process.argv[6]);
 var libName = process.argv[7].replace("'", "");
 var resultadosProcessados = [];
+var resultadosProcessadosDeTodos = [];
 var os = require("os");
 var listaDeFuncoesOriginal = [];
 var rankingEstatico = {};
@@ -102,6 +103,7 @@ async function Executar() {
     resultadoOriginal.Instructions = originalIns;
 
     resultadosProcessados.push(resultadoOriginal);
+    resultadosProcessadosDeTodos.push(resultadoOriginal);
 
     //============================================================================================ Rodadas //>
 
@@ -150,6 +152,9 @@ async function Executar() {
                 resultadoFinal.Chars = result.code.length;
                 var generatedAST = esprima.parse(result.code) as any;
                 resultadoFinal.Instructions = CountNodes(generatedAST);
+                resultadoFinal.Trial = String(index);
+                resultadoFinal.duration = 0;
+                resultadosProcessadosDeTodos.push(resultadoFinal);
 
                 if (resultadoFinal.passedAllTests && (resultadoFinal.Chars < BestChars || resultadoFinal.Instructions < BestInst)) {
                     var tempo = 0;
@@ -169,7 +174,6 @@ async function Executar() {
                         tempo = csv[0].time;
                     }
 
-                    resultadoFinal.Trial = String(index);
                     resultadoFinal.duration = tempo;
                     BestResult = resultadoFinal;
                     BestChars = resultadoFinal.Chars;
@@ -197,7 +201,8 @@ async function Executar() {
 
     console.log(`Escrever csv com ${resultadosProcessados.length} resultados obtidos`);
 
-    EscreverResultadoEmCsv(DiretorioResultados, resultadosProcessados);
+    EscreverResultadoEmCsv(DiretorioResultados, resultadosProcessados, undefined);
+    EscreverResultadoEmCsv(DiretorioResultados, resultadosProcessadosDeTodos, 'Results-grouped-Boxplot.csv');
 
     process.exit();
 }
@@ -299,7 +304,7 @@ function ShowConsoleResults(result: TestResults) {
 /** 
  * Salva os resultados na raiz
  */
-function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: TestResults[]) {
+function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: TestResults[], nomeArquivoDestino: string) {
 
     var newLine: string = '\n';
     //var csvcontent = "sep=;" + newLine;
@@ -323,7 +328,9 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
 
     });
 
-    fs.writeFileSync(path.join(DiretorioResultados, 'analiseTempoExecucao.csv'), csvcontent);
+    var arquivoFinal = nomeArquivoDestino === undefined ? 'analiseTempoExecucao.csv' : nomeArquivoDestino;
+
+    fs.writeFileSync(path.join(DiretorioResultados, arquivoFinal), csvcontent);
 }
 
 function parseMillisecondsIntoReadableTime(milliseconds) {
