@@ -15,7 +15,9 @@
     "logWritter": "ConcreteLogger",
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
-    "heuristics": ["RD"],
+    "heuristics": [
+        "HC"
+    ],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout": 120,
@@ -23,7 +25,11 @@
     "copyFileTimeout": 1728000,
     "memory": 2047,
     "libraries": [
-        {"name":"esprima",   "path":"../esprima",     "mainFilePath":"dist/esprima.js" }
+        {
+            "name": "uuid",
+            "path": "Libraries/uuid",
+            "mainFilePath": "lib/uuid.js"
+        }
     ],
     "trialsConfiguration": [
         {
@@ -33,26 +39,12 @@
                 "neighborApproach": "FirstAscent",
                 "neighborsToProcess": 4,
                 "trials": 5000,
-                "restartAtEnd": true,
-                "ramdonRestart":false,
+                "restartAtEnd": false,
+                "ramdonRestart": false,
                 "ramdonNodes": false,
                 "nodesType": [
-                    "FunctionDeclaration",
-                    "FunctionExpression",
-                    "BlockStatement",
-                    "ObjectExpression",
-                    "ArrayExpression",
-                    "ExpressionStatement",
                     "IfStatement",
-                    "MemberExpression",
-                    "BinaryExpression",
-                    "CallExpression",
-                    "ThisExpression",
-                    "VariableDeclarator",
-                    "Property",
-                    "Identifier",
-                    "Literal",
-                    "ReturnStatement"
+                    "CallExpression"
                 ],
                 "individuals": 50,
                 "generations": 100,
