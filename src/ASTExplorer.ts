@@ -1,4 +1,4 @@
-import esprima = require('esprima');
+var esprima = require('../../src/esprima-0-HC5.js');
 import fs = require('fs');
 import Individual from './Individual';
 import OperatorContext from './OperatorContext';
