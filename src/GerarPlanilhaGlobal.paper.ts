@@ -34,8 +34,8 @@ var uglifyOptions = {
     }
 };
 
-//var heuristicas = ['RD', 'GA', 'GA2', 'HC', 'HC2', 'HC3', 'HC32', 'HC4', 'HC42', , 'HC5', , 'HC52'];
-var heuristicas = ['RD'];
+var heuristicas = ['RD', 'GA', 'GA2', 'HC', 'HC2', 'HC3', 'HC32', 'HC4', 'HC42', , 'HC5', , 'HC52'];
+//var heuristicas = ['RD'];
 var DiretorioBiblioteca = process.argv[2].replace("'", "");
 var arquivoRootBiblioteca = process.argv[3].replace("'", "");
 var DiretorioResultados = process.argv[4].replace("'", "");
@@ -156,7 +156,8 @@ async function Executar() {
                 resultadoFinal.Trial = String(index);
                 resultadoFinal.duration = 0;
 
-                if (resultadoFinal.passedAllTests && (resultadoFinal.Chars < BestChars || resultadoFinal.Instructions < BestInst)) {
+                //if (resultadoFinal.passedAllTests && (resultadoFinal.Chars < BestChars || resultadoFinal.Instructions < BestInst)) {
+                if (resultadoFinal.passedAllTests && (resultadoFinal.Chars < resultadoOriginal.Chars || resultadoFinal.Instructions < resultadoOriginal.Instructions)) {
                     var tempo = 0;
                     if (fs.existsSync(caminhoArquivoCVSRodada)) {
                         var fileContents = fs.readFileSync(caminhoArquivoCVSRodada).toString().replace('sep=,\n', '');
@@ -321,13 +322,13 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
     listaResultados.forEach(element => {
         var improvedLoc: number = ((originalLoc - element.Loc) / originalLoc);
         improvedLoc = improvedLoc < 0 ? improvedLoc * -1 : improvedLoc;
-        
+
         var improvedChars: number = ((originalChar - element.Chars) / originalChar);
         improvedChars = improvedChars < 0 ? improvedChars * -1 : improvedChars;
-        
+
         var improvedInstructions = ((originalIns - element.Instructions) / originalIns);
         improvedInstructions = improvedInstructions < 0 ? improvedInstructions * -1 : improvedInstructions;
-        
+
         var duracaoTotal = element.duration; //Math.round(element.duration / 60);
 
         //csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${String(improvedLoc).replace('.', ',')};${element.Chars};${String(improvedChars).replace('.', ',')};${element.Instructions};${String(improvedInstructions).replace('.', ',')};${duracaoTotal}` + newLine;
