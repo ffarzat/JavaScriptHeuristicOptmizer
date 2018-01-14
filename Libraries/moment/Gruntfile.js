@@ -190,6 +190,7 @@ module.exports = function (grunt) {
     // test tasks
     //grunt.registerTask('test', ['test:node', 'test:typescript']);
 grunt.registerTask('test', ['test:node']);
+    //grunt.registerTask('test:node', ['transpile', 'qtest']);
     grunt.registerTask('test:node', ['qtest']);
     grunt.registerTask('test:typescript', ['exec:typescript-test']);
     // TODO: For some weird reason karma doesn't like the files in
