@@ -145,14 +145,14 @@ async function Executar() {
 
                 resultadoFinal.Heuristic = heuristica;
 
-                var result = UglifyJS.minify(CodigoDaRodada, uglifyOptions);
-                if (result.code == undefined)
-                    console.log(result);
+                var resultLocal = UglifyJS.minify(CodigoDaRodada, uglifyOptions);
+                if (resultLocal.code == undefined)
+                    console.log(resultLocal);
 
-                resultadoFinal.Loc = result.code.split(/\r\n|\r|\n/).length;
-                resultadoFinal.Chars = result.code.length;
-                var generatedAST = esprima.parse(result.code) as any;
-                resultadoFinal.Instructions = CountNodes(generatedAST);
+                resultadoFinal.Loc = resultLocal.code.split(/\r\n|\r|\n/).length;
+                resultadoFinal.Chars = resultLocal.code.length;
+                var generatedLocalAST = esprima.parse(resultLocal.code) as any;
+                resultadoFinal.Instructions = CountNodes(generatedLocalAST);
                 resultadoFinal.Trial = String(index);
                 resultadoFinal.duration = 0;
 
@@ -332,7 +332,7 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
         var duracaoTotal = element.duration; //Math.round(element.duration / 60);
 
         //csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${String(improvedLoc).replace('.', ',')};${element.Chars};${String(improvedChars).replace('.', ',')};${element.Instructions};${String(improvedInstructions).replace('.', ',')};${duracaoTotal}` + newLine;
-        csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${improvedLoc.toString().replace('.', ',')};${element.Chars};${improvedChars.toString().replace('.', ',')};${element.Instructions};${improvedInstructions.toString().replace('.', ',')};${duracaoTotal}` + newLine;
+        csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${improvedLoc};${element.Chars};${improvedChars};${element.Instructions};${improvedInstructions};${duracaoTotal}` + newLine;
 
     });
 

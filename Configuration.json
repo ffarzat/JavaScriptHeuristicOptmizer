@@ -23,7 +23,7 @@
     "copyFileTimeout": 1728000,
     "memory": 2047,
     "libraries": [
-        {"name":"esprima",   "path":"../esprima",     "mainFilePath":"dist/esprima.js" }
+        {"name":"lodash",       "path":"Libraries/lodash",         "mainFilePath":"lodash.js" }
     ],
     "trialsConfiguration": [
         {
