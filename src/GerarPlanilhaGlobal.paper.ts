@@ -86,7 +86,7 @@ async function Executar() {
     tamanhoArquivoOriginalEmBytes = getFilesizeInBytes(arquivoRootBiblioteca);
 
     var resultadoOriginal = await ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade);
-
+    
     //Gerar versão minified
 
     var result = UglifyJS.minify(codigoOriginal, uglifyOptions);
@@ -142,7 +142,7 @@ async function Executar() {
                     console.log("Falhou nos testes!")
                     continue;
                 }
-
+                
                 resultadoFinal.Heuristic = heuristica;
 
                 var resultLocal = UglifyJS.minify(CodigoDaRodada, uglifyOptions);
@@ -420,6 +420,16 @@ function split(line, lineNumber) {
 }
 
 function CountNodes(AST: Object): number {
-    var traverse = require('traverse');
-    return traverse(AST).nodes().length;
+    var estraverse = require('estraverse');
+    var total = 0;
+
+    estraverse.traverse(AST, {
+        enter: function (node) {
+            if (node.type) {
+                total += 1;
+            }
+        }
+    });
+
+    return total;
 }
