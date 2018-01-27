@@ -80,8 +80,8 @@ async function Executar() {
     WriteCodeToFile(arquivoRootBiblioteca, codigoOriginal);
 
     //Despreza a primeira execuçao
-    if (Quantidade > 0)
-        await ExecutarTeste(DiretorioBiblioteca, bufferOption, 1);
+    //if (Quantidade > 0)
+        //await ExecutarTeste(DiretorioBiblioteca, bufferOption, 1);
 
     tamanhoArquivoOriginalEmBytes = getFilesizeInBytes(arquivoRootBiblioteca);
 
