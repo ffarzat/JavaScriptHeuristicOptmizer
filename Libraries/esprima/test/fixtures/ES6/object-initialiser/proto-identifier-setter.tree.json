@@ -164,6 +164,7 @@
                                     "name": "x"
                                 }
                             ],
+                            "defaults": [],
                             "body": {
                                 "range": [
                                     36,
@@ -183,8 +184,7 @@
                                 "body": []
                             },
                             "generator": false,
-                            "expression": false,
-                            "async": false
+                            "expression": false
                         },
                         "kind": "set",
                         "method": false,

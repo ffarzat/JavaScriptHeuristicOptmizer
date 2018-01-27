@@ -36,6 +36,7 @@
                 "name": "foo"
             },
             "params": [],
+            "defaults": [],
             "body": {
                 "range": [
                     16,
@@ -110,8 +111,7 @@
                 ]
             },
             "generator": true,
-            "expression": false,
-            "async": false
+            "expression": false
         }
     ],
     "sourceType": "script",

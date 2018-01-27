@@ -1,12 +1,10 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.Syntax = {
     AssignmentExpression: 'AssignmentExpression',
     AssignmentPattern: 'AssignmentPattern',
     ArrayExpression: 'ArrayExpression',
     ArrayPattern: 'ArrayPattern',
     ArrowFunctionExpression: 'ArrowFunctionExpression',
-    AwaitExpression: 'AwaitExpression',
     BlockStatement: 'BlockStatement',
     BinaryExpression: 'BinaryExpression',
     BreakStatement: 'BreakStatement',
@@ -32,7 +30,6 @@ exports.Syntax = {
     FunctionExpression: 'FunctionExpression',
     Identifier: 'Identifier',
     IfStatement: 'IfStatement',
-    Import: 'Import',
     ImportDeclaration: 'ImportDeclaration',
     ImportDefaultSpecifier: 'ImportDefaultSpecifier',
     ImportNamespaceSpecifier: 'ImportNamespaceSpecifier',

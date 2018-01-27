@@ -7,7 +7,7 @@ module.exports = function (config) {
         ],
 
         files: [
-            'dist/esprima.js',
+            'esprima.js',
             'node_modules/lodash/index.js',
             'test/dist/fixtures_js.js',
             'test/dist/fixtures_json.js',
@@ -41,11 +41,9 @@ module.exports = function (config) {
         plugins: [
             'karma-mocha',
             'karma-chrome-launcher',
-            'karma-edge-launcher',
             'karma-firefox-launcher',
             'karma-ie-launcher',
             'karma-safari-launcher',
-            'karma-safaritechpreview-launcher',
             'karma-detect-browsers'
         ]
 

@@ -57,6 +57,7 @@
                         ]
                     }
                 ],
+                "defaults": [],
                 "body": {
                     "range": [
                         8,
@@ -77,8 +78,7 @@
                     "raw": "0"
                 },
                 "generator": false,
-                "expression": true,
-                "async": false
+                "expression": true
             }
         }
     ],

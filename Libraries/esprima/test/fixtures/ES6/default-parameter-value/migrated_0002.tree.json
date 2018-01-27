@@ -53,52 +53,37 @@
                                 "id": null,
                                 "params": [
                                     {
-                                        "type": "AssignmentPattern",
-                                        "left": {
-                                            "type": "Identifier",
-                                            "name": "a",
-                                            "range": [
-                                                18,
-                                                19
-                                            ],
-                                            "loc": {
-                                                "start": {
-                                                    "line": 1,
-                                                    "column": 18
-                                                },
-                                                "end": {
-                                                    "line": 1,
-                                                    "column": 19
-                                                }
-                                            }
-                                        },
-                                        "right": {
-                                            "type": "Literal",
-                                            "value": 1,
-                                            "raw": "1",
-                                            "range": [
-                                                20,
-                                                21
-                                            ],
-                                            "loc": {
-                                                "start": {
-                                                    "line": 1,
-                                                    "column": 20
-                                                },
-                                                "end": {
-                                                    "line": 1,
-                                                    "column": 21
-                                                }
-                                            }
-                                        },
+                                        "type": "Identifier",
+                                        "name": "a",
                                         "range": [
                                             18,
-                                            21
+                                            19
                                         ],
                                         "loc": {
                                             "start": {
                                                 "line": 1,
                                                 "column": 18
+                                            },
+                                            "end": {
+                                                "line": 1,
+                                                "column": 19
+                                            }
+                                        }
+                                    }
+                                ],
+                                "defaults": [
+                                    {
+                                        "type": "Literal",
+                                        "value": 1,
+                                        "raw": "1",
+                                        "range": [
+                                            20,
+                                            21
+                                        ],
+                                        "loc": {
+                                            "start": {
+                                                "line": 1,
+                                                "column": 20
                                             },
                                             "end": {
                                                 "line": 1,
@@ -127,7 +112,6 @@
                                 },
                                 "generator": false,
                                 "expression": false,
-                                "async": false,
                                 "range": [
                                     9,
                                     25
@@ -209,20 +193,6 @@
         }
     ],
     "sourceType": "script",
-    "range": [
-        0,
-        27
-    ],
-    "loc": {
-        "start": {
-            "line": 1,
-            "column": 0
-        },
-        "end": {
-            "line": 1,
-            "column": 27
-        }
-    },
     "tokens": [
         {
             "type": "Identifier",
@@ -476,5 +446,19 @@
                 }
             }
         }
-    ]
+    ],
+    "range": [
+        0,
+        27
+    ],
+    "loc": {
+        "start": {
+            "line": 1,
+            "column": 0
+        },
+        "end": {
+            "line": 1,
+            "column": 27
+        }
+    }
 }

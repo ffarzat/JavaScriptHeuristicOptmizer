@@ -1,12 +1,11 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var assert_1 = require("./assert");
-var error_handler_1 = require("./error-handler");
-var messages_1 = require("./messages");
-var Node = require("./nodes");
-var scanner_1 = require("./scanner");
-var syntax_1 = require("./syntax");
-var token_1 = require("./token");
+var assert_1 = require('./assert');
+var messages_1 = require('./messages');
+var error_handler_1 = require('./error-handler');
+var token_1 = require('./token');
+var scanner_1 = require('./scanner');
+var syntax_1 = require('./syntax');
+var Node = require('./nodes');
 var ArrowParameterPlaceHolder = 'ArrowParameterPlaceHolder';
 var Parser = (function () {
     function Parser(code, options, delegate) {
@@ -55,20 +54,11 @@ var Parser = (function () {
             '/': 11,
             '%': 11
         };
-        this.lookahead = {
-            type: 2 /* EOF */,
-            value: '',
-            lineNumber: this.scanner.lineNumber,
-            lineStart: 0,
-            start: 0,
-            end: 0
-        };
+        this.sourceType = (options && options.sourceType === 'module') ? 'module' : 'script';
+        this.lookahead = null;
         this.hasLineTerminator = false;
         this.context = {
-            isModule: false,
-            await: false,
             allowIn: true,
-            allowStrictDirective: true,
             allowYield: true,
             firstCoverInitializedNameError: null,
             isAssignmentTarget: false,
@@ -77,24 +67,24 @@ var Parser = (function () {
             inIteration: false,
             inSwitch: false,
             labelSet: {},
-            strict: false
+            strict: (this.sourceType === 'module')
         };
         this.tokens = [];
         this.startMarker = {
             index: 0,
-            line: this.scanner.lineNumber,
-            column: 0
+            lineNumber: this.scanner.lineNumber,
+            lineStart: 0
         };
         this.lastMarker = {
             index: 0,
-            line: this.scanner.lineNumber,
-            column: 0
+            lineNumber: this.scanner.lineNumber,
+            lineStart: 0
         };
         this.nextToken();
         this.lastMarker = {
             index: this.scanner.index,
-            line: this.scanner.lineNumber,
-            column: this.scanner.index - this.scanner.lineStart
+            lineNumber: this.scanner.lineNumber,
+            lineStart: this.scanner.lineStart
         };
     }
     Parser.prototype.throwError = function (messageFormat) {
@@ -108,8 +98,8 @@ var Parser = (function () {
             return args[idx];
         });
         var index = this.lastMarker.index;
-        var line = this.lastMarker.line;
-        var column = this.lastMarker.column + 1;
+        var line = this.lastMarker.lineNumber;
+        var column = this.lastMarker.index - this.lastMarker.lineStart + 1;
         throw this.errorHandler.createError(index, line, column, msg);
     };
     Parser.prototype.tolerateError = function (messageFormat) {
@@ -124,7 +114,7 @@ var Parser = (function () {
         });
         var index = this.lastMarker.index;
         var line = this.scanner.lineNumber;
-        var column = this.lastMarker.column + 1;
+        var column = this.lastMarker.index - this.lastMarker.lineStart + 1;
         this.errorHandler.tolerateError(index, line, column, msg);
     };
     // Throw an exception because of the token.
@@ -133,13 +123,13 @@ var Parser = (function () {
         var value;
         if (token) {
             if (!message) {
-                msg = (token.type === 2 /* EOF */) ? messages_1.Messages.UnexpectedEOS :
-                    (token.type === 3 /* Identifier */) ? messages_1.Messages.UnexpectedIdentifier :
-                        (token.type === 6 /* NumericLiteral */) ? messages_1.Messages.UnexpectedNumber :
-                            (token.type === 8 /* StringLiteral */) ? messages_1.Messages.UnexpectedString :
-                                (token.type === 10 /* Template */) ? messages_1.Messages.UnexpectedTemplate :
+                msg = (token.type === token_1.Token.EOF) ? messages_1.Messages.UnexpectedEOS :
+                    (token.type === token_1.Token.Identifier) ? messages_1.Messages.UnexpectedIdentifier :
+                        (token.type === token_1.Token.NumericLiteral) ? messages_1.Messages.UnexpectedNumber :
+                            (token.type === token_1.Token.StringLiteral) ? messages_1.Messages.UnexpectedString :
+                                (token.type === token_1.Token.Template) ? messages_1.Messages.UnexpectedTemplate :
                                     messages_1.Messages.UnexpectedToken;
-                if (token.type === 4 /* Keyword */) {
+                if (token.type === token_1.Token.Keyword) {
                     if (this.scanner.isFutureReservedWord(token.value)) {
                         msg = messages_1.Messages.UnexpectedReserved;
                     }
@@ -148,7 +138,7 @@ var Parser = (function () {
                     }
                 }
             }
-            value = token.value;
+            value = (token.type === token_1.Token.Template) ? token.value.raw : token.value;
         }
         else {
             value = 'ILLEGAL';
@@ -157,14 +147,13 @@ var Parser = (function () {
         if (token && typeof token.lineNumber === 'number') {
             var index = token.start;
             var line = token.lineNumber;
-            var lastMarkerLineStart = this.lastMarker.index - this.lastMarker.column;
-            var column = token.start - lastMarkerLineStart + 1;
+            var column = token.start - this.lastMarker.lineStart + 1;
             return this.errorHandler.createError(index, line, column, msg);
         }
         else {
             var index = this.lastMarker.index;
-            var line = this.lastMarker.line;
-            var column = this.lastMarker.column + 1;
+            var line = this.lastMarker.lineNumber;
+            var column = index - this.lastMarker.lineStart + 1;
             return this.errorHandler.createError(index, line, column, msg);
         }
     };
@@ -216,7 +205,8 @@ var Parser = (function () {
         return this.scanner.source.slice(token.start, token.end);
     };
     Parser.prototype.convertToken = function (token) {
-        var t = {
+        var t;
+        t = {
             type: token_1.TokenName[token.type],
             value: this.getTokenRaw(token)
         };
@@ -226,8 +216,8 @@ var Parser = (function () {
         if (this.config.loc) {
             t.loc = {
                 start: {
-                    line: this.startMarker.line,
-                    column: this.startMarker.column
+                    line: this.startMarker.lineNumber,
+                    column: this.startMarker.index - this.startMarker.lineStart
                 },
                 end: {
                     line: this.scanner.lineNumber,
@@ -235,33 +225,30 @@ var Parser = (function () {
                 }
             };
         }
-        if (token.type === 9 /* RegularExpression */) {
-            var pattern = token.pattern;
-            var flags = token.flags;
-            t.regex = { pattern: pattern, flags: flags };
+        if (token.regex) {
+            t.regex = token.regex;
         }
         return t;
     };
     Parser.prototype.nextToken = function () {
         var token = this.lookahead;
         this.lastMarker.index = this.scanner.index;
-        this.lastMarker.line = this.scanner.lineNumber;
-        this.lastMarker.column = this.scanner.index - this.scanner.lineStart;
+        this.lastMarker.lineNumber = this.scanner.lineNumber;
+        this.lastMarker.lineStart = this.scanner.lineStart;
         this.collectComments();
-        if (this.scanner.index !== this.startMarker.index) {
-            this.startMarker.index = this.scanner.index;
-            this.startMarker.line = this.scanner.lineNumber;
-            this.startMarker.column = this.scanner.index - this.scanner.lineStart;
-        }
-        var next = this.scanner.lex();
-        this.hasLineTerminator = (token.lineNumber !== next.lineNumber);
-        if (next && this.context.strict && next.type === 3 /* Identifier */) {
+        this.startMarker.index = this.scanner.index;
+        this.startMarker.lineNumber = this.scanner.lineNumber;
+        this.startMarker.lineStart = this.scanner.lineStart;
+        var next;
+        next = this.scanner.lex();
+        this.hasLineTerminator = (token && next) ? (token.lineNumber !== next.lineNumber) : false;
+        if (next && this.context.strict && next.type === token_1.Token.Identifier) {
             if (this.scanner.isStrictModeReservedWord(next.value)) {
-                next.type = 4 /* Keyword */;
+                next.type = token_1.Token.Keyword;
             }
         }
         this.lookahead = next;
-        if (this.config.tokens && next.type !== 2 /* EOF */) {
+        if (this.config.tokens && next.type !== token_1.Token.EOF) {
             this.tokens.push(this.convertToken(next));
         }
         return token;
@@ -283,8 +270,8 @@ var Parser = (function () {
     Parser.prototype.createNode = function () {
         return {
             index: this.startMarker.index,
-            line: this.startMarker.line,
-            column: this.startMarker.column
+            line: this.startMarker.lineNumber,
+            column: this.startMarker.index - this.startMarker.lineStart
         };
     };
     Parser.prototype.startNode = function (token) {
@@ -294,19 +281,19 @@ var Parser = (function () {
             column: token.start - token.lineStart
         };
     };
-    Parser.prototype.finalize = function (marker, node) {
+    Parser.prototype.finalize = function (meta, node) {
         if (this.config.range) {
-            node.range = [marker.index, this.lastMarker.index];
+            node.range = [meta.index, this.lastMarker.index];
         }
         if (this.config.loc) {
             node.loc = {
                 start: {
-                    line: marker.line,
-                    column: marker.column,
+                    line: meta.line,
+                    column: meta.column
                 },
                 end: {
-                    line: this.lastMarker.line,
-                    column: this.lastMarker.column
+                    line: this.lastMarker.lineNumber,
+                    column: this.lastMarker.index - this.lastMarker.lineStart
                 }
             };
             if (this.config.source) {
@@ -316,13 +303,13 @@ var Parser = (function () {
         if (this.delegate) {
             var metadata = {
                 start: {
-                    line: marker.line,
-                    column: marker.column,
-                    offset: marker.index
+                    line: meta.line,
+                    column: meta.column,
+                    offset: meta.index
                 },
                 end: {
-                    line: this.lastMarker.line,
-                    column: this.lastMarker.column,
+                    line: this.lastMarker.lineNumber,
+                    column: this.lastMarker.index - this.lastMarker.lineStart,
                     offset: this.lastMarker.index
                 }
             };
@@ -334,7 +321,7 @@ var Parser = (function () {
     // If not, an exception will be thrown.
     Parser.prototype.expect = function (value) {
         var token = this.nextToken();
-        if (token.type !== 7 /* Punctuator */ || token.value !== value) {
+        if (token.type !== token_1.Token.Punctuator || token.value !== value) {
             this.throwUnexpectedToken(token);
         }
     };
@@ -342,10 +329,10 @@ var Parser = (function () {
     Parser.prototype.expectCommaSeparator = function () {
         if (this.config.tolerant) {
             var token = this.lookahead;
-            if (token.type === 7 /* Punctuator */ && token.value === ',') {
+            if (token.type === token_1.Token.Punctuator && token.value === ',') {
                 this.nextToken();
             }
-            else if (token.type === 7 /* Punctuator */ && token.value === ';') {
+            else if (token.type === token_1.Token.Punctuator && token.value === ';') {
                 this.nextToken();
                 this.tolerateUnexpectedToken(token);
             }
@@ -361,26 +348,26 @@ var Parser = (function () {
     // If not, an exception will be thrown.
     Parser.prototype.expectKeyword = function (keyword) {
         var token = this.nextToken();
-        if (token.type !== 4 /* Keyword */ || token.value !== keyword) {
+        if (token.type !== token_1.Token.Keyword || token.value !== keyword) {
             this.throwUnexpectedToken(token);
         }
     };
     // Return true if the next token matches the specified punctuator.
     Parser.prototype.match = function (value) {
-        return this.lookahead.type === 7 /* Punctuator */ && this.lookahead.value === value;
+        return this.lookahead.type === token_1.Token.Punctuator && this.lookahead.value === value;
     };
     // Return true if the next token matches the specified keyword
     Parser.prototype.matchKeyword = function (keyword) {
-        return this.lookahead.type === 4 /* Keyword */ && this.lookahead.value === keyword;
+        return this.lookahead.type === token_1.Token.Keyword && this.lookahead.value === keyword;
     };
     // Return true if the next token matches the specified contextual keyword
     // (where an identifier is sometimes a keyword depending on the context)
     Parser.prototype.matchContextualKeyword = function (keyword) {
-        return this.lookahead.type === 3 /* Identifier */ && this.lookahead.value === keyword;
+        return this.lookahead.type === token_1.Token.Identifier && this.lookahead.value === keyword;
     };
     // Return true if the next token is an assignment operator
     Parser.prototype.matchAssign = function () {
-        if (this.lookahead.type !== 7 /* Punctuator */) {
+        if (this.lookahead.type !== token_1.Token.Punctuator) {
             return false;
         }
         var op = this.lookahead.value;
@@ -463,28 +450,28 @@ var Parser = (function () {
             this.nextToken();
         }
         else if (!this.hasLineTerminator) {
-            if (this.lookahead.type !== 2 /* EOF */ && !this.match('}')) {
+            if (this.lookahead.type !== token_1.Token.EOF && !this.match('}')) {
                 this.throwUnexpectedToken(this.lookahead);
             }
             this.lastMarker.index = this.startMarker.index;
-            this.lastMarker.line = this.startMarker.line;
-            this.lastMarker.column = this.startMarker.column;
+            this.lastMarker.lineNumber = this.startMarker.lineNumber;
+            this.lastMarker.lineStart = this.startMarker.lineStart;
         }
     };
-    // https://tc39.github.io/ecma262/#sec-primary-expression
+    // ECMA-262 12.2 Primary Expressions
     Parser.prototype.parsePrimaryExpression = function () {
         var node = this.createNode();
         var expr;
-        var token, raw;
+        var value, token, raw;
         switch (this.lookahead.type) {
-            case 3 /* Identifier */:
-                if ((this.context.isModule || this.context.await) && this.lookahead.value === 'await') {
+            case token_1.Token.Identifier:
+                if (this.sourceType === 'module' && this.lookahead.value === 'await') {
                     this.tolerateUnexpectedToken(this.lookahead);
                 }
-                expr = this.matchAsyncFunction() ? this.parseFunctionExpression() : this.finalize(node, new Node.Identifier(this.nextToken().value));
+                expr = this.finalize(node, new Node.Identifier(this.nextToken().value));
                 break;
-            case 6 /* NumericLiteral */:
-            case 8 /* StringLiteral */:
+            case token_1.Token.NumericLiteral:
+            case token_1.Token.StringLiteral:
                 if (this.context.strict && this.lookahead.octal) {
                     this.tolerateUnexpectedToken(this.lookahead, messages_1.Messages.StrictOctalLiteral);
                 }
@@ -494,25 +481,28 @@ var Parser = (function () {
                 raw = this.getTokenRaw(token);
                 expr = this.finalize(node, new Node.Literal(token.value, raw));
                 break;
-            case 1 /* BooleanLiteral */:
+            case token_1.Token.BooleanLiteral:
                 this.context.isAssignmentTarget = false;
                 this.context.isBindingElement = false;
                 token = this.nextToken();
+                token.value = (token.value === 'true');
                 raw = this.getTokenRaw(token);
-                expr = this.finalize(node, new Node.Literal(token.value === 'true', raw));
+                expr = this.finalize(node, new Node.Literal(token.value, raw));
                 break;
-            case 5 /* NullLiteral */:
+            case token_1.Token.NullLiteral:
                 this.context.isAssignmentTarget = false;
                 this.context.isBindingElement = false;
                 token = this.nextToken();
+                token.value = null;
                 raw = this.getTokenRaw(token);
-                expr = this.finalize(node, new Node.Literal(null, raw));
+                expr = this.finalize(node, new Node.Literal(token.value, raw));
                 break;
-            case 10 /* Template */:
+            case token_1.Token.Template:
                 expr = this.parseTemplateLiteral();
                 break;
-            case 7 /* Punctuator */:
-                switch (this.lookahead.value) {
+            case token_1.Token.Punctuator:
+                value = this.lookahead.value;
+                switch (value) {
                     case '(':
                         this.context.isBindingElement = false;
                         expr = this.inheritCoverGrammar(this.parseGroupExpression);
@@ -530,13 +520,13 @@ var Parser = (function () {
                         this.scanner.index = this.startMarker.index;
                         token = this.nextRegexToken();
                         raw = this.getTokenRaw(token);
-                        expr = this.finalize(node, new Node.RegexLiteral(token.regex, raw, token.pattern, token.flags));
+                        expr = this.finalize(node, new Node.RegexLiteral(token.value, raw, token.regex));
                         break;
                     default:
-                        expr = this.throwUnexpectedToken(this.nextToken());
+                        this.throwUnexpectedToken(this.nextToken());
                 }
                 break;
-            case 4 /* Keyword */:
+            case token_1.Token.Keyword:
                 if (!this.context.strict && this.context.allowYield && this.matchKeyword('yield')) {
                     expr = this.parseIdentifierName();
                 }
@@ -556,20 +546,17 @@ var Parser = (function () {
                     else if (this.matchKeyword('class')) {
                         expr = this.parseClassExpression();
                     }
-                    else if (this.matchImportCall()) {
-                        expr = this.parseImportCall();
-                    }
                     else {
-                        expr = this.throwUnexpectedToken(this.nextToken());
+                        this.throwUnexpectedToken(this.nextToken());
                     }
                 }
                 break;
             default:
-                expr = this.throwUnexpectedToken(this.nextToken());
+                this.throwUnexpectedToken(this.nextToken());
         }
         return expr;
     };
-    // https://tc39.github.io/ecma262/#sec-array-initializer
+    // ECMA-262 12.2.5 Array Initializer
     Parser.prototype.parseSpreadElement = function () {
         var node = this.createNode();
         this.expect('...');
@@ -604,13 +591,11 @@ var Parser = (function () {
         this.expect(']');
         return this.finalize(node, new Node.ArrayExpression(elements));
     };
-    // https://tc39.github.io/ecma262/#sec-object-initializer
+    // ECMA-262 12.2.6 Object Initializer
     Parser.prototype.parsePropertyMethod = function (params) {
         this.context.isAssignmentTarget = false;
         this.context.isBindingElement = false;
         var previousStrict = this.context.strict;
-        var previousAllowStrictDirective = this.context.allowStrictDirective;
-        this.context.allowStrictDirective = params.simple;
         var body = this.isolateCoverGrammar(this.parseFunctionSourceElements);
         if (this.context.strict && params.firstRestricted) {
             this.tolerateUnexpectedToken(params.firstRestricted, params.message);
@@ -619,7 +604,6 @@ var Parser = (function () {
             this.tolerateUnexpectedToken(params.stricted, params.message);
         }
         this.context.strict = previousStrict;
-        this.context.allowStrictDirective = previousAllowStrictDirective;
         return body;
     };
     Parser.prototype.parsePropertyMethodFunction = function () {
@@ -632,48 +616,36 @@ var Parser = (function () {
         this.context.allowYield = previousAllowYield;
         return this.finalize(node, new Node.FunctionExpression(null, params.params, method, isGenerator));
     };
-    Parser.prototype.parsePropertyMethodAsyncFunction = function () {
-        var node = this.createNode();
-        var previousAllowYield = this.context.allowYield;
-        var previousAwait = this.context.await;
-        this.context.allowYield = false;
-        this.context.await = true;
-        var params = this.parseFormalParameters();
-        var method = this.parsePropertyMethod(params);
-        this.context.allowYield = previousAllowYield;
-        this.context.await = previousAwait;
-        return this.finalize(node, new Node.AsyncFunctionExpression(null, params.params, method));
-    };
     Parser.prototype.parseObjectPropertyKey = function () {
         var node = this.createNode();
         var token = this.nextToken();
-        var key;
+        var key = null;
         switch (token.type) {
-            case 8 /* StringLiteral */:
-            case 6 /* NumericLiteral */:
+            case token_1.Token.StringLiteral:
+            case token_1.Token.NumericLiteral:
                 if (this.context.strict && token.octal) {
                     this.tolerateUnexpectedToken(token, messages_1.Messages.StrictOctalLiteral);
                 }
                 var raw = this.getTokenRaw(token);
                 key = this.finalize(node, new Node.Literal(token.value, raw));
                 break;
-            case 3 /* Identifier */:
-            case 1 /* BooleanLiteral */:
-            case 5 /* NullLiteral */:
-            case 4 /* Keyword */:
+            case token_1.Token.Identifier:
+            case token_1.Token.BooleanLiteral:
+            case token_1.Token.NullLiteral:
+            case token_1.Token.Keyword:
                 key = this.finalize(node, new Node.Identifier(token.value));
                 break;
-            case 7 /* Punctuator */:
+            case token_1.Token.Punctuator:
                 if (token.value === '[') {
                     key = this.isolateCoverGrammar(this.parseAssignmentExpression);
                     this.expect(']');
                 }
                 else {
-                    key = this.throwUnexpectedToken(token);
+                    this.throwUnexpectedToken(token);
                 }
                 break;
             default:
-                key = this.throwUnexpectedToken(token);
+                this.throwUnexpectedToken(token);
         }
         return key;
     };
@@ -685,19 +657,14 @@ var Parser = (function () {
         var node = this.createNode();
         var token = this.lookahead;
         var kind;
-        var key = null;
-        var value = null;
+        var key;
+        var value;
         var computed = false;
         var method = false;
         var shorthand = false;
-        var isAsync = false;
-        if (token.type === 3 /* Identifier */) {
-            var id = token.value;
+        if (token.type === token_1.Token.Identifier) {
             this.nextToken();
-            computed = this.match('[');
-            isAsync = !this.hasLineTerminator && (id === 'async') &&
-                !this.match(':') && !this.match('(') && !this.match('*');
-            key = isAsync ? this.parseObjectPropertyKey() : this.finalize(node, new Node.Identifier(id));
+            key = this.finalize(node, new Node.Identifier(token.value));
         }
         else if (this.match('*')) {
             this.nextToken();
@@ -707,20 +674,20 @@ var Parser = (function () {
             key = this.parseObjectPropertyKey();
         }
         var lookaheadPropertyKey = this.qualifiedPropertyName(this.lookahead);
-        if (token.type === 3 /* Identifier */ && !isAsync && token.value === 'get' && lookaheadPropertyKey) {
+        if (token.type === token_1.Token.Identifier && token.value === 'get' && lookaheadPropertyKey) {
             kind = 'get';
             computed = this.match('[');
             key = this.parseObjectPropertyKey();
             this.context.allowYield = false;
             value = this.parseGetterMethod();
         }
-        else if (token.type === 3 /* Identifier */ && !isAsync && token.value === 'set' && lookaheadPropertyKey) {
+        else if (token.type === token_1.Token.Identifier && token.value === 'set' && lookaheadPropertyKey) {
             kind = 'set';
             computed = this.match('[');
             key = this.parseObjectPropertyKey();
             value = this.parseSetterMethod();
         }
-        else if (token.type === 7 /* Punctuator */ && token.value === '*' && lookaheadPropertyKey) {
+        else if (token.type === token_1.Token.Punctuator && token.value === '*' && lookaheadPropertyKey) {
             kind = 'init';
             computed = this.match('[');
             key = this.parseObjectPropertyKey();
@@ -732,7 +699,7 @@ var Parser = (function () {
                 this.throwUnexpectedToken(this.lookahead);
             }
             kind = 'init';
-            if (this.match(':') && !isAsync) {
+            if (this.match(':')) {
                 if (!computed && this.isPropertyKey(key, '__proto__')) {
                     if (hasProto.value) {
                         this.tolerateError(messages_1.Messages.DuplicateProtoProperty);
@@ -743,10 +710,10 @@ var Parser = (function () {
                 value = this.inheritCoverGrammar(this.parseAssignmentExpression);
             }
             else if (this.match('(')) {
-                value = isAsync ? this.parsePropertyMethodAsyncFunction() : this.parsePropertyMethodFunction();
+                value = this.parsePropertyMethodFunction();
                 method = true;
             }
-            else if (token.type === 3 /* Identifier */) {
+            else if (token.type === token_1.Token.Identifier) {
                 var id = this.finalize(node, new Node.Identifier(token.value));
                 if (this.match('=')) {
                     this.context.firstCoverInitializedNameError = this.lookahead;
@@ -772,7 +739,7 @@ var Parser = (function () {
         var properties = [];
         var hasProto = { value: false };
         while (!this.match('}')) {
-            properties.push(this.match('...') ? this.parseSpreadElement() : this.parseObjectProperty(hasProto));
+            properties.push(this.parseObjectProperty(hasProto));
             if (!this.match('}')) {
                 this.expectCommaSeparator();
             }
@@ -780,24 +747,28 @@ var Parser = (function () {
         this.expect('}');
         return this.finalize(node, new Node.ObjectExpression(properties));
     };
-    // https://tc39.github.io/ecma262/#sec-template-literals
+    // ECMA-262 12.2.9 Template Literals
     Parser.prototype.parseTemplateHead = function () {
         assert_1.assert(this.lookahead.head, 'Template literal must start with a template head');
         var node = this.createNode();
         var token = this.nextToken();
-        var raw = token.value;
-        var cooked = token.cooked;
-        return this.finalize(node, new Node.TemplateElement({ raw: raw, cooked: cooked }, token.tail));
+        var value = {
+            raw: token.value.raw,
+            cooked: token.value.cooked
+        };
+        return this.finalize(node, new Node.TemplateElement(value, token.tail));
     };
     Parser.prototype.parseTemplateElement = function () {
-        if (this.lookahead.type !== 10 /* Template */) {
+        if (this.lookahead.type !== token_1.Token.Template) {
             this.throwUnexpectedToken();
         }
         var node = this.createNode();
         var token = this.nextToken();
-        var raw = token.value;
-        var cooked = token.cooked;
-        return this.finalize(node, new Node.TemplateElement({ raw: raw, cooked: cooked }, token.tail));
+        var value = {
+            raw: token.value.raw,
+            cooked: token.value.cooked
+        };
+        return this.finalize(node, new Node.TemplateElement(value, token.tail));
     };
     Parser.prototype.parseTemplateLiteral = function () {
         var node = this.createNode();
@@ -812,7 +783,7 @@ var Parser = (function () {
         }
         return this.finalize(node, new Node.TemplateLiteral(quasis, expressions));
     };
-    // https://tc39.github.io/ecma262/#sec-grouping-operator
+    // ECMA-262 12.2.10 The Grouping Operator
     Parser.prototype.reinterpretExpressionAsPattern = function (expr) {
         switch (expr.type) {
             case syntax_1.Syntax.Identifier:
@@ -835,8 +806,7 @@ var Parser = (function () {
             case syntax_1.Syntax.ObjectExpression:
                 expr.type = syntax_1.Syntax.ObjectPattern;
                 for (var i = 0; i < expr.properties.length; i++) {
-                    var property = expr.properties[i];
-                    this.reinterpretExpressionAsPattern(property.type === syntax_1.Syntax.SpreadElement ? property : property.value);
+                    this.reinterpretExpressionAsPattern(expr.properties[i].value);
                 }
                 break;
             case syntax_1.Syntax.AssignmentExpression:
@@ -859,8 +829,7 @@ var Parser = (function () {
             }
             expr = {
                 type: ArrowParameterPlaceHolder,
-                params: [],
-                async: false
+                params: []
             };
         }
         else {
@@ -874,8 +843,7 @@ var Parser = (function () {
                 }
                 expr = {
                     type: ArrowParameterPlaceHolder,
-                    params: [expr],
-                    async: false
+                    params: [expr]
                 };
             }
             else {
@@ -886,24 +854,12 @@ var Parser = (function () {
                     var expressions = [];
                     this.context.isAssignmentTarget = false;
                     expressions.push(expr);
-                    while (this.lookahead.type !== 2 /* EOF */) {
+                    while (this.startMarker.index < this.scanner.length) {
                         if (!this.match(',')) {
                             break;
                         }
                         this.nextToken();
-                        if (this.match(')')) {
-                            this.nextToken();
-                            for (var i = 0; i < expressions.length; i++) {
-                                this.reinterpretExpressionAsPattern(expressions[i]);
-                            }
-                            arrow = true;
-                            expr = {
-                                type: ArrowParameterPlaceHolder,
-                                params: expressions,
-                                async: false
-                            };
-                        }
-                        else if (this.match('...')) {
+                        if (this.match('...')) {
                             if (!this.context.isBindingElement) {
                                 this.throwUnexpectedToken(this.lookahead);
                             }
@@ -919,8 +875,7 @@ var Parser = (function () {
                             arrow = true;
                             expr = {
                                 type: ArrowParameterPlaceHolder,
-                                params: expressions,
-                                async: false
+                                params: expressions
                             };
                         }
                         else {
@@ -941,8 +896,7 @@ var Parser = (function () {
                             arrow = true;
                             expr = {
                                 type: ArrowParameterPlaceHolder,
-                                params: [expr],
-                                async: false
+                                params: [expr]
                             };
                         }
                         if (!arrow) {
@@ -957,11 +911,10 @@ var Parser = (function () {
                             else {
                                 this.reinterpretExpressionAsPattern(expr);
                             }
-                            var parameters = (expr.type === syntax_1.Syntax.SequenceExpression ? expr.expressions : [expr]);
+                            var params_1 = (expr.type === syntax_1.Syntax.SequenceExpression ? expr.expressions : [expr]);
                             expr = {
                                 type: ArrowParameterPlaceHolder,
-                                params: parameters,
-                                async: false
+                                params: params_1
                             };
                         }
                     }
@@ -971,7 +924,7 @@ var Parser = (function () {
         }
         return expr;
     };
-    // https://tc39.github.io/ecma262/#sec-left-hand-side-expressions
+    // ECMA-262 12.3 Left-Hand-Side Expressions
     Parser.prototype.parseArguments = function () {
         this.expect('(');
         var args = [];
@@ -984,19 +937,16 @@ var Parser = (function () {
                     break;
                 }
                 this.expectCommaSeparator();
-                if (this.match(')')) {
-                    break;
-                }
             }
         }
         this.expect(')');
         return args;
     };
     Parser.prototype.isIdentifierName = function (token) {
-        return token.type === 3 /* Identifier */ ||
-            token.type === 4 /* Keyword */ ||
-            token.type === 1 /* BooleanLiteral */ ||
-            token.type === 5 /* NullLiteral */;
+        return token.type === token_1.Token.Identifier ||
+            token.type === token_1.Token.Keyword ||
+            token.type === token_1.Token.BooleanLiteral ||
+            token.type === token_1.Token.NullLiteral;
     };
     Parser.prototype.parseIdentifierName = function () {
         var node = this.createNode();
@@ -1013,16 +963,13 @@ var Parser = (function () {
         var expr;
         if (this.match('.')) {
             this.nextToken();
-            if (this.lookahead.type === 3 /* Identifier */ && this.context.inFunctionBody && this.lookahead.value === 'target') {
+            if (this.lookahead.type === token_1.Token.Identifier && this.context.inFunctionBody && this.lookahead.value === 'target') {
                 var property = this.parseIdentifierName();
                 expr = new Node.MetaProperty(id, property);
             }
             else {
                 this.throwUnexpectedToken(this.lookahead);
             }
-        }
-        else if (this.matchKeyword('import')) {
-            this.throwUnexpectedToken(this.lookahead);
         }
         else {
             var callee = this.isolateCoverGrammar(this.parseLeftHandSideExpression);
@@ -1033,50 +980,8 @@ var Parser = (function () {
         }
         return this.finalize(node, expr);
     };
-    Parser.prototype.parseAsyncArgument = function () {
-        var arg = this.parseAssignmentExpression();
-        this.context.firstCoverInitializedNameError = null;
-        return arg;
-    };
-    Parser.prototype.parseAsyncArguments = function () {
-        this.expect('(');
-        var args = [];
-        if (!this.match(')')) {
-            while (true) {
-                var expr = this.match('...') ? this.parseSpreadElement() :
-                    this.isolateCoverGrammar(this.parseAsyncArgument);
-                args.push(expr);
-                if (this.match(')')) {
-                    break;
-                }
-                this.expectCommaSeparator();
-                if (this.match(')')) {
-                    break;
-                }
-            }
-        }
-        this.expect(')');
-        return args;
-    };
-    Parser.prototype.matchImportCall = function () {
-        var match = this.matchKeyword('import');
-        if (match) {
-            var state = this.scanner.saveState();
-            this.scanner.scanComments();
-            var next = this.scanner.lex();
-            this.scanner.restoreState(state);
-            match = (next.type === 7 /* Punctuator */) && (next.value === '(');
-        }
-        return match;
-    };
-    Parser.prototype.parseImportCall = function () {
-        var node = this.createNode();
-        this.expectKeyword('import');
-        return this.finalize(node, new Node.Import());
-    };
     Parser.prototype.parseLeftHandSideExpressionAllowCall = function () {
         var startToken = this.lookahead;
-        var maybeAsync = this.matchContextualKeyword('async');
         var previousAllowIn = this.context.allowIn;
         this.context.allowIn = true;
         var expr;
@@ -1100,24 +1005,10 @@ var Parser = (function () {
                 expr = this.finalize(this.startNode(startToken), new Node.StaticMemberExpression(expr, property));
             }
             else if (this.match('(')) {
-                var asyncArrow = maybeAsync && (startToken.lineNumber === this.lookahead.lineNumber);
                 this.context.isBindingElement = false;
                 this.context.isAssignmentTarget = false;
-                var args = asyncArrow ? this.parseAsyncArguments() : this.parseArguments();
-                if (expr.type === syntax_1.Syntax.Import && args.length !== 1) {
-                    this.tolerateError(messages_1.Messages.BadImportCallArity);
-                }
+                var args = this.parseArguments();
                 expr = this.finalize(this.startNode(startToken), new Node.CallExpression(expr, args));
-                if (asyncArrow && this.match('=>')) {
-                    for (var i = 0; i < args.length; ++i) {
-                        this.reinterpretExpressionAsPattern(args[i]);
-                    }
-                    expr = {
-                        type: ArrowParameterPlaceHolder,
-                        params: args,
-                        async: true
-                    };
-                }
             }
             else if (this.match('[')) {
                 this.context.isBindingElement = false;
@@ -1127,7 +1018,7 @@ var Parser = (function () {
                 this.expect(']');
                 expr = this.finalize(this.startNode(startToken), new Node.ComputedMemberExpression(expr, property));
             }
-            else if (this.lookahead.type === 10 /* Template */ && this.lookahead.head) {
+            else if (this.lookahead.type === token_1.Token.Template && this.lookahead.head) {
                 var quasi = this.parseTemplateLiteral();
                 expr = this.finalize(this.startNode(startToken), new Node.TaggedTemplateExpression(expr, quasi));
             }
@@ -1167,7 +1058,7 @@ var Parser = (function () {
                 var property = this.parseIdentifierName();
                 expr = this.finalize(node, new Node.StaticMemberExpression(expr, property));
             }
-            else if (this.lookahead.type === 10 /* Template */ && this.lookahead.head) {
+            else if (this.lookahead.type === token_1.Token.Template && this.lookahead.head) {
                 var quasi = this.parseTemplateLiteral();
                 expr = this.finalize(node, new Node.TaggedTemplateExpression(expr, quasi));
             }
@@ -1177,7 +1068,7 @@ var Parser = (function () {
         }
         return expr;
     };
-    // https://tc39.github.io/ecma262/#sec-update-expressions
+    // ECMA-262 12.4 Update Expressions
     Parser.prototype.parseUpdateExpression = function () {
         var expr;
         var startToken = this.lookahead;
@@ -1198,7 +1089,7 @@ var Parser = (function () {
         }
         else {
             expr = this.inheritCoverGrammar(this.parseLeftHandSideExpressionAllowCall);
-            if (!this.hasLineTerminator && this.lookahead.type === 7 /* Punctuator */) {
+            if (!this.hasLineTerminator && this.lookahead.type === token_1.Token.Punctuator) {
                 if (this.match('++') || this.match('--')) {
                     if (this.context.strict && expr.type === syntax_1.Syntax.Identifier && this.scanner.isRestrictedWord(expr.name)) {
                         this.tolerateError(messages_1.Messages.StrictLHSPostfix);
@@ -1216,13 +1107,7 @@ var Parser = (function () {
         }
         return expr;
     };
-    // https://tc39.github.io/ecma262/#sec-unary-operators
-    Parser.prototype.parseAwaitExpression = function () {
-        var node = this.createNode();
-        this.nextToken();
-        var argument = this.parseUnaryExpression();
-        return this.finalize(node, new Node.AwaitExpression(argument));
-    };
+    // ECMA-262 12.5 Unary Operators
     Parser.prototype.parseUnaryExpression = function () {
         var expr;
         if (this.match('+') || this.match('-') || this.match('~') || this.match('!') ||
@@ -1236,9 +1121,6 @@ var Parser = (function () {
             }
             this.context.isAssignmentTarget = false;
             this.context.isBindingElement = false;
-        }
-        else if (this.context.await && this.matchContextualKeyword('await')) {
-            expr = this.parseAwaitExpression();
         }
         else {
             expr = this.parseUpdateExpression();
@@ -1258,21 +1140,21 @@ var Parser = (function () {
         }
         return expr;
     };
-    // https://tc39.github.io/ecma262/#sec-exp-operator
-    // https://tc39.github.io/ecma262/#sec-multiplicative-operators
-    // https://tc39.github.io/ecma262/#sec-additive-operators
-    // https://tc39.github.io/ecma262/#sec-bitwise-shift-operators
-    // https://tc39.github.io/ecma262/#sec-relational-operators
-    // https://tc39.github.io/ecma262/#sec-equality-operators
-    // https://tc39.github.io/ecma262/#sec-binary-bitwise-operators
-    // https://tc39.github.io/ecma262/#sec-binary-logical-operators
+    // ECMA-262 12.6 Exponentiation Operators
+    // ECMA-262 12.7 Multiplicative Operators
+    // ECMA-262 12.8 Additive Operators
+    // ECMA-262 12.9 Bitwise Shift Operators
+    // ECMA-262 12.10 Relational Operators
+    // ECMA-262 12.11 Equality Operators
+    // ECMA-262 12.12 Binary Bitwise Operators
+    // ECMA-262 12.13 Binary Logical Operators
     Parser.prototype.binaryPrecedence = function (token) {
         var op = token.value;
         var precedence;
-        if (token.type === 7 /* Punctuator */) {
+        if (token.type === token_1.Token.Punctuator) {
             precedence = this.operatorPrecedence[op] || 0;
         }
-        else if (token.type === 4 /* Keyword */) {
+        else if (token.type === token_1.Token.Keyword) {
             precedence = (op === 'instanceof' || (this.context.allowIn && op === 'in')) ? 7 : 0;
         }
         else {
@@ -1287,31 +1169,31 @@ var Parser = (function () {
         var prec = this.binaryPrecedence(token);
         if (prec > 0) {
             this.nextToken();
+            token.prec = prec;
             this.context.isAssignmentTarget = false;
             this.context.isBindingElement = false;
             var markers = [startToken, this.lookahead];
             var left = expr;
             var right = this.isolateCoverGrammar(this.parseExponentiationExpression);
-            var stack = [left, token.value, right];
-            var precedences = [prec];
+            var stack = [left, token, right];
             while (true) {
                 prec = this.binaryPrecedence(this.lookahead);
                 if (prec <= 0) {
                     break;
                 }
                 // Reduce: make a binary expression from the three topmost entries.
-                while ((stack.length > 2) && (prec <= precedences[precedences.length - 1])) {
+                while ((stack.length > 2) && (prec <= stack[stack.length - 2].prec)) {
                     right = stack.pop();
-                    var operator = stack.pop();
-                    precedences.pop();
+                    var operator = stack.pop().value;
                     left = stack.pop();
                     markers.pop();
                     var node = this.startNode(markers[markers.length - 1]);
                     stack.push(this.finalize(node, new Node.BinaryExpression(operator, left, right)));
                 }
                 // Shift.
-                stack.push(this.nextToken().value);
-                precedences.push(prec);
+                token = this.nextToken();
+                token.prec = prec;
+                stack.push(token);
                 markers.push(this.lookahead);
                 stack.push(this.isolateCoverGrammar(this.parseExponentiationExpression));
             }
@@ -1321,14 +1203,13 @@ var Parser = (function () {
             markers.pop();
             while (i > 1) {
                 var node = this.startNode(markers.pop());
-                var operator = stack[i - 1];
-                expr = this.finalize(node, new Node.BinaryExpression(operator, stack[i - 2], expr));
+                expr = this.finalize(node, new Node.BinaryExpression(stack[i - 1].value, stack[i - 2], expr));
                 i -= 2;
             }
         }
         return expr;
     };
-    // https://tc39.github.io/ecma262/#sec-conditional-operator
+    // ECMA-262 12.14 Conditional Operator
     Parser.prototype.parseConditionalExpression = function () {
         var startToken = this.lookahead;
         var expr = this.inheritCoverGrammar(this.parseBinaryExpression);
@@ -1346,7 +1227,7 @@ var Parser = (function () {
         }
         return expr;
     };
-    // https://tc39.github.io/ecma262/#sec-assignment-operators
+    // ECMA-262 12.15 Assignment Operators
     Parser.prototype.checkPatternParam = function (options, param) {
         switch (param.type) {
             case syntax_1.Syntax.Identifier:
@@ -1365,33 +1246,29 @@ var Parser = (function () {
                     }
                 }
                 break;
-            case syntax_1.Syntax.ObjectPattern:
-                for (var i = 0; i < param.properties.length; i++) {
-                    var property = param.properties[i];
-                    this.checkPatternParam(options, (property.type === syntax_1.Syntax.RestElement) ? property : property.value);
-                }
+            case syntax_1.Syntax.YieldExpression:
                 break;
             default:
+                assert_1.assert(param.type === syntax_1.Syntax.ObjectPattern, 'Invalid type');
+                for (var i = 0; i < param.properties.length; i++) {
+                    this.checkPatternParam(options, param.properties[i].value);
+                }
                 break;
         }
-        options.simple = options.simple && (param instanceof Node.Identifier);
     };
     Parser.prototype.reinterpretAsCoverFormalsList = function (expr) {
         var params = [expr];
         var options;
-        var asyncArrow = false;
         switch (expr.type) {
             case syntax_1.Syntax.Identifier:
                 break;
             case ArrowParameterPlaceHolder:
                 params = expr.params;
-                asyncArrow = expr.async;
                 break;
             default:
                 return null;
         }
         options = {
-            simple: true,
             paramSet: {}
         };
         for (var i = 0; i < params.length; ++i) {
@@ -1406,9 +1283,6 @@ var Parser = (function () {
                     delete param.right.argument;
                     delete param.right.delegate;
                 }
-            }
-            else if (asyncArrow && param.type === syntax_1.Syntax.Identifier && param.name === 'await') {
-                this.throwUnexpectedToken(this.lookahead);
             }
             this.checkPatternParam(options, param);
             params[i] = param;
@@ -1426,7 +1300,6 @@ var Parser = (function () {
             this.throwUnexpectedToken(token, options.message);
         }
         return {
-            simple: options.simple,
             params: params,
             stricted: options.stricted,
             firstRestricted: options.firstRestricted,
@@ -1442,22 +1315,10 @@ var Parser = (function () {
             var startToken = this.lookahead;
             var token = startToken;
             expr = this.parseConditionalExpression();
-            if (token.type === 3 /* Identifier */ && (token.lineNumber === this.lookahead.lineNumber) && token.value === 'async') {
-                if (this.lookahead.type === 3 /* Identifier */ || this.matchKeyword('yield')) {
-                    var arg = this.parsePrimaryExpression();
-                    this.reinterpretExpressionAsPattern(arg);
-                    expr = {
-                        type: ArrowParameterPlaceHolder,
-                        params: [arg],
-                        async: true
-                    };
-                }
-            }
             if (expr.type === ArrowParameterPlaceHolder || this.match('=>')) {
-                // https://tc39.github.io/ecma262/#sec-arrow-function-definitions
+                // ECMA-262 14.2 Arrow Function Definitions
                 this.context.isAssignmentTarget = false;
                 this.context.isBindingElement = false;
-                var isAsync = expr.async;
                 var list = this.reinterpretAsCoverFormalsList(expr);
                 if (list) {
                     if (this.hasLineTerminator) {
@@ -1465,24 +1326,12 @@ var Parser = (function () {
                     }
                     this.context.firstCoverInitializedNameError = null;
                     var previousStrict = this.context.strict;
-                    var previousAllowStrictDirective = this.context.allowStrictDirective;
-                    this.context.allowStrictDirective = list.simple;
                     var previousAllowYield = this.context.allowYield;
-                    var previousAwait = this.context.await;
                     this.context.allowYield = true;
-                    this.context.await = isAsync;
                     var node = this.startNode(startToken);
                     this.expect('=>');
-                    var body = void 0;
-                    if (this.match('{')) {
-                        var previousAllowIn = this.context.allowIn;
-                        this.context.allowIn = true;
-                        body = this.parseFunctionSourceElements();
-                        this.context.allowIn = previousAllowIn;
-                    }
-                    else {
-                        body = this.isolateCoverGrammar(this.parseAssignmentExpression);
-                    }
+                    var body = this.match('{') ? this.parseFunctionSourceElements() :
+                        this.isolateCoverGrammar(this.parseAssignmentExpression);
                     var expression = body.type !== syntax_1.Syntax.BlockStatement;
                     if (this.context.strict && list.firstRestricted) {
                         this.throwUnexpectedToken(list.firstRestricted, list.message);
@@ -1490,12 +1339,9 @@ var Parser = (function () {
                     if (this.context.strict && list.stricted) {
                         this.tolerateUnexpectedToken(list.stricted, list.message);
                     }
-                    expr = isAsync ? this.finalize(node, new Node.AsyncArrowFunctionExpression(list.params, body, expression)) :
-                        this.finalize(node, new Node.ArrowFunctionExpression(list.params, body, expression));
+                    expr = this.finalize(node, new Node.ArrowFunctionExpression(list.params, body, expression));
                     this.context.strict = previousStrict;
-                    this.context.allowStrictDirective = previousAllowStrictDirective;
                     this.context.allowYield = previousAllowYield;
-                    this.context.await = previousAwait;
                 }
             }
             else {
@@ -1504,7 +1350,7 @@ var Parser = (function () {
                         this.tolerateError(messages_1.Messages.InvalidLHSInAssignment);
                     }
                     if (this.context.strict && expr.type === syntax_1.Syntax.Identifier) {
-                        var id = expr;
+                        var id = (expr);
                         if (this.scanner.isRestrictedWord(id.name)) {
                             this.tolerateUnexpectedToken(token, messages_1.Messages.StrictLHSAssignment);
                         }
@@ -1520,23 +1366,22 @@ var Parser = (function () {
                         this.reinterpretExpressionAsPattern(expr);
                     }
                     token = this.nextToken();
-                    var operator = token.value;
                     var right = this.isolateCoverGrammar(this.parseAssignmentExpression);
-                    expr = this.finalize(this.startNode(startToken), new Node.AssignmentExpression(operator, expr, right));
+                    expr = this.finalize(this.startNode(startToken), new Node.AssignmentExpression(token.value, expr, right));
                     this.context.firstCoverInitializedNameError = null;
                 }
             }
         }
         return expr;
     };
-    // https://tc39.github.io/ecma262/#sec-comma-operator
+    // ECMA-262 12.16 Comma Operator
     Parser.prototype.parseExpression = function () {
         var startToken = this.lookahead;
         var expr = this.isolateCoverGrammar(this.parseAssignmentExpression);
         if (this.match(',')) {
             var expressions = [];
             expressions.push(expr);
-            while (this.lookahead.type !== 2 /* EOF */) {
+            while (this.startMarker.index < this.scanner.length) {
                 if (!this.match(',')) {
                     break;
                 }
@@ -1547,29 +1392,24 @@ var Parser = (function () {
         }
         return expr;
     };
-    // https://tc39.github.io/ecma262/#sec-block
+    // ECMA-262 13.2 Block
     Parser.prototype.parseStatementListItem = function () {
-        var statement;
+        var statement = null;
         this.context.isAssignmentTarget = true;
         this.context.isBindingElement = true;
-        if (this.lookahead.type === 4 /* Keyword */) {
+        if (this.lookahead.type === token_1.Token.Keyword) {
             switch (this.lookahead.value) {
                 case 'export':
-                    if (!this.context.isModule) {
+                    if (this.sourceType !== 'module') {
                         this.tolerateUnexpectedToken(this.lookahead, messages_1.Messages.IllegalExportDeclaration);
                     }
                     statement = this.parseExportDeclaration();
                     break;
                 case 'import':
-                    if (this.matchImportCall()) {
-                        statement = this.parseExpressionStatement();
+                    if (this.sourceType !== 'module') {
+                        this.tolerateUnexpectedToken(this.lookahead, messages_1.Messages.IllegalImportDeclaration);
                     }
-                    else {
-                        if (!this.context.isModule) {
-                            this.tolerateUnexpectedToken(this.lookahead, messages_1.Messages.IllegalImportDeclaration);
-                        }
-                        statement = this.parseImportDeclaration();
-                    }
+                    statement = this.parseImportDeclaration();
                     break;
                 case 'const':
                     statement = this.parseLexicalDeclaration({ inFor: false });
@@ -1606,26 +1446,22 @@ var Parser = (function () {
         this.expect('}');
         return this.finalize(node, new Node.BlockStatement(block));
     };
-    // https://tc39.github.io/ecma262/#sec-let-and-const-declarations
+    // ECMA-262 13.3.1 Let and Const Declarations
     Parser.prototype.parseLexicalBinding = function (kind, options) {
         var node = this.createNode();
         var params = [];
         var id = this.parsePattern(params, kind);
+        // ECMA-262 12.2.1
         if (this.context.strict && id.type === syntax_1.Syntax.Identifier) {
-            if (this.scanner.isRestrictedWord(id.name)) {
+            if (this.scanner.isRestrictedWord((id).name)) {
                 this.tolerateError(messages_1.Messages.StrictVarName);
             }
         }
         var init = null;
         if (kind === 'const') {
             if (!this.matchKeyword('in') && !this.matchContextualKeyword('of')) {
-                if (this.match('=')) {
-                    this.nextToken();
-                    init = this.isolateCoverGrammar(this.parseAssignmentExpression);
-                }
-                else {
-                    this.throwError(messages_1.Messages.DeclarationMissingInitializer, 'const');
-                }
+                this.expect('=');
+                init = this.isolateCoverGrammar(this.parseAssignmentExpression);
             }
         }
         else if ((!options.inFor && id.type !== syntax_1.Syntax.Identifier) || this.match('=')) {
@@ -1643,15 +1479,19 @@ var Parser = (function () {
         return list;
     };
     Parser.prototype.isLexicalDeclaration = function () {
-        var state = this.scanner.saveState();
-        this.scanner.scanComments();
+        var previousIndex = this.scanner.index;
+        var previousLineNumber = this.scanner.lineNumber;
+        var previousLineStart = this.scanner.lineStart;
+        this.collectComments();
         var next = this.scanner.lex();
-        this.scanner.restoreState(state);
-        return (next.type === 3 /* Identifier */) ||
-            (next.type === 7 /* Punctuator */ && next.value === '[') ||
-            (next.type === 7 /* Punctuator */ && next.value === '{') ||
-            (next.type === 4 /* Keyword */ && next.value === 'let') ||
-            (next.type === 4 /* Keyword */ && next.value === 'yield');
+        this.scanner.index = previousIndex;
+        this.scanner.lineNumber = previousLineNumber;
+        this.scanner.lineStart = previousLineStart;
+        return (next.type === token_1.Token.Identifier) ||
+            (next.type === token_1.Token.Punctuator && next.value === '[') ||
+            (next.type === token_1.Token.Punctuator && next.value === '{') ||
+            (next.type === token_1.Token.Keyword && next.value === 'let') ||
+            (next.type === token_1.Token.Keyword && next.value === 'yield');
     };
     Parser.prototype.parseLexicalDeclaration = function (options) {
         var node = this.createNode();
@@ -1661,11 +1501,12 @@ var Parser = (function () {
         this.consumeSemicolon();
         return this.finalize(node, new Node.VariableDeclaration(declarations, kind));
     };
-    // https://tc39.github.io/ecma262/#sec-destructuring-binding-patterns
+    // ECMA-262 13.3.3 Destructuring Binding Patterns
     Parser.prototype.parseBindingRestElement = function (params, kind) {
         var node = this.createNode();
         this.expect('...');
-        var arg = this.parsePattern(params, kind);
+        params.push(this.lookahead);
+        var arg = this.parseVariableIdentifier(kind);
         return this.finalize(node, new Node.RestElement(arg));
     };
     Parser.prototype.parseArrayPattern = function (params, kind) {
@@ -1700,7 +1541,7 @@ var Parser = (function () {
         var method = false;
         var key;
         var value;
-        if (this.lookahead.type === 3 /* Identifier */) {
+        if (this.lookahead.type === token_1.Token.Identifier) {
             var keyToken = this.lookahead;
             key = this.parseVariableIdentifier();
             var init = this.finalize(node, new Node.Identifier(keyToken.value));
@@ -1729,24 +1570,12 @@ var Parser = (function () {
         }
         return this.finalize(node, new Node.Property('init', key, computed, value, method, shorthand));
     };
-    Parser.prototype.parseRestProperty = function (params, kind) {
-        var node = this.createNode();
-        this.expect('...');
-        var arg = this.parsePattern(params);
-        if (this.match('=')) {
-            this.throwError(messages_1.Messages.DefaultRestProperty);
-        }
-        if (!this.match('}')) {
-            this.throwError(messages_1.Messages.PropertyAfterRestProperty);
-        }
-        return this.finalize(node, new Node.RestElement(arg));
-    };
     Parser.prototype.parseObjectPattern = function (params, kind) {
         var node = this.createNode();
         var properties = [];
         this.expect('{');
         while (!this.match('}')) {
-            properties.push(this.match('...') ? this.parseRestProperty(params, kind) : this.parsePropertyPattern(params, kind));
+            properties.push(this.parsePropertyPattern(params, kind));
             if (!this.match('}')) {
                 this.expect(',');
             }
@@ -1764,7 +1593,7 @@ var Parser = (function () {
         }
         else {
             if (this.matchKeyword('let') && (kind === 'const' || kind === 'let')) {
-                this.tolerateUnexpectedToken(this.lookahead, messages_1.Messages.LetInLexicalBinding);
+                this.tolerateUnexpectedToken(this.lookahead, messages_1.Messages.UnexpectedToken);
             }
             params.push(this.lookahead);
             pattern = this.parseVariableIdentifier(kind);
@@ -1784,20 +1613,20 @@ var Parser = (function () {
         }
         return pattern;
     };
-    // https://tc39.github.io/ecma262/#sec-variable-statement
+    // ECMA-262 13.3.2 Variable Statement
     Parser.prototype.parseVariableIdentifier = function (kind) {
         var node = this.createNode();
         var token = this.nextToken();
-        if (token.type === 4 /* Keyword */ && token.value === 'yield') {
+        if (token.type === token_1.Token.Keyword && token.value === 'yield') {
             if (this.context.strict) {
                 this.tolerateUnexpectedToken(token, messages_1.Messages.StrictReservedWord);
             }
-            else if (!this.context.allowYield) {
+            if (!this.context.allowYield) {
                 this.throwUnexpectedToken(token);
             }
         }
-        else if (token.type !== 3 /* Identifier */) {
-            if (this.context.strict && token.type === 4 /* Keyword */ && this.scanner.isStrictModeReservedWord(token.value)) {
+        else if (token.type !== token_1.Token.Identifier) {
+            if (this.context.strict && token.type === token_1.Token.Keyword && this.scanner.isStrictModeReservedWord(token.value)) {
                 this.tolerateUnexpectedToken(token, messages_1.Messages.StrictReservedWord);
             }
             else {
@@ -1806,7 +1635,7 @@ var Parser = (function () {
                 }
             }
         }
-        else if ((this.context.isModule || this.context.await) && token.type === 3 /* Identifier */ && token.value === 'await') {
+        else if (this.sourceType === 'module' && token.type === token_1.Token.Identifier && token.value === 'await') {
             this.tolerateUnexpectedToken(token);
         }
         return this.finalize(node, new Node.Identifier(token.value));
@@ -1815,8 +1644,9 @@ var Parser = (function () {
         var node = this.createNode();
         var params = [];
         var id = this.parsePattern(params, 'var');
+        // ECMA-262 12.2.1
         if (this.context.strict && id.type === syntax_1.Syntax.Identifier) {
-            if (this.scanner.isRestrictedWord(id.name)) {
+            if (this.scanner.isRestrictedWord((id).name)) {
                 this.tolerateError(messages_1.Messages.StrictVarName);
             }
         }
@@ -1847,26 +1677,20 @@ var Parser = (function () {
         this.consumeSemicolon();
         return this.finalize(node, new Node.VariableDeclaration(declarations, 'var'));
     };
-    // https://tc39.github.io/ecma262/#sec-empty-statement
+    // ECMA-262 13.4 Empty Statement
     Parser.prototype.parseEmptyStatement = function () {
         var node = this.createNode();
         this.expect(';');
         return this.finalize(node, new Node.EmptyStatement());
     };
-    // https://tc39.github.io/ecma262/#sec-expression-statement
+    // ECMA-262 13.5 Expression Statement
     Parser.prototype.parseExpressionStatement = function () {
         var node = this.createNode();
         var expr = this.parseExpression();
         this.consumeSemicolon();
         return this.finalize(node, new Node.ExpressionStatement(expr));
     };
-    // https://tc39.github.io/ecma262/#sec-if-statement
-    Parser.prototype.parseIfClause = function () {
-        if (this.context.strict && this.matchKeyword('function')) {
-            this.tolerateError(messages_1.Messages.StrictFunction);
-        }
-        return this.parseStatement();
-    };
+    // ECMA-262 13.6 If statement
     Parser.prototype.parseIfStatement = function () {
         var node = this.createNode();
         var consequent;
@@ -1880,15 +1704,15 @@ var Parser = (function () {
         }
         else {
             this.expect(')');
-            consequent = this.parseIfClause();
+            consequent = this.parseStatement();
             if (this.matchKeyword('else')) {
                 this.nextToken();
-                alternate = this.parseIfClause();
+                alternate = this.parseStatement();
             }
         }
         return this.finalize(node, new Node.IfStatement(test, consequent, alternate));
     };
-    // https://tc39.github.io/ecma262/#sec-do-while-statement
+    // ECMA-262 13.7.2 The do-while Statement
     Parser.prototype.parseDoWhileStatement = function () {
         var node = this.createNode();
         this.expectKeyword('do');
@@ -1899,18 +1723,13 @@ var Parser = (function () {
         this.expectKeyword('while');
         this.expect('(');
         var test = this.parseExpression();
-        if (!this.match(')') && this.config.tolerant) {
-            this.tolerateUnexpectedToken(this.nextToken());
-        }
-        else {
-            this.expect(')');
-            if (this.match(';')) {
-                this.nextToken();
-            }
+        this.expect(')');
+        if (this.match(';')) {
+            this.nextToken();
         }
         return this.finalize(node, new Node.DoWhileStatement(body, test));
     };
-    // https://tc39.github.io/ecma262/#sec-while-statement
+    // ECMA-262 13.7.3 The while Statement
     Parser.prototype.parseWhileStatement = function () {
         var node = this.createNode();
         var body;
@@ -1930,8 +1749,8 @@ var Parser = (function () {
         }
         return this.finalize(node, new Node.WhileStatement(test, body));
     };
-    // https://tc39.github.io/ecma262/#sec-for-statement
-    // https://tc39.github.io/ecma262/#sec-for-in-and-for-of-statements
+    // ECMA-262 13.7.4 The for Statement
+    // ECMA-262 13.7.5 The for-in and for-of Statements
     Parser.prototype.parseForStatement = function () {
         var init = null;
         var test = null;
@@ -2078,17 +1897,16 @@ var Parser = (function () {
             forIn ? this.finalize(node, new Node.ForInStatement(left, right, body)) :
                 this.finalize(node, new Node.ForOfStatement(left, right, body));
     };
-    // https://tc39.github.io/ecma262/#sec-continue-statement
+    // ECMA-262 13.8 The continue statement
     Parser.prototype.parseContinueStatement = function () {
         var node = this.createNode();
         this.expectKeyword('continue');
         var label = null;
-        if (this.lookahead.type === 3 /* Identifier */ && !this.hasLineTerminator) {
-            var id = this.parseVariableIdentifier();
-            label = id;
-            var key = '$' + id.name;
+        if (this.lookahead.type === token_1.Token.Identifier && !this.hasLineTerminator) {
+            label = this.parseVariableIdentifier();
+            var key = '$' + label.name;
             if (!Object.prototype.hasOwnProperty.call(this.context.labelSet, key)) {
-                this.throwError(messages_1.Messages.UnknownLabel, id.name);
+                this.throwError(messages_1.Messages.UnknownLabel, label.name);
             }
         }
         this.consumeSemicolon();
@@ -2097,18 +1915,17 @@ var Parser = (function () {
         }
         return this.finalize(node, new Node.ContinueStatement(label));
     };
-    // https://tc39.github.io/ecma262/#sec-break-statement
+    // ECMA-262 13.9 The break statement
     Parser.prototype.parseBreakStatement = function () {
         var node = this.createNode();
         this.expectKeyword('break');
         var label = null;
-        if (this.lookahead.type === 3 /* Identifier */ && !this.hasLineTerminator) {
-            var id = this.parseVariableIdentifier();
-            var key = '$' + id.name;
+        if (this.lookahead.type === token_1.Token.Identifier && !this.hasLineTerminator) {
+            label = this.parseVariableIdentifier();
+            var key = '$' + label.name;
             if (!Object.prototype.hasOwnProperty.call(this.context.labelSet, key)) {
-                this.throwError(messages_1.Messages.UnknownLabel, id.name);
+                this.throwError(messages_1.Messages.UnknownLabel, label.name);
             }
-            label = id;
         }
         this.consumeSemicolon();
         if (label === null && !this.context.inIteration && !this.context.inSwitch) {
@@ -2116,7 +1933,7 @@ var Parser = (function () {
         }
         return this.finalize(node, new Node.BreakStatement(label));
     };
-    // https://tc39.github.io/ecma262/#sec-return-statement
+    // ECMA-262 13.10 The return statement
     Parser.prototype.parseReturnStatement = function () {
         if (!this.context.inFunctionBody) {
             this.tolerateError(messages_1.Messages.IllegalReturn);
@@ -2124,32 +1941,25 @@ var Parser = (function () {
         var node = this.createNode();
         this.expectKeyword('return');
         var hasArgument = !this.match(';') && !this.match('}') &&
-            !this.hasLineTerminator && this.lookahead.type !== 2 /* EOF */;
+            !this.hasLineTerminator && this.lookahead.type !== token_1.Token.EOF;
         var argument = hasArgument ? this.parseExpression() : null;
         this.consumeSemicolon();
         return this.finalize(node, new Node.ReturnStatement(argument));
     };
-    // https://tc39.github.io/ecma262/#sec-with-statement
+    // ECMA-262 13.11 The with statement
     Parser.prototype.parseWithStatement = function () {
         if (this.context.strict) {
             this.tolerateError(messages_1.Messages.StrictModeWith);
         }
         var node = this.createNode();
-        var body;
         this.expectKeyword('with');
         this.expect('(');
         var object = this.parseExpression();
-        if (!this.match(')') && this.config.tolerant) {
-            this.tolerateUnexpectedToken(this.nextToken());
-            body = this.finalize(this.createNode(), new Node.EmptyStatement());
-        }
-        else {
-            this.expect(')');
-            body = this.parseStatement();
-        }
+        this.expect(')');
+        var body = this.parseStatement();
         return this.finalize(node, new Node.WithStatement(object, body));
     };
-    // https://tc39.github.io/ecma262/#sec-switch-statement
+    // ECMA-262 13.12 The switch statement
     Parser.prototype.parseSwitchCase = function () {
         var node = this.createNode();
         var test;
@@ -2199,40 +2009,22 @@ var Parser = (function () {
         this.context.inSwitch = previousInSwitch;
         return this.finalize(node, new Node.SwitchStatement(discriminant, cases));
     };
-    // https://tc39.github.io/ecma262/#sec-labelled-statements
+    // ECMA-262 13.13 Labelled Statements
     Parser.prototype.parseLabelledStatement = function () {
         var node = this.createNode();
         var expr = this.parseExpression();
         var statement;
         if ((expr.type === syntax_1.Syntax.Identifier) && this.match(':')) {
             this.nextToken();
-            var id = expr;
+            var id = (expr);
             var key = '$' + id.name;
             if (Object.prototype.hasOwnProperty.call(this.context.labelSet, key)) {
                 this.throwError(messages_1.Messages.Redeclaration, 'Label', id.name);
             }
             this.context.labelSet[key] = true;
-            var body = void 0;
-            if (this.matchKeyword('class')) {
-                this.tolerateUnexpectedToken(this.lookahead);
-                body = this.parseClassDeclaration();
-            }
-            else if (this.matchKeyword('function')) {
-                var token = this.lookahead;
-                var declaration = this.parseFunctionDeclaration();
-                if (this.context.strict) {
-                    this.tolerateUnexpectedToken(token, messages_1.Messages.StrictFunction);
-                }
-                else if (declaration.generator) {
-                    this.tolerateUnexpectedToken(token, messages_1.Messages.GeneratorInLegacyContext);
-                }
-                body = declaration;
-            }
-            else {
-                body = this.parseStatement();
-            }
+            var labeledBody = this.parseStatement();
             delete this.context.labelSet[key];
-            statement = new Node.LabeledStatement(id, body);
+            statement = new Node.LabeledStatement(id, labeledBody);
         }
         else {
             this.consumeSemicolon();
@@ -2240,7 +2032,7 @@ var Parser = (function () {
         }
         return this.finalize(node, statement);
     };
-    // https://tc39.github.io/ecma262/#sec-throw-statement
+    // ECMA-262 13.14 The throw statement
     Parser.prototype.parseThrowStatement = function () {
         var node = this.createNode();
         this.expectKeyword('throw');
@@ -2251,7 +2043,7 @@ var Parser = (function () {
         this.consumeSemicolon();
         return this.finalize(node, new Node.ThrowStatement(argument));
     };
-    // https://tc39.github.io/ecma262/#sec-try-statement
+    // ECMA-262 13.15 The try statement
     Parser.prototype.parseCatchClause = function () {
         var node = this.createNode();
         this.expectKeyword('catch');
@@ -2270,7 +2062,7 @@ var Parser = (function () {
             paramMap[key] = true;
         }
         if (this.context.strict && param.type === syntax_1.Syntax.Identifier) {
-            if (this.scanner.isRestrictedWord(param.name)) {
+            if (this.scanner.isRestrictedWord((param).name)) {
                 this.tolerateError(messages_1.Messages.StrictCatchVariable);
             }
         }
@@ -2293,26 +2085,26 @@ var Parser = (function () {
         }
         return this.finalize(node, new Node.TryStatement(block, handler, finalizer));
     };
-    // https://tc39.github.io/ecma262/#sec-debugger-statement
+    // ECMA-262 13.16 The debugger statement
     Parser.prototype.parseDebuggerStatement = function () {
         var node = this.createNode();
         this.expectKeyword('debugger');
         this.consumeSemicolon();
         return this.finalize(node, new Node.DebuggerStatement());
     };
-    // https://tc39.github.io/ecma262/#sec-ecmascript-language-statements-and-declarations
+    // ECMA-262 13 Statements
     Parser.prototype.parseStatement = function () {
-        var statement;
+        var statement = null;
         switch (this.lookahead.type) {
-            case 1 /* BooleanLiteral */:
-            case 5 /* NullLiteral */:
-            case 6 /* NumericLiteral */:
-            case 8 /* StringLiteral */:
-            case 10 /* Template */:
-            case 9 /* RegularExpression */:
+            case token_1.Token.BooleanLiteral:
+            case token_1.Token.NullLiteral:
+            case token_1.Token.NumericLiteral:
+            case token_1.Token.StringLiteral:
+            case token_1.Token.Template:
+            case token_1.Token.RegularExpression:
                 statement = this.parseExpressionStatement();
                 break;
-            case 7 /* Punctuator */:
+            case token_1.Token.Punctuator:
                 var value = this.lookahead.value;
                 if (value === '{') {
                     statement = this.parseBlock();
@@ -2327,10 +2119,10 @@ var Parser = (function () {
                     statement = this.parseExpressionStatement();
                 }
                 break;
-            case 3 /* Identifier */:
-                statement = this.matchAsyncFunction() ? this.parseFunctionDeclaration() : this.parseLabelledStatement();
+            case token_1.Token.Identifier:
+                statement = this.parseLabelledStatement();
                 break;
-            case 4 /* Keyword */:
+            case token_1.Token.Keyword:
                 switch (this.lookahead.value) {
                     case 'break':
                         statement = this.parseBreakStatement();
@@ -2380,11 +2172,11 @@ var Parser = (function () {
                 }
                 break;
             default:
-                statement = this.throwUnexpectedToken(this.lookahead);
+                this.throwUnexpectedToken(this.lookahead);
         }
         return statement;
     };
-    // https://tc39.github.io/ecma262/#sec-function-definitions
+    // ECMA-262 14.1 Function Definition
     Parser.prototype.parseFunctionSourceElements = function () {
         var node = this.createNode();
         this.expect('{');
@@ -2397,7 +2189,7 @@ var Parser = (function () {
         this.context.inIteration = false;
         this.context.inSwitch = false;
         this.context.inFunctionBody = true;
-        while (this.lookahead.type !== 2 /* EOF */) {
+        while (this.startMarker.index < this.scanner.length) {
             if (this.match('}')) {
                 break;
             }
@@ -2446,74 +2238,65 @@ var Parser = (function () {
     };
     Parser.prototype.parseRestElement = function (params) {
         var node = this.createNode();
-        this.expect('...');
-        var arg = this.parsePattern(params);
+        this.nextToken();
+        if (this.match('{')) {
+            this.throwError(messages_1.Messages.ObjectPatternAsRestParameter);
+        }
+        params.push(this.lookahead);
+        var param = this.parseVariableIdentifier();
         if (this.match('=')) {
             this.throwError(messages_1.Messages.DefaultRestParameter);
         }
         if (!this.match(')')) {
             this.throwError(messages_1.Messages.ParameterAfterRestParameter);
         }
-        return this.finalize(node, new Node.RestElement(arg));
+        return this.finalize(node, new Node.RestElement(param));
     };
     Parser.prototype.parseFormalParameter = function (options) {
+        var param;
         var params = [];
-        var param = this.match('...') ? this.parseRestElement(params) : this.parsePatternWithDefault(params);
+        var token = this.lookahead;
+        if (token.value === '...') {
+            param = this.parseRestElement(params);
+            this.validateParam(options, param.argument, param.argument.name);
+            options.params.push(param);
+            return false;
+        }
+        param = this.parsePatternWithDefault(params);
         for (var i = 0; i < params.length; i++) {
             this.validateParam(options, params[i], params[i].value);
         }
-        options.simple = options.simple && (param instanceof Node.Identifier);
         options.params.push(param);
+        return !this.match(')');
     };
     Parser.prototype.parseFormalParameters = function (firstRestricted) {
         var options;
         options = {
-            simple: true,
             params: [],
             firstRestricted: firstRestricted
         };
         this.expect('(');
         if (!this.match(')')) {
             options.paramSet = {};
-            while (this.lookahead.type !== 2 /* EOF */) {
-                this.parseFormalParameter(options);
-                if (this.match(')')) {
+            while (this.startMarker.index < this.scanner.length) {
+                if (!this.parseFormalParameter(options)) {
                     break;
                 }
                 this.expect(',');
-                if (this.match(')')) {
-                    break;
-                }
             }
         }
         this.expect(')');
         return {
-            simple: options.simple,
             params: options.params,
             stricted: options.stricted,
             firstRestricted: options.firstRestricted,
             message: options.message
         };
     };
-    Parser.prototype.matchAsyncFunction = function () {
-        var match = this.matchContextualKeyword('async');
-        if (match) {
-            var state = this.scanner.saveState();
-            this.scanner.scanComments();
-            var next = this.scanner.lex();
-            this.scanner.restoreState(state);
-            match = (state.lineNumber === next.lineNumber) && (next.type === 4 /* Keyword */) && (next.value === 'function');
-        }
-        return match;
-    };
     Parser.prototype.parseFunctionDeclaration = function (identifierIsOptional) {
         var node = this.createNode();
-        var isAsync = this.matchContextualKeyword('async');
-        if (isAsync) {
-            this.nextToken();
-        }
         this.expectKeyword('function');
-        var isGenerator = isAsync ? false : this.match('*');
+        var isGenerator = this.match('*');
         if (isGenerator) {
             this.nextToken();
         }
@@ -2539,9 +2322,7 @@ var Parser = (function () {
                 }
             }
         }
-        var previousAllowAwait = this.context.await;
         var previousAllowYield = this.context.allowYield;
-        this.context.await = isAsync;
         this.context.allowYield = !isGenerator;
         var formalParameters = this.parseFormalParameters(firstRestricted);
         var params = formalParameters.params;
@@ -2551,8 +2332,6 @@ var Parser = (function () {
             message = formalParameters.message;
         }
         var previousStrict = this.context.strict;
-        var previousAllowStrictDirective = this.context.allowStrictDirective;
-        this.context.allowStrictDirective = formalParameters.simple;
         var body = this.parseFunctionSourceElements();
         if (this.context.strict && firstRestricted) {
             this.throwUnexpectedToken(firstRestricted, message);
@@ -2561,29 +2340,20 @@ var Parser = (function () {
             this.tolerateUnexpectedToken(stricted, message);
         }
         this.context.strict = previousStrict;
-        this.context.allowStrictDirective = previousAllowStrictDirective;
-        this.context.await = previousAllowAwait;
         this.context.allowYield = previousAllowYield;
-        return isAsync ? this.finalize(node, new Node.AsyncFunctionDeclaration(id, params, body)) :
-            this.finalize(node, new Node.FunctionDeclaration(id, params, body, isGenerator));
+        return this.finalize(node, new Node.FunctionDeclaration(id, params, body, isGenerator));
     };
     Parser.prototype.parseFunctionExpression = function () {
         var node = this.createNode();
-        var isAsync = this.matchContextualKeyword('async');
-        if (isAsync) {
-            this.nextToken();
-        }
         this.expectKeyword('function');
-        var isGenerator = isAsync ? false : this.match('*');
+        var isGenerator = this.match('*');
         if (isGenerator) {
             this.nextToken();
         }
         var message;
         var id = null;
         var firstRestricted;
-        var previousAllowAwait = this.context.await;
         var previousAllowYield = this.context.allowYield;
-        this.context.await = isAsync;
         this.context.allowYield = !isGenerator;
         if (!this.match('(')) {
             var token = this.lookahead;
@@ -2612,8 +2382,6 @@ var Parser = (function () {
             message = formalParameters.message;
         }
         var previousStrict = this.context.strict;
-        var previousAllowStrictDirective = this.context.allowStrictDirective;
-        this.context.allowStrictDirective = formalParameters.simple;
         var body = this.parseFunctionSourceElements();
         if (this.context.strict && firstRestricted) {
             this.throwUnexpectedToken(firstRestricted, message);
@@ -2622,27 +2390,28 @@ var Parser = (function () {
             this.tolerateUnexpectedToken(stricted, message);
         }
         this.context.strict = previousStrict;
-        this.context.allowStrictDirective = previousAllowStrictDirective;
-        this.context.await = previousAllowAwait;
         this.context.allowYield = previousAllowYield;
-        return isAsync ? this.finalize(node, new Node.AsyncFunctionExpression(id, params, body)) :
-            this.finalize(node, new Node.FunctionExpression(id, params, body, isGenerator));
+        return this.finalize(node, new Node.FunctionExpression(id, params, body, isGenerator));
     };
-    // https://tc39.github.io/ecma262/#sec-directive-prologues-and-the-use-strict-directive
+    // ECMA-262 14.1.1 Directive Prologues
     Parser.prototype.parseDirective = function () {
         var token = this.lookahead;
+        var directive = null;
         var node = this.createNode();
         var expr = this.parseExpression();
-        var directive = (expr.type === syntax_1.Syntax.Literal) ? this.getTokenRaw(token).slice(1, -1) : null;
+        if (expr.type === syntax_1.Syntax.Literal) {
+            directive = this.getTokenRaw(token).slice(1, -1);
+        }
         this.consumeSemicolon();
-        return this.finalize(node, directive ? new Node.Directive(expr, directive) : new Node.ExpressionStatement(expr));
+        return this.finalize(node, directive ? new Node.Directive(expr, directive) :
+            new Node.ExpressionStatement(expr));
     };
     Parser.prototype.parseDirectivePrologues = function () {
         var firstRestricted = null;
         var body = [];
         while (true) {
             var token = this.lookahead;
-            if (token.type !== 8 /* StringLiteral */) {
+            if (token.type !== token_1.Token.StringLiteral) {
                 break;
             }
             var statement = this.parseDirective();
@@ -2656,9 +2425,6 @@ var Parser = (function () {
                 if (firstRestricted) {
                     this.tolerateUnexpectedToken(firstRestricted, messages_1.Messages.StrictOctalLiteral);
                 }
-                if (!this.context.allowStrictDirective) {
-                    this.tolerateUnexpectedToken(token, messages_1.Messages.IllegalLanguageModeDirective);
-                }
             }
             else {
                 if (!firstRestricted && token.octal) {
@@ -2668,51 +2434,59 @@ var Parser = (function () {
         }
         return body;
     };
-    // https://tc39.github.io/ecma262/#sec-method-definitions
+    // ECMA-262 14.3 Method Definitions
     Parser.prototype.qualifiedPropertyName = function (token) {
         switch (token.type) {
-            case 3 /* Identifier */:
-            case 8 /* StringLiteral */:
-            case 1 /* BooleanLiteral */:
-            case 5 /* NullLiteral */:
-            case 6 /* NumericLiteral */:
-            case 4 /* Keyword */:
+            case token_1.Token.Identifier:
+            case token_1.Token.StringLiteral:
+            case token_1.Token.BooleanLiteral:
+            case token_1.Token.NullLiteral:
+            case token_1.Token.NumericLiteral:
+            case token_1.Token.Keyword:
                 return true;
-            case 7 /* Punctuator */:
+            case token_1.Token.Punctuator:
                 return token.value === '[';
-            default:
-                break;
         }
         return false;
     };
     Parser.prototype.parseGetterMethod = function () {
         var node = this.createNode();
+        this.expect('(');
+        this.expect(')');
         var isGenerator = false;
+        var params = {
+            params: [],
+            stricted: null,
+            firstRestricted: null,
+            message: null
+        };
         var previousAllowYield = this.context.allowYield;
         this.context.allowYield = false;
-        var formalParameters = this.parseFormalParameters();
-        if (formalParameters.params.length > 0) {
-            this.tolerateError(messages_1.Messages.BadGetterArity);
-        }
-        var method = this.parsePropertyMethod(formalParameters);
+        var method = this.parsePropertyMethod(params);
         this.context.allowYield = previousAllowYield;
-        return this.finalize(node, new Node.FunctionExpression(null, formalParameters.params, method, isGenerator));
+        return this.finalize(node, new Node.FunctionExpression(null, params.params, method, isGenerator));
     };
     Parser.prototype.parseSetterMethod = function () {
         var node = this.createNode();
+        var options = {
+            params: [],
+            firstRestricted: null,
+            paramSet: {}
+        };
         var isGenerator = false;
         var previousAllowYield = this.context.allowYield;
         this.context.allowYield = false;
-        var formalParameters = this.parseFormalParameters();
-        if (formalParameters.params.length !== 1) {
-            this.tolerateError(messages_1.Messages.BadSetterArity);
+        this.expect('(');
+        if (this.match(')')) {
+            this.tolerateUnexpectedToken(this.lookahead);
         }
-        else if (formalParameters.params[0] instanceof Node.RestElement) {
-            this.tolerateError(messages_1.Messages.BadSetterRestParameter);
+        else {
+            this.parseFormalParameter(options);
         }
-        var method = this.parsePropertyMethod(formalParameters);
+        this.expect(')');
+        var method = this.parsePropertyMethod(options);
         this.context.allowYield = previousAllowYield;
-        return this.finalize(node, new Node.FunctionExpression(null, formalParameters.params, method, isGenerator));
+        return this.finalize(node, new Node.FunctionExpression(null, options.params, method, isGenerator));
     };
     Parser.prototype.parseGeneratorMethod = function () {
         var node = this.createNode();
@@ -2725,29 +2499,7 @@ var Parser = (function () {
         this.context.allowYield = previousAllowYield;
         return this.finalize(node, new Node.FunctionExpression(null, params.params, method, isGenerator));
     };
-    // https://tc39.github.io/ecma262/#sec-generator-function-definitions
-    Parser.prototype.isStartOfExpression = function () {
-        var start = true;
-        var value = this.lookahead.value;
-        switch (this.lookahead.type) {
-            case 7 /* Punctuator */:
-                start = (value === '[') || (value === '(') || (value === '{') ||
-                    (value === '+') || (value === '-') ||
-                    (value === '!') || (value === '~') ||
-                    (value === '++') || (value === '--') ||
-                    (value === '/') || (value === '/='); // regular expression literal
-                break;
-            case 4 /* Keyword */:
-                start = (value === 'class') || (value === 'delete') ||
-                    (value === 'function') || (value === 'let') || (value === 'new') ||
-                    (value === 'super') || (value === 'this') || (value === 'typeof') ||
-                    (value === 'void') || (value === 'yield');
-                break;
-            default:
-                break;
-        }
-        return start;
-    };
+    // ECMA-262 14.4 Generator Function Definitions
     Parser.prototype.parseYieldExpression = function () {
         var node = this.createNode();
         this.expectKeyword('yield');
@@ -2761,24 +2513,25 @@ var Parser = (function () {
                 this.nextToken();
                 argument = this.parseAssignmentExpression();
             }
-            else if (this.isStartOfExpression()) {
-                argument = this.parseAssignmentExpression();
+            else {
+                if (!this.match(';') && !this.match('}') && !this.match(')') && this.lookahead.type !== token_1.Token.EOF) {
+                    argument = this.parseAssignmentExpression();
+                }
             }
             this.context.allowYield = previousAllowYield;
         }
         return this.finalize(node, new Node.YieldExpression(argument, delegate));
     };
-    // https://tc39.github.io/ecma262/#sec-class-definitions
+    // ECMA-262 14.5 Class Definitions
     Parser.prototype.parseClassElement = function (hasConstructor) {
         var token = this.lookahead;
         var node = this.createNode();
-        var kind = '';
-        var key = null;
-        var value = null;
+        var kind;
+        var key;
+        var value;
         var computed = false;
         var method = false;
         var isStatic = false;
-        var isAsync = false;
         if (this.match('*')) {
             this.nextToken();
         }
@@ -2797,25 +2550,9 @@ var Parser = (function () {
                     key = this.parseObjectPropertyKey();
                 }
             }
-            if ((token.type === 3 /* Identifier */) && !this.hasLineTerminator && (token.value === 'async')) {
-                var punctuator = this.lookahead.value;
-                if (punctuator !== ':' && punctuator !== '(' && punctuator !== '*') {
-                    isAsync = true;
-                    token = this.lookahead;
-                    key = this.parseObjectPropertyKey();
-                    if (token.type === 3 /* Identifier */) {
-                        if (token.value === 'get' || token.value === 'set') {
-                            this.tolerateUnexpectedToken(token);
-                        }
-                        else if (token.value === 'constructor') {
-                            this.tolerateUnexpectedToken(token, messages_1.Messages.ConstructorIsAsync);
-                        }
-                    }
-                }
-            }
         }
         var lookaheadPropertyKey = this.qualifiedPropertyName(this.lookahead);
-        if (token.type === 3 /* Identifier */) {
+        if (token.type === token_1.Token.Identifier) {
             if (token.value === 'get' && lookaheadPropertyKey) {
                 kind = 'get';
                 computed = this.match('[');
@@ -2830,7 +2567,7 @@ var Parser = (function () {
                 value = this.parseSetterMethod();
             }
         }
-        else if (token.type === 7 /* Punctuator */ && token.value === '*' && lookaheadPropertyKey) {
+        else if (token.type === token_1.Token.Punctuator && token.value === '*' && lookaheadPropertyKey) {
             kind = 'init';
             computed = this.match('[');
             key = this.parseObjectPropertyKey();
@@ -2839,7 +2576,7 @@ var Parser = (function () {
         }
         if (!kind && key && this.match('(')) {
             kind = 'init';
-            value = isAsync ? this.parsePropertyMethodAsyncFunction() : this.parsePropertyMethodFunction();
+            value = this.parsePropertyMethodFunction();
             method = true;
         }
         if (!kind) {
@@ -2853,7 +2590,7 @@ var Parser = (function () {
                 this.throwUnexpectedToken(token, messages_1.Messages.StaticPrototype);
             }
             if (!isStatic && this.isPropertyKey(key, 'constructor')) {
-                if (kind !== 'method' || !method || (value && value.generator)) {
+                if (kind !== 'method' || !method || value.generator) {
                     this.throwUnexpectedToken(token, messages_1.Messages.ConstructorSpecialMethod);
                 }
                 if (hasConstructor.value) {
@@ -2892,7 +2629,7 @@ var Parser = (function () {
         var previousStrict = this.context.strict;
         this.context.strict = true;
         this.expectKeyword('class');
-        var id = (identifierIsOptional && (this.lookahead.type !== 3 /* Identifier */)) ? null : this.parseVariableIdentifier();
+        var id = (identifierIsOptional && (this.lookahead.type !== token_1.Token.Identifier)) ? null : this.parseVariableIdentifier();
         var superClass = null;
         if (this.matchKeyword('extends')) {
             this.nextToken();
@@ -2907,7 +2644,7 @@ var Parser = (function () {
         var previousStrict = this.context.strict;
         this.context.strict = true;
         this.expectKeyword('class');
-        var id = (this.lookahead.type === 3 /* Identifier */) ? this.parseVariableIdentifier() : null;
+        var id = (this.lookahead.type === token_1.Token.Identifier) ? this.parseVariableIdentifier() : null;
         var superClass = null;
         if (this.matchKeyword('extends')) {
             this.nextToken();
@@ -2917,30 +2654,20 @@ var Parser = (function () {
         this.context.strict = previousStrict;
         return this.finalize(node, new Node.ClassExpression(id, superClass, classBody));
     };
-    // https://tc39.github.io/ecma262/#sec-scripts
-    // https://tc39.github.io/ecma262/#sec-modules
-    Parser.prototype.parseModule = function () {
-        this.context.strict = true;
-        this.context.isModule = true;
+    // ECMA-262 15.1 Scripts
+    // ECMA-262 15.2 Modules
+    Parser.prototype.parseProgram = function () {
         var node = this.createNode();
         var body = this.parseDirectivePrologues();
-        while (this.lookahead.type !== 2 /* EOF */) {
+        while (this.startMarker.index < this.scanner.length) {
             body.push(this.parseStatementListItem());
         }
-        return this.finalize(node, new Node.Module(body));
+        return this.finalize(node, new Node.Program(body, this.sourceType));
     };
-    Parser.prototype.parseScript = function () {
-        var node = this.createNode();
-        var body = this.parseDirectivePrologues();
-        while (this.lookahead.type !== 2 /* EOF */) {
-            body.push(this.parseStatementListItem());
-        }
-        return this.finalize(node, new Node.Script(body));
-    };
-    // https://tc39.github.io/ecma262/#sec-imports
+    // ECMA-262 15.2.2 Imports
     Parser.prototype.parseModuleSpecifier = function () {
         var node = this.createNode();
-        if (this.lookahead.type !== 8 /* StringLiteral */) {
+        if (this.lookahead.type !== token_1.Token.StringLiteral) {
             this.throwError(messages_1.Messages.InvalidModuleSpecifier);
         }
         var token = this.nextToken();
@@ -2950,26 +2677,14 @@ var Parser = (function () {
     // import {<foo as bar>} ...;
     Parser.prototype.parseImportSpecifier = function () {
         var node = this.createNode();
-        var imported;
         var local;
-        if (this.lookahead.type === 3 /* Identifier */) {
-            imported = this.parseVariableIdentifier();
-            local = imported;
-            if (this.matchContextualKeyword('as')) {
-                this.nextToken();
-                local = this.parseVariableIdentifier();
-            }
+        var imported = this.parseIdentifierName();
+        if (this.matchContextualKeyword('as')) {
+            this.nextToken();
+            local = this.parseVariableIdentifier();
         }
         else {
-            imported = this.parseIdentifierName();
             local = imported;
-            if (this.matchContextualKeyword('as')) {
-                this.nextToken();
-                local = this.parseVariableIdentifier();
-            }
-            else {
-                this.throwUnexpectedToken(this.nextToken());
-            }
         }
         return this.finalize(node, new Node.ImportSpecifier(local, imported));
     };
@@ -3011,7 +2726,7 @@ var Parser = (function () {
         this.expectKeyword('import');
         var src;
         var specifiers = [];
-        if (this.lookahead.type === 8 /* StringLiteral */) {
+        if (this.lookahead.type === token_1.Token.StringLiteral) {
             // import 'foo';
             src = this.parseModuleSpecifier();
         }
@@ -3055,7 +2770,7 @@ var Parser = (function () {
         this.consumeSemicolon();
         return this.finalize(node, new Node.ImportDeclaration(specifiers, src));
     };
-    // https://tc39.github.io/ecma262/#sec-exports
+    // ECMA-262 15.2.3 Exports
     Parser.prototype.parseExportSpecifier = function () {
         var node = this.createNode();
         var local = this.parseIdentifierName();
@@ -3087,13 +2802,6 @@ var Parser = (function () {
                 var declaration = this.parseClassDeclaration(true);
                 exportDeclaration = this.finalize(node, new Node.ExportDefaultDeclaration(declaration));
             }
-            else if (this.matchContextualKeyword('async')) {
-                // export default async function f () {}
-                // export default async function () {}
-                // export default async x => x
-                var declaration = this.matchAsyncFunction() ? this.parseFunctionDeclaration(true) : this.parseAssignmentExpression();
-                exportDeclaration = this.finalize(node, new Node.ExportDefaultDeclaration(declaration));
-            }
             else {
                 if (this.matchContextualKeyword('from')) {
                     this.throwError(messages_1.Messages.UnexpectedToken, this.lookahead.value);
@@ -3119,7 +2827,7 @@ var Parser = (function () {
             this.consumeSemicolon();
             exportDeclaration = this.finalize(node, new Node.ExportAllDeclaration(src));
         }
-        else if (this.lookahead.type === 4 /* Keyword */) {
+        else if (this.lookahead.type === token_1.Token.Keyword) {
             // export var f = 1;
             var declaration = void 0;
             switch (this.lookahead.value) {
@@ -3135,10 +2843,6 @@ var Parser = (function () {
                 default:
                     this.throwUnexpectedToken(this.lookahead);
             }
-            exportDeclaration = this.finalize(node, new Node.ExportNamedDeclaration(declaration, [], null));
-        }
-        else if (this.matchAsyncFunction()) {
-            var declaration = this.parseFunctionDeclaration();
             exportDeclaration = this.finalize(node, new Node.ExportNamedDeclaration(declaration, [], null));
         }
         else {

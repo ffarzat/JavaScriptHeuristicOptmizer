@@ -1,7 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var syntax_1 = require("./syntax");
-/* tslint:disable:max-classes-per-file */
+var syntax_1 = require('./syntax');
 var ArrayExpression = (function () {
     function ArrayExpression(elements) {
         this.type = syntax_1.Syntax.ArrayExpression;
@@ -26,7 +24,6 @@ var ArrowFunctionExpression = (function () {
         this.body = body;
         this.generator = false;
         this.expression = expression;
-        this.async = false;
     }
     return ArrowFunctionExpression;
 }());
@@ -50,53 +47,6 @@ var AssignmentPattern = (function () {
     return AssignmentPattern;
 }());
 exports.AssignmentPattern = AssignmentPattern;
-var AsyncArrowFunctionExpression = (function () {
-    function AsyncArrowFunctionExpression(params, body, expression) {
-        this.type = syntax_1.Syntax.ArrowFunctionExpression;
-        this.id = null;
-        this.params = params;
-        this.body = body;
-        this.generator = false;
-        this.expression = expression;
-        this.async = true;
-    }
-    return AsyncArrowFunctionExpression;
-}());
-exports.AsyncArrowFunctionExpression = AsyncArrowFunctionExpression;
-var AsyncFunctionDeclaration = (function () {
-    function AsyncFunctionDeclaration(id, params, body) {
-        this.type = syntax_1.Syntax.FunctionDeclaration;
-        this.id = id;
-        this.params = params;
-        this.body = body;
-        this.generator = false;
-        this.expression = false;
-        this.async = true;
-    }
-    return AsyncFunctionDeclaration;
-}());
-exports.AsyncFunctionDeclaration = AsyncFunctionDeclaration;
-var AsyncFunctionExpression = (function () {
-    function AsyncFunctionExpression(id, params, body) {
-        this.type = syntax_1.Syntax.FunctionExpression;
-        this.id = id;
-        this.params = params;
-        this.body = body;
-        this.generator = false;
-        this.expression = false;
-        this.async = true;
-    }
-    return AsyncFunctionExpression;
-}());
-exports.AsyncFunctionExpression = AsyncFunctionExpression;
-var AwaitExpression = (function () {
-    function AwaitExpression(argument) {
-        this.type = syntax_1.Syntax.AwaitExpression;
-        this.argument = argument;
-    }
-    return AwaitExpression;
-}());
-exports.AwaitExpression = AwaitExpression;
 var BinaryExpression = (function () {
     function BinaryExpression(operator, left, right) {
         var logical = (operator === '||' || operator === '&&');
@@ -313,7 +263,6 @@ var FunctionDeclaration = (function () {
         this.body = body;
         this.generator = generator;
         this.expression = false;
-        this.async = false;
     }
     return FunctionDeclaration;
 }());
@@ -326,7 +275,6 @@ var FunctionExpression = (function () {
         this.body = body;
         this.generator = generator;
         this.expression = false;
-        this.async = false;
     }
     return FunctionExpression;
 }());
@@ -349,13 +297,6 @@ var IfStatement = (function () {
     return IfStatement;
 }());
 exports.IfStatement = IfStatement;
-var Import = (function () {
-    function Import() {
-        this.type = syntax_1.Syntax.Import;
-    }
-    return Import;
-}());
-exports.Import = Import;
 var ImportDeclaration = (function () {
     function ImportDeclaration(specifiers, source) {
         this.type = syntax_1.Syntax.ImportDeclaration;
@@ -429,15 +370,6 @@ var MethodDefinition = (function () {
     return MethodDefinition;
 }());
 exports.MethodDefinition = MethodDefinition;
-var Module = (function () {
-    function Module(body) {
-        this.type = syntax_1.Syntax.Program;
-        this.body = body;
-        this.sourceType = 'module';
-    }
-    return Module;
-}());
-exports.Module = Module;
 var NewExpression = (function () {
     function NewExpression(callee, args) {
         this.type = syntax_1.Syntax.NewExpression;
@@ -463,6 +395,15 @@ var ObjectPattern = (function () {
     return ObjectPattern;
 }());
 exports.ObjectPattern = ObjectPattern;
+var Program = (function () {
+    function Program(body, sourceType) {
+        this.type = syntax_1.Syntax.Program;
+        this.body = body;
+        this.sourceType = sourceType;
+    }
+    return Program;
+}());
+exports.Program = Program;
 var Property = (function () {
     function Property(kind, key, computed, value, method, shorthand) {
         this.type = syntax_1.Syntax.Property;
@@ -477,11 +418,11 @@ var Property = (function () {
 }());
 exports.Property = Property;
 var RegexLiteral = (function () {
-    function RegexLiteral(value, raw, pattern, flags) {
+    function RegexLiteral(value, raw, regex) {
         this.type = syntax_1.Syntax.Literal;
         this.value = value;
         this.raw = raw;
-        this.regex = { pattern: pattern, flags: flags };
+        this.regex = regex;
     }
     return RegexLiteral;
 }());
@@ -502,15 +443,6 @@ var ReturnStatement = (function () {
     return ReturnStatement;
 }());
 exports.ReturnStatement = ReturnStatement;
-var Script = (function () {
-    function Script(body) {
-        this.type = syntax_1.Syntax.Program;
-        this.body = body;
-        this.sourceType = 'script';
-    }
-    return Script;
-}());
-exports.Script = Script;
 var SequenceExpression = (function () {
     function SequenceExpression(expressions) {
         this.type = syntax_1.Syntax.SequenceExpression;

@@ -18,13 +18,13 @@ module.exports = function (config) {
         MobileSafari_9: {
             base: 'SauceLabs',
             browserName: 'iphone',
-            platform: 'OS X 10.11',
+            platform: 'OS X 10.10',
             version: '9.0'
         },
         MobileSafari_8: {
             base: 'SauceLabs',
             browserName: 'iphone',
-            platform: 'OS X 10.11',
+            platform: 'OS X 10.10',
             version: '8.4'
         }
     });

@@ -123,6 +123,7 @@
                             "type": "FunctionExpression",
                             "id": null,
                             "params": [],
+                            "defaults": [],
                             "body": {
                                 "range": [
                                     38,
@@ -174,6 +175,7 @@
                                             "type": "ArrowFunctionExpression",
                                             "id": null,
                                             "params": [],
+                                            "defaults": [],
                                             "body": {
                                                 "range": [
                                                     54,
@@ -210,15 +212,13 @@
                                                 "arguments": []
                                             },
                                             "generator": false,
-                                            "expression": true,
-                                            "async": false
+                                            "expression": true
                                         }
                                     }
                                 ]
                             },
                             "generator": false,
-                            "expression": false,
-                            "async": false
+                            "expression": false
                         },
                         "kind": "constructor",
                         "static": false

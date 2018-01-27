@@ -1,44 +1,40 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var character_1 = require("./character");
-var JSXNode = require("./jsx-nodes");
-var jsx_syntax_1 = require("./jsx-syntax");
-var Node = require("./nodes");
-var parser_1 = require("./parser");
-var token_1 = require("./token");
-var xhtml_entities_1 = require("./xhtml-entities");
-token_1.TokenName[100 /* Identifier */] = 'JSXIdentifier';
-token_1.TokenName[101 /* Text */] = 'JSXText';
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var character_1 = require('./character');
+var token_1 = require('./token');
+var parser_1 = require('./parser');
+var xhtml_entities_1 = require('./xhtml-entities');
+var jsx_syntax_1 = require('./jsx-syntax');
+var Node = require('./nodes');
+var JSXNode = require('./jsx-nodes');
+var JSXToken;
+(function (JSXToken) {
+    JSXToken[JSXToken["Identifier"] = 100] = "Identifier";
+    JSXToken[JSXToken["Text"] = 101] = "Text";
+})(JSXToken || (JSXToken = {}));
+token_1.TokenName[JSXToken.Identifier] = 'JSXIdentifier';
+token_1.TokenName[JSXToken.Text] = 'JSXText';
 // Fully qualified element name, e.g. <svg:path> returns "svg:path"
 function getQualifiedElementName(elementName) {
     var qualifiedName;
     switch (elementName.type) {
         case jsx_syntax_1.JSXSyntax.JSXIdentifier:
-            var id = elementName;
+            var id = (elementName);
             qualifiedName = id.name;
             break;
         case jsx_syntax_1.JSXSyntax.JSXNamespacedName:
-            var ns = elementName;
+            var ns = (elementName);
             qualifiedName = getQualifiedElementName(ns.namespace) + ':' +
                 getQualifiedElementName(ns.name);
             break;
         case jsx_syntax_1.JSXSyntax.JSXMemberExpression:
-            var expr = elementName;
+            var expr = (elementName);
             qualifiedName = getQualifiedElementName(expr.object) + '.' +
                 getQualifiedElementName(expr.property);
-            break;
-        /* istanbul ignore next */
-        default:
             break;
     }
     return qualifiedName;
@@ -46,7 +42,7 @@ function getQualifiedElementName(elementName) {
 var JSXParser = (function (_super) {
     __extends(JSXParser, _super);
     function JSXParser(code, options, delegate) {
-        return _super.call(this, code, options, delegate) || this;
+        _super.call(this, code, options, delegate);
     }
     JSXParser.prototype.parsePrimaryExpression = function () {
         return this.match('<') ? this.parseJSXRoot() : _super.prototype.parsePrimaryExpression.call(this);
@@ -54,20 +50,12 @@ var JSXParser = (function (_super) {
     JSXParser.prototype.startJSX = function () {
         // Unwind the scanner before the lookahead token.
         this.scanner.index = this.startMarker.index;
-        this.scanner.lineNumber = this.startMarker.line;
-        this.scanner.lineStart = this.startMarker.index - this.startMarker.column;
+        this.scanner.lineNumber = this.startMarker.lineNumber;
+        this.scanner.lineStart = this.startMarker.lineStart;
     };
     JSXParser.prototype.finishJSX = function () {
         // Prime the next lookahead.
         this.nextToken();
-    };
-    JSXParser.prototype.reenterJSX = function () {
-        this.startJSX();
-        this.expectJSX('}');
-        // Pop the closing '}' added from the lookahead.
-        if (this.config.tokens) {
-            this.tokens.pop();
-        }
     };
     JSXParser.prototype.createJSXNode = function () {
         this.collectComments();
@@ -84,53 +72,28 @@ var JSXParser = (function (_super) {
             column: this.scanner.index - this.scanner.lineStart
         };
     };
-    JSXParser.prototype.scanXHTMLEntity = function (quote) {
+    JSXParser.prototype.scanXHTMLEntity = function () {
         var result = '&';
-        var valid = true;
-        var terminated = false;
-        var numeric = false;
-        var hex = false;
-        while (!this.scanner.eof() && valid && !terminated) {
-            var ch = this.scanner.source[this.scanner.index];
-            if (ch === quote) {
+        var str = '';
+        while (!this.scanner.eof()) {
+            var ch = this.scanner.source[this.scanner.index++];
+            if (ch === ';') {
+                if (str[0] === '#') {
+                    str = str.substr(1);
+                    var hex = (str[0] === 'x');
+                    var cp = hex ? parseInt('0' + str, 16) : parseInt(str, 10);
+                    result = String.fromCharCode(cp);
+                }
+                else if (xhtml_entities_1.XHTMLEntities[str]) {
+                    result = xhtml_entities_1.XHTMLEntities[str];
+                }
+                else {
+                    result += ch;
+                }
                 break;
             }
-            terminated = (ch === ';');
+            str += ch;
             result += ch;
-            ++this.scanner.index;
-            if (!terminated) {
-                switch (result.length) {
-                    case 2:
-                        // e.g. '&#123;'
-                        numeric = (ch === '#');
-                        break;
-                    case 3:
-                        if (numeric) {
-                            // e.g. '&#x41;'
-                            hex = (ch === 'x');
-                            valid = hex || character_1.Character.isDecimalDigit(ch.charCodeAt(0));
-                            numeric = numeric && !hex;
-                        }
-                        break;
-                    default:
-                        valid = valid && !(numeric && !character_1.Character.isDecimalDigit(ch.charCodeAt(0)));
-                        valid = valid && !(hex && !character_1.Character.isHexDigit(ch.charCodeAt(0)));
-                        break;
-                }
-            }
-        }
-        if (valid && terminated && result.length > 2) {
-            // e.g. '&#x41;' becomes just '#x41'
-            var str = result.substr(1, result.length - 2);
-            if (numeric && str.length > 1) {
-                result = String.fromCharCode(parseInt(str.substr(1), 10));
-            }
-            else if (hex && str.length > 2) {
-                result = String.fromCharCode(parseInt('0' + str.substr(1), 16));
-            }
-            else if (!numeric && !hex && xhtml_entities_1.XHTMLEntities[str]) {
-                result = xhtml_entities_1.XHTMLEntities[str];
-            }
         }
         return result;
     };
@@ -141,7 +104,7 @@ var JSXParser = (function (_super) {
         if (cp === 60 || cp === 62 || cp === 47 || cp === 58 || cp === 61 || cp === 123 || cp === 125) {
             var value = this.scanner.source[this.scanner.index++];
             return {
-                type: 7 /* Punctuator */,
+                type: token_1.Token.Punctuator,
                 value: value,
                 lineNumber: this.scanner.lineNumber,
                 lineStart: this.scanner.lineStart,
@@ -160,14 +123,14 @@ var JSXParser = (function (_super) {
                     break;
                 }
                 else if (ch === '&') {
-                    str += this.scanXHTMLEntity(quote);
+                    str += this.scanXHTMLEntity();
                 }
                 else {
                     str += ch;
                 }
             }
             return {
-                type: 8 /* StringLiteral */,
+                type: token_1.Token.StringLiteral,
                 value: str,
                 lineNumber: this.scanner.lineNumber,
                 lineStart: this.scanner.lineStart,
@@ -183,23 +146,11 @@ var JSXParser = (function (_super) {
             var start = this.scanner.index;
             this.scanner.index += value.length;
             return {
-                type: 7 /* Punctuator */,
+                type: token_1.Token.Punctuator,
                 value: value,
                 lineNumber: this.scanner.lineNumber,
                 lineStart: this.scanner.lineStart,
                 start: start,
-                end: this.scanner.index
-            };
-        }
-        // `
-        if (cp === 96) {
-            // Only placeholder, since it will be rescanned as a real assignment expression.
-            return {
-                type: 10 /* Template */,
-                value: '',
-                lineNumber: this.scanner.lineNumber,
-                lineStart: this.scanner.lineStart,
-                start: this.scanner.index,
                 end: this.scanner.index
             };
         }
@@ -222,7 +173,7 @@ var JSXParser = (function (_super) {
             }
             var id = this.scanner.source.slice(start, this.scanner.index);
             return {
-                type: 100 /* Identifier */,
+                type: JSXToken.Identifier,
                 value: id,
                 lineNumber: this.scanner.lineNumber,
                 lineStart: this.scanner.lineStart,
@@ -230,17 +181,17 @@ var JSXParser = (function (_super) {
                 end: this.scanner.index
             };
         }
-        return this.scanner.lex();
+        this.scanner.throwUnexpectedToken();
     };
     JSXParser.prototype.nextJSXToken = function () {
         this.collectComments();
         this.startMarker.index = this.scanner.index;
-        this.startMarker.line = this.scanner.lineNumber;
-        this.startMarker.column = this.scanner.index - this.scanner.lineStart;
+        this.startMarker.lineNumber = this.scanner.lineNumber;
+        this.startMarker.lineStart = this.scanner.lineStart;
         var token = this.lexJSX();
         this.lastMarker.index = this.scanner.index;
-        this.lastMarker.line = this.scanner.lineNumber;
-        this.lastMarker.column = this.scanner.index - this.scanner.lineStart;
+        this.lastMarker.lineNumber = this.scanner.lineNumber;
+        this.lastMarker.lineStart = this.scanner.lineStart;
         if (this.config.tokens) {
             this.tokens.push(this.convertToken(token));
         }
@@ -248,8 +199,8 @@ var JSXParser = (function (_super) {
     };
     JSXParser.prototype.nextJSXText = function () {
         this.startMarker.index = this.scanner.index;
-        this.startMarker.line = this.scanner.lineNumber;
-        this.startMarker.column = this.scanner.index - this.scanner.lineStart;
+        this.startMarker.lineNumber = this.scanner.lineNumber;
+        this.startMarker.lineStart = this.scanner.lineStart;
         var start = this.scanner.index;
         var text = '';
         while (!this.scanner.eof()) {
@@ -268,10 +219,10 @@ var JSXParser = (function (_super) {
             }
         }
         this.lastMarker.index = this.scanner.index;
-        this.lastMarker.line = this.scanner.lineNumber;
-        this.lastMarker.column = this.scanner.index - this.scanner.lineStart;
+        this.lastMarker.lineNumber = this.scanner.lineNumber;
+        this.lastMarker.lineStart = this.scanner.lineStart;
         var token = {
-            type: 101 /* Text */,
+            type: JSXToken.Text,
             value: text,
             lineNumber: this.scanner.lineNumber,
             lineStart: this.scanner.lineStart,
@@ -284,29 +235,33 @@ var JSXParser = (function (_super) {
         return token;
     };
     JSXParser.prototype.peekJSXToken = function () {
-        var state = this.scanner.saveState();
+        var previousIndex = this.scanner.index;
+        var previousLineNumber = this.scanner.lineNumber;
+        var previousLineStart = this.scanner.lineStart;
         this.scanner.scanComments();
         var next = this.lexJSX();
-        this.scanner.restoreState(state);
+        this.scanner.index = previousIndex;
+        this.scanner.lineNumber = previousLineNumber;
+        this.scanner.lineStart = previousLineStart;
         return next;
     };
     // Expect the next JSX token to match the specified punctuator.
     // If not, an exception will be thrown.
     JSXParser.prototype.expectJSX = function (value) {
         var token = this.nextJSXToken();
-        if (token.type !== 7 /* Punctuator */ || token.value !== value) {
+        if (token.type !== token_1.Token.Punctuator || token.value !== value) {
             this.throwUnexpectedToken(token);
         }
     };
     // Return true if the next JSX token matches the specified punctuator.
     JSXParser.prototype.matchJSX = function (value) {
         var next = this.peekJSXToken();
-        return next.type === 7 /* Punctuator */ && next.value === value;
+        return next.type === token_1.Token.Punctuator && next.value === value;
     };
     JSXParser.prototype.parseJSXIdentifier = function () {
         var node = this.createJSXNode();
         var token = this.nextJSXToken();
-        if (token.type !== 100 /* Identifier */) {
+        if (token.type !== JSXToken.Identifier) {
             this.throwUnexpectedToken(token);
         }
         return this.finalize(node, new JSXNode.JSXIdentifier(token.value));
@@ -348,7 +303,7 @@ var JSXParser = (function (_super) {
     JSXParser.prototype.parseJSXStringLiteralAttribute = function () {
         var node = this.createJSXNode();
         var token = this.nextJSXToken();
-        if (token.type !== 8 /* StringLiteral */) {
+        if (token.type !== token_1.Token.StringLiteral) {
             this.throwUnexpectedToken(token);
         }
         var raw = this.getTokenRaw(token);
@@ -357,12 +312,14 @@ var JSXParser = (function (_super) {
     JSXParser.prototype.parseJSXExpressionAttribute = function () {
         var node = this.createJSXNode();
         this.expectJSX('{');
+        var expression = null;
         this.finishJSX();
         if (this.match('}')) {
             this.tolerateError('JSX attributes must only be assigned a non-empty expression');
         }
-        var expression = this.parseAssignmentExpression();
-        this.reenterJSX();
+        expression = this.parseAssignmentExpression();
+        this.startJSX();
+        this.expectJSX('}');
         return this.finalize(node, new JSXNode.JSXExpressionContainer(expression));
     };
     JSXParser.prototype.parseJSXAttributeValue = function () {
@@ -385,7 +342,8 @@ var JSXParser = (function (_super) {
         this.expectJSX('...');
         this.finishJSX();
         var argument = this.parseAssignmentExpression();
-        this.reenterJSX();
+        this.startJSX();
+        this.expectJSX('}');
         return this.finalize(node, new JSXNode.JSXSpreadAttribute(argument));
     };
     JSXParser.prototype.parseJSXAttributes = function () {
@@ -431,23 +389,27 @@ var JSXParser = (function (_super) {
         var node = this.createJSXChildNode();
         this.collectComments();
         this.lastMarker.index = this.scanner.index;
-        this.lastMarker.line = this.scanner.lineNumber;
-        this.lastMarker.column = this.scanner.index - this.scanner.lineStart;
+        this.lastMarker.lineNumber = this.scanner.lineNumber;
+        this.lastMarker.lineStart = this.scanner.lineStart;
         return this.finalize(node, new JSXNode.JSXEmptyExpression());
     };
-    JSXParser.prototype.parseJSXExpressionContainer = function () {
-        var node = this.createJSXNode();
-        this.expectJSX('{');
+    JSXParser.prototype.parseJSXExpression = function () {
         var expression;
         if (this.matchJSX('}')) {
             expression = this.parseJSXEmptyExpression();
-            this.expectJSX('}');
         }
         else {
             this.finishJSX();
             expression = this.parseAssignmentExpression();
-            this.reenterJSX();
+            this.startJSX();
         }
+        return expression;
+    };
+    JSXParser.prototype.parseJSXExpressionContainer = function () {
+        var node = this.createJSXNode();
+        this.expectJSX('{');
+        var expression = this.parseJSXExpression();
+        this.expectJSX('}');
         return this.finalize(node, new JSXNode.JSXExpressionContainer(expression));
     };
     JSXParser.prototype.parseJSXChildren = function () {
@@ -477,7 +439,7 @@ var JSXParser = (function (_super) {
             var node = this.createJSXChildNode();
             var element = this.parseJSXBoundaryElement();
             if (element.type === jsx_syntax_1.JSXSyntax.JSXOpeningElement) {
-                var opening = element;
+                var opening = (element);
                 if (opening.selfClosing) {
                     var child = this.finalize(node, new JSXNode.JSXElement(opening, [], null));
                     el.children.push(child);
@@ -488,7 +450,7 @@ var JSXParser = (function (_super) {
                 }
             }
             if (element.type === jsx_syntax_1.JSXSyntax.JSXClosingElement) {
-                el.closing = element;
+                el.closing = (element);
                 var open_1 = getQualifiedElementName(el.opening.name);
                 var close_1 = getQualifiedElementName(el.closing.name);
                 if (open_1 !== close_1) {
@@ -496,9 +458,8 @@ var JSXParser = (function (_super) {
                 }
                 if (stack.length > 0) {
                     var child = this.finalize(el.node, new JSXNode.JSXElement(el.opening, el.children, el.closing));
-                    el = stack[stack.length - 1];
+                    el = stack.pop();
                     el.children.push(child);
-                    stack.pop();
                 }
                 else {
                     break;
@@ -528,9 +489,6 @@ var JSXParser = (function (_super) {
         var element = this.parseJSXElement();
         this.finishJSX();
         return element;
-    };
-    JSXParser.prototype.isStartOfExpression = function () {
-        return _super.prototype.isStartOfExpression.call(this) || this.match('<');
     };
     return JSXParser;
 }(parser_1.Parser));

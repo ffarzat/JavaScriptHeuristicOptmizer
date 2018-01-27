@@ -55,6 +55,7 @@
                     "elements": []
                 }
             ],
+            "defaults": [],
             "body": {
                 "range": [
                     15,
@@ -74,8 +75,7 @@
                 "body": []
             },
             "generator": false,
-            "expression": false,
-            "async": false
+            "expression": false
         }
     ],
     "sourceType": "script",

@@ -54,6 +54,7 @@
                         "name": "x"
                     }
                 ],
+                "defaults": [],
                 "body": {
                     "range": [
                         7,
@@ -109,8 +110,7 @@
                     }
                 },
                 "generator": false,
-                "expression": true,
-                "async": false
+                "expression": true
             }
         }
     ],

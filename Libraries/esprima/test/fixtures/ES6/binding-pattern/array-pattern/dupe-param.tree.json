@@ -35,8 +35,7 @@
                 "type": "Literal",
                 "value": "use strict",
                 "raw": "\"use strict\""
-            },
-            "directive": "use strict"
+            }
         },
         {
             "range": [
@@ -129,6 +128,7 @@
                     ]
                 }
             ],
+            "defaults": [],
             "body": {
                 "range": [
                     31,
@@ -148,8 +148,7 @@
                 "body": []
             },
             "generator": false,
-            "expression": false,
-            "async": false
+            "expression": false
         },
         {
             "range": [
@@ -259,6 +258,7 @@
                     ]
                 }
             ],
+            "defaults": [],
             "body": {
                 "range": [
                     55,
@@ -278,8 +278,7 @@
                 "body": []
             },
             "generator": false,
-            "expression": false,
-            "async": false
+            "expression": false
         },
         {
             "range": [
@@ -447,6 +446,7 @@
                     ]
                 }
             ],
+            "defaults": [],
             "body": {
                 "range": [
                     81,
@@ -466,8 +466,7 @@
                 "body": []
             },
             "generator": false,
-            "expression": false,
-            "async": false
+            "expression": false
         }
     ],
     "sourceType": "script",

@@ -1,18 +1,4 @@
 {
-    "range": [
-        0,
-        40
-    ],
-    "loc": {
-        "start": {
-            "line": 1,
-            "column": 0
-        },
-        "end": {
-            "line": 3,
-            "column": 1
-        }
-    },
     "type": "Program",
     "body": [
         {
@@ -50,6 +36,7 @@
                 "name": "f"
             },
             "params": [],
+            "defaults": [],
             "body": {
                 "range": [
                     13,
@@ -134,42 +121,8 @@
                                         }
                                     },
                                     "type": "MetaProperty",
-                                    "meta": {
-                                        "range": [
-                                            27,
-                                            30
-                                        ],
-                                        "loc": {
-                                            "start": {
-                                                "line": 2,
-                                                "column": 12
-                                            },
-                                            "end": {
-                                                "line": 2,
-                                                "column": 15
-                                            }
-                                        },
-                                        "type": "Identifier",
-                                        "name": "new"
-                                    },
-                                    "property": {
-                                        "range": [
-                                            31,
-                                            37
-                                        ],
-                                        "loc": {
-                                            "start": {
-                                                "line": 2,
-                                                "column": 16
-                                            },
-                                            "end": {
-                                                "line": 2,
-                                                "column": 22
-                                            }
-                                        },
-                                        "type": "Identifier",
-                                        "name": "target"
-                                    }
+                                    "meta": "new",
+                                    "property": "target"
                                 }
                             }
                         ],
@@ -178,8 +131,7 @@
                 ]
             },
             "generator": false,
-            "expression": false,
-            "async": false
+            "expression": false
         }
     ],
     "sourceType": "script",
@@ -418,5 +370,19 @@
                 }
             }
         }
-    ]
+    ],
+    "range": [
+        0,
+        40
+    ],
+    "loc": {
+        "start": {
+            "line": 1,
+            "column": 0
+        },
+        "end": {
+            "line": 3,
+            "column": 1
+        }
+    }
 }

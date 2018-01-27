@@ -124,6 +124,7 @@
                             }
                         }
                     ],
+                    "defaults": [],
                     "body": {
                         "range": [
                             22,
@@ -143,8 +144,7 @@
                         "body": []
                     },
                     "generator": false,
-                    "expression": false,
-                    "async": false
+                    "expression": false
                 }
             }
         }

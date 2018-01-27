@@ -1,5 +1,5 @@
 /*
-  Copyright JS Foundation and other contributors, https://js.foundation/
+  Copyright (c) jQuery Foundation, Inc. and Contributors, All Rights Reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -25,9 +25,9 @@
 'use strict';
 
 var escomplex = require('escomplex-js'),
-    content = require('fs').readFileSync(require.resolve('../'), 'utf-8'),
+    content = require('fs').readFileSync('esprima.js', 'utf-8'),
     opt = { logicalor: false, switchcase: false },
-    MAX = 24,
+    MAX = 22,
     list = [], bad = [];
 
 escomplex.analyse(content, opt).functions.forEach(function (entry) {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
-  Copyright JS Foundation and other contributors, https://js.foundation/
+  Copyright (c) jQuery Foundation, Inc. and Contributors, All Rights Reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -26,16 +26,13 @@
 
 'use strict';
 
-function readFile(filename) {
-    var fs = require('fs');
-    return fs.readFileSync(filename, 'utf-8').split('\n');
-}
+var fs = require('fs');
 
 function findCanonicalVersion() {
     var matcher, lines, version;
 
     matcher = /exports\.version\s+=\s+\'([0-9\.\-a-zA-Z]+)\'/;
-    lines = readFile(require.resolve('../'));
+    lines = fs.readFileSync('esprima.js', 'utf-8').split('\n');
     lines.forEach(function (line) {
         if (matcher.test(line)) {
             version = matcher.exec(line)[1];
@@ -50,7 +47,7 @@ function ensureVersion(manifestFile, expectedVersion) {
 
     console.log('Checking', manifestFile, '...');
     matcher = /"version"\s*\:\s*"([0-9\.\-a-zA-Z]+)"/;
-    lines = readFile(manifestFile);
+    lines = fs.readFileSync(manifestFile, 'utf-8').split('\n');
     lines.forEach(function (line) {
         if (matcher.test(line)) {
             version = matcher.exec(line)[1];
@@ -76,6 +73,7 @@ function checkVersion() {
     console.log('Library version is', version);
 
     ensureVersion('package.json', version);
+    ensureVersion('bower.json', version);
 }
 
 

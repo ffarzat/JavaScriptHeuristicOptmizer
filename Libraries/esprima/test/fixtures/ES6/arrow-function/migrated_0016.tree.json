@@ -26,6 +26,7 @@
                         }
                     }
                 ],
+                "defaults": [],
                 "body": {
                     "type": "ArrowFunctionExpression",
                     "id": null,
@@ -49,6 +50,7 @@
                             }
                         }
                     ],
+                    "defaults": [],
                     "body": {
                         "type": "Literal",
                         "value": 42,
@@ -70,7 +72,6 @@
                     },
                     "generator": false,
                     "expression": true,
-                    "async": false,
                     "range": [
                         5,
                         12
@@ -88,7 +89,6 @@
                 },
                 "generator": false,
                 "expression": true,
-                "async": false,
                 "range": [
                     0,
                     12

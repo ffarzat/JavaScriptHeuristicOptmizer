@@ -146,6 +146,7 @@
                             "type": "FunctionExpression",
                             "id": null,
                             "params": [],
+                            "defaults": [],
                             "body": {
                                 "range": [
                                     33,
@@ -165,8 +166,7 @@
                                 "body": []
                             },
                             "generator": false,
-                            "expression": false,
-                            "async": false
+                            "expression": false
                         },
                         "kind": "init",
                         "method": true,

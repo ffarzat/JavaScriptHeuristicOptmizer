@@ -1,14 +1,14 @@
 "use strict";
-/* tslint:disable:max-classes-per-file */
-Object.defineProperty(exports, "__esModule", { value: true });
 var ErrorHandler = (function () {
     function ErrorHandler() {
         this.errors = [];
         this.tolerant = false;
     }
+    ;
     ErrorHandler.prototype.recordError = function (error) {
         this.errors.push(error);
     };
+    ;
     ErrorHandler.prototype.tolerate = function (error) {
         if (this.tolerant) {
             this.recordError(error);
@@ -17,6 +17,7 @@ var ErrorHandler = (function () {
             throw error;
         }
     };
+    ;
     ErrorHandler.prototype.constructError = function (msg, column) {
         var error = new Error(msg);
         try {
@@ -29,9 +30,11 @@ var ErrorHandler = (function () {
                 Object.defineProperty(error, 'column', { value: column });
             }
         }
-        /* istanbul ignore next */
-        return error;
+        finally {
+            return error;
+        }
     };
+    ;
     ErrorHandler.prototype.createError = function (index, line, col, description) {
         var msg = 'Line ' + line + ': ' + description;
         var error = this.constructError(msg, col);
@@ -40,9 +43,11 @@ var ErrorHandler = (function () {
         error.description = description;
         return error;
     };
+    ;
     ErrorHandler.prototype.throwError = function (index, line, col, description) {
         throw this.createError(index, line, col, description);
     };
+    ;
     ErrorHandler.prototype.tolerateError = function (index, line, col, description) {
         var error = this.createError(index, line, col, description);
         if (this.tolerant) {
@@ -52,6 +57,7 @@ var ErrorHandler = (function () {
             throw error;
         }
     };
+    ;
     return ErrorHandler;
 }());
 exports.ErrorHandler = ErrorHandler;

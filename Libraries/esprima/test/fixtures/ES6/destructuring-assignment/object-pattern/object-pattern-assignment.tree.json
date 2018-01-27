@@ -216,6 +216,7 @@
                                     }
                                 },
                                 "type": "AssignmentPattern",
+                                "operator": "=",
                                 "left": {
                                     "range": [
                                         25,

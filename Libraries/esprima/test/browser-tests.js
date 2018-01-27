@@ -1,5 +1,5 @@
 /*
-  Copyright JS Foundation and other contributors, https://js.foundation/
+  Copyright (c) jQuery Foundation, Inc. and Contributors, All Rights Reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -76,7 +76,7 @@ function browserRunner(cases) {
             source = ''
         }
 
-        return testCase.key + " - " + source + testCaseCase;
+        return testCase.key + " - " + source  + testCaseCase;
     }
 
     function describeTests(tree, path) {

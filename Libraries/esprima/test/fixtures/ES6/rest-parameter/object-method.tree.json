@@ -176,6 +176,7 @@
                                         }
                                     }
                                 ],
+                                "defaults": [],
                                 "body": {
                                     "range": [
                                         27,
@@ -195,8 +196,7 @@
                                     "body": []
                                 },
                                 "generator": false,
-                                "expression": false,
-                                "async": false
+                                "expression": false
                             },
                             "kind": "init",
                             "method": false,

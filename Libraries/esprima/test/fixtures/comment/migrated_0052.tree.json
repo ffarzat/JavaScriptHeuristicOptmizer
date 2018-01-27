@@ -16,6 +16,7 @@
                 "name": "a"
             },
             "params": [],
+            "defaults": [],
             "body": {
                 "range": [
                     18,
@@ -26,7 +27,6 @@
             },
             "generator": false,
             "expression": false,
-            "async": false,
             "leadingComments": [
                 {
                     "type": "Block",
