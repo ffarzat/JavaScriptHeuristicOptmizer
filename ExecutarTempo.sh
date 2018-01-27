@@ -1,7 +1,8 @@
 #!/bin/sh
 node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/esprima/' 'dist/esprima.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/esprima' 30 1 'esprima'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/moment' 'moment.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/moment' 30 1 'moment'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/pug' 30 1 'pug'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/moment' 'moment.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/moment' 30 1 'moment'
+#-- https://github.com/pugjs/pug/releases/tag/pug%402.0.0-rc.1 (versão correta)
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/pug' 30 1 'pug'
 #node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/jquery' 'dist/jquery.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/jquery' 30 1 'jquery'
 #node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/node-browserify' 'index.js' '/home/fabio/Dropbox/Doutorado/2017/Experimentos/Fitness_Loc_bytes/Resultados/Global/node-browserify' 30 1 'node-browserify'
 
