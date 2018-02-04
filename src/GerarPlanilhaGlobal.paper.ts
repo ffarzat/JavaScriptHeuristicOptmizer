@@ -81,12 +81,12 @@ async function Executar() {
 
     //Despreza a primeira execuçao
     //if (Quantidade > 0)
-        //await ExecutarTeste(DiretorioBiblioteca, bufferOption, 1);
+    //await ExecutarTeste(DiretorioBiblioteca, bufferOption, 1);
 
     tamanhoArquivoOriginalEmBytes = getFilesizeInBytes(arquivoRootBiblioteca);
 
     var resultadoOriginal = await ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade);
-    
+
     //Gerar versão minified
 
     var result = UglifyJS.minify(codigoOriginal, uglifyOptions);
@@ -138,11 +138,11 @@ async function Executar() {
                 WriteCodeToFile(arquivoRootBiblioteca, CodigoDaRodada);
 
                 var resultadoFinal = await ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade);
-                if (!resultadoFinal.passedAllTests) {
-                    console.log("Falhou nos testes!")
-                    continue;
-                }
-                
+                //if (!resultadoFinal.passedAllTests) {
+                //console.log("Falhou nos testes!")
+                //continue;
+                //}
+
                 resultadoFinal.Heuristic = heuristica;
 
                 var resultLocal = UglifyJS.minify(CodigoDaRodada, uglifyOptions);
@@ -157,7 +157,8 @@ async function Executar() {
                 resultadoFinal.duration = 0;
 
                 //if (resultadoFinal.passedAllTests && (resultadoFinal.Chars < BestChars || resultadoFinal.Instructions < BestInst)) {
-                if (resultadoFinal.passedAllTests && (resultadoFinal.Chars < resultadoOriginal.Chars || resultadoFinal.Instructions < resultadoOriginal.Instructions)) {
+                //if (resultadoFinal.passedAllTests && (resultadoFinal.Chars < resultadoOriginal.Chars || resultadoFinal.Instructions < resultadoOriginal.Instructions)) {
+                if ( (resultadoFinal.Chars < resultadoOriginal.Chars || resultadoFinal.Instructions < resultadoOriginal.Instructions)) {
                     var tempo = 0;
                     if (fs.existsSync(caminhoArquivoCVSRodada)) {
                         var fileContents = fs.readFileSync(caminhoArquivoCVSRodada).toString().replace('sep=,\n', '');
