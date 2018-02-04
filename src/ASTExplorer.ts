@@ -7,6 +7,24 @@ import NodeIndex from './heuristics/NodeIndex';
 import path = require('path');
 import traverse = require('traverse');
 
+var UglifyJS = require("uglify-es");
+
+
+var uglifyOptions = {
+    mangle: true,
+    compress: {
+        sequences: true,
+        dead_code: true,
+        conditionals: true,
+        booleans: true,
+        unused: true,
+        if_return: true,
+        join_vars: true,
+        drop_console: true
+    }
+};
+
+
 var escodegen = require('escodegen');
 //var _ = require('underscore');
 
@@ -274,7 +292,10 @@ export default class ASTExplorer {
 
 
         mutant = this.ReconstruirIndividio(context, mutant);
-        mutant.modificationLog.push(`${localGlobalIndexForinstructionType};${localType};${localNodeIndex}`);
+        var localCode = mutant.ToCode();
+        var result = UglifyJS.minify(localCode, uglifyOptions);
+
+        mutant.modificationLog.push(`${localGlobalIndexForinstructionType};${localType};${result.code.length}`);
         return mutant;
     }
 

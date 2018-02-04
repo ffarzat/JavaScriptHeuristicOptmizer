@@ -13,6 +13,24 @@ import NodeIndex from './NodeIndex';
 import Library from '../Library';
 
 
+var UglifyJS = require("uglify-es");
+
+
+var uglifyOptions = {
+    mangle: true,
+    compress: {
+        sequences: true,
+        dead_code: true,
+        conditionals: true,
+        booleans: true,
+        unused: true,
+        if_return: true,
+        join_vars: true,
+        drop_console: true
+    }
+};
+
+
 //[FunctionExpression, FunctionDeclaration and ArrowFunctionExpression]
 
 /**
@@ -167,6 +185,15 @@ export default class HC extends IHeuristic {
 
                 process.nextTick(() => {
                     this.findBestInThisTrial = false; //força o false antes de executar
+
+                    if (time > 0) {
+                        //Adiciona o reinicio ao log
+                        var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "HC");
+                        var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+                        var result = UglifyJS.minify(this.bestIndividual.ToCode(), uglifyOptions);
+                        fs.appendFileSync(file, `${time};${this.restartCounter};RESTART;${result.code.length} \n`);
+                    }
+
                     this.reRunGlobal(trialIndex, contagem + 1, cb);
                 });
             } else {
@@ -185,6 +212,19 @@ export default class HC extends IHeuristic {
         var nodesIndexList: NodeIndex[] = this.DoIndexes(this.bestIndividual);
         var indexes: NodeIndex = nodesIndexList[0];
         this._logger.Write(`[HC] Initial index: ${indexes.Type}`);
+
+        //Save modifications log
+        if (time == 0) {
+            var result = UglifyJS.minify(this.bestIndividual.ToCode(), uglifyOptions);
+            this.bestIndividual.modificationLog.push(`0;original;${result.code.length}`);
+
+            var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "HC");
+            var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+            var logString = this.bestIndividual.modificationLog[this.bestIndividual.modificationLog.length - 1];
+            fs.appendFileSync(file, `counter;index;instructionType;totalChars \n`);
+            fs.appendFileSync(file, `${time};${logString} \n`);
+        }
+
 
         this.executeCalculatedTimes(time, indexes, nodesIndexList, (quantasVezesJaExecutou: number) => {
             cb(quantasVezesJaExecutou);
@@ -376,7 +416,7 @@ export default class HC extends IHeuristic {
                     foundNewBest = this.UpdateBest(element);
 
 
-                    var constante_quantas_voltar = 0; //this._config.neighborsToProcess;
+                    var constante_quantas_voltar = this._config.neighborsToProcess;
 
                     if (foundNewBest && this.neighborApproach === 'FirstAscent') {
                         this.findBestInThisTrial = foundNewBest;
@@ -384,7 +424,7 @@ export default class HC extends IHeuristic {
                         //Save modifications log
                         var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "HC");
                         var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
-                        var logString = element.modificationLog[element.modificationLog.length-1];
+                        var logString = element.modificationLog[element.modificationLog.length - 1];
                         fs.appendFileSync(file, `${time};${logString} \n`);
 
                         //Jump to first best founded
