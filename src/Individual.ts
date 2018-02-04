@@ -36,6 +36,9 @@ export default class Individual {
 
     typesRemoved: string[] = [];
 
+    //Saves a log for this individual in order to determine how was its constructin over the mutations
+    modificationLog: string[] = [];
+
 
     /**
      * Get parsed AST object
@@ -88,6 +91,7 @@ export default class Individual {
     Clone(): Individual {
         var newOne = new Individual();
         newOne.typesRemoved = this.typesRemoved.slice();
+        newOne.modificationLog = this.modificationLog.slice();
         newOne.AST =   traverse(this.AST).clone();
         newOne.testResults = traverse(this.testResults).clone();
         return newOne;

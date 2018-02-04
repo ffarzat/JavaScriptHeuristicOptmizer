@@ -1,5 +1,8 @@
 /// <reference path="../typings/tsd.d.ts" />
 
+import fs = require('fs');
+import path = require('path');
+
 import IConfiguration from '../IConfiguration';
 import TrialEspecificConfiguration from '../TrialEspecificConfiguration';
 import IHeuristic from './IHeuristic';
@@ -373,10 +376,17 @@ export default class HC extends IHeuristic {
                     foundNewBest = this.UpdateBest(element);
 
 
-                    var constante_quantas_voltar = this._config.neighborsToProcess;
+                    var constante_quantas_voltar = 0; //this._config.neighborsToProcess;
 
                     if (foundNewBest && this.neighborApproach === 'FirstAscent') {
                         this.findBestInThisTrial = foundNewBest;
+
+                        //Save modifications log
+                        var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "HC");
+                        var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+                        var logString = element.modificationLog[element.modificationLog.length-1];
+                        fs.appendFileSync(file, `${time};${logString} \n`);
+
                         //Jump to first best founded
                         var updatedIndexList = this.DoIndexes(this.bestIndividual);
                         nodesIndexList = updatedIndexList.slice();

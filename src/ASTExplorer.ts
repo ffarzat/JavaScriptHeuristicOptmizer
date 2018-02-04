@@ -56,6 +56,8 @@ export default class ASTExplorer {
             newCtx.First.AST = oldFirst.astObj;
             newCtx.First.testResults = oldFirst.testResults;
             newCtx.First.typesRemoved = oldFirst.typesRemoved;
+            newCtx.First.modificationLog = oldFirst.modificationLog;
+
         }
 
         if (context.Second) {
@@ -66,6 +68,7 @@ export default class ASTExplorer {
             newCtx.Second.AST = oldSecond.astObj;
             newCtx.Second.testResults = oldSecond.testResults;
             newCtx.Second.typesRemoved = oldSecond.typesRemoved;
+            newCtx.Second.modificationLog = oldSecond.modificationLog;
         }
 
         if (context.ActualBestForFunctionScope) {
@@ -74,6 +77,7 @@ export default class ASTExplorer {
             newCtx.ActualBestForFunctionScope.AST = oldActualBestForFunctionScope.astObj;
             newCtx.ActualBestForFunctionScope.testResults = oldActualBestForFunctionScope.testResults;
             newCtx.ActualBestForFunctionScope.typesRemoved = oldActualBestForFunctionScope.typesRemoved;
+            newCtx.ActualBestForFunctionScope.modificationLog = oldActualBestForFunctionScope.modificationLog;
         }
 
         if (context.Original) {
@@ -84,6 +88,7 @@ export default class ASTExplorer {
             newCtx.Original.AST = oldOriginal.astObj;
             newCtx.Original.testResults = oldOriginal.testResults;
             newCtx.Original.typesRemoved = oldOriginal.typesRemoved;
+            newCtx.Original.modificationLog = oldOriginal.modificationLog;
         }
 
         return newCtx;
@@ -234,6 +239,8 @@ export default class ASTExplorer {
         const fs = require('fs');
         var mutant = context.First.Clone();
         var localNodeIndex = context.NodeIndex;
+        var localGlobalIndexForinstructionType = context.globalIndexForinstructionType;
+        var localType = context.instructionType;
         var counter = 0;
 
         //console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
@@ -267,9 +274,7 @@ export default class ASTExplorer {
 
 
         mutant = this.ReconstruirIndividio(context, mutant);
-
-
-
+        mutant.modificationLog.push(`${localGlobalIndexForinstructionType};${localType};${localNodeIndex}`);
         return mutant;
     }
 
