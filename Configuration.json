@@ -23,47 +23,22 @@
     "clientTimeout": 300,
     "clientsTotal": 7,
     "copyFileTimeout": 1728000,
-    "memory": 2047,
+    "memory": 8192,
     "libraries": [
-        {
-            "name": "d3-node",
-            "path": "Libraries/d3-node/",
-            "mainFilePath": "index.js"
-        },
-        {
-            "name": "exectimer",
-            "path": "Libraries/exectimer",
-            "mainFilePath": "index.js"
-        },
         {
             "name": "uuid",
             "path": "Libraries/uuid",
             "mainFilePath": "lib/uuid.js"
         },
         {
-            "name": "minimist",
-            "path": "Libraries/minimist",
-            "mainFilePath": "index.js"
-        },
-        {
-            "name": "plivo-node",
-            "path": "Libraries/plivo-node",
-            "mainFilePath": "lib/plivo.js"
-        },
-        {
-            "name": "tleaf",
-            "path": "Libraries/tleaf",
-            "mainFilePath": "src/ask.js"
+            "name": "xml2js",
+            "path": "Libraries/xml2js/",
+            "mainFilePath": "lib/xml2js.js"
         },
         {
             "name": "lodash",
             "path": "Libraries/lodash",
             "mainFilePath": "lodash.js"
-        },
-        {
-            "name": "xml2js",
-            "path": "Libraries/xml2js/",
-            "mainFilePath": "lib/xml2js.js"
         },
         {
             "name": "moment",
