@@ -1,5 +1,5 @@
 /*
-  Copyright JS Foundation and other contributors, https://js.foundation/
+  Copyright (c) jQuery Foundation, Inc. and Contributors, All Rights Reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -51,7 +51,7 @@
          * Determines which type of test it is based on the filepath
          */
         function getType() {
-            return _(['tree', 'tokens', 'failure']).find(function (type) {
+            return _(['module', 'tree', 'tokens', 'failure', 'result']).find(function (type) {
                 var suffix = '.' + type;
                 return (filePath.slice(-suffix.length) === suffix);
             });

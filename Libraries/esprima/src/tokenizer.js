@@ -1,13 +1,13 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var error_handler_1 = require("./error-handler");
-var scanner_1 = require("./scanner");
-var token_1 = require("./token");
+var scanner_1 = require('./scanner');
+var error_handler_1 = require('./error-handler');
+var token_1 = require('./token');
 var Reader = (function () {
     function Reader() {
         this.values = [];
         this.curly = this.paren = -1;
     }
+    ;
     // A function following one of those tokens is an expression.
     Reader.prototype.beforeFunctionExpression = function (t) {
         return ['(', '{', '[', 'in', 'typeof', 'instanceof', 'new',
@@ -20,6 +20,7 @@ var Reader = (function () {
             '|', '^', '!', '~', '&&', '||', '?', ':', '===', '==', '>=',
             '<=', '<', '>', '!=', '!=='].indexOf(t) >= 0;
     };
+    ;
     // Determine if forward slash (/) is an operator or part of a regular expression
     // https://github.com/mozilla/sweet.js/wiki/design
     Reader.prototype.isRegexStart = function () {
@@ -31,8 +32,8 @@ var Reader = (function () {
                 regex = false;
                 break;
             case ')':
-                var keyword = this.values[this.paren - 1];
-                regex = (keyword === 'if' || keyword === 'while' || keyword === 'for' || keyword === 'with');
+                var check = this.values[this.paren - 1];
+                regex = (check === 'if' || check === 'while' || check === 'for' || check === 'with');
                 break;
             case '}':
                 // Dividing a function by anything makes little sense,
@@ -40,22 +41,20 @@ var Reader = (function () {
                 regex = false;
                 if (this.values[this.curly - 3] === 'function') {
                     // Anonymous function, e.g. function(){} /42
-                    var check = this.values[this.curly - 4];
-                    regex = check ? !this.beforeFunctionExpression(check) : false;
+                    var check_1 = this.values[this.curly - 4];
+                    regex = check_1 ? !this.beforeFunctionExpression(check_1) : false;
                 }
                 else if (this.values[this.curly - 4] === 'function') {
                     // Named function, e.g. function f(){} /42/
-                    var check = this.values[this.curly - 5];
-                    regex = check ? !this.beforeFunctionExpression(check) : true;
+                    var check_2 = this.values[this.curly - 5];
+                    regex = check_2 ? !this.beforeFunctionExpression(check_2) : true;
                 }
-                break;
-            default:
-                break;
         }
         return regex;
     };
+    ;
     Reader.prototype.push = function (token) {
-        if (token.type === 7 /* Punctuator */ || token.type === 4 /* Keyword */) {
+        if (token.type === token_1.Token.Punctuator || token.type === token_1.Token.Keyword) {
             if (token.value === '{') {
                 this.curly = this.values.length;
             }
@@ -68,6 +67,7 @@ var Reader = (function () {
             this.values.push(null);
         }
     };
+    ;
     return Reader;
 }());
 var Tokenizer = (function () {
@@ -81,17 +81,20 @@ var Tokenizer = (function () {
         this.buffer = [];
         this.reader = new Reader();
     }
+    ;
     Tokenizer.prototype.errors = function () {
         return this.errorHandler.errors;
     };
+    ;
     Tokenizer.prototype.getNextToken = function () {
         if (this.buffer.length === 0) {
             var comments = this.scanner.scanComments();
             if (this.scanner.trackComment) {
                 for (var i = 0; i < comments.length; ++i) {
                     var e = comments[i];
+                    var comment = void 0;
                     var value = this.scanner.source.slice(e.slice[0], e.slice[1]);
-                    var comment = {
+                    comment = {
                         type: e.multiLine ? 'BlockComment' : 'LineComment',
                         value: value
                     };
@@ -115,10 +118,16 @@ var Tokenizer = (function () {
                         end: {}
                     };
                 }
-                var startRegex = (this.scanner.source[this.scanner.index] === '/') && this.reader.isRegexStart();
-                var token = startRegex ? this.scanner.scanRegExp() : this.scanner.lex();
+                var token = void 0;
+                if (this.scanner.source[this.scanner.index] === '/') {
+                    token = this.reader.isRegexStart() ? this.scanner.scanRegExp() : this.scanner.scanPunctuator();
+                }
+                else {
+                    token = this.scanner.lex();
+                }
                 this.reader.push(token);
-                var entry = {
+                var entry = void 0;
+                entry = {
                     type: token_1.TokenName[token.type],
                     value: this.scanner.source.slice(token.start, token.end)
                 };
@@ -132,16 +141,15 @@ var Tokenizer = (function () {
                     };
                     entry.loc = loc;
                 }
-                if (token.type === 9 /* RegularExpression */) {
-                    var pattern = token.pattern;
-                    var flags = token.flags;
-                    entry.regex = { pattern: pattern, flags: flags };
+                if (token.regex) {
+                    entry.regex = token.regex;
                 }
                 this.buffer.push(entry);
             }
         }
         return this.buffer.shift();
     };
+    ;
     return Tokenizer;
 }());
 exports.Tokenizer = Tokenizer;

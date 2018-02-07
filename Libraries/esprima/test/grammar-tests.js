@@ -1,5 +1,5 @@
 /*
-  Copyright JS Foundation and other contributors, https://js.foundation/
+  Copyright (c) jQuery Foundation, Inc. and Contributors, All Rights Reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -22,7 +22,7 @@
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-var esprima = require('../');
+var esprima = require('../esprima');
 
 function readEverythingJsProgram(type) {
     return require('fs').readFileSync(require.resolve('everything.js/' + type), 'utf-8');

@@ -1,8 +1,8 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var assert_1 = require("./assert");
-var character_1 = require("./character");
-var messages_1 = require("./messages");
+var assert_1 = require('./assert');
+var messages_1 = require('./messages');
+var character_1 = require('./character');
+var token_1 = require('./token');
 function hexValue(ch) {
     return '0123456789abcdef'.indexOf(ch.toLowerCase());
 }
@@ -20,32 +20,23 @@ var Scanner = (function () {
         this.lineStart = 0;
         this.curlyStack = [];
     }
-    Scanner.prototype.saveState = function () {
-        return {
-            index: this.index,
-            lineNumber: this.lineNumber,
-            lineStart: this.lineStart
-        };
-    };
-    Scanner.prototype.restoreState = function (state) {
-        this.index = state.index;
-        this.lineNumber = state.lineNumber;
-        this.lineStart = state.lineStart;
-    };
+    ;
     Scanner.prototype.eof = function () {
         return this.index >= this.length;
     };
+    ;
     Scanner.prototype.throwUnexpectedToken = function (message) {
         if (message === void 0) { message = messages_1.Messages.UnexpectedTokenIllegal; }
-        return this.errorHandler.throwError(this.index, this.lineNumber, this.index - this.lineStart + 1, message);
+        this.errorHandler.throwError(this.index, this.lineNumber, this.index - this.lineStart + 1, message);
     };
-    Scanner.prototype.tolerateUnexpectedToken = function (message) {
-        if (message === void 0) { message = messages_1.Messages.UnexpectedTokenIllegal; }
-        this.errorHandler.tolerateError(this.index, this.lineNumber, this.index - this.lineStart + 1, message);
+    ;
+    Scanner.prototype.tolerateUnexpectedToken = function () {
+        this.errorHandler.tolerateError(this.index, this.lineNumber, this.index - this.lineStart + 1, messages_1.Messages.UnexpectedTokenIllegal);
     };
-    // https://tc39.github.io/ecma262/#sec-comments
+    ;
+    // ECMA-262 11.4 Comments
     Scanner.prototype.skipSingleLineComment = function (offset) {
-        var comments = [];
+        var comments;
         var start, loc;
         if (this.trackComment) {
             comments = [];
@@ -98,8 +89,9 @@ var Scanner = (function () {
         }
         return comments;
     };
+    ;
     Scanner.prototype.skipMultiLineComment = function () {
-        var comments = [];
+        var comments;
         var start, loc;
         if (this.trackComment) {
             comments = [];
@@ -164,6 +156,7 @@ var Scanner = (function () {
         this.tolerateUnexpectedToken();
         return comments;
     };
+    ;
     Scanner.prototype.scanComments = function () {
         var comments;
         if (this.trackComment) {
@@ -237,7 +230,8 @@ var Scanner = (function () {
         }
         return comments;
     };
-    // https://tc39.github.io/ecma262/#sec-future-reserved-words
+    ;
+    // ECMA-262 11.6.2.2 Future Reserved Words
     Scanner.prototype.isFutureReservedWord = function (id) {
         switch (id) {
             case 'enum':
@@ -249,6 +243,7 @@ var Scanner = (function () {
                 return false;
         }
     };
+    ;
     Scanner.prototype.isStrictModeReservedWord = function (id) {
         switch (id) {
             case 'implements':
@@ -265,10 +260,12 @@ var Scanner = (function () {
                 return false;
         }
     };
+    ;
     Scanner.prototype.isRestrictedWord = function (id) {
         return id === 'eval' || id === 'arguments';
     };
-    // https://tc39.github.io/ecma262/#sec-keywords
+    ;
+    // ECMA-262 11.6.2.1 Keywords
     Scanner.prototype.isKeyword = function (id) {
         switch (id.length) {
             case 2:
@@ -296,6 +293,7 @@ var Scanner = (function () {
                 return false;
         }
     };
+    ;
     Scanner.prototype.codePointAt = function (i) {
         var cp = this.source.charCodeAt(i);
         if (cp >= 0xD800 && cp <= 0xDBFF) {
@@ -307,6 +305,7 @@ var Scanner = (function () {
         }
         return cp;
     };
+    ;
     Scanner.prototype.scanHexEscape = function (prefix) {
         var len = (prefix === 'u') ? 4 : 2;
         var code = 0;
@@ -315,11 +314,12 @@ var Scanner = (function () {
                 code = code * 16 + hexValue(this.source[this.index++]);
             }
             else {
-                return null;
+                return '';
             }
         }
         return String.fromCharCode(code);
     };
+    ;
     Scanner.prototype.scanUnicodeCodePointEscape = function () {
         var ch = this.source[this.index];
         var code = 0;
@@ -339,6 +339,7 @@ var Scanner = (function () {
         }
         return character_1.Character.fromCodePoint(code);
     };
+    ;
     Scanner.prototype.getIdentifier = function () {
         var start = this.index++;
         while (!this.eof()) {
@@ -362,6 +363,7 @@ var Scanner = (function () {
         }
         return this.source.slice(start, this.index);
     };
+    ;
     Scanner.prototype.getComplexIdentifier = function () {
         var cp = this.codePointAt(this.index);
         var id = character_1.Character.fromCodePoint(cp);
@@ -379,7 +381,8 @@ var Scanner = (function () {
             }
             else {
                 ch = this.scanHexEscape('u');
-                if (ch === null || ch === '\\' || !character_1.Character.isIdentifierStart(ch.charCodeAt(0))) {
+                cp = ch.charCodeAt(0);
+                if (!ch || ch === '\\' || !character_1.Character.isIdentifierStart(cp)) {
                     this.throwUnexpectedToken();
                 }
             }
@@ -406,7 +409,8 @@ var Scanner = (function () {
                 }
                 else {
                     ch = this.scanHexEscape('u');
-                    if (ch === null || ch === '\\' || !character_1.Character.isIdentifierPart(ch.charCodeAt(0))) {
+                    cp = ch.charCodeAt(0);
+                    if (!ch || ch === '\\' || !character_1.Character.isIdentifierPart(cp)) {
                         this.throwUnexpectedToken();
                     }
                 }
@@ -415,6 +419,7 @@ var Scanner = (function () {
         }
         return id;
     };
+    ;
     Scanner.prototype.octalToDecimal = function (ch) {
         // \0 is not octal escape sequence
         var octal = (ch !== '0');
@@ -433,7 +438,8 @@ var Scanner = (function () {
             octal: octal
         };
     };
-    // https://tc39.github.io/ecma262/#sec-names-and-keywords
+    ;
+    // ECMA-262 11.6 Names and Keywords
     Scanner.prototype.scanIdentifier = function () {
         var type;
         var start = this.index;
@@ -442,25 +448,19 @@ var Scanner = (function () {
         // There is no keyword or literal with only one character.
         // Thus, it must be an identifier.
         if (id.length === 1) {
-            type = 3 /* Identifier */;
+            type = token_1.Token.Identifier;
         }
         else if (this.isKeyword(id)) {
-            type = 4 /* Keyword */;
+            type = token_1.Token.Keyword;
         }
         else if (id === 'null') {
-            type = 5 /* NullLiteral */;
+            type = token_1.Token.NullLiteral;
         }
         else if (id === 'true' || id === 'false') {
-            type = 1 /* BooleanLiteral */;
+            type = token_1.Token.BooleanLiteral;
         }
         else {
-            type = 3 /* Identifier */;
-        }
-        if (type !== 3 /* Identifier */ && (start + id.length !== this.index)) {
-            var restore = this.index;
-            this.index = start;
-            this.tolerateUnexpectedToken(messages_1.Messages.InvalidEscapedReservedWord);
-            this.index = restore;
+            type = token_1.Token.Identifier;
         }
         return {
             type: type,
@@ -471,9 +471,17 @@ var Scanner = (function () {
             end: this.index
         };
     };
-    // https://tc39.github.io/ecma262/#sec-punctuators
+    ;
+    // ECMA-262 11.7 Punctuators
     Scanner.prototype.scanPunctuator = function () {
-        var start = this.index;
+        var token = {
+            type: token_1.Token.Punctuator,
+            value: '',
+            lineNumber: this.lineNumber,
+            lineStart: this.lineStart,
+            start: this.index,
+            end: this.index
+        };
         // Check for most common single-character punctuators.
         var str = this.source[this.index];
         switch (str) {
@@ -539,53 +547,50 @@ var Scanner = (function () {
                     }
                 }
         }
-        if (this.index === start) {
+        if (this.index === token.start) {
             this.throwUnexpectedToken();
         }
-        return {
-            type: 7 /* Punctuator */,
-            value: str,
-            lineNumber: this.lineNumber,
-            lineStart: this.lineStart,
-            start: start,
-            end: this.index
-        };
+        token.end = this.index;
+        token.value = str;
+        return token;
     };
-    // https://tc39.github.io/ecma262/#sec-literals-numeric-literals
+    ;
+    // ECMA-262 11.8.3 Numeric Literals
     Scanner.prototype.scanHexLiteral = function (start) {
-        var num = '';
+        var number = '';
         while (!this.eof()) {
             if (!character_1.Character.isHexDigit(this.source.charCodeAt(this.index))) {
                 break;
             }
-            num += this.source[this.index++];
+            number += this.source[this.index++];
         }
-        if (num.length === 0) {
+        if (number.length === 0) {
             this.throwUnexpectedToken();
         }
         if (character_1.Character.isIdentifierStart(this.source.charCodeAt(this.index))) {
             this.throwUnexpectedToken();
         }
         return {
-            type: 6 /* NumericLiteral */,
-            value: parseInt('0x' + num, 16),
+            type: token_1.Token.NumericLiteral,
+            value: parseInt('0x' + number, 16),
             lineNumber: this.lineNumber,
             lineStart: this.lineStart,
             start: start,
             end: this.index
         };
     };
+    ;
     Scanner.prototype.scanBinaryLiteral = function (start) {
-        var num = '';
+        var number = '';
         var ch;
         while (!this.eof()) {
             ch = this.source[this.index];
             if (ch !== '0' && ch !== '1') {
                 break;
             }
-            num += this.source[this.index++];
+            number += this.source[this.index++];
         }
-        if (num.length === 0) {
+        if (number.length === 0) {
             // only 0b or 0B
             this.throwUnexpectedToken();
         }
@@ -597,20 +602,21 @@ var Scanner = (function () {
             }
         }
         return {
-            type: 6 /* NumericLiteral */,
-            value: parseInt(num, 2),
+            type: token_1.Token.NumericLiteral,
+            value: parseInt(number, 2),
             lineNumber: this.lineNumber,
             lineStart: this.lineStart,
             start: start,
             end: this.index
         };
     };
+    ;
     Scanner.prototype.scanOctalLiteral = function (prefix, start) {
-        var num = '';
+        var number = '';
         var octal = false;
         if (character_1.Character.isOctalDigit(prefix.charCodeAt(0))) {
             octal = true;
-            num = '0' + this.source[this.index++];
+            number = '0' + this.source[this.index++];
         }
         else {
             ++this.index;
@@ -619,9 +625,9 @@ var Scanner = (function () {
             if (!character_1.Character.isOctalDigit(this.source.charCodeAt(this.index))) {
                 break;
             }
-            num += this.source[this.index++];
+            number += this.source[this.index++];
         }
-        if (!octal && num.length === 0) {
+        if (!octal && number.length === 0) {
             // only 0o or 0O
             this.throwUnexpectedToken();
         }
@@ -629,8 +635,8 @@ var Scanner = (function () {
             this.throwUnexpectedToken();
         }
         return {
-            type: 6 /* NumericLiteral */,
-            value: parseInt(num, 8),
+            type: token_1.Token.NumericLiteral,
+            value: parseInt(number, 8),
             octal: octal,
             lineNumber: this.lineNumber,
             lineStart: this.lineStart,
@@ -638,6 +644,7 @@ var Scanner = (function () {
             end: this.index
         };
     };
+    ;
     Scanner.prototype.isImplicitOctalLiteral = function () {
         // Implicit octal, unless there is a non-octal digit.
         // (Annex B.1.1 on Numeric Literals)
@@ -652,19 +659,20 @@ var Scanner = (function () {
         }
         return true;
     };
+    ;
     Scanner.prototype.scanNumericLiteral = function () {
         var start = this.index;
         var ch = this.source[start];
         assert_1.assert(character_1.Character.isDecimalDigit(ch.charCodeAt(0)) || (ch === '.'), 'Numeric literal must start with a decimal digit or a decimal point');
-        var num = '';
+        var number = '';
         if (ch !== '.') {
-            num = this.source[this.index++];
+            number = this.source[this.index++];
             ch = this.source[this.index];
             // Hex number starts with '0x'.
             // Octal number starts with '0'.
             // Octal number in ES6 starts with '0o'.
             // Binary number in ES6 starts with '0b'.
-            if (num === '0') {
+            if (number === '0') {
                 if (ch === 'x' || ch === 'X') {
                     ++this.index;
                     return this.scanHexLiteral(start);
@@ -683,26 +691,26 @@ var Scanner = (function () {
                 }
             }
             while (character_1.Character.isDecimalDigit(this.source.charCodeAt(this.index))) {
-                num += this.source[this.index++];
+                number += this.source[this.index++];
             }
             ch = this.source[this.index];
         }
         if (ch === '.') {
-            num += this.source[this.index++];
+            number += this.source[this.index++];
             while (character_1.Character.isDecimalDigit(this.source.charCodeAt(this.index))) {
-                num += this.source[this.index++];
+                number += this.source[this.index++];
             }
             ch = this.source[this.index];
         }
         if (ch === 'e' || ch === 'E') {
-            num += this.source[this.index++];
+            number += this.source[this.index++];
             ch = this.source[this.index];
             if (ch === '+' || ch === '-') {
-                num += this.source[this.index++];
+                number += this.source[this.index++];
             }
             if (character_1.Character.isDecimalDigit(this.source.charCodeAt(this.index))) {
                 while (character_1.Character.isDecimalDigit(this.source.charCodeAt(this.index))) {
-                    num += this.source[this.index++];
+                    number += this.source[this.index++];
                 }
             }
             else {
@@ -713,15 +721,16 @@ var Scanner = (function () {
             this.throwUnexpectedToken();
         }
         return {
-            type: 6 /* NumericLiteral */,
-            value: parseFloat(num),
+            type: token_1.Token.NumericLiteral,
+            value: parseFloat(number),
             lineNumber: this.lineNumber,
             lineStart: this.lineStart,
             start: start,
             end: this.index
         };
     };
-    // https://tc39.github.io/ecma262/#sec-literals-string-literals
+    ;
+    // ECMA-262 11.8.4 String Literals
     Scanner.prototype.scanStringLiteral = function () {
         var start = this.index;
         var quote = this.source[start];
@@ -740,24 +749,18 @@ var Scanner = (function () {
                 if (!ch || !character_1.Character.isLineTerminator(ch.charCodeAt(0))) {
                     switch (ch) {
                         case 'u':
+                        case 'x':
                             if (this.source[this.index] === '{') {
                                 ++this.index;
                                 str += this.scanUnicodeCodePointEscape();
                             }
                             else {
-                                var unescaped_1 = this.scanHexEscape(ch);
-                                if (unescaped_1 === null) {
+                                var unescaped = this.scanHexEscape(ch);
+                                if (!unescaped) {
                                     this.throwUnexpectedToken();
                                 }
-                                str += unescaped_1;
+                                str += unescaped;
                             }
-                            break;
-                        case 'x':
-                            var unescaped = this.scanHexEscape(ch);
-                            if (unescaped === null) {
-                                this.throwUnexpectedToken(messages_1.Messages.InvalidHexEscapeSequence);
-                            }
-                            str += unescaped;
                             break;
                         case 'n':
                             str += '\n';
@@ -814,7 +817,7 @@ var Scanner = (function () {
             this.throwUnexpectedToken();
         }
         return {
-            type: 8 /* StringLiteral */,
+            type: token_1.Token.StringLiteral,
             value: str,
             octal: octal,
             lineNumber: this.lineNumber,
@@ -823,7 +826,8 @@ var Scanner = (function () {
             end: this.index
         };
     };
-    // https://tc39.github.io/ecma262/#sec-template-literal-lexical-components
+    ;
+    // ECMA-262 11.8.6 Template Literal Lexical Components
     Scanner.prototype.scanTemplate = function () {
         var cooked = '';
         var terminated = false;
@@ -863,28 +867,22 @@ var Scanner = (function () {
                             cooked += '\t';
                             break;
                         case 'u':
+                        case 'x':
                             if (this.source[this.index] === '{') {
                                 ++this.index;
                                 cooked += this.scanUnicodeCodePointEscape();
                             }
                             else {
                                 var restore = this.index;
-                                var unescaped_2 = this.scanHexEscape(ch);
-                                if (unescaped_2 !== null) {
-                                    cooked += unescaped_2;
+                                var unescaped = this.scanHexEscape(ch);
+                                if (unescaped) {
+                                    cooked += unescaped;
                                 }
                                 else {
                                     this.index = restore;
                                     cooked += ch;
                                 }
                             }
-                            break;
-                        case 'x':
-                            var unescaped = this.scanHexEscape(ch);
-                            if (unescaped === null) {
-                                this.throwUnexpectedToken(messages_1.Messages.InvalidHexEscapeSequence);
-                            }
-                            cooked += unescaped;
                             break;
                         case 'b':
                             cooked += '\b';
@@ -940,9 +938,11 @@ var Scanner = (function () {
             this.curlyStack.pop();
         }
         return {
-            type: 10 /* Template */,
-            value: this.source.slice(start + 1, this.index - rawOffset),
-            cooked: cooked,
+            type: token_1.Token.Template,
+            value: {
+                cooked: cooked,
+                raw: this.source.slice(start + 1, this.index - rawOffset)
+            },
             head: head,
             tail: tail,
             lineNumber: this.lineNumber,
@@ -951,7 +951,8 @@ var Scanner = (function () {
             end: this.index
         };
     };
-    // https://tc39.github.io/ecma262/#sec-literals-regular-expression-literals
+    ;
+    // ECMA-262 11.8.5 Regular Expression Literals
     Scanner.prototype.testRegExp = function (pattern, flags) {
         // The BMP character to use as a replacement for astral symbols when
         // translating an ES6 "u"-flagged pattern to an ES5-compatible
@@ -994,6 +995,7 @@ var Scanner = (function () {
             return null;
         }
     };
+    ;
     Scanner.prototype.scanRegExpBody = function () {
         var ch = this.source[this.index];
         assert_1.assert(ch === '/', 'Regular expression literal must start with a slash');
@@ -1005,7 +1007,7 @@ var Scanner = (function () {
             str += ch;
             if (ch === '\\') {
                 ch = this.source[this.index++];
-                // https://tc39.github.io/ecma262/#sec-literals-regular-expression-literals
+                // ECMA-262 7.8.5
                 if (character_1.Character.isLineTerminator(ch.charCodeAt(0))) {
                     this.throwUnexpectedToken(messages_1.Messages.UnterminatedRegExp);
                 }
@@ -1033,8 +1035,13 @@ var Scanner = (function () {
             this.throwUnexpectedToken(messages_1.Messages.UnterminatedRegExp);
         }
         // Exclude leading and trailing slash.
-        return str.substr(1, str.length - 2);
+        var body = str.substr(1, str.length - 2);
+        return {
+            value: body,
+            literal: str
+        };
     };
+    ;
     Scanner.prototype.scanRegExpFlags = function () {
         var str = '';
         var flags = '';
@@ -1049,9 +1056,9 @@ var Scanner = (function () {
                 if (ch === 'u') {
                     ++this.index;
                     var restore = this.index;
-                    var char = this.scanHexEscape('u');
-                    if (char !== null) {
-                        flags += char;
+                    ch = this.scanHexEscape('u');
+                    if (ch) {
+                        flags += ch;
                         for (str += '\\u'; restore < this.index; ++restore) {
                             str += this.source[restore];
                         }
@@ -1073,30 +1080,36 @@ var Scanner = (function () {
                 str += ch;
             }
         }
-        return flags;
+        return {
+            value: flags,
+            literal: str
+        };
     };
+    ;
     Scanner.prototype.scanRegExp = function () {
         var start = this.index;
-        var pattern = this.scanRegExpBody();
+        var body = this.scanRegExpBody();
         var flags = this.scanRegExpFlags();
-        var value = this.testRegExp(pattern, flags);
+        var value = this.testRegExp(body.value, flags.value);
         return {
-            type: 9 /* RegularExpression */,
-            value: '',
-            pattern: pattern,
-            flags: flags,
-            regex: value,
+            type: token_1.Token.RegularExpression,
+            value: value,
+            literal: body.literal + flags.literal,
+            regex: {
+                pattern: body.value,
+                flags: flags.value
+            },
             lineNumber: this.lineNumber,
             lineStart: this.lineStart,
             start: start,
             end: this.index
         };
     };
+    ;
     Scanner.prototype.lex = function () {
         if (this.eof()) {
             return {
-                type: 2 /* EOF */,
-                value: '',
+                type: token_1.Token.EOF,
                 lineNumber: this.lineNumber,
                 lineStart: this.lineStart,
                 start: this.index,
@@ -1139,6 +1152,7 @@ var Scanner = (function () {
         }
         return this.scanPunctuator();
     };
+    ;
     return Scanner;
 }());
 exports.Scanner = Scanner;

@@ -62,8 +62,14 @@ export default class OperatorContext {
     //Global, ByFunction
     nodesSelectionApproach: string;
 
+    //Instruction Type for mutations Log
+    instructionType: string;
+
+    //Actual Global Index
+    globalIndexForinstructionType: number;
+
 
     ActualBestForFunctionScope: Individual;
 
-    functionName: string
+    functionName: string;
 }

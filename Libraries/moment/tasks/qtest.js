@@ -4,8 +4,8 @@ module.exports = function (grunt) {
 
         var testrunner = require('qunit');
 
-        testrunner.options.log.assertions = true;
-        testrunner.options.log.tests = true;
+        testrunner.options.log.assertions = false;
+        testrunner.options.log.tests = false;
         testrunner.options.log.summary = true;
         testrunner.options.log.testing = true;
         testrunner.options.log.errors = true,

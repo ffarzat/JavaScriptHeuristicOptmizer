@@ -1,5 +1,5 @@
 /*
-  Copyright JS Foundation and other contributors, https://js.foundation/
+  Copyright (c) jQuery Foundation, Inc. and Contributors, All Rights Reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -24,7 +24,7 @@
 
 'use strict';
 
-var esprima = require('../'),
+var esprima = require('../esprima'),
     evaluateTestCase = require('./utils/evaluate-testcase'),
     createTestCases = require('./utils/create-testcases'),
     errorToObject = require('./utils/error-to-object'),
@@ -35,7 +35,7 @@ var esprima = require('../'),
     result,
     failures = [],
     cases = {},
-    context = { source: '', result: null },
+    context = {source: '', result: null},
     tick = new Date(),
     testCase,
     header;
@@ -46,11 +46,9 @@ function generateTestCase(testCase) {
     fileName = testCase.key + ".tree.json";
     try {
         options = {
-            jsx: true,
             loc: true,
             range: true,
-            tokens: true,
-            sourceType: testCase.key.match(/\.module$/) ? 'module' : 'script'
+            tokens: true
         };
         tree = esprima.parse(testCase.case, options);
         tree = JSON.stringify(tree, null, 4);
@@ -76,7 +74,8 @@ total = Object.keys(cases).length;
 Object.keys(cases).forEach(function (key) {
     testCase = cases[key];
 
-    if (testCase.hasOwnProperty('tree')
+    if (testCase.hasOwnProperty('module')
+        || testCase.hasOwnProperty('tree')
         || testCase.hasOwnProperty('tokens')
         || testCase.hasOwnProperty('failure')
         || testCase.hasOwnProperty('result')) {
@@ -105,21 +104,21 @@ header = total + ' tests. ' + failures.length + ' failures. ' + tick + ' ms';
 if (failures.length) {
     console.error(header);
     failures.forEach(function (failure) {
-        var expectedObject, actualObject;
-        try {
-            expectedObject = JSON.parse(failure.expected);
-            actualObject = JSON.parse(failure.actual);
+       var expectedObject, actualObject;
+       try {
+           expectedObject = JSON.parse(failure.expected);
+           actualObject = JSON.parse(failure.actual);
 
-            console.error(failure.source + ': Expected\n    ' +
-                failure.expected.split('\n').join('\n    ') +
-                '\nto match\n    ' + failure.actual + '\nDiff:\n' +
-                diff(expectedObject, actualObject));
-        } catch (ex) {
-            console.error(failure.source + ': Expected\n    ' +
-                failure.expected.split('\n').join('\n    ') +
-                '\nto match\n    ' + failure.actual);
-        }
-    });
+           console.error(failure.source + ': Expected\n    ' +
+               failure.expected.split('\n').join('\n    ') +
+               '\nto match\n    ' + failure.actual + '\nDiff:\n' +
+               diff(expectedObject, actualObject));
+       } catch (ex) {
+           console.error(failure.source + ': Expected\n    ' +
+               failure.expected.split('\n').join('\n    ') +
+               '\nto match\n    ' + failure.actual);
+       }
+   });
 } else {
     console.log(header);
 }

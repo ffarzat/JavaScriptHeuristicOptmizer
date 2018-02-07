@@ -22,7 +22,6 @@
                     }
                 }
             },
-            "directive": "\\1",
             "range": [
                 0,
                 5
@@ -59,7 +58,6 @@
                     }
                 }
             },
-            "directive": "use strict",
             "range": [
                 6,
                 19

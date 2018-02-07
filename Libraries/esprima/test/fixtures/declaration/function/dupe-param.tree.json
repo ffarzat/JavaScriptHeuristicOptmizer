@@ -73,6 +73,7 @@
                     "name": "x"
                 }
             ],
+            "defaults": [],
             "body": {
                 "range": [
                     17,
@@ -124,14 +125,12 @@
                             "type": "Literal",
                             "value": "use strict",
                             "raw": "'use strict'"
-                        },
-                        "directive": "use strict"
+                        }
                     }
                 ]
             },
             "generator": false,
-            "expression": false,
-            "async": false
+            "expression": false
         }
     ],
     "sourceType": "script",

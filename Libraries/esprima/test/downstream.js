@@ -1,5 +1,5 @@
 /*
-  Copyright JS Foundation and other contributors, https://js.foundation/
+  Copyright (c) jQuery Foundation, Inc. and Contributors, All Rights Reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -25,7 +25,7 @@
 var child_process = require('child_process'),
     fs = require('fs'),
     temp = require('temp').track(),
-    source = fs.realpathSync(require.resolve('../'));
+    source = fs.realpathSync('esprima.js');
 
 function execute(cmd) {
     child_process.execSync(cmd, { stdio: 'inherit' });
@@ -33,24 +33,6 @@ function execute(cmd) {
 
 function copy_file(source, target) {
     fs.writeFileSync(target, fs.readFileSync(source));
-}
-
-function workaroundRecastTest() {
-    var filename = 'test/es6tests.js', lines, i, line;
-
-    console.log();
-    console.log('Applying a workaround...');
-    lines = fs.readFileSync(filename, 'utf-8').split('\n');
-    for (i = 0; i < lines.length; ++i) {
-        line = lines[i];
-        if (line.indexOf('const variables must have an initializer') > 0) {
-            console.log('-- Patching', filename);
-            lines.splice(i, 5);
-            fs.writeFileSync(filename, lines.join('\n'));
-            break;
-        }
-    }
-    execute('git diff');
 }
 
 function test_project(project, repo) {
@@ -65,10 +47,6 @@ function test_project(project, repo) {
     console.log('HEAD is');
     execute('git log -n1 > commit.top');
     console.log(fs.readFileSync('commit.top', 'utf-8'));
-
-    if (project === 'recast') {
-        workaroundRecastTest();
-    }
 
     console.log();
     execute('npm install');
@@ -88,7 +66,19 @@ function test_project(project, repo) {
 }
 
 function test_downstream(projects) {
-    var downstream_path = temp.mkdirSync('downstream');
+    var nodejs_version = 'v0.12',
+        downstream_path;
+
+    if (typeof child_process.execSync !== 'function') {
+        console.error('This only works with Node.js that support execSync');
+        process.exit(0);
+    }
+    if (process.version.indexOf(nodejs_version) !== 0) {
+        console.error('This is intended to run only with Node.js', nodejs_version);
+        process.exit(0);
+    }
+
+    downstream_path = temp.mkdirSync('downstream');
     console.log('Running the tests in', downstream_path);
 
     if (!fs.existsSync(downstream_path)) {
@@ -102,22 +92,15 @@ function test_downstream(projects) {
 }
 
 
-if (typeof child_process.execSync !== 'function') {
-    console.error('This only works with Node.js that support execSync');
-    process.exit(0);
-}
-
 test_downstream({
-    'envify': 'https://github.com/hughsk/envify.git',
-    // 'escope': 'https://github.com/estools/escope.git',
+    'escope': 'https://github.com/estools/escope.git',
     'esmangle': 'https://github.com/estools/esmangle.git',
     'escomplex-js': 'https://github.com/philbooth/escomplex-js.git',
-    // 'js2coffee': 'https://github.com/js2coffee/js2coffee.git',
+    'js2coffee': 'https://github.com/js2coffee/js2coffee.git',
     'redeyed': 'https://github.com/thlorenz/redeyed.git',
     'jsfmt': 'https://github.com/rdio/jsfmt.git',
-    'assetgraph': 'https://github.com/assetgraph/assetgraph.git',
     'recast': 'https://github.com/benjamn/recast.git',
-    'rocambole': 'https://github.com/millermedeiros/rocambole.git'
-    // 'documentjs': 'https://github.com/bitovi/documentjs.git'
-    // 'istanbul': 'https://github.com/gotwarlost/istanbul.git'
+    'rocambole': 'https://github.com/millermedeiros/rocambole.git',
+    'documentjs': 'https://github.com/bitovi/documentjs.git',
+    'istanbul': 'https://github.com/gotwarlost/istanbul.git'
 });

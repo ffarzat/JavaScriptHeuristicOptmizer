@@ -1,7 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var jsx_syntax_1 = require("./jsx-syntax");
-/* tslint:disable:max-classes-per-file */
+var jsx_syntax_1 = require('./jsx-syntax');
 var JSXClosingElement = (function () {
     function JSXClosingElement(name) {
         this.type = jsx_syntax_1.JSXSyntax.JSXClosingElement;

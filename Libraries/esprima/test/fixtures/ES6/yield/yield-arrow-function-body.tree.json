@@ -54,6 +54,7 @@
                         "name": "z"
                     }
                 ],
+                "defaults": [],
                 "body": {
                     "range": [
                         7,
@@ -145,8 +146,7 @@
                     ]
                 },
                 "generator": false,
-                "expression": false,
-                "async": false
+                "expression": false
             }
         }
     ],

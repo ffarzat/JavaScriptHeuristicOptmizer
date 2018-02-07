@@ -35,6 +35,7 @@
                 "type": "FunctionExpression",
                 "id": null,
                 "params": [],
+                "defaults": [],
                 "body": {
                     "range": [
                         13,
@@ -109,8 +110,7 @@
                     ]
                 },
                 "generator": true,
-                "expression": false,
-                "async": false
+                "expression": false
             }
         }
     ],

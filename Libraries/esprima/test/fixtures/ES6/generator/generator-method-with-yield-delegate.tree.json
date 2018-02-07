@@ -87,6 +87,7 @@
                             "type": "FunctionExpression",
                             "id": null,
                             "params": [],
+                            "defaults": [],
                             "body": {
                                 "range": [
                                     10,
@@ -161,8 +162,7 @@
                                 ]
                             },
                             "generator": true,
-                            "expression": false,
-                            "async": false
+                            "expression": false
                         },
                         "kind": "init",
                         "method": true,

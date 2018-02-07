@@ -145,6 +145,7 @@
                             "type": "FunctionExpression",
                             "id": null,
                             "params": [],
+                            "defaults": [],
                             "body": {
                                 "range": [
                                     35,
@@ -164,8 +165,7 @@
                                 "body": []
                             },
                             "generator": false,
-                            "expression": false,
-                            "async": false
+                            "expression": false
                         },
                         "kind": "get",
                         "method": false,
@@ -243,6 +243,7 @@
                                     "name": "x"
                                 }
                             ],
+                            "defaults": [],
                             "body": {
                                 "range": [
                                     55,
@@ -262,8 +263,7 @@
                                 "body": []
                             },
                             "generator": false,
-                            "expression": false,
-                            "async": false
+                            "expression": false
                         },
                         "kind": "set",
                         "method": false,

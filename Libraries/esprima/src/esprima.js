@@ -1,6 +1,5 @@
-"use strict";
 /*
-  Copyright JS Foundation and other contributors, https://js.foundation/
+  Copyright (c) jQuery Foundation, Inc. and Contributors, All Rights Reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -22,11 +21,11 @@
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-Object.defineProperty(exports, "__esModule", { value: true });
-var comment_handler_1 = require("./comment-handler");
-var jsx_parser_1 = require("./jsx-parser");
-var parser_1 = require("./parser");
-var tokenizer_1 = require("./tokenizer");
+"use strict";
+var comment_handler_1 = require('./comment-handler');
+var parser_1 = require('./parser');
+var jsx_parser_1 = require('./jsx-parser');
+var tokenizer_1 = require('./tokenizer');
 function parse(code, options, delegate) {
     var commentHandler = null;
     var proxyDelegate = function (node, metadata) {
@@ -49,10 +48,6 @@ function parse(code, options, delegate) {
             parserDelegate = proxyDelegate;
         }
     }
-    var isModule = false;
-    if (options && typeof options.sourceType === 'string') {
-        isModule = (options.sourceType === 'module');
-    }
     var parser;
     if (options && typeof options.jsx === 'boolean' && options.jsx) {
         parser = new jsx_parser_1.JSXParser(code, options, parserDelegate);
@@ -60,9 +55,8 @@ function parse(code, options, delegate) {
     else {
         parser = new parser_1.Parser(code, options, parserDelegate);
     }
-    var program = isModule ? parser.parseModule() : parser.parseScript();
-    var ast = program;
-    if (collectComment && commentHandler) {
+    var ast = (parser.parseProgram());
+    if (collectComment) {
         ast.comments = commentHandler.comments;
     }
     if (parser.config.tokens) {
@@ -74,18 +68,6 @@ function parse(code, options, delegate) {
     return ast;
 }
 exports.parse = parse;
-function parseModule(code, options, delegate) {
-    var parsingOptions = options || {};
-    parsingOptions.sourceType = 'module';
-    return parse(code, parsingOptions, delegate);
-}
-exports.parseModule = parseModule;
-function parseScript(code, options, delegate) {
-    var parsingOptions = options || {};
-    parsingOptions.sourceType = 'script';
-    return parse(code, parsingOptions, delegate);
-}
-exports.parseScript = parseScript;
 function tokenize(code, options, delegate) {
     var tokenizer = new tokenizer_1.Tokenizer(code, options);
     var tokens;
@@ -111,7 +93,7 @@ function tokenize(code, options, delegate) {
     return tokens;
 }
 exports.tokenize = tokenize;
-var syntax_1 = require("./syntax");
+var syntax_1 = require('./syntax');
 exports.Syntax = syntax_1.Syntax;
 // Sync with *.json manifests.
-exports.version = '4.0.0-dev';
+exports.version = '3.1.1';

@@ -9,6 +9,7 @@
                     "type": "FunctionExpression",
                     "id": null,
                     "params": [],
+                    "defaults": [],
                     "body": {
                         "type": "BlockStatement",
                         "body": [
@@ -33,7 +34,6 @@
                                         }
                                     }
                                 },
-                                "directive": "use strict",
                                 "range": [
                                     15,
                                     28
@@ -103,7 +103,6 @@
                     },
                     "generator": false,
                     "expression": false,
-                    "async": false,
                     "range": [
                         1,
                         34

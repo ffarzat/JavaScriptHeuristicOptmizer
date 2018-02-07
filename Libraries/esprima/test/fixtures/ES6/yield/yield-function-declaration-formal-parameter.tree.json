@@ -55,6 +55,7 @@
                     "name": "yield"
                 }
             ],
+            "defaults": [],
             "body": {
                 "range": [
                     18,
@@ -74,8 +75,7 @@
                 "body": []
             },
             "generator": false,
-            "expression": false,
-            "async": false
+            "expression": false
         }
     ],
     "sourceType": "script",

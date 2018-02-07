@@ -22,7 +22,6 @@
                     }
                 }
             },
-            "directive": "Hello\\412World",
             "range": [
                 0,
                 16

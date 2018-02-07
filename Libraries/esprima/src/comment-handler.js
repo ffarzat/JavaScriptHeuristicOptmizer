@@ -1,6 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var syntax_1 = require("./syntax");
+var syntax_1 = require('./syntax');
 var CommentHandler = (function () {
     function CommentHandler() {
         this.attach = false;
@@ -27,7 +26,7 @@ var CommentHandler = (function () {
             }
         }
     };
-    CommentHandler.prototype.findTrailingComments = function (metadata) {
+    CommentHandler.prototype.findTrailingComments = function (node, metadata) {
         var trailingComments = [];
         if (this.trailing.length > 0) {
             for (var i = this.trailing.length - 1; i >= 0; --i) {
@@ -49,14 +48,13 @@ var CommentHandler = (function () {
         }
         return trailingComments;
     };
-    CommentHandler.prototype.findLeadingComments = function (metadata) {
+    CommentHandler.prototype.findLeadingComments = function (node, metadata) {
         var leadingComments = [];
         var target;
         while (this.stack.length > 0) {
             var entry = this.stack[this.stack.length - 1];
             if (entry && entry.start >= metadata.start.offset) {
-                target = entry.node;
-                this.stack.pop();
+                target = this.stack.pop().node;
             }
             else {
                 break;
@@ -90,8 +88,8 @@ var CommentHandler = (function () {
             return;
         }
         this.insertInnerComments(node, metadata);
-        var trailingComments = this.findTrailingComments(metadata);
-        var leadingComments = this.findLeadingComments(metadata);
+        var trailingComments = this.findTrailingComments(node, metadata);
+        var leadingComments = this.findLeadingComments(node, metadata);
         if (leadingComments.length > 0) {
             node.leadingComments = leadingComments;
         }

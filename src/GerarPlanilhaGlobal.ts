@@ -11,6 +11,8 @@ import fs = require('fs');
 import fse = require('fs-extra');
 import path = require('path');
 
+import esprima = require('esprima');
+
 var exectimer = require('exectimer');
 const child_process = require('child_process');
 var uuid = require('node-uuid');
@@ -31,7 +33,7 @@ var uglifyOptions = {
     }
 };
 
-var heuristicas = ['RD', 'HC3', 'HC4', 'HC5'];
+var heuristicas = ['RD', 'GA', 'GA2', 'HC', 'HC2', 'HC3', 'HC4', 'HC5', 'HC52'];
 var DiretorioBiblioteca = process.argv[2].replace("'", "");
 var arquivoRootBiblioteca = process.argv[3].replace("'", "");
 var DiretorioResultados = process.argv[4].replace("'", "");
@@ -39,6 +41,7 @@ var QuantidadeRodadas = parseInt(process.argv[5]);
 var Quantidade = parseInt(process.argv[6]);
 var libName = process.argv[7].replace("'", "");
 var resultadosProcessados = [];
+var resultadosProcessadosDeTodos = [];
 var os = require("os");
 var listaDeFuncoesOriginal = [];
 var rankingEstatico = {};
@@ -49,6 +52,7 @@ var caminhoOriginal = DiretorioResultados + `/${heuristicas[0]}/original.js`;
 var codigoOriginal = fs.readFileSync(caminhoOriginal, 'UTF8');
 var originalLoc = 0;
 var originalChar = 0;
+var originalIns = 0;
 
 console.log(`${DiretorioBiblioteca}`);
 console.log(`${arquivoRootBiblioteca}`);
@@ -94,7 +98,12 @@ async function Executar() {
     originalLoc = resultadoOriginal.Loc;
     originalChar = resultadoOriginal.Chars;
 
+    var generatedAST = esprima.parse(result.code) as any;
+    originalIns = CountNodes(generatedAST);
+    resultadoOriginal.Instructions = originalIns;
+
     resultadosProcessados.push(resultadoOriginal);
+    resultadosProcessadosDeTodos.push(resultadoOriginal);
 
     //============================================================================================ Rodadas //>
 
@@ -102,6 +111,7 @@ async function Executar() {
         var heuristica = heuristicas[j];
         var BestLoc = originalLoc;
         var BestChars = originalChar;
+        var BestInst = originalIns;
         var BestResult: TestResults = JSON.parse(JSON.stringify(resultadoOriginal));
 
         BestResult.Heuristic = heuristica;
@@ -127,11 +137,11 @@ async function Executar() {
                 WriteCodeToFile(arquivoRootBiblioteca, CodigoDaRodada);
 
                 var resultadoFinal = await ExecutarTeste(DiretorioBiblioteca, bufferOption, Quantidade);
-                if(!resultadoFinal.passedAllTests){
+                if (!resultadoFinal.passedAllTests) {
                     console.log("Falhou nos testes!")
                     continue;
                 }
-                
+
                 resultadoFinal.Heuristic = heuristica;
 
                 var result = UglifyJS.minify(CodigoDaRodada, uglifyOptions);
@@ -140,26 +150,35 @@ async function Executar() {
 
                 resultadoFinal.Loc = result.code.split(/\r\n|\r|\n/).length;
                 resultadoFinal.Chars = result.code.length;
+                var generatedAST = esprima.parse(result.code) as any;
+                resultadoFinal.Instructions = CountNodes(generatedAST);
+                resultadoFinal.Trial = String(index);
+                resultadoFinal.duration = 0;
+                resultadosProcessadosDeTodos.push(resultadoFinal);
 
-                if (resultadoFinal.passedAllTests && resultadoFinal.Chars < BestChars) {
+                if (resultadoFinal.passedAllTests && (resultadoFinal.Chars < BestChars || resultadoFinal.Instructions < BestInst)) {
+                    var tempo = 0;
+                    if (fs.existsSync(caminhoArquivoCVSRodada)) {
+                        var fileContents = fs.readFileSync(caminhoArquivoCVSRodada).toString().replace('sep=,\n', '');
+                        if (fileContents.length === 0) {
+                            console.log(`Arquivo ${caminhoArquivoCVSRodada} não possui registros!`);
+                            continue;
+                        }
 
-                    var fileContents = fs.readFileSync(caminhoArquivoCVSRodada).toString().replace('sep=,\n', '');
-                    if (fileContents.length === 0) {
-                        console.log(`Arquivo ${caminhoArquivoCVSRodada} não possui registros!`);
-                        continue;
+                        fs.writeFileSync(caminhoArquivoCVSRodadaAlterado, fileContents);
+                        var loader = require('csv-load-sync');
+                        var csv = loader(caminhoArquivoCVSRodadaAlterado, {
+                            getColumns: split
+                        });;
+
+                        tempo = csv[0].time;
                     }
 
-                    fs.writeFileSync(caminhoArquivoCVSRodadaAlterado, fileContents);
-                    var loader = require('csv-load-sync');
-                    var csv = loader(caminhoArquivoCVSRodadaAlterado, {
-                        getColumns: split
-                    });;
-
-                    resultadoFinal.Trial = String(index);
-                    resultadoFinal.duration = csv[0].time;
+                    resultadoFinal.duration = tempo;
                     BestResult = resultadoFinal;
                     BestChars = resultadoFinal.Chars;
                     BestLoc = resultadoFinal.Loc;
+                    BestInst = resultadoFinal.Instructions;
                 }
 
                 //Volta a cópia de segurança
@@ -176,10 +195,14 @@ async function Executar() {
     //============================================================================================ Fim //>
     //Volta a cópia de segurança
     fse.copySync(oldLibFilePath, arquivoRootBiblioteca, { "clobber": true });
-    fse.unlinkSync(caminhoArquivoCVSRodadaAlterado);
+
+    if (fse.existsSync(caminhoArquivoCVSRodadaAlterado))
+        fse.unlinkSync(caminhoArquivoCVSRodadaAlterado);
+
     console.log(`Escrever csv com ${resultadosProcessados.length} resultados obtidos`);
 
-    EscreverResultadoEmCsv(DiretorioResultados, resultadosProcessados);
+    EscreverResultadoEmCsv(DiretorioResultados, resultadosProcessados, undefined);
+    EscreverResultadoEmCsv(DiretorioResultados, resultadosProcessadosDeTodos, 'Results-grouped-Boxplot.csv');
 
     process.exit();
 }
@@ -278,15 +301,15 @@ function ShowConsoleResults(result: TestResults) {
     console.log('median:' + result.median);   // median tick duration
 }
 
-/**
+/** 
  * Salva os resultados na raiz
  */
-function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: TestResults[]) {
+function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: TestResults[], nomeArquivoDestino: string) {
 
     var newLine: string = '\n';
     //var csvcontent = "sep=;" + newLine;
     var csvcontent = "";
-    csvcontent += "Lib;Heuristic;Trial;Lines;% Improved Loc;Chars;% Improved Chars;Time Spent" + newLine;
+    csvcontent += "Lib;Heuristic;Trial;Lines;% Improved Loc;Chars;% Improved Chars;Instructions;% Improved Instructions;Time Spent" + newLine;
 
     listaResultados.forEach(element => {
         var improvedLoc = ((originalLoc - element.Loc) / originalLoc);
@@ -295,12 +318,19 @@ function EscreverResultadoEmCsv(DiretorioResultados: string, listaResultados: Te
         var improvedChars = ((originalChar - element.Chars) / originalChar);
         improvedChars = improvedChars < 0 ? improvedChars * -1 : improvedChars;
 
+        var improvedInstructions = ((originalIns - element.Instructions) / originalIns);
+        improvedInstructions = improvedInstructions < 0 ? improvedInstructions * -1 : improvedInstructions;
 
-        csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${String(improvedLoc).replace('.', ',')};${element.Chars};${String(improvedChars).replace('.', ',')};${element.duration}` + newLine;
+        var duracaoTotal = Math.round(element.duration / 60);
+
+        //csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${String(improvedLoc).replace('.', ',')};${element.Chars};${String(improvedChars).replace('.', ',')};${element.Instructions};${String(improvedInstructions).replace('.', ',')};${duracaoTotal}` + newLine;
+        csvcontent += `${libName};${element.Heuristic};${element.Trial};${element.Loc};${String(improvedLoc)};${element.Chars};${String(improvedChars)};${element.Instructions};${String(improvedInstructions)};${duracaoTotal}` + newLine;
 
     });
 
-    fs.writeFileSync(path.join(DiretorioResultados, 'analiseTempoExecucao.csv'), csvcontent);
+    var arquivoFinal = nomeArquivoDestino === undefined ? 'analiseTempoExecucao.csv' : nomeArquivoDestino;
+
+    fs.writeFileSync(path.join(DiretorioResultados, arquivoFinal), csvcontent);
 }
 
 function parseMillisecondsIntoReadableTime(milliseconds) {
@@ -379,4 +409,9 @@ function split(line, lineNumber) {
     }
     var parts = line.split(',')
     return [parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7] + ',' + parts[8], parts[9]];
+}
+
+function CountNodes(AST: Object): number {
+    var traverse = require('traverse');
+    return traverse(AST).nodes().length;
 }

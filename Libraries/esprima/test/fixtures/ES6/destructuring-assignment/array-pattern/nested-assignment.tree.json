@@ -85,6 +85,7 @@
                                 }
                             },
                             "type": "AssignmentPattern",
+                            "operator": "=",
                             "left": {
                                 "range": [
                                     3,
@@ -139,6 +140,7 @@
                                 }
                             },
                             "type": "AssignmentPattern",
+                            "operator": "=",
                             "left": {
                                 "range": [
                                     7,

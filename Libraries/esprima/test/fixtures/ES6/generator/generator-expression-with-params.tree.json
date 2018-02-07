@@ -90,6 +90,7 @@
                         "name": "z"
                     }
                 ],
+                "defaults": [],
                 "body": {
                     "range": [
                         20,
@@ -109,8 +110,7 @@
                     "body": []
                 },
                 "generator": true,
-                "expression": false,
-                "async": false
+                "expression": false
             }
         }
     ],

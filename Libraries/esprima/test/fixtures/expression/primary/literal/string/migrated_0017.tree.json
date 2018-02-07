@@ -22,7 +22,6 @@
                     }
                 }
             },
-            "directive": "Hello\\\r\nworld",
             "range": [
                 0,
                 15
