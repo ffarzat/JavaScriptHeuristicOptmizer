@@ -8,7 +8,7 @@
 ### Specify email address to use for notification.
 #PBS -M ffarzat@cos.ufrj.br
 
-for i in {0..29}
+for i in {0..9}
 do
    echo "Rodada $i"
 
