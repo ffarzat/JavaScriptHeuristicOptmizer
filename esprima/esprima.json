@@ -27,7 +27,7 @@
     "libraries": [
         {
             "name": "esprima",
-            "path": "../esprima/",
+            "path": "Libraries/esprima/",
             "mainFilePath": "dist/esprima.js"
         }
     ],
