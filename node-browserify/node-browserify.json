@@ -25,7 +25,7 @@
     "clientsTotal": 40,
     "memory": 2408000,
     "libraries": [
-        {"name":"node-browserify",       "path":"Libraries/node-browserify/",         "mainFilePath":"index.js" }
+        {"name":"browserify",       "path":"Libraries/browserify/",         "mainFilePath":"index.js" }
     ],
     "trialsConfiguration": [
         {
