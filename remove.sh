@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -k oe
-#PBS -l select=1:ncpus=48
+#PBS -l select=1:ncpus=2
 #PBS -N limpando-scratch
 #PBS -l walltime=500:00:00
 #PBS -m bea
