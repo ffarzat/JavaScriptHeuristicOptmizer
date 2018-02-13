@@ -22,23 +22,23 @@ node agrupadorCSVGlobal.paper.js /home/fabio/Dropbox/Doutorado/2018/Experimentos
 
 #2018 - global-2 - nova lista de nós global
 
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/esprima/' 'dist/esprima.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/esprima' 1 1 'esprima'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/moment' 'moment.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/moment' 1 1 'moment'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/pug' 1 1 'pug'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/jquery' 'dist/jquery.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/jquery' 1 1 'jquery'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/browserify' 'index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/node-browserify' 1 1 'browserify'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/uuid' 1 1 'uuid'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/exectimer' 1 1 'exectimer'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/tleaf' 'src/ask.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/tleaf' 1 1 'tleaf'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/d3-node' 'index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/d3-node' 1 1 'd3-node'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/plivo-node' 'lib/plivo.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/plivo-node' 1 1 'plivo-node'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/minimist' 'index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/minimist' 1 1 'minimist'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/xml2js' 'lib/xml2js.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/xml2js' 1 1 'xml2js'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/underscore' 'underscore.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/underscore' 1 1 'underscore'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/lodash' 'lodash.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/lodash' 30 1 'lodash'
-#node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/UglifyJS2' 'lib/compress.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/UglifyJS2' 30 1 'UglifyJS2'
-#node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/
-#node agrupadorCSVGlobal.paper.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/esprima/' 'dist/esprima.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/esprima' 1 1 'esprima'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/moment' 'moment.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/moment' 1 1 'moment'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/pug' 1 1 'pug'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/jquery' 'dist/jquery.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/jquery' 1 1 'jquery'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/browserify' 'index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/node-browserify' 1 1 'browserify'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/uuid' 'lib/uuid.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/uuid' 1 1 'uuid'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/exectimer' 'index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/exectimer' 1 1 'exectimer'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/tleaf' 'src/ask.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/tleaf' 1 1 'tleaf'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/d3-node' 'index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/d3-node' 1 1 'd3-node'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/plivo-node' 'lib/plivo.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/plivo-node' 1 1 'plivo-node'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/minimist' 'index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/minimist' 1 1 'minimist'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/xml2js' 'lib/xml2js.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/xml2js' 1 1 'xml2js'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/underscore' 'underscore.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/underscore' 1 1 'underscore'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/lodash' 'lodash.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/lodash' 30 1 'lodash'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/UglifyJS2' 'lib/compress.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/UglifyJS2' 30 1 'UglifyJS2'
+node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/
+node agrupadorCSVGlobal.paper.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/
 
 
 #2018 - global-1 - - Sem Identifier, MemberExpression e Literal
