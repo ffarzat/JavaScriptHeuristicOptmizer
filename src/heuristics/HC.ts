@@ -431,7 +431,7 @@ export default class HC extends IHeuristic {
                         var updatedIndexList = this.DoIndexes(this.bestIndividual);
                         nodesIndexList = updatedIndexList.slice();
                         updatedIndexes = updatedIndexList[this.typeIndexCounter];
-                        if (updatedIndexes == undefined)
+                        if (updatedIndexes === undefined)
                             cb(time);
                         updatedIndexes.ActualIndex = (indexes.ActualIndex - constante_quantas_voltar) < 0 ? 0 : (indexes.ActualIndex - constante_quantas_voltar); //continua de onde parou (-2??)
                         throw BreakException;
