@@ -18,7 +18,7 @@ export default class Individual {
     //_astFile: any; //= new tmp.File();
     //_astFile: any = new tmp.File();
 
-    astObj:any;
+    astObj: any;
 
     /**
      * Options to generate new code
@@ -75,9 +75,12 @@ export default class Individual {
             //console.log(`AST: ${this.AST}`);
             var generatedAST = this.AST;
             code = escodegen.generate(generatedAST, this.Options);
-            
 
-            code = code.replace('return /******/\n', 'return /******/ '); //Patch for Esprima
+            //Patch for Esprima
+            code = code.replace('return /******/\n', 'return /******/ ');
+            if (code.length == 1)
+                code = "";
+                
         } catch (error) {
             //console.error('Error regenerating code: ' + error);
         }
@@ -92,7 +95,7 @@ export default class Individual {
         var newOne = new Individual();
         newOne.typesRemoved = this.typesRemoved.slice();
         newOne.modificationLog = this.modificationLog.slice();
-        newOne.AST =   traverse(this.AST).clone();
+        newOne.AST = traverse(this.AST).clone();
         newOne.testResults = traverse(this.testResults).clone();
         return newOne;
     }
