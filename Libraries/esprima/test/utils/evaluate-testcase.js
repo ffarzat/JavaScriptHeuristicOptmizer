@@ -27,7 +27,7 @@
 (function (root, factory) {
     if (typeof module === 'object' && module.exports) {
         module.exports = factory(
-            require('../../esprima'),
+            require('../../'),
             require('./error-to-object')
         );
     } else {
@@ -98,9 +98,10 @@
 
     function testParse(code, syntax) {
         'use strict';
-        var expected, tree, actual, options, i, len;
+        var expected, tree, actual, options, i, len, nodes;
 
         options = {
+            jsx: true,
             comment: (typeof syntax.comments !== 'undefined'),
             range: true,
             loc: true,
@@ -137,9 +138,9 @@
         expected = JSON.stringify(syntax, null, 4);
         try {
             // Some variations of the options.
-            tree = esprima.parse(code, { tolerant: options.tolerant, sourceType: options.sourceType });
-            tree = esprima.parse(code, { tolerant: options.tolerant, sourceType: options.sourceType, range: true });
-            tree = esprima.parse(code, { tolerant: options.tolerant, sourceType: options.sourceType, loc: true });
+            tree = esprima.parse(code, { jsx: options.jsx, tolerant: options.tolerant, sourceType: options.sourceType });
+            tree = esprima.parse(code, { jsx: options.jsx, tolerant: options.tolerant, sourceType: options.sourceType, range: true });
+            tree = esprima.parse(code, { jsx: options.jsx, tolerant: options.tolerant, sourceType: options.sourceType, loc: true });
 
             tree = esprima.parse(code, options);
 
@@ -185,8 +186,52 @@
         } catch (e) {
             throw new NotMatchingError(expected, e.toString());
         }
-
         assertEquality(expected, actual);
+
+        function collect(node) {
+            nodes.push(node);
+        }
+
+        function filter(node) {
+            if (node.type === 'Program') {
+                nodes.push(node);
+            }
+        }
+
+        // Use the delegate to collect the nodes.
+        try {
+            nodes = [];
+            esprima.parse(code, options, collect);
+        } catch (e) {
+            throw new NotMatchingError(expected, e.toString());
+        }
+        // The last one, the most top-level node, is always a Program node.
+        assertEquality('Program', nodes.pop().type);
+
+        // Use the delegate to filter the nodes.
+        try {
+            nodes = [];
+            esprima.parse(code, options, filter);
+        } catch (e) {
+            throw new NotMatchingError(expected, e.toString());
+        }
+        // Every tree will have exactly one Program node.
+        assertEquality('Program', nodes[0].type);
+
+        // Exercise more code paths with the delegate
+        try {
+            esprima.parse(code);
+            esprima.parse(code, { range: false, loc: false, comment: false }, filter);
+            esprima.parse(code, { range: true,  loc: false, comment: false }, filter);
+            esprima.parse(code, { range: false, loc: true,  comment: false }, filter);
+            esprima.parse(code, { range: true,  loc: true,  comment: false }, filter);
+            esprima.parse(code, { range: false, loc: false, comment: true }, filter);
+            esprima.parse(code, { range: true,  loc: false, comment: true }, filter);
+            esprima.parse(code, { range: false, loc: true,  comment: true }, filter);
+            esprima.parse(code, { range: true,  loc: true,  comment: true }, filter);
+        } catch (e) {
+            // Ignore, do nothing
+        }
     }
 
     function testTokenize(code, tokens) {
@@ -203,6 +248,15 @@
         expected = JSON.stringify(tokens, null, 4);
 
         try {
+            // Some variations of the options (tolerant mode, to avoid premature error)
+            esprima.tokenize(code, { tolerant: true, comment: false, loc: false, range: false });
+            esprima.tokenize(code, { tolerant: true, comment: false, loc: false, range: true });
+            esprima.tokenize(code, { tolerant: true, comment: false, loc: true,  range: false });
+            esprima.tokenize(code, { tolerant: true, comment: false, loc: true,  range: true });
+            esprima.tokenize(code, { tolerant: true, comment: true,  loc: false, range: false });
+            esprima.tokenize(code, { tolerant: true, comment: true,  loc: false, range: true });
+            esprima.tokenize(code, { tolerant: true, comment: true,  loc: true,  range: false });
+
             list = esprima.tokenize(code, options);
             actual = JSON.stringify(list, null, 4);
         } catch (e) {
@@ -243,11 +297,19 @@
         if (expected !== actual) {
             throw new NotMatchingError(expected, actual);
         }
+
+        // Exercise more code paths
+        try {
+            esprima.tokenize(code);
+            esprima.tokenize(code, { tolerant: false });
+        } catch (e) {
+            // Ignore, do nothing
+        }
     }
 
     function testModule(code, exception) {
         'use strict';
-        var i, options, expected, actual, err, handleInvalidRegexFlag, tokenize;
+        var i, options, expected, actual, err, handleInvalidRegexFlag;
 
         // Different parsing options should give the same error.
         options = [
@@ -295,10 +357,10 @@
 
         // Different parsing options should give the same error.
         options = [
-            {},
-            { comment: true },
-            { raw: true },
-            { raw: true, comment: true }
+            { jsx: true },
+            { jsx: true, comment: true },
+            { jsx: true, raw: true },
+            { jsx: true, raw: true, comment: true }
         ];
 
         // If handleInvalidRegexFlag is true, an invalid flag in a regular expression
@@ -349,16 +411,6 @@
         }
     }
 
-    function testAPI(code, expected) {
-        var result;
-        // API test.
-        expected = JSON.stringify(expected, null, 4);
-        result = eval(code);
-        result = JSON.stringify(result, null, 4);
-
-        assertEquality(expected, result);
-    }
-
     return function (testCase) {
         var code = testCase.case || testCase.source || "";
         if (testCase.hasOwnProperty('module')) {
@@ -369,8 +421,6 @@
             testTokenize(testCase.case, testCase.tokens);
         } else if (testCase.hasOwnProperty('failure')) {
             testError(code, testCase.failure);
-        } else if (testCase.hasOwnProperty('result')) {
-            testAPI(testCase.run, testCase.result);
         }
     }
 }));

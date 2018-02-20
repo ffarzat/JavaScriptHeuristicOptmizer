@@ -37,9 +37,8 @@ function parse(code, options, delegate) {
         }
     };
     var parserDelegate = (typeof delegate === 'function') ? proxyDelegate : null;
-    var collectComment = false;
     if (options) {
-        collectComment = (typeof options.comment === 'boolean' && options.comment);
+        var collectComment = (typeof options.comment === 'boolean' && options.comment);
         var attachComment = (typeof options.attachComment === 'boolean' && options.attachComment);
         if (collectComment || attachComment) {
             commentHandler = new comment_handler_1.CommentHandler();
@@ -56,7 +55,7 @@ function parse(code, options, delegate) {
         parser = new parser_1.Parser(code, options, parserDelegate);
     }
     var ast = (parser.parseProgram());
-    if (collectComment) {
+    if (parser.config.comment) {
         ast.comments = commentHandler.comments;
     }
     if (parser.config.tokens) {
@@ -96,4 +95,4 @@ exports.tokenize = tokenize;
 var syntax_1 = require('./syntax');
 exports.Syntax = syntax_1.Syntax;
 // Sync with *.json manifests.
-exports.version = '3.1.1';
+exports.version = '3.0.0';

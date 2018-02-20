@@ -9,7 +9,6 @@
                     "type": "FunctionExpression",
                     "id": null,
                     "params": [],
-                    "defaults": [],
                     "body": {
                         "type": "BlockStatement",
                         "body": [
@@ -34,6 +33,7 @@
                                         }
                                     }
                                 },
+                                "directive": "use\\x20strict",
                                 "range": [
                                     15,
                                     31

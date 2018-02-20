@@ -528,7 +528,7 @@ var Parser = (function () {
                 break;
             case token_1.Token.Keyword:
                 if (!this.context.strict && this.context.allowYield && this.matchKeyword('yield')) {
-                    expr = this.parseIdentifierName();
+                    expr = this.parseNonComputedProperty();
                 }
                 else if (!this.context.strict && this.matchKeyword('let')) {
                     expr = this.finalize(node, new Node.Identifier(this.nextToken().value));
@@ -653,6 +653,16 @@ var Parser = (function () {
         return (key.type === syntax_1.Syntax.Identifier && key.name === value) ||
             (key.type === syntax_1.Syntax.Literal && key.value === value);
     };
+    Parser.prototype.checkDuplicatedProto = function (key, hasProto) {
+        if (this.isPropertyKey(key, '__proto__')) {
+            if (hasProto.value) {
+                this.tolerateError(messages_1.Messages.DuplicateProtoProperty);
+            }
+            else {
+                hasProto.value = true;
+            }
+        }
+    };
     Parser.prototype.parseObjectProperty = function (hasProto) {
         var node = this.createNode();
         var token = this.lookahead;
@@ -700,11 +710,8 @@ var Parser = (function () {
             }
             kind = 'init';
             if (this.match(':')) {
-                if (!computed && this.isPropertyKey(key, '__proto__')) {
-                    if (hasProto.value) {
-                        this.tolerateError(messages_1.Messages.DuplicateProtoProperty);
-                    }
-                    hasProto.value = true;
+                if (!computed) {
+                    this.checkDuplicatedProto(key, hasProto);
                 }
                 this.nextToken();
                 value = this.inheritCoverGrammar(this.parseAssignmentExpression);
@@ -715,6 +722,7 @@ var Parser = (function () {
             }
             else if (token.type === token_1.Token.Identifier) {
                 var id = this.finalize(node, new Node.Identifier(token.value));
+                this.checkDuplicatedProto(key, hasProto);
                 if (this.match('=')) {
                     this.context.firstCoverInitializedNameError = this.lookahead;
                     this.nextToken();
@@ -811,7 +819,6 @@ var Parser = (function () {
                 break;
             case syntax_1.Syntax.AssignmentExpression:
                 expr.type = syntax_1.Syntax.AssignmentPattern;
-                delete expr.operator;
                 this.reinterpretExpressionAsPattern(expr.left);
                 break;
             default:
@@ -948,7 +955,7 @@ var Parser = (function () {
             token.type === token_1.Token.BooleanLiteral ||
             token.type === token_1.Token.NullLiteral;
     };
-    Parser.prototype.parseIdentifierName = function () {
+    Parser.prototype.parseNonComputedProperty = function () {
         var node = this.createNode();
         var token = this.nextToken();
         if (!this.isIdentifierName(token)) {
@@ -958,13 +965,13 @@ var Parser = (function () {
     };
     Parser.prototype.parseNewExpression = function () {
         var node = this.createNode();
-        var id = this.parseIdentifierName();
+        var id = this.parseNonComputedProperty();
         assert_1.assert(id.name === 'new', 'New expression must start with `new`');
         var expr;
         if (this.match('.')) {
             this.nextToken();
             if (this.lookahead.type === token_1.Token.Identifier && this.context.inFunctionBody && this.lookahead.value === 'target') {
-                var property = this.parseIdentifierName();
+                var property = this.parseNonComputedProperty();
                 expr = new Node.MetaProperty(id, property);
             }
             else {
@@ -1001,7 +1008,7 @@ var Parser = (function () {
                 this.context.isBindingElement = false;
                 this.context.isAssignmentTarget = true;
                 this.expect('.');
-                var property = this.parseIdentifierName();
+                var property = this.parseNonComputedProperty();
                 expr = this.finalize(this.startNode(startToken), new Node.StaticMemberExpression(expr, property));
             }
             else if (this.match('(')) {
@@ -1055,7 +1062,7 @@ var Parser = (function () {
                 this.context.isBindingElement = false;
                 this.context.isAssignmentTarget = true;
                 this.expect('.');
-                var property = this.parseIdentifierName();
+                var property = this.parseNonComputedProperty();
                 expr = this.finalize(node, new Node.StaticMemberExpression(expr, property));
             }
             else if (this.lookahead.type === token_1.Token.Template && this.lookahead.head) {
@@ -1110,8 +1117,15 @@ var Parser = (function () {
     // ECMA-262 12.5 Unary Operators
     Parser.prototype.parseUnaryExpression = function () {
         var expr;
-        if (this.match('+') || this.match('-') || this.match('~') || this.match('!') ||
-            this.matchKeyword('delete') || this.matchKeyword('void') || this.matchKeyword('typeof')) {
+        if (this.match('+') || this.match('-') || this.match('~') || this.match('!')) {
+            var node = this.startNode(this.lookahead);
+            var token = this.nextToken();
+            expr = this.inheritCoverGrammar(this.parseUnaryExpression);
+            expr = this.finalize(node, new Node.UnaryExpression(token.value, expr));
+            this.context.isAssignmentTarget = false;
+            this.context.isBindingElement = false;
+        }
+        else if (this.matchKeyword('delete') || this.matchKeyword('void') || this.matchKeyword('typeof')) {
             var node = this.startNode(this.lookahead);
             var token = this.nextToken();
             expr = this.inheritCoverGrammar(this.parseUnaryExpression);
@@ -1140,14 +1154,13 @@ var Parser = (function () {
         }
         return expr;
     };
-    // ECMA-262 12.6 Exponentiation Operators
-    // ECMA-262 12.7 Multiplicative Operators
-    // ECMA-262 12.8 Additive Operators
-    // ECMA-262 12.9 Bitwise Shift Operators
-    // ECMA-262 12.10 Relational Operators
-    // ECMA-262 12.11 Equality Operators
-    // ECMA-262 12.12 Binary Bitwise Operators
-    // ECMA-262 12.13 Binary Logical Operators
+    // ECMA-262 12.6 Multiplicative Operators
+    // ECMA-262 12.7 Additive Operators
+    // ECMA-262 12.8 Bitwise Shift Operators
+    // ECMA-262 12.9 Relational Operators
+    // ECMA-262 12.10 Equality Operators
+    // ECMA-262 12.11 Binary Bitwise Operators
+    // ECMA-262 12.12 Binary Logical Operators
     Parser.prototype.binaryPrecedence = function (token) {
         var op = token.value;
         var precedence;
@@ -1209,7 +1222,7 @@ var Parser = (function () {
         }
         return expr;
     };
-    // ECMA-262 12.14 Conditional Operator
+    // ECMA-262 12.13 Conditional Operator
     Parser.prototype.parseConditionalExpression = function () {
         var startToken = this.lookahead;
         var expr = this.inheritCoverGrammar(this.parseBinaryExpression);
@@ -1227,7 +1240,7 @@ var Parser = (function () {
         }
         return expr;
     };
-    // ECMA-262 12.15 Assignment Operators
+    // ECMA-262 12.14 Assignment Operators
     Parser.prototype.checkPatternParam = function (options, param) {
         switch (param.type) {
             case syntax_1.Syntax.Identifier:
@@ -1374,7 +1387,7 @@ var Parser = (function () {
         }
         return expr;
     };
-    // ECMA-262 12.16 Comma Operator
+    // ECMA-262 12.15 Comma Operator
     Parser.prototype.parseExpression = function () {
         var startToken = this.lookahead;
         var expr = this.isolateCoverGrammar(this.parseAssignmentExpression);
@@ -1395,8 +1408,6 @@ var Parser = (function () {
     // ECMA-262 13.2 Block
     Parser.prototype.parseStatementListItem = function () {
         var statement = null;
-        this.context.isAssignmentTarget = true;
-        this.context.isBindingElement = true;
         if (this.lookahead.type === token_1.Token.Keyword) {
             switch (this.lookahead.value) {
                 case 'export':
@@ -1772,10 +1783,6 @@ var Parser = (function () {
                 var declarations = this.parseVariableDeclarationList({ inFor: true });
                 this.context.allowIn = previousAllowIn;
                 if (declarations.length === 1 && this.matchKeyword('in')) {
-                    var decl = declarations[0];
-                    if (decl.init && (decl.id.type === syntax_1.Syntax.ArrayPattern || decl.id.type === syntax_1.Syntax.ObjectPattern || this.context.strict)) {
-                        this.tolerateError(messages_1.Messages.ForInOfLoopInitializer, 'for-in');
-                    }
                     init = this.finalize(init, new Node.VariableDeclaration(declarations, 'var'));
                     this.nextToken();
                     left = init;
@@ -1838,7 +1845,7 @@ var Parser = (function () {
                 init = this.inheritCoverGrammar(this.parseAssignmentExpression);
                 this.context.allowIn = previousAllowIn;
                 if (this.matchKeyword('in')) {
-                    if (!this.context.isAssignmentTarget || init.type === syntax_1.Syntax.AssignmentExpression) {
+                    if (!this.context.isAssignmentTarget) {
                         this.tolerateError(messages_1.Messages.InvalidLHSInForIn);
                     }
                     this.nextToken();
@@ -1848,7 +1855,7 @@ var Parser = (function () {
                     init = null;
                 }
                 else if (this.matchContextualKeyword('of')) {
-                    if (!this.context.isAssignmentTarget || init.type === syntax_1.Syntax.AssignmentExpression) {
+                    if (!this.context.isAssignmentTarget) {
                         this.tolerateError(messages_1.Messages.InvalidLHSInForLoop);
                     }
                     this.nextToken();
@@ -2094,6 +2101,8 @@ var Parser = (function () {
     };
     // ECMA-262 13 Statements
     Parser.prototype.parseStatement = function () {
+        this.context.isAssignmentTarget = true;
+        this.context.isBindingElement = true;
         var statement = null;
         switch (this.lookahead.type) {
             case token_1.Token.BooleanLiteral:
@@ -2357,7 +2366,7 @@ var Parser = (function () {
         this.context.allowYield = !isGenerator;
         if (!this.match('(')) {
             var token = this.lookahead;
-            id = (!this.context.strict && !isGenerator && this.matchKeyword('yield')) ? this.parseIdentifierName() : this.parseVariableIdentifier();
+            id = (!this.context.strict && !isGenerator && this.matchKeyword('yield')) ? this.parseNonComputedProperty() : this.parseVariableIdentifier();
             if (this.context.strict) {
                 if (this.scanner.isRestrictedWord(token.value)) {
                     this.tolerateUnexpectedToken(token, messages_1.Messages.StrictFunctionName);
@@ -2499,7 +2508,7 @@ var Parser = (function () {
         this.context.allowYield = previousAllowYield;
         return this.finalize(node, new Node.FunctionExpression(null, params.params, method, isGenerator));
     };
-    // ECMA-262 14.4 Generator Function Definitions
+    // ECMA-262 14.4 Yield expression
     Parser.prototype.parseYieldExpression = function () {
         var node = this.createNode();
         this.expectKeyword('yield');
@@ -2624,12 +2633,12 @@ var Parser = (function () {
         var elementList = this.parseClassElementList();
         return this.finalize(node, new Node.ClassBody(elementList));
     };
-    Parser.prototype.parseClassDeclaration = function (identifierIsOptional) {
+    Parser.prototype.parseClassDeclaration = function () {
         var node = this.createNode();
         var previousStrict = this.context.strict;
         this.context.strict = true;
         this.expectKeyword('class');
-        var id = (identifierIsOptional && (this.lookahead.type !== token_1.Token.Identifier)) ? null : this.parseVariableIdentifier();
+        var id = this.parseVariableIdentifier();
         var superClass = null;
         if (this.matchKeyword('extends')) {
             this.nextToken();
@@ -2678,7 +2687,7 @@ var Parser = (function () {
     Parser.prototype.parseImportSpecifier = function () {
         var node = this.createNode();
         var local;
-        var imported = this.parseIdentifierName();
+        var imported = this.parseNonComputedProperty();
         if (this.matchContextualKeyword('as')) {
             this.nextToken();
             local = this.parseVariableIdentifier();
@@ -2704,7 +2713,7 @@ var Parser = (function () {
     // import <foo> ...;
     Parser.prototype.parseImportDefaultSpecifier = function () {
         var node = this.createNode();
-        var local = this.parseIdentifierName();
+        var local = this.parseNonComputedProperty();
         return this.finalize(node, new Node.ImportDefaultSpecifier(local));
     };
     // import <* as foo> ...;
@@ -2715,7 +2724,7 @@ var Parser = (function () {
             this.throwError(messages_1.Messages.NoAsAfterImportNamespace);
         }
         this.nextToken();
-        var local = this.parseIdentifierName();
+        var local = this.parseNonComputedProperty();
         return this.finalize(node, new Node.ImportNamespaceSpecifier(local));
     };
     Parser.prototype.parseImportDeclaration = function () {
@@ -2773,11 +2782,11 @@ var Parser = (function () {
     // ECMA-262 15.2.3 Exports
     Parser.prototype.parseExportSpecifier = function () {
         var node = this.createNode();
-        var local = this.parseIdentifierName();
+        var local = this.matchKeyword('default') ? this.parseNonComputedProperty() : this.parseVariableIdentifier();
         var exported = local;
         if (this.matchContextualKeyword('as')) {
             this.nextToken();
-            exported = this.parseIdentifierName();
+            exported = this.parseNonComputedProperty();
         }
         return this.finalize(node, new Node.ExportSpecifier(local, exported));
     };
@@ -2799,7 +2808,8 @@ var Parser = (function () {
             }
             else if (this.matchKeyword('class')) {
                 // export default class foo {}
-                var declaration = this.parseClassDeclaration(true);
+                var declaration = this.parseClassExpression();
+                declaration.type = syntax_1.Syntax.ClassDeclaration;
                 exportDeclaration = this.finalize(node, new Node.ExportDefaultDeclaration(declaration));
             }
             else {

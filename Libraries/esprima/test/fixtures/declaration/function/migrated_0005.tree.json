@@ -22,7 +22,6 @@
                 }
             },
             "params": [],
-            "defaults": [],
             "body": {
                 "type": "BlockStatement",
                 "body": [
@@ -47,7 +46,6 @@
                             }
                         },
                         "params": [],
-                        "defaults": [],
                         "body": {
                             "type": "BlockStatement",
                             "body": [
@@ -72,6 +70,7 @@
                                             }
                                         }
                                     },
+                                    "directive": "use strict",
                                     "range": [
                                         37,
                                         50

@@ -22,6 +22,7 @@
                     }
                 }
             },
+            "directive": "use strict",
             "range": [
                 0,
                 13
@@ -88,7 +89,6 @@
                                     "type": "FunctionExpression",
                                     "id": null,
                                     "params": [],
-                                    "defaults": [],
                                     "body": {
                                         "type": "BlockStatement",
                                         "body": [],
@@ -167,7 +167,6 @@
                                     "type": "FunctionExpression",
                                     "id": null,
                                     "params": [],
-                                    "defaults": [],
                                     "body": {
                                         "type": "BlockStatement",
                                         "body": [],

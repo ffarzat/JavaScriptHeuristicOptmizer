@@ -43,8 +43,8 @@ exports.Character = {
     },
     isHexDigit: function (cp) {
         return (cp >= 0x30 && cp <= 0x39) ||
-            (cp >= 0x41 && cp <= 0x46) ||
-            (cp >= 0x61 && cp <= 0x66); // a..f
+            (cp >= 0x41 && cp <= 0x48) ||
+            (cp >= 0x61 && cp <= 0x68); // a..h
     },
     isOctalDigit: function (cp) {
         return (cp >= 0x30 && cp <= 0x37); // 0..7

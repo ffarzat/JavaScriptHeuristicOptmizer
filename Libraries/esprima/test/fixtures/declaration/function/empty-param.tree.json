@@ -73,7 +73,6 @@
                     "elements": []
                 }
             ],
-            "defaults": [],
             "body": {
                 "range": [
                     19,
@@ -125,7 +124,8 @@
                             "type": "Literal",
                             "value": "use strict",
                             "raw": "'use strict'"
-                        }
+                        },
+                        "directive": "use strict"
                     }
                 ]
             },

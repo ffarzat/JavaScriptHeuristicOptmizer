@@ -50,7 +50,6 @@
                                     }
                                 }
                             ],
-                            "defaults": [],
                             "body": {
                                 "type": "BlockStatement",
                                 "body": [
@@ -75,6 +74,7 @@
                                                 }
                                             }
                                         },
+                                        "directive": "use strict",
                                         "range": [
                                             10,
                                             22

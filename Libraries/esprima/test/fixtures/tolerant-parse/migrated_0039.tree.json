@@ -22,6 +22,7 @@
                     }
                 }
             },
+            "directive": "use strict",
             "range": [
                 0,
                 13
@@ -107,7 +108,6 @@
                                         }
                                     }
                                 ],
-                                "defaults": [],
                                 "body": {
                                     "type": "BlockStatement",
                                     "body": [],
