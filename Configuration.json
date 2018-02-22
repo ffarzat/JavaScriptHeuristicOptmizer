@@ -26,9 +26,14 @@
     "memory": 8192,
     "libraries": [
         {
-            "name": "esprima",
-            "path": "Libraries/esprima/",
-            "mainFilePath": "dist/esprima.js"
+            "name": "minimist",
+            "path": "Libraries/minimist_changed",
+            "mainFilePath": "index.js"
+        },
+        {
+            "name": "exectimer",
+            "path": "Libraries/exectimer_changed",
+            "mainFilePath": "index.js"
         }
     ],
     "trialsConfiguration": [
@@ -37,7 +42,7 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 2,
+                "neighborsToProcess": 4,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,

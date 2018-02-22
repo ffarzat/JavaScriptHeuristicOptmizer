@@ -1,0 +1,348 @@
+function ToNanosecondsToSeconds_Optmizer(nanovalue) {return parseFloat((nanovalue / 1000000000.0).toFixed(3));}
+global['__objeto_raiz_exectimer'] = require('exectimer'); 
+global['__objeto_raiz_exectimer_Tick'] = global['__objeto_raiz_exectimer'].Tick; 
+global['__exectimer_counter_object'] = {};
+global['optmizerFunctionsInternalList'] = {};
+global['__exectimer_counter_object_timer'] = []; 
+global['__exectimer_counter_object_median'] = []; 
+global['__exectimer_counter_object_[Anonymous]'] = []; 
+global['__exectimer_counter_object_mean'] = []; 
+global['__exectimer_counter_object_duration'] = []; 
+global['__exectimer_counter_object_min'] = []; 
+global['__exectimer_counter_object_max'] = []; 
+global['__exectimer_counter_object_count'] = []; 
+global['__exectimer_counter_object_parse'] = []; 
+global['__exectimer_counter_object_isGeneratorFunction'] = []; 
+global['__exectimer_counter_object_Tick'] = []; 
+global['__exectimer_counter_object_wrap'] = []; 
+global['__exectimer_counter_object_done'] = []; 
+global['__exectimer_counter_object_start'] = []; 
+global['__exectimer_counter_object_stop'] = []; 
+global['__exectimer_counter_object_getDiff'] = []; 
+global['__exectimer_counter_object_functionName'] = []; 
+
+
+
+
+ 
+        function Enter(details){
+            if(details.name == "toString")
+                return;
+
+            if(global['__exectimer_counter_object_'+details.name])
+            {
+                var p = new global['__objeto_raiz_exectimer_Tick'](details.name);
+                p.start();
+                global['__exectimer_counter_object_'+details.name].push(p);
+            }
+        }
+
+        function Exit(details){
+            if(details.name == "toString")
+                return;
+               
+
+            if(global['__exectimer_counter_object']  && global['__exectimer_counter_object_' + details.name])
+            {
+                var p = global['__exectimer_counter_object_'+details.name].pop();
+                p.stop();
+                var resultadoFinal = {'name': details.name};
+                resultadoFinal.min = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].min()); 
+                resultadoFinal.max = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].max()); 
+                resultadoFinal.mean = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].mean()); 
+                resultadoFinal.median = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].median()); 
+                resultadoFinal.duration = ToNanosecondsToSeconds_Optmizer(global['__objeto_raiz_exectimer'].timers[details.name].duration())
+
+                global['__exectimer_counter_object'][details.name] = resultadoFinal;
+            }
+
+            global['optmizerFunctionsInternalList'][details.name] = isNaN(global['optmizerFunctionsInternalList'][details.name])? 0 : parseInt(global['optmizerFunctionsInternalList'][details.name]) + parseInt(1);
+            var fs = require('fs');
+            fs.writeFileSync('/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer/resultados-funcoes.json', JSON.stringify(global['__exectimer_counter_object'], null, 4));
+            fs.writeFileSync('/home/fabio/Github/JavaScriptHeuristicOptmizer/Libraries/exectimer/resultados-dinamico.json', JSON.stringify(global['optmizerFunctionsInternalList'], null, 4));
+
+        }
+        Enter({ name: 'Corpo-Lib' });
+        'use strict';
+const co = require('co');
+/**
+ * Contains all timers.
+ * @type {{}}
+ */
+const timers = {};
+/**
+ * Timers factory object.
+ * @param name
+ * @returns {*}
+ */
+const timer = function (name) {
+Enter({ name: 'timer', lineNumber: 13, range: [184, 3320] });
+    if (typeof timers[name] === 'undefined') {
+        timers[name] = {
+            ticks: [],
+            /**
+             * Get the median of all ticks.
+             * @returns {*}
+             */
+            median: function () {
+Enter({ name: 'median', lineNumber: 21, range: [421, 1081] });
+                if (this.ticks.length > 1) {
+                    this.ticks.sort(function (a, b) {
+Enter({ name: '[Anonymous]', lineNumber: 23, range: [516, 628] });
+                        
+Exit({ name: '[Anonymous]', lineNumber: 24, range: [516, 628], return: true });
+                       return a && b && a.getDiff() - b.getDiff() || 0;
+                    
+Exit({ name: '[Anonymous]', lineNumber: 23, range: [516, 628] });
+                    });
+                    const l = this.ticks.length;
+                    const half = Math.floor(l / 2);
+                    if (l % 2) {
+                        return this.ticks[half].getDiff();
+                    } else {
+                        return (this.ticks[half - 1].getDiff() + this.ticks[half].getDiff()) / 2;
+                    }
+                } else {
+                    
+Exit({ name: 'median', lineNumber: 34, range: [421, 1081], return: true });
+                   return this.ticks[0].getDiff();
+                }
+            
+Exit({ name: 'median', lineNumber: 21, range: [421, 1081] });
+            },
+            /**
+             * Get the average duration of all ticks.
+             * @returns {number}
+             */
+            mean: function () {
+Enter({ name: 'mean', lineNumber: 41, range: [1220, 1307] });
+                
+Exit({ name: 'mean', lineNumber: 42, range: [1220, 1307], return: true });
+               return this.duration() / this.ticks.length;
+            
+Exit({ name: 'mean', lineNumber: 41, range: [1220, 1307] });
+            },
+            /**
+             * Get the duration of all ticks.
+             * @returns {number}
+             */
+            duration: function () {
+Enter({ name: 'duration', lineNumber: 48, range: [1442, 1665] });
+                let sum = 0;
+                for (let i = 0, l = this.ticks.length; i < l; i++) {
+                    sum += this.ticks[i].getDiff();
+                }
+                
+Exit({ name: 'duration', lineNumber: 53, range: [1442, 1665], return: true });
+               return sum;
+            
+Exit({ name: 'duration', lineNumber: 48, range: [1442, 1665] });
+            },
+            /**
+             * Get the shortest tick.
+             * @returns {number}
+             */
+            min: function () {
+Enter({ name: 'min', lineNumber: 59, range: [1787, 2082] });
+                let min = this.ticks[0].getDiff();
+                this.ticks.forEach(function (tick) {
+Enter({ name: '[Anonymous]', lineNumber: 61, range: [1887, 2038] });
+                    if (tick.getDiff() < min) {
+                        min = tick.getDiff();
+                    }
+                
+Exit({ name: '[Anonymous]', lineNumber: 61, range: [1887, 2038] });
+                });
+                
+Exit({ name: 'min', lineNumber: 66, range: [1787, 2082], return: true });
+               return min;
+            
+Exit({ name: 'min', lineNumber: 59, range: [1787, 2082] });
+            },
+            /**
+             * Get the longest tick.
+             * @returns {number}
+             */
+            max: function () {
+Enter({ name: 'max', lineNumber: 72, range: [2203, 2476] });
+                let max = 0;
+                this.ticks.forEach(function (tick) {
+Enter({ name: '[Anonymous]', lineNumber: 74, range: [2281, 2432] });
+                    if (tick.getDiff() > max) {
+                        max = tick.getDiff();
+                    }
+                
+Exit({ name: '[Anonymous]', lineNumber: 74, range: [2281, 2432] });
+                });
+                
+Exit({ name: 'max', lineNumber: 79, range: [2203, 2476], return: true });
+               return max;
+            
+Exit({ name: 'max', lineNumber: 72, range: [2203, 2476] });
+            },
+            /**
+             * Get the number of ticks.
+             * @returns {Number}
+             */
+            count: function () {
+Enter({ name: 'count', lineNumber: 85, range: [2602, 2684] });
+                
+Exit({ name: 'count', lineNumber: 86, range: [2602, 2684], return: true });
+               return Object.keys(this.ticks).length;
+            
+Exit({ name: 'count', lineNumber: 85, range: [2602, 2684] });
+            },
+            /**
+             * Parse the numbers nicely.
+             * @param num
+             * @returns {string}
+             */
+            parse: function (num) {
+Enter({ name: 'parse', lineNumber: 93, range: [2837, 3276] });
+                if (num < 1000) {
+                    return num + 'ns';
+                } else if (num >= 1000 && num < 1000000) {
+                    return num / 1000 + 'us';
+                } else if (num >= 1000000 && num < 1000000000) {
+                    return num / 1000000 + 'ms';
+                } else if (num >= 1000000000) {
+                    
+Exit({ name: 'parse', lineNumber: 101, range: [2837, 3276], return: true });
+                   return num / 1000000000 + 's';
+                }
+            
+Exit({ name: 'parse', lineNumber: 93, range: [2837, 3276] });
+            }
+        };
+    }
+    
+Exit({ name: 'timer', lineNumber: 106, range: [184, 3320], return: true });
+   return timers[name];
+
+Exit({ name: 'timer', lineNumber: 13, range: [184, 3320] });
+};
+/**
+ * Check if `obj` is a generator function.
+ *
+ * @param {Mixed} obj
+ * @return {Boolean}
+ * @api private
+ */
+function isGeneratorFunction(obj) {
+Enter({ name: 'isGeneratorFunction', lineNumber: 115, range: [3435, 3807] });
+    var constructor = obj.constructor;
+    if (!constructor) {
+        return false;
+    }
+    if ('GeneratorFunction' === constructor.name || 'GeneratorFunction' === constructor.displayName) {
+        return true;
+    }
+    
+Exit({ name: 'isGeneratorFunction', lineNumber: 123, range: [3435, 3807], return: true });
+   return 'function' === typeof constructor.prototype.next && 'function' === typeof constructor.prototype.throw;
+
+Exit({ name: 'isGeneratorFunction', lineNumber: 115, range: [3435, 3807] });
+}
+/**
+ * Constructor of tick.
+ * @param name The name of this tick.
+ * @returns {Tick}
+ * @constructor
+ */
+function Tick(name) {
+Enter({ name: 'Tick', lineNumber: 131, range: [3913, 3975] });
+    this.name = name;
+    
+Exit({ name: 'Tick', lineNumber: 133, range: [3913, 3975], return: true });
+   return this;
+
+Exit({ name: 'Tick', lineNumber: 131, range: [3913, 3975] });
+}
+Tick.wrap = function (name, callback) {
+Enter({ name: 'wrap', lineNumber: 135, range: [3988, 4680] });
+    if (typeof name === 'function') {
+        callback = name;
+        name = functionName(callback);
+    }
+    if (name === '') {
+        name = 'anon';
+    }
+    const tick = new Tick(name);
+    tick.start();
+    const done = function () {
+Enter({ name: 'done', lineNumber: 145, range: [4244, 4284] });
+        tick.stop();
+    
+Exit({ name: 'done', lineNumber: 145, range: [4244, 4284] });
+    };
+    if (isGeneratorFunction(callback)) {
+        co(callback).then(done, done);
+    } else if (!!callback.toString().match(/^function.*\(.*\)/)) {
+        // If done is passed when the callback is declared than we assume is async
+        callback(done);
+    } else {
+        // Otherwise just call the function and stop the tick
+        callback();
+        tick.stop();
+    }
+    
+Exit({ name: 'wrap', lineNumber: 158, range: [3988, 4680], return: true });
+   return tick;
+
+Exit({ name: 'wrap', lineNumber: 135, range: [3988, 4680] });
+};
+/**
+ * Starts the tick.
+ */
+Tick.prototype.start = function () {
+Enter({ name: 'start', lineNumber: 163, range: [4733, 4785] });
+    this.hrstart = process.hrtime();
+
+Exit({ name: 'start', lineNumber: 163, range: [4733, 4785] });
+};
+/**
+ * Ends the tick.
+ */
+Tick.prototype.stop = function () {
+Enter({ name: 'stop', lineNumber: 169, range: [4835, 4936] });
+    this.hrend = process.hrtime(this.hrstart);
+    timer(this.name).ticks.push(this);
+
+Exit({ name: 'stop', lineNumber: 169, range: [4835, 4936] });
+};
+/**
+ * Get the duration of the tick.
+ * @returns Long nanoseconds
+ */
+Tick.prototype.getDiff = function () {
+Enter({ name: 'getDiff', lineNumber: 177, range: [5033, 5103] });
+    
+Exit({ name: 'getDiff', lineNumber: 178, range: [5033, 5103], return: true });
+   return this.hrend[0] * 1000000000 + this.hrend[1];
+
+Exit({ name: 'getDiff', lineNumber: 177, range: [5033, 5103] });
+};
+module.exports = {
+    timer: timer,
+    timers: timers,
+    Tick: Tick
+};
+/**
+ * Helper function used to retrieve function name.
+ * @param fun
+ * @returns {string}
+ */
+function functionName(fun) {
+Enter({ name: 'functionName', lineNumber: 190, range: [5274, 5435] });
+    let ret = fun.toString();
+    ret = ret.substr('function '.length);
+    ret = ret.substr(0, ret.indexOf('('));
+    
+Exit({ name: 'functionName', lineNumber: 194, range: [5274, 5435], return: true });
+   return ret;
+
+Exit({ name: 'functionName', lineNumber: 190, range: [5274, 5435] });
+}
+ 
+ 
+Exit({ name: 'Corpo-Lib' });
