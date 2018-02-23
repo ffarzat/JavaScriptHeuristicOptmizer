@@ -1,12 +1,12 @@
 {
-    "file": "jquery.json",
+    "file": "ramda.json",
     "trials": 60,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
     "mutationTrials": 1,
     "crossOverTrials": 1,
-    "logFilePath": "build/jquery.log",
+    "logFilePath": "build/ramda.log",
     "tmpDirectory": "/scratch/41061a/ffarzat1981/clients",
     "logCategory": "optmization",
     "logFileClearing": false,
@@ -20,25 +20,25 @@
     ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 200,
+    "clientTimeout": 30,
     "copyFileTimeout": 1728000,
     "clientsTotal": 40,
     "memory": 2408000,
     "libraries": [
         {
-            "name": "jquery",
-            "path": "Libraries/jquery/",
-            "mainFilePath": "dist/jquery.js"
+            "name": "ramda",
+            "path": "Libraries/ramda",
+            "mainFilePath": "/lib/type/unit/Unit.js"
         }
     ],
     "trialsConfiguration": [
         {
             "nodesSelectionApproach": "Global",
-            "ByFunctionType": "dynamic",
+            "ByFunctionType": "static",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 5,
-                "trials": 5000,
+                "neighborsToProcess": 1,
+                "trials": 10000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
                 "ramdonNodes": false,
@@ -62,8 +62,8 @@
                 ],
                 "individuals": 100,
                 "generations": 50,
-                "crossoverProbability": 0,
-                "mutationProbability": 75,
+                "crossoverProbability": 75,
+                "mutationProbability": 10,
                 "elitism": true,
                 "elitismPercentual": 30
             }
