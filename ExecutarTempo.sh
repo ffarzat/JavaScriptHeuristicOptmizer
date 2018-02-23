@@ -1,5 +1,12 @@
 #!/bin/sh
 
+#2018 - global 4 - bibliotecas em que alterei casos de teste para confirmar situações
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/exectimer_changed' 'index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-4/exectimer_changed' 1 1 'exectimer_changed'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/minimist_changed' 'index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-4/minimist_changed' 1 1 'minimist_changed'
+
+node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-4/
+node agrupadorCSVGlobal.paper.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-4/
+
 #2018 - global-3 - nova lista de n[os global + Identifier e MemberExpression
 
 node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/esprima/' 'dist/esprima.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-3/esprima' 1 1 'esprima'

@@ -1,13 +1,13 @@
 {
-    "file": "Configuration.json",
-    "trials": 1,
+    "file": "decimal.js.json",
+    "trials": 60,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
     "mutationTrials": 1,
     "crossOverTrials": 1,
-    "logFilePath": "build/optmization.log",
-    "tmpDirectory": "/media/fabio/Dados1/tmp",
+    "logFilePath": "build/decimal.js.log",
+    "tmpDirectory": "/scratch/41061a/ffarzat1981/clients",
     "logCategory": "optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
@@ -20,21 +20,12 @@
     ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 20,
-    "clientsTotal": 7,
-    "copyFileTimeout": 1728000,
-    "memory": 8192,
+    "clientTimeout": 60,
+    "copyFileTimeout": 300,
+    "clientsTotal": 40,
+    "memory": 2408000,
     "libraries": [
-        {
-            "name": "exectimer_changed",
-            "path": "Libraries/exectimer_changed",
-            "mainFilePath": "index.js"
-        },
-        {
-            "name": "minimist_changed",
-            "path": "Libraries/minimist_changed",
-            "mainFilePath": "index.js"
-        }
+        {"name":"decimal.js",       "path":"Libraries/decimal.js/",         "mainFilePath":"decimal.js" }
     ],
     "trialsConfiguration": [
         {
@@ -42,7 +33,7 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 4,
+                "neighborsToProcess": 20,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
@@ -63,10 +54,12 @@
                     "ArrayExpression",
                     "UnaryExpression",
                     "AssignmentExpression",
-                    "ConditionalExpression"
+                    "ConditionalExpression",
+                    "MemberExpression",
+                    "Identifier"
                 ],
-                "individuals": 50,
-                "generations": 100,
+                "individuals": 100,
+                "generations": 50,
                 "crossoverProbability": 0,
                 "mutationProbability": 75,
                 "elitism": true,
