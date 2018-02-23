@@ -1,0 +1,74 @@
+{
+    "file": "express.json",
+    "trials": 60,
+    "startTrial": 0,
+    "fitType": "median",
+    "testUntil": 1,
+    "mutationTrials": 1,
+    "crossOverTrials": 1,
+    "logFilePath": "build/express.log",
+    "tmpDirectory": "/scratch/41061a/ffarzat1981/clients",
+    "logCategory": "optmization",
+    "logFileClearing": false,
+    "resultsDirectory": "build/results",
+    "trialResultsFile": "Results.csv",
+    "logWritter": "ConcreteLogger",
+    "tester": "CommandTester",
+    "outWriter": "CsvResultsOutWriter",
+    "heuristics": [
+        "HC"
+    ],
+    "port": 5000,
+    "url": "ws://localhost",
+    "clientTimeout": 10,
+    "copyFileTimeout": 300,
+    "clientsTotal": 40,
+    "memory": 2408000,
+    "libraries": [
+        {
+            "name": "express",
+            "path": "Libraries/express",
+            "mainFilePath": "lib/response.js"
+        }
+    ],
+    "trialsConfiguration": [
+        {
+            "nodesSelectionApproach": "Global",
+            "ByFunctionType": "static",
+            "especific": {
+                "neighborApproach": "FirstAscent",
+                "neighborsToProcess": 40,
+                "trials": 5000,
+                "restartAtEnd": true,
+                "ramdonRestart": false,
+                "ramdonNodes": false,
+                "nodesType": [
+                    "ExpressionStatement",
+                    "VariableDeclaration",
+                    "Literal",
+                    "ReturnStatement",
+                    "Property",
+                    "BinaryExpression",
+                    "FunctionDeclaration",
+                    "IfStatement",
+                    "CallExpression",
+                    "VariableDeclarator",
+                    "ObjectExpression",
+                    "FunctionExpression",
+                    "ArrayExpression",
+                    "UnaryExpression",
+                    "AssignmentExpression",
+                    "ConditionalExpression",
+                    "MemberExpression",
+                    "Identifier"
+                ],
+                "individuals": 100,
+                "generations": 50,
+                "crossoverProbability": 0,
+                "mutationProbability": 75,
+                "elitism": true,
+                "elitismPercentual": 30
+            }
+        }
+    ]
+}
