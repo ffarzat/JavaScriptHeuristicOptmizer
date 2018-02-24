@@ -20,7 +20,7 @@
     ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 30,
+    "clientTimeout": 80,
     "copyFileTimeout": 1728000,
     "clientsTotal": 40,
     "memory": 2408000,
@@ -37,7 +37,7 @@
             "ByFunctionType": "static",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 1,
+                "neighborsToProcess": 40,
                 "trials": 10000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
