@@ -21,19 +21,14 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout": 20,
-    "clientsTotal": 7,
+    "clientsTotal": 10,
     "copyFileTimeout": 1728000,
     "memory": 8192,
     "libraries": [
         {
-            "name": "exectimer_changed",
-            "path": "Libraries/exectimer_changed",
-            "mainFilePath": "index.js"
-        },
-        {
-            "name": "minimist_changed",
-            "path": "Libraries/minimist_changed",
-            "mainFilePath": "index.js"
+            "name": "node-semver",
+            "path": "Libraries/node-semver",
+            "mainFilePath": "semver.js"
         }
     ],
     "trialsConfiguration": [
