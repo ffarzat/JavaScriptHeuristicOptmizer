@@ -41,7 +41,7 @@
                 "trials": 10000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
-                "ramdonNodes": false,
+                "ramdonNodes": true,
                 "nodesType": [
                     "ExpressionStatement",
                     "VariableDeclaration",
