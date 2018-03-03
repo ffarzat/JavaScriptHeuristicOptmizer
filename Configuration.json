@@ -20,15 +20,15 @@
     ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 20,
+    "clientTimeout": 80,
     "clientsTotal": 10,
     "copyFileTimeout": 1728000,
     "memory": 8192,
     "libraries": [
         {
-            "name": "node-semver",
-            "path": "Libraries/node-semver",
-            "mainFilePath": "semver.js"
+            "name": "express",
+            "path": "Libraries/express",
+            "mainFilePath": "lib/response.js"
         }
     ],
     "trialsConfiguration": [
@@ -37,8 +37,8 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 4,
-                "trials": 5000,
+                "neighborsToProcess": 1,
+                "trials": 5,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
                 "ramdonNodes": false,
