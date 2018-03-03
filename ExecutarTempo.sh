@@ -10,6 +10,7 @@ node agrupadorCSVGlobal.paper.js /home/fabio/Dropbox/Doutorado/2018/Experimentos
 #2018 - global-3 - nova lista de n[os global + Identifier e MemberExpression
 
 node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/express' 'lib/response.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-3/express' 1 1 'express'
+
 node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/esprima/' 'dist/esprima.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-3/esprima' 1 1 'esprima'
 node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/moment' 'moment.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-3/moment' 1 1 'moment'
 node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/pug' 'packages/pug/lib/index.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-3/pug' 1 1 'pug'
@@ -32,6 +33,7 @@ node agrupadorCSVGlobal.paper.js /home/fabio/Dropbox/Doutorado/2018/Experimentos
 
 node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/mathjs/' '/lib/type/unit/Unit.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/mathjs' 1 1 'mathjs'
 node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/node-semver/' 'semver.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/node-semver' 1 1 'node-semver'
+node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/decimal.js/' 'decimal.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/decimal.js' 1 1 'decimal.js'
 
 node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/esprima/' 'dist/esprima.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/esprima' 1 1 'esprima'
 node build/src/GerarPlanilhaGlobal.paper.js '/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/moment' 'moment.js' '/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/global-2/moment' 1 1 'moment'
