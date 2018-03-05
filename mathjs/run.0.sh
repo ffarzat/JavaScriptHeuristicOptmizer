@@ -15,7 +15,7 @@ node --max-old-space-size=2408000 build/src/index.js mathjs/mathjs.json null nul
 
 node --max-old-space-size=2408000 build/src/index.js mathjs/mathjs.json null null 1
 
-node --max-old-space-size=2408000 build/src/index.js mathjs/mathjs.json null null 2
+#node --max-old-space-size=2408000 build/src/index.js mathjs/mathjs.json null null 2
 
 node --max-old-space-size=2408000 build/src/index.js mathjs/mathjs.json null null 3
 
