@@ -69,7 +69,7 @@ test('default thresholds toNow', function (assert) {
     a.subtract(25, 'days');
     assert.equal(a.toNow(), 'in 25 days', 'Below default days to month (singular) threshold');
     a.subtract(1, 'days');
-    assert.equal(a.toNow(), 'in a month', 'Above default days to month (singular) threshold');
+    assert.equal(a.toNow(), 'in 30 days', 'Above default days to month (singular) threshold');
 
     // months to year threshold
     a = moment();
@@ -161,7 +161,7 @@ test('custom rounding', function (assert) {
 
     a = moment.utc();
     a.subtract({days: 30, hours: 23, minutes: 59});
-    assert.equal(a.toNow(), 'in a month', 'Round down towards the nearest day');
+    assert.equal(a.toNow(), 'in 30 days', 'Round down towards the nearest day');
 
     a = moment.utc();
     a.subtract({days: 364});
