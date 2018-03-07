@@ -19,7 +19,7 @@ node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null n
 
 node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 3
 
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 4
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 4
 
 node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 5
 

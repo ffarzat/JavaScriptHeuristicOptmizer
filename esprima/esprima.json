@@ -20,7 +20,7 @@
     ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 120,
+    "clientTimeout": 200,
     "copyFileTimeout": 1728000,
     "clientsTotal": 40,
     "memory": 2408000,
