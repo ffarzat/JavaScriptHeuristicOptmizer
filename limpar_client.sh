@@ -2,7 +2,7 @@
 #PBS -k oe
 #PBS -l select=1:ncpus=10
 #PBS -l walltime=500:00:00
-#PBS -N Lipar-client
+#PBS -N Limpar-client
 ### Request email when job begins and ends
 #PBS -m bea
 ### Specify email address to use for notification.
@@ -19,7 +19,7 @@ do
    do
 		#mkdir $STR/$i
 
-		rm -r -f $STR/$i/moment
+		rm -r -f $STR/$i/mathjs
 #		echo "c-> esprima $i ok"
 #		cp -r /home/users/ffarzat1981/Otimizador/JavaScriptHeuristicOptmizer/Libraries/jquery $STR/$i
 #		echo "c-> jquery $i ok"
