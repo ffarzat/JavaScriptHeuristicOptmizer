@@ -15,9 +15,9 @@ echo "----------------"
 
 #node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json null null 1
 
-#node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json null null 2
+node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json null null 2
 
-node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json null null 3
+#node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json null null 3
 
 node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json null null 4
 
