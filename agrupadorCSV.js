@@ -13,7 +13,7 @@ ListaDasBibliotecas.forEach(function (biblioteca) {
     ListaDasHeuristicas.forEach(function (heuristica) {
 
         var runResult = "";
-        runResult += "sep=,\ntrial,originalIndividualAvgTime,originalIndividualLOC,originalIndividualCharacters,bestIndividualAvgTime,bestIndividualLOC,bestIndividualCharacters,time,better\n";
+        runResult += "trial,originalIndividualAvgTime,originalIndividualLOC,originalIndividualCharacters,bestIndividualAvgTime,bestIndividualLOC,bestIndividualCharacters,time,better\n";
 
         for (var index = 0; index < 30; index++) {
 
