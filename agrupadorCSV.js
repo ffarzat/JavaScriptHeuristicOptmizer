@@ -31,11 +31,11 @@ ListaDasBibliotecas.forEach(function (biblioteca) {
             if (text.length === 0)
                 continue;
 
-                if (!arr[0] || arr[0] == 'sep=,') {
+            if (!arr[0] || arr[0] == 'sep=,') {
                 if (!arr[2] || arr[2].length === 0) {
                     continue;
                 }
-                
+
                 runResult += `${arr[2]}\n`;
             }
             else {
@@ -46,9 +46,34 @@ ListaDasBibliotecas.forEach(function (biblioteca) {
             }
         }
 
+        var resultadosAgrupadosVelho = runResult.split("\n");
+        //Header com ;
+        var resultadosAgrupadosFinal = `${resultadosAgrupadosVelho[0].replace(/,/g, ';')}\n`
+        var arrayLinhas = resultadosAgrupadosVelho.splice(1, resultadosAgrupadosVelho.length);
+
+        arrayLinhas.forEach(linha => {
+            if (linha.length > 0) {
+                colunas = linha.split(","); //cada coluna
+
+                resultadosAgrupadosFinal += `${colunas[0].replace(/"/g, '').replace(/,/g, '.')};`;
+                resultadosAgrupadosFinal += `${colunas[1].replace(/"/g, '').replace(/,/g, '.')};`;
+                resultadosAgrupadosFinal += `${colunas[2].replace(/"/g, '').replace(/,/g, '.')};`;
+                resultadosAgrupadosFinal += `${colunas[3].replace(/"/g, '').replace(/,/g, '.')};`;
+                resultadosAgrupadosFinal += `${colunas[4].replace(/"/g, '').replace(/,/g, '.')};`;
+                resultadosAgrupadosFinal += `${colunas[5].replace(/"/g, '').replace(/,/g, '.')};`;
+                resultadosAgrupadosFinal += `${colunas[6].replace(/"/g, '').replace(/,/g, '.')};`;
+                resultadosAgrupadosFinal += `${colunas[7].replace(/"/g, '')}.${colunas[8].replace(/"/g, '')};`;
+                resultadosAgrupadosFinal += `${colunas[9].replace(/"/g, '').replace(/,/g, '.')};`;
+
+                resultadosAgrupadosFinal += '\n';
+            }
+        });
+
+
+
         console.log(`Generated File: ${diretorioBiblioteca}/${heuristica}/${FileResults}`);
 
-        fs.writeFileSync(`${diretorioBiblioteca}/${heuristica}/${FileResults}`, runResult);
+        fs.writeFileSync(`${diretorioBiblioteca}/${heuristica}/${FileResults}`, resultadosAgrupadosFinal);
     });
 });
 
