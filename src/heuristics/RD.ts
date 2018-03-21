@@ -9,6 +9,27 @@ import Library from '../Library';
 
 var exectimer = require("exectimer");
 
+import fs = require('fs');
+import path = require('path');
+
+var UglifyJS = require("uglify-es");
+
+
+var uglifyOptions = {
+    mangle: true,
+    compress: {
+        sequences: true,
+        dead_code: true,
+        conditionals: true,
+        booleans: true,
+        unused: true,
+        if_return: true,
+        join_vars: true,
+        drop_console: true
+    }
+};
+
+
 /**
  * Random Search for Code Improvement
  */
@@ -187,7 +208,7 @@ export default class RD extends IHeuristic {
                         if (this.qtdMutacoesNaFuncaoAtual > this.qtdMutantesAtuais) {
                             //salva os mutantes
                             for (var n = 0; n < this.neighbors.length; n++) {
-                                
+
                                 this.UpdateBest(this.neighbors[n].Clone());
                             }
 
@@ -269,6 +290,18 @@ export default class RD extends IHeuristic {
         this.operationsCounter = 0;
         this.totalCallBack = 0;
 
+        if (time == 0) {
+            var result = UglifyJS.minify(this.bestIndividual.ToCode(), uglifyOptions);
+            this.bestIndividual.modificationLog.push(`0;original;${result.code.length}`);
+
+            var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "RD");
+            var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+            var logString = this.bestIndividual.modificationLog[this.bestIndividual.modificationLog.length - 1];
+            fs.appendFileSync(file, `counter;index;instructionType;totalChars \n`);
+            fs.appendFileSync(file, `${time};${logString} \n`);
+        }
+
+
         this.DoMutationsPerTime(1, [], (mutants) => {
 
             time++;
@@ -278,7 +311,14 @@ export default class RD extends IHeuristic {
 
 
             mutants.forEach(element => {
-                this.UpdateBest(element);
+                var isBetter = this.UpdateBest(element);
+                if (isBetter) {
+                    //Save modifications log
+                    var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "RD");
+                    var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+                    var logString = element.modificationLog[element.modificationLog.length - 1];
+                    fs.appendFileSync(file, `${time};${logString} \n`);
+                }
             });
 
 
