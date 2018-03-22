@@ -103,6 +103,18 @@ export default class RD extends IHeuristic {
      * Surrogate para executeCalculatedTimes
      */
     private runGlobal(trialIndex: number, cb: (results: TrialResults) => void) {
+
+        var result = UglifyJS.minify(this.bestIndividual.ToCode(), uglifyOptions);
+        this.bestIndividual.modificationLog.push(`0;original;${result.code.length}`);
+
+        var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "RD");
+        var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+        var logString = this.bestIndividual.modificationLog[this.bestIndividual.modificationLog.length - 1];
+        fs.appendFileSync(file, `counter;index;instructionType;totalChars \n`);
+        fs.appendFileSync(file, `0;${logString} \n`);
+
+
+
         this.executeCalculatedTimes(0, () => {
             this.Stop();
             var results = this.ProcessResult(trialIndex, this.Original, this.bestIndividual);
@@ -289,18 +301,6 @@ export default class RD extends IHeuristic {
 
         this.operationsCounter = 0;
         this.totalCallBack = 0;
-
-        if (time == 0) {
-            var result = UglifyJS.minify(this.bestIndividual.ToCode(), uglifyOptions);
-            this.bestIndividual.modificationLog.push(`0;original;${result.code.length}`);
-
-            var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "RD");
-            var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
-            var logString = this.bestIndividual.modificationLog[this.bestIndividual.modificationLog.length - 1];
-            fs.appendFileSync(file, `counter;index;instructionType;totalChars \n`);
-            fs.appendFileSync(file, `${time};${logString} \n`);
-        }
-
 
         this.DoMutationsPerTime(1, [], (mutants) => {
 
