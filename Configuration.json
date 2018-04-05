@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials": 10,
+    "trials": 9,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
@@ -26,19 +26,9 @@
     "memory": 8192,
     "libraries": [
         {
-            "name": "uuid",
-            "path": "Libraries/uuid",
-            "mainFilePath": "lib/uuid.js"
-        },
-        {
-            "name": "exectimer",
-            "path": "Libraries/exectimer",
-            "mainFilePath": "index.js"
-        },
-        {
-            "name": "d3-node",
-            "path": "Libraries/d3-node/",
-            "mainFilePath": "index.js"
+            "name": "pug",
+            "path": "Libraries/pug",
+            "mainFilePath": "packages/pug/lib/index.js"
         }
     ],
     "trialsConfiguration": [
