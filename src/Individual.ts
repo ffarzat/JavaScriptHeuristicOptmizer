@@ -12,6 +12,8 @@ var tmp = require('temporary');
 */
 export default class Individual {
 
+    LastNodeRemoved: number;
+
     /**
      * Keeps all tree for this individual
      */

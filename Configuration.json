@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials": 1,
+    "trials": 9,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
@@ -16,7 +16,7 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "HC"
+        "RD"
     ],
     "port": 5000,
     "url": "ws://localhost",
@@ -26,9 +26,9 @@
     "memory": 8192,
     "libraries": [
         {
-            "name": "express",
-            "path": "Libraries/express",
-            "mainFilePath": "lib/response.js"
+            "name": "pug",
+            "path": "Libraries/pug",
+            "mainFilePath": "packages/pug/lib/index.js"
         }
     ],
     "trialsConfiguration": [
@@ -37,8 +37,8 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 1,
-                "trials": 5,
+                "neighborsToProcess": 5,
+                "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
                 "ramdonNodes": false,

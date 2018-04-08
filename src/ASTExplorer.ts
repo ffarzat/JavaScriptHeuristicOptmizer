@@ -247,6 +247,11 @@ export default class ASTExplorer {
 
         mutant = this.ReconstruirIndividio(context, mutant);
 
+        var localCode = mutant.ToCode();
+        var result = UglifyJS.minify(localCode, uglifyOptions);
+
+        mutant.modificationLog.push(`${mutant.LastNodeRemoved};${mutant.typesRemoved[mutant.typesRemoved.length-1]};${result.code.length}`);
+
         return mutant;
     }
 
@@ -336,6 +341,7 @@ export default class ASTExplorer {
                 //fs.appendFileSync("mutante_excluidos.txt",JSON.stringify(node) + "\n");
                 var tipo = ASTExplorer.extrairTipo(node);
 
+                mutant.LastNodeRemoved = counter;
                 //console.log(tipo);
                 mutant.typesRemoved.push(tipo);
                 this.remove();
