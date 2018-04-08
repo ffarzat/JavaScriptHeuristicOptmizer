@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
-#PBS -N esprima-0
+#PBS -N esprima-9
 #PBS -l walltime=500:00:00
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
@@ -11,7 +11,7 @@ echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
 echo "----------------"
-node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 0
+#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 0
 
 #node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 1
 
@@ -29,4 +29,4 @@ node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null n
 
 #node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 8
 
-#node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 9
+node --max-old-space-size=2408000 build/src/index.js esprima/esprima.json null null 9

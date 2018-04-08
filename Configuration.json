@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials": 9,
+    "trials": 10,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
@@ -26,9 +26,9 @@
     "memory": 8192,
     "libraries": [
         {
-            "name": "pug",
-            "path": "Libraries/pug",
-            "mainFilePath": "packages/pug/lib/index.js"
+            "name": "UglifyJS2",
+            "path": "Libraries/UglifyJS2/",
+            "mainFilePath": "lib/compress.js"
         }
     ],
     "trialsConfiguration": [

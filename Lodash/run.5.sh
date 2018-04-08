@@ -12,11 +12,6 @@ echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
 echo "----------------"
 
-node --max-old-space-size=2408000 build/src/index.js Lodash/lodash.json null null 15
-
-node --max-old-space-size=2408000 build/src/index.js Lodash/lodash.json null null 16
-
-node --max-old-space-size=2408000 build/src/index.js Lodash/lodash.json null null 17
-
+node --max-old-space-size=2408000 build/src/index.js Lodash/lodash.json null null 5
 
 
