@@ -6,7 +6,7 @@ var FileResults = path.join(DiretorioDosResultados, "Results-grouped-all.csv");
 //====================================================================================//>
 var ListaDasBibliotecas = getDirectories(DiretorioDosResultados)
 var runResult = "";
-runResult += "Lib;alg;trial;time \n";
+runResult += "Lib;alg;trial;time;chars;originalchars;diffchars \n";
 
 ListaDasBibliotecas.forEach(function (biblioteca) {
     var diretorioBiblioteca = path.join(DiretorioDosResultados, biblioteca);
@@ -30,20 +30,24 @@ ListaDasBibliotecas.forEach(function (biblioteca) {
                     continue;
                 }
                 var itens = arr[2].split(',');
-                runResult += `${biblioteca};${heuristica};${itens[0]};${itens[7]}.${itens[8]} \n`;
+                var totalDiff = parseFloat(itens[3]) - parseFloat(itens[6]);
+                runResult += `${biblioteca};${heuristica};${itens[0]};${itens[7]}.${itens[8]};${itens[6]};${itens[3]};${totalDiff} \n`;
             }
             else {
                 if (!arr[1] || arr[1].length === 0) {
                     continue;
                 }
                 var itens = arr[1].split(',');
-                runResult += `${biblioteca};${heuristica};${itens[0]};${itens[7]}.${itens[8]} \n`;
+                var totalDiff = parseFloat(itens[3]) - parseFloat(itens[6]);
+                runResult += `${biblioteca};${heuristica};${itens[0]};${itens[7]}.${itens[8]};${itens[6]};${itens[3]};${totalDiff} \n`;
             }
         }
     });
 });
 
 console.log(`Generated File: ${FileResults}`);
+
+runResult = runResult.replace(/"/g, '');
 
 fs.writeFileSync(FileResults, runResult);
 
