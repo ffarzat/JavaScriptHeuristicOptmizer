@@ -15,6 +15,7 @@ node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitne
 node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HC/
 node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/RDs/
 
+node agrupadorTodasHeuristicas.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/
 
 
 # 2018 - HC4 - Nova rodada com os nós novos. As libs estão separadas por pequenas e grandes

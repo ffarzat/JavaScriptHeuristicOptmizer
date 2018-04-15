@@ -54,6 +54,11 @@ ListaDasBibliotecas.forEach(function (biblioteca) {
         arrayLinhas.forEach(linha => {
             if (linha.length > 0) {
                 colunas = linha.split(","); //cada coluna
+                var time = `${colunas[7]}.${colunas[8]}`;
+
+                if (colunas[8] === "true") {
+                    time = colunas[7];
+                }
 
                 resultadosAgrupadosFinal += `${colunas[0].replace(/"/g, '').replace(/,/g, '.')};`;
                 resultadosAgrupadosFinal += `${colunas[1].replace(/"/g, '').replace(/,/g, '.')};`;
@@ -62,8 +67,8 @@ ListaDasBibliotecas.forEach(function (biblioteca) {
                 resultadosAgrupadosFinal += `${colunas[4].replace(/"/g, '').replace(/,/g, '.')};`;
                 resultadosAgrupadosFinal += `${colunas[5].replace(/"/g, '').replace(/,/g, '.')};`;
                 resultadosAgrupadosFinal += `${colunas[6].replace(/"/g, '').replace(/,/g, '.')};`;
-                resultadosAgrupadosFinal += `${colunas[7].replace(/"/g, '')}.${colunas[8].replace(/"/g, '')};`;
-                resultadosAgrupadosFinal += `${colunas[9].replace(/"/g, '').replace(/,/g, '.')};`;
+                resultadosAgrupadosFinal += time.replace(/"/g, '') + ';';
+                resultadosAgrupadosFinal += `${colunas[9].replace(/"/g, '').replace(/,/g, '.')}; `;
 
                 resultadosAgrupadosFinal += '\n';
             }
@@ -71,7 +76,7 @@ ListaDasBibliotecas.forEach(function (biblioteca) {
 
 
 
-        console.log(`Generated File: ${diretorioBiblioteca}/${heuristica}/${FileResults}`);
+        console.log(`Generated File: ${diretorioBiblioteca} /${heuristica}/${FileResults} `);
 
         fs.writeFileSync(`${diretorioBiblioteca}/${heuristica}/${FileResults}`, resultadosAgrupadosFinal);
     });
