@@ -13,34 +13,20 @@ ListaDasBibliotecas.forEach(function (biblioteca) {
     var ListaDasHeuristicas = getDirectories(diretorioBiblioteca);
     ListaDasHeuristicas.forEach(function (heuristica) {
 
-        for (var index = 0; index < 30; index++) {
 
-            if (!fs.existsSync(`${diretorioBiblioteca}/${heuristica}/${index}-Results.csv`))
-                continue;
+        if (!fs.existsSync(`${diretorioBiblioteca}/${heuristica}/Results-grouped.csv`)) {
 
-            var text = fs.readFileSync(`${diretorioBiblioteca}/${heuristica}/${index}-Results.csv`, 'utf8');
-
-            if (text.length === 0)
-                continue;
-
-            var arr = text.split("\n");
-
-            if (!arr[0] || arr[0] == 'sep=,') {
-                if (!arr[2] || arr[2].length === 0) {
+            for (var index = 0; index < 30; index++) {
+                if (!fs.existsSync(`${diretorioBiblioteca}/${heuristica}/${index}-Results.csv`))
                     continue;
-                }
-                var itens = arr[2].split(',');
-                var totalDiff = parseFloat(itens[3]) - parseFloat(itens[6]);
-                runResult += `${biblioteca};${heuristica};${itens[0]};${itens[7]}.${itens[8]};${itens[6]};${itens[3]};${totalDiff} \n`;
+
+                var text = fs.readFileSync(`${diretorioBiblioteca}/${heuristica}/${index}-Results.csv`, 'utf8');
+                runResult += accumulateText(text, biblioteca, heuristica);
             }
-            else {
-                if (!arr[1] || arr[1].length === 0) {
-                    continue;
-                }
-                var itens = arr[1].split(',');
-                var totalDiff = parseFloat(itens[3]) - parseFloat(itens[6]);
-                runResult += `${biblioteca};${heuristica};${itens[0]};${itens[7]}.${itens[8]};${itens[6]};${itens[3]};${totalDiff} \n`;
-            }
+        }
+        else {
+            var text = fs.readFileSync(`${diretorioBiblioteca}/${heuristica}/Results-grouped.csv`, 'utf8');
+            runResult += accumulateText(text, biblioteca, heuristica);
         }
     });
 });
@@ -59,3 +45,36 @@ function getDirectories(srcpath) {
     return fs.readdirSync(srcpath)
         .filter(file => fs.lstatSync(path.join(srcpath, file)).isDirectory())
 }
+
+
+function accumulateText(text, biblioteca, heuristica) {
+    if (!text.length === 0)
+        return '';
+
+    var arr = text.split("\n");
+    var returnedText = '';
+    var indexLocal = 1;
+
+    if (!arr[0] || arr[0] == 'sep=,') {
+        if (!arr[2] || arr[2].length === 0) {
+            return '';
+        }
+
+        indexLocal = 2; //pule a primeira linha
+    }
+    else {
+        if (!arr[1] || arr[1].length === 0) {
+            return'';
+        }
+    }
+
+    for (let index = indexLocal; index < arr.length-1; index++) {
+        const element = arr[index];
+        var itens = element.split(',');
+        var totalDiff = parseFloat(itens[3]) - parseFloat(itens[6]);
+        returnedText += `${biblioteca};${heuristica};${itens[0]};${itens[7]}.${itens[8]};${itens[6]};${itens[3]};${totalDiff} \n`
+    }
+
+    return returnedText;
+}
+
