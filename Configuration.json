@@ -26,9 +26,9 @@
     "memory": 8192,
     "libraries": [
         {
-            "name": "UglifyJS2",
-            "path": "Libraries/UglifyJS2/",
-            "mainFilePath": "lib/compress.js"
+            "name": "moment",
+            "path": "Libraries/moment",
+            "mainFilePath": "build/umd/moment.js"
         }
     ],
     "trialsConfiguration": [
