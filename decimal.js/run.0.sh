@@ -25,7 +25,7 @@ node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json 
 
 node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json null null 6
 
-#node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json null null 7
+node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json null null 7
 
 node --max-old-space-size=2408000 build/src/index.js decimal.js/decimal.js.json null null 8
 
