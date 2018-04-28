@@ -33,7 +33,7 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 1,
+                "neighborsToProcess": 2,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
