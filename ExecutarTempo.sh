@@ -1,21 +1,44 @@
 #!/bin/sh
+
+# 2018 - https://github.com/google/closure-compiler https://www.npmjs.com/package/google-closure-compiler 
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/mathjs/lib/type/unit/Unit.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/mathjs.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/node-semver/semver.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/semver.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/express/lib/response.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/express.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/esprima/dist/esprima.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/esprima.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/moment/moment.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/moment.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/pug/packages/pug/lib/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/pug.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/jquery/dist/jquery.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/jquery.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/browserify/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/browserify.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/uuid/lib/uuid.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/uuid.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/exectimer/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/exectimer.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/tleaf/src/ask.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/tleaf.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/d3-node/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/d3-node.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/plivo-node/lib/plivo.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/plivo-node.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/minimist/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/minimist.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/xml2js/lib/xml2js.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/xml2js.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/underscore/underscore.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/underscore.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/lodash/lodash.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/lodash.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/UglifyJS2/lib/compress.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/UglifyJS2.js
+npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/decimal.js/decimal.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/decimal.js
+
+
 # 2018 - HC. HC4 e RDs - Agrupar tudo em um único csv
 
 #Agrupa os resultados da lib em um unico arquivo (/lib/Results-grouped.csv)
-node agrupadorCSV.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HC/
-node agrupadorCSV.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HCs/
+#node agrupadorCSV.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HC/
+#node agrupadorCSV.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HCs/
 #node agrupadorCSV.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/RDs/
 
 #Agrupa os resultados da lib em um unico arquivo (/lib/Modifications-grouped.csv)
-node agrupadorModifications.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HC/
-node agrupadorModifications.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HCs/
-node agrupadorModifications.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/RDs/
+#node agrupadorModifications.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HC/
+#node agrupadorModifications.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HCs/
+#node agrupadorModifications.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/RDs/
 #Agrupa os resultados de todas as libs em um unico arquivo (/Hcs/Results-grouped-all.csv)
-node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HCs/
-node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HC/
-node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/RDs/
+#node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HCs/
+#node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/HC/
+#node agrupadorCSVGlobal.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/RDs/
 
-node agrupadorTodasHeuristicas.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/
+#node agrupadorTodasHeuristicas.js /home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/
 
 
 # 2018 - HC4 - Nova rodada com os nós novos. As libs estão separadas por pequenas e grandes
