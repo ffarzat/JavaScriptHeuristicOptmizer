@@ -49,18 +49,20 @@ async function Executar() {
     var melhorLoc = 0;
     var melhorChar = 0;
     var melhorIns = 0;
+    var melhorPercent = 0;
 
     var tamanhoArquivoGCCEmBytes;
     var gccLoc = 0;
     var gccChar = 0;
     var gccIns = 0;
+    var gccPercent = 0;
 
     var libs = getDirectories(DiretorioResultados);
     //console.log(libs);
 
     var resultados = [];
 
-    resultados.push (`lib,originalBytes,DFAHCBytes,GCCBytes,originalChars,DFAHCChars,GCCChars,orignalInstructions,DFAHCInstructions,GCCInstructions`);
+    resultados.push (`lib,originalBytes,GCCBytes,DFAHCBytes,originalChars,GCCChars,DFAHCChars,orignalInstructions,GCCInstructions,DFAHCInstructions,GCC%,DFAHC%`);
 
     libs.forEach(library => {
         var caminhoOriginal = DiretorioResultados + `${library}/${heuristicas[0]}/original.js`;
@@ -94,6 +96,8 @@ async function Executar() {
 
         tamanhoArquivoMelhorEmBytes = Buffer.byteLength(resultMelhor.code, 'utf8');
 
+        melhorPercent = ((originalChar - melhorChar)/originalChar);
+
         //Gerar versão minified do GCC
         var resultGCC = UglifyJS.minify(codigoGCC, uglifyOptions);
         gccLoc = resultGCC.code.split(/\r\n|\r|\n/).length;
@@ -103,8 +107,10 @@ async function Executar() {
         gccIns = CountNodes(generatedASTGCC);
 
         tamanhoArquivoGCCEmBytes = Buffer.byteLength(resultGCC.code, 'utf8');
-
-        resultados.push (`${library},${tamanhoArquivoOriginalEmBytes},${tamanhoArquivoMelhorEmBytes},${tamanhoArquivoGCCEmBytes},${originalChar},${melhorChar},${gccChar},${originalIns},${melhorIns},${gccIns}`);
+        
+        gccPercent = ((originalChar - gccChar)/originalChar);
+        
+        resultados.push (`${library},${tamanhoArquivoOriginalEmBytes},${tamanhoArquivoGCCEmBytes},${tamanhoArquivoMelhorEmBytes},${originalChar},${gccChar},${melhorChar},${originalIns},${gccIns},${melhorIns},${gccPercent},${melhorPercent}`);
         
     });
 
