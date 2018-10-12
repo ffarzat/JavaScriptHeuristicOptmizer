@@ -516,6 +516,9 @@ export default class GA extends IHeuristic {
      * Returns a list of Mutated new individuals
      */
     CreatesFirstGeneration(original: Individual, cb: (individuals: Individual[]) => void) {
+     
+        //Indexa os nós da AST usando o uuidv1();
+        this._astExplorer.IndexNodesGUID(original);
 
         this.Repopulate([], this.individuals - 1, (newIndividuals: Individual[]) => {
             newIndividuals.unshift(original);

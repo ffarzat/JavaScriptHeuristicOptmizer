@@ -373,6 +373,19 @@ export default class ASTExplorer {
         return Math.floor(Math.random() * (high - low + 1) + low);
     }
 
+     /**
+     * Creates a GUID for each node inside a AST
+     */
+    IndexNodesGUID(individual: Individual) {
+        const uuidv4 = require('uuid/v4');
+
+        traverse(individual.AST).forEach(function (node) {
+            if (node && node.type && (node.type != 'Line' && node.type != 'Block')) { //comments - Line and Block
+                node.ID = uuidv4(); 
+            }
+        });
+    }
+
     /**
      * Creates a index map for all valid node types
      */

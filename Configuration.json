@@ -7,7 +7,7 @@
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/optmization.log",
-    "tmpDirectory": "/media/fabio/Dados1/tmp",
+    "tmpDirectory": "D:\\tmp",
     "logCategory": "optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
@@ -16,19 +16,19 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "RD"
+        "GA"
     ],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout": 80,
-    "clientsTotal": 10,
+    "clientsTotal": 1,
     "copyFileTimeout": 1728000,
     "memory": 8192,
     "libraries": [
         {
-            "name": "moment",
-            "path": "Libraries/moment",
-            "mainFilePath": "build/umd/moment.js"
+            "name": "uuid",
+            "path": "Libraries/uuid",
+            "mainFilePath": "uuid.js"
         }
     ],
     "trialsConfiguration": [
