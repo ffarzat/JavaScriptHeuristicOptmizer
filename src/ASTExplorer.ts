@@ -161,8 +161,8 @@ export default class ASTExplorer {
         var randomIndexNodeOne: number = this.GenereateRandom(0, context.First.removedIDS.length);
         var randomIndexNodeTwo: number = this.GenereateRandom(0, context.Second.removedIDS.length);
 
-        console.log(context.Second.removedIDS[randomIndexNodeTwo]);
-        console.log(context.First.removedIDS[randomIndexNodeOne]);
+        //console.log(context.Second.removedIDS[randomIndexNodeTwo]);
+        //console.log(context.First.removedIDS[randomIndexNodeOne]);
         
         //erases the nodes in each other
         this.deleteNodeById(context.First, context.Second.removedIDS[randomIndexNodeTwo]);
@@ -177,13 +177,29 @@ export default class ASTExplorer {
 
         //If err in cross...
         try {
-            newSon.ToCode();
+            var novo1 = context.Original.Clone();
+            for (let indiceID = 0; indiceID < newSon.removedIDS.length; indiceID++) {
+                const idAtual = newSon.removedIDS[indiceID];
+                this.deleteNodeById(novo1, idAtual);
+                novo1.removedIDS.push(idAtual);
+            }
+            
+            novo1.ToCode();
+            newSon = novo1.Clone();
         } catch (error) {
             newSon = context.Original.Clone();
         }
 
         try {
-            newDaughter.ToCode();
+            var novo2 = context.Original.Clone();
+            for (let indiceID = 0; indiceID < newDaughter.removedIDS.length; indiceID++) {
+                const idAtual = newDaughter.removedIDS[indiceID];
+                this.deleteNodeById(novo2, idAtual);
+                novo2.removedIDS.push(idAtual);
+            }
+            
+            novo2.ToCode();
+            newDaughter = novo2.Clone();
         } catch (error) {
             newDaughter = context.Original.Clone();
         }
@@ -228,7 +244,7 @@ export default class ASTExplorer {
      */
     private deleteNodeById(individual: Individual, nodeId: string) {
         traverse(individual.AST).forEach(function (node) {
-            if (node.ID == nodeId) {
+            if (node && node.ID && node.ID == nodeId) {
                 this.remove();
                 this.stop();
             }
