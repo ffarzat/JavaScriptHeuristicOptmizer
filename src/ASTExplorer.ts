@@ -154,41 +154,35 @@ export default class ASTExplorer {
      * Try to execute single point CrossOver operation
      */
     private TryCrossOver(context: OperatorContext): Individual[] {
-        var indexesOne: number[] = this.IndexNodes(context.First);
-        //var indexesTwo: number [] = this.IndexNodes(context.Second);
-        var randomIndexNodeOne: number = this.GenereateRandom(0, indexesOne.length);
-        var randomIndexNodeTwo: number = this.GenereateRandom(0, indexesOne.length);
-        //var randomIndexNodeTwo: number = this.GenereateRandom(0, indexesTwo.length);
-
-        //Gets the nodes
-        var firstNode = this.GetNode(context.First, indexesOne[randomIndexNodeOne]);
-        var secondNode = this.GetNode(context.First, indexesOne[randomIndexNodeTwo]);
-        //var secondNode = this.GetNode(context.Second, indexesTwo[randomIndexNodeTwo]);
-
-        //console.log('Node #1:' + JSON.stringify(firstNode));
-        //console.log('Node #2:' + JSON.stringify(secondNode));
+        var randomIndexNodeOne: number = this.GenereateRandom(0, context.First.removedIDS.length);
+        var randomIndexNodeTwo: number = this.GenereateRandom(0, context.Second.removedIDS.length);
+        
+        //erases the nodes in each other
+        this.deleteNodeById(context.First, context.Second.removedIDS[randomIndexNodeTwo]);
+        this.deleteNodeById(context.Second, context.First.removedIDS[randomIndexNodeOne]);
+                
 
         //Do Crossover
-        //var newSon: Individual = this.ReplaceNode(context.Second, indexesTwo[randomIndexNodeTwo], firstNode);
-        var newSon: Individual = this.ReplaceNode(context.First, indexesOne[randomIndexNodeTwo], firstNode);
-        //var newDaughter: Individual = this.ReplaceNode(context.First, indexesOne[randomIndexNodeOne], secondNode);
+        var newSon: Individual = context.First.Clone();
+        newSon.removedIDS.push(context.Second.removedIDS[randomIndexNodeTwo]);
+        var newDaughter: Individual = context.Second.Clone();
+        newDaughter.removedIDS.push(context.First.removedIDS[randomIndexNodeOne]);
 
         //If err in cross...
         try {
             newSon.ToCode();
         } catch (error) {
-            newSon = context.First.Clone();
+            newSon = context.Original.Clone();
         }
 
-        /*
         try {
             newDaughter.ToCode();
         } catch (error) {
-            newDaughter = context.Second.Clone();
+            newDaughter = context.Original.Clone();
         }
-        */
-        //var result: Individual[] = [newSon, newDaughter];
-        var result: Individual[] = [newSon, undefined];
+        
+        var result: Individual[] = [newSon, newDaughter];
+        //var result: Individual[] = [newSon, undefined];
 
         return result;
     }
@@ -216,11 +210,38 @@ export default class ASTExplorer {
     }
 
     /**
+     * Replaces a node by ID returning a brand new Individual
+     */
+    private ReplaceNodeById(individual: Individual, nodeId: string, nodeReplacement: any): Individual {
+        var newOne = individual.Clone();
+        traverse(newOne.AST).forEach(function (node) {
+            if (node.ID == nodeId) {
+                this.update(nodeReplacement);
+                this.stop();
+            }
+        });
+
+        return newOne;
+    }
+
+    /**
      * Retrivies a node by index
      */
     private GetNode(individual: Individual, nodeIndex: number): any {
         return traverse(individual.AST).nodes()[nodeIndex];
     }
+
+    /**
+     * Retrivies a node by its id
+     */
+    private deleteNodeById(individual: Individual, nodeId: string) {
+        traverse(individual.AST).forEach(function (node) {
+            if (node.ID == nodeId) {
+                this.remove();
+                this.stop();
+            }
+        });
+    }    
 
     /**
      * Executes a mutation over the AST
