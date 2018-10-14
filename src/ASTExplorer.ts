@@ -75,6 +75,7 @@ export default class ASTExplorer {
             newCtx.First.testResults = oldFirst.testResults;
             newCtx.First.typesRemoved = oldFirst.typesRemoved;
             newCtx.First.modificationLog = oldFirst.modificationLog;
+            newCtx.First.removedIDS = oldFirst.removedIDS;
 
         }
 
@@ -87,6 +88,7 @@ export default class ASTExplorer {
             newCtx.Second.testResults = oldSecond.testResults;
             newCtx.Second.typesRemoved = oldSecond.typesRemoved;
             newCtx.Second.modificationLog = oldSecond.modificationLog;
+            newCtx.Second.removedIDS = oldSecond.removedIDS;
         }
 
         if (context.ActualBestForFunctionScope) {
@@ -96,6 +98,7 @@ export default class ASTExplorer {
             newCtx.ActualBestForFunctionScope.testResults = oldActualBestForFunctionScope.testResults;
             newCtx.ActualBestForFunctionScope.typesRemoved = oldActualBestForFunctionScope.typesRemoved;
             newCtx.ActualBestForFunctionScope.modificationLog = oldActualBestForFunctionScope.modificationLog;
+            newCtx.ActualBestForFunctionScope.removedIDS = oldActualBestForFunctionScope.removedIDS;
         }
 
         if (context.Original) {
@@ -107,6 +110,7 @@ export default class ASTExplorer {
             newCtx.Original.testResults = oldOriginal.testResults;
             newCtx.Original.typesRemoved = oldOriginal.typesRemoved;
             newCtx.Original.modificationLog = oldOriginal.modificationLog;
+            newCtx.Original.removedIDS = oldOriginal.removedIDS;
         }
 
         return newCtx;
@@ -156,6 +160,9 @@ export default class ASTExplorer {
     private TryCrossOver(context: OperatorContext): Individual[] {
         var randomIndexNodeOne: number = this.GenereateRandom(0, context.First.removedIDS.length);
         var randomIndexNodeTwo: number = this.GenereateRandom(0, context.Second.removedIDS.length);
+
+        console.log(context.Second.removedIDS[randomIndexNodeTwo]);
+        console.log(context.First.removedIDS[randomIndexNodeOne]);
         
         //erases the nodes in each other
         this.deleteNodeById(context.First, context.Second.removedIDS[randomIndexNodeTwo]);
@@ -204,21 +211,6 @@ export default class ASTExplorer {
                 //this.remove(true);
             }
             counter++;
-        });
-
-        return newOne;
-    }
-
-    /**
-     * Replaces a node by ID returning a brand new Individual
-     */
-    private ReplaceNodeById(individual: Individual, nodeId: string, nodeReplacement: any): Individual {
-        var newOne = individual.Clone();
-        traverse(newOne.AST).forEach(function (node) {
-            if (node.ID == nodeId) {
-                this.update(nodeReplacement);
-                this.stop();
-            }
         });
 
         return newOne;
@@ -293,11 +285,13 @@ export default class ASTExplorer {
 
         //fs.appendFileSync('/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/nos_excluidos.txt', localNodeIndex + ' = ' + escodegen.generate(this.GetNode(mutant, localNodeIndex)) + '\n\n\n');
 
+        var removedNode = this.GetNode(mutant, localNodeIndex);
+        removedNodeId = removedNode.ID;
+
         mutant.AST = traverse(mutant.AST).forEach(function (node) {
             if (counter == localNodeIndex) {
                 if (node.type && node.type == "BlockStatement") {
-                    //console.log("\n" + localNodeIndex + "\n");
-                    removedNodeId = node.ID;
+                    console.log("\n" + localNodeIndex + "\n");
                     this.update({ "type": "BlockStatement", "body": [] });
                     this.stop();
                     return;

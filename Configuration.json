@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials": 10,
+    "trials": 1,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
@@ -21,7 +21,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout": 80,
-    "clientsTotal": 1,
+    "clientsTotal": 2,
     "copyFileTimeout": 1728000,
     "memory": 8192,
     "libraries": [
@@ -37,7 +37,7 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 5,
+                "neighborsToProcess": 2,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
@@ -60,10 +60,10 @@
                     "AssignmentExpression",
                     "ConditionalExpression"
                 ],
-                "individuals": 50,
-                "generations": 100,
-                "crossoverProbability": 0,
-                "mutationProbability": 75,
+                "individuals": 10,
+                "generations": 2,
+                "crossoverProbability": 75,
+                "mutationProbability": 5,
                 "elitism": true,
                 "elitismPercentual": 30
             }

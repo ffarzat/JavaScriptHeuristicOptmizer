@@ -9,6 +9,27 @@ import OperatorContext from '../OperatorContext';
 import ILogger from '../ILogger';
 import Library from '../Library';
 
+import fs = require('fs');
+import path = require('path');
+
+var UglifyJS = require("uglify-es");
+
+
+var uglifyOptions = {
+    mangle: true,
+    compress: {
+        sequences: true,
+        dead_code: true,
+        conditionals: true,
+        booleans: true,
+        unused: true,
+        if_return: true,
+        join_vars: true,
+        drop_console: true
+    }
+};
+
+
 /**
  * Genetic Algorithm for Code Improvement
  */
@@ -88,6 +109,17 @@ export default class GA extends IHeuristic {
      * Surrogate para execução global
      */
     private runGlobal(trialIndex: number, cb: (results: TrialResults) => void) {
+        
+        var result = UglifyJS.minify(this.bestIndividual.ToCode(), uglifyOptions);
+        this.bestIndividual.modificationLog.push(`0;original;${result.code.length}`);
+
+        var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "GA");
+        var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+        var logString = this.bestIndividual.modificationLog[this.bestIndividual.modificationLog.length - 1];
+        fs.appendFileSync(file, `counter;index;instructionType;totalChars;OperationType \n`);
+        fs.appendFileSync(file, `0;${logString} \n`);
+        
+        
         this.CreatesFirstGeneration(this.Original, (population) => {
             this.executeStack(1, population, () => {
                 this.Stop();
@@ -170,13 +202,14 @@ export default class GA extends IHeuristic {
         process.nextTick(() => {
             var elementIndex = elements.shift();
             var individual = population[elementIndex];
+            var individual2 = population[this._astExplorer.GenereateRandom(0, population.length-1)];
 
             //this._logger.Write(`individual tem resultados? ${individual.testResults != undefined}`);
 
             if (operation == 'c') {
                 //this._logger.Write(`[GA] Asking CrossOver for an individual ${elementIndex}`);
                 this.operationsCounter++
-                this.CrossOver(individual, individual, (elements) => {
+                this.CrossOver(individual, individual2, (elements) => {
                     this._logger.Write(`elements[0] tem resultados? ${elements[0].testResults != undefined}`);
                     this._logger.Write(`elements[1] tem resultados? ${elements[1].testResults != undefined}`);
 
@@ -187,8 +220,27 @@ export default class GA extends IHeuristic {
                         population.push(elements[0]);
                         population.push(elements[1]);
 
-                        this.UpdateBest(elements[0]);
-                        this.UpdateBest(elements[1]);
+                        var isBetter = this.UpdateBest(elements[0]);
+
+                        if (isBetter) {
+                            //Save modifications log
+                            var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "GA");
+                            var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+                            var logString = elements[0].modificationLog[elements[0].modificationLog.length - 1];
+                            fs.appendFileSync(file, `${this.generations};${logString};c \n`);
+                        }
+
+                        isBetter = this.UpdateBest(elements[1]);
+
+                        if (isBetter) {
+                            //Save modifications log
+                            var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "GA");
+                            var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+                            var logString = elements[1].modificationLog[elements[1].modificationLog.length - 1];
+                            fs.appendFileSync(file, `${this.generations};${logString};c \n`);
+                        }
+
+
                     } catch (error) {
                         this._logger.Write(`[GA] ProcessOperations/Crossover error: ${error.stack}`);
                     }
@@ -216,7 +268,16 @@ export default class GA extends IHeuristic {
                             mutant = localBest.Clone();
                         }
                         population.push(mutant);
-                        this.UpdateBest(mutant);
+
+                        var isBetter = this.UpdateBest(mutant);
+                        if (isBetter) {
+                            //Save modifications log
+                            var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "GA");
+                            var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+                            var logString = mutant.modificationLog[mutant.modificationLog.length - 1];
+                            fs.appendFileSync(file, `${this.generations};${logString};m \n`);
+                        }
+
                     } catch (error) {
                         this._logger.Write(`[GA] ProcessOperations/Mutate error: ${error.stack}`);
                     }
@@ -386,7 +447,17 @@ export default class GA extends IHeuristic {
             this._logger.Write(`[GA] Repopulate: ${untill} done`);
 
             mutants.forEach(element => {
-                this.UpdateBest(element);
+                var isBetter = this.UpdateBest(element);
+
+                if (isBetter) {
+                    //Save modifications log
+                    var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "GA");
+                    var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
+                    var logString = element.modificationLog[element.modificationLog.length - 1];
+                    fs.appendFileSync(file, `${this.generations};${logString};m \n`);
+                }
+
+
                 population.push(element);
             });
 
@@ -453,8 +524,10 @@ export default class GA extends IHeuristic {
                     if (neighbors.length == this.operationsCounter) {
                         clearInterval(this.DoMutationsIntervalId);
                         this.DoMutationsIntervalId = undefined;
-                        //this._logger.Write(`[GA] Interval: doing callback`);
+                        this._logger.Write(`[GA] Interval: doing callback ${neighbors.length}`);
+                        this.totalCallBack = neighbors.length;
                         cb(neighbors);
+                        return;
                     }
                 }, 1 * 1000);
             }
@@ -474,7 +547,7 @@ export default class GA extends IHeuristic {
 
             this.MutateBy(localBest.Clone(), indexes, (mutant) => {
                 try {
-                    this.totalCallBack++;
+                    //this.totalCallBack++;
                     if (mutant == undefined) {
                         mutant = localBest.Clone();
                     }
@@ -514,12 +587,8 @@ export default class GA extends IHeuristic {
      * Returns a list of Mutated new individuals
      */
     CreatesFirstGeneration(original: Individual, cb: (individuals: Individual[]) => void) {
-     
-        //Indexa os nós da AST usando o uuidv1();
-        this._astExplorer.IndexNodesGUID(original);
-
         this.Repopulate([], this.individuals - 1, (newIndividuals: Individual[]) => {
-            newIndividuals.unshift(original);
+            //newIndividuals.unshift(original);
             cb(newIndividuals);
         });
     }

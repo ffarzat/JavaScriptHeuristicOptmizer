@@ -451,6 +451,8 @@ abstract class IHeuristic extends events.EventEmitter {
 
         this._lib = library;
         this.Original = this.CreateOriginalFromLibraryConfiguration(library);
+        //Indexa os nós da AST usando o uuidv1();
+        this._astExplorer.IndexNodesGUID(this.Original);
         this.bestIndividual = this.Original.Clone();
 
         //ByFunction, Global, static and dynamic
