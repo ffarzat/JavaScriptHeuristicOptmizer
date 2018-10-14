@@ -378,8 +378,6 @@ export default class GA extends IHeuristic {
      */
     private Repopulate(population: Individual[], untill: number, cb: (individuals: Individual[]) => void) {
         this._logger.Write(`[GA] Initializing a new population [+ ${untill} new individuals]`);
-        var total = 0;
-        var mutantIndex: number = 0;
 
         this.operationsCounter = 0;
         this.totalCallBack = 0;

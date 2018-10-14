@@ -250,7 +250,7 @@ export default class ASTExplorer {
         var localCode = mutant.ToCode();
         var result = UglifyJS.minify(localCode, uglifyOptions);
 
-        mutant.modificationLog.push(`${mutant.LastNodeRemoved};${mutant.typesRemoved[mutant.typesRemoved.length-1]};${result.code.length}`);
+        mutant.modificationLog.push(`${mutant.LastNodeRemoved};${mutant.typesRemoved[mutant.typesRemoved.length - 1]};${result.code.length}`);
 
         return mutant;
     }
@@ -265,6 +265,7 @@ export default class ASTExplorer {
         var localGlobalIndexForinstructionType = context.globalIndexForinstructionType;
         var localType = context.instructionType;
         var counter = 0;
+        var removedNodeId = '';
 
         //console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
         //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/mutante-antes.txt`, mutant.ToCode());
@@ -275,6 +276,7 @@ export default class ASTExplorer {
             if (counter == localNodeIndex) {
                 if (node.type && node.type == "BlockStatement") {
                     //console.log("\n" + localNodeIndex + "\n");
+                    removedNodeId = node.ID;
                     this.update({ "type": "BlockStatement", "body": [] });
                     this.stop();
                     return;
@@ -301,6 +303,8 @@ export default class ASTExplorer {
         var result = UglifyJS.minify(localCode, uglifyOptions);
 
         mutant.modificationLog.push(`${localGlobalIndexForinstructionType};${localType};${result.code.length}`);
+        mutant.removedIDS.push(removedNodeId);
+
         return mutant;
     }
 
@@ -344,6 +348,7 @@ export default class ASTExplorer {
                 mutant.LastNodeRemoved = counter;
                 //console.log(tipo);
                 mutant.typesRemoved.push(tipo);
+                mutant.removedIDS.push(node.ID);
                 this.remove();
                 this.stop();
             }
@@ -373,15 +378,15 @@ export default class ASTExplorer {
         return Math.floor(Math.random() * (high - low + 1) + low);
     }
 
-     /**
-     * Creates a GUID for each node inside a AST
-     */
+    /**
+    * Creates a GUID for each node inside a AST
+    */
     IndexNodesGUID(individual: Individual) {
         const uuidv4 = require('uuid/v4');
 
         traverse(individual.AST).forEach(function (node) {
             if (node && node.type && (node.type != 'Line' && node.type != 'Block')) { //comments - Line and Block
-                node.ID = uuidv4(); 
+                node.ID = uuidv4();
             }
         });
     }
@@ -413,16 +418,16 @@ export default class ASTExplorer {
     IndexNodesBy(nodesType: string[], individual: Individual): Object {
 
         var nodes = traverse(individual.AST).nodes();
-        
+
         var index: number = 0;
         var objetoGlobal = {};
-        
+
         //var node = { "Type": nodeType, "ActualIndex": 0, "Indexes": index };
 
         traverse(individual.AST).forEach(function (node) {
-            if (node && node.type &&  nodesType.indexOf(node.type) != -1) {
-                
-                var indiceDoTipo = objetoGlobal[node.type] == undefined? { "Type": node.type, "ActualIndex": 0, "Indexes": [] } : objetoGlobal[node.type];
+            if (node && node.type && nodesType.indexOf(node.type) != -1) {
+
+                var indiceDoTipo = objetoGlobal[node.type] == undefined ? { "Type": node.type, "ActualIndex": 0, "Indexes": [] } : objetoGlobal[node.type];
                 indiceDoTipo['Indexes'].push(index);
                 //console.log(`[ASTExplorer.IndexNodesBy]Tipo:${node.type}`);
                 //console.log(`[ASTExplorer.IndexNodesBy]Indice:${index}`);

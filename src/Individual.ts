@@ -38,6 +38,9 @@ export default class Individual {
 
     typesRemoved: string[] = [];
 
+    removedIDS: string[] = [];
+
+
     //Saves a log for this individual in order to determine how was its constructin over the mutations
     modificationLog: string[] = [];
 
@@ -99,6 +102,7 @@ export default class Individual {
         newOne.modificationLog = this.modificationLog.slice();
         newOne.AST = traverse(this.AST).clone();
         newOne.testResults = traverse(this.testResults).clone();
+        newOne.removedIDS = this.removedIDS.slice();
         return newOne;
     }
 }

@@ -93,6 +93,8 @@ describe('ASTExplorer Tests', function () {
         //fs.writeFileSync("mutantFromTest.js", newOne.ToCode());
 
         expect(newOne.ToCode()).not.equal(generatedIndividual.ToCode());
+        expect(generatedIndividual.removedIDS.length).equal(0);
+        expect(newOne.removedIDS.length).equal(1);
     });
 
     it('Should Mutate Nodes by Index  from uuid lib', function () {
@@ -120,6 +122,9 @@ describe('ASTExplorer Tests', function () {
 
         //fs.writeFileSync("mutantIndexFromTests.js", newOne.ToCode());
         expect(newOne.ToCode()).not.equal(generatedIndividual.ToCode());
+        expect(newOne.removedIDS).not.equal(generatedIndividual.removedIDS);
+        expect(generatedIndividual.removedIDS.length).equal(0);
+        expect(newOne.removedIDS.length).equal(1);
     });
     /*
     it('Should Cross over Nodes from underscore lib', function() {
