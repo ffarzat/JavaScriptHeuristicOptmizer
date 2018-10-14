@@ -60,8 +60,8 @@
                     "AssignmentExpression",
                     "ConditionalExpression"
                 ],
-                "individuals": 10,
-                "generations": 2,
+                "individuals": 50,
+                "generations": 100,
                 "crossoverProbability": 75,
                 "mutationProbability": 5,
                 "elitism": true,

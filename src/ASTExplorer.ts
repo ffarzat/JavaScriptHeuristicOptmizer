@@ -163,17 +163,13 @@ export default class ASTExplorer {
 
         //console.log(context.Second.removedIDS[randomIndexNodeTwo]);
         //console.log(context.First.removedIDS[randomIndexNodeOne]);
-        
+        var newSon: Individual = context.First.Clone();
+        var newDaughter: Individual = context.Second.Clone();
+
         //erases the nodes in each other
         this.deleteNodeById(context.First, context.Second.removedIDS[randomIndexNodeTwo]);
         this.deleteNodeById(context.Second, context.First.removedIDS[randomIndexNodeOne]);
-                
-
-        //Do Crossover
-        var newSon: Individual = context.First.Clone();
-        newSon.removedIDS.push(context.Second.removedIDS[randomIndexNodeTwo]);
-        var newDaughter: Individual = context.Second.Clone();
-        newDaughter.removedIDS.push(context.First.removedIDS[randomIndexNodeOne]);
+       
 
         //If err in cross...
         try {
@@ -243,8 +239,9 @@ export default class ASTExplorer {
      * Retrivies a node by its id
      */
     private deleteNodeById(individual: Individual, nodeId: string) {
-        traverse(individual.AST).forEach(function (node) {
+        individual.AST = traverse(individual.AST).forEach(function (node) {
             if (node && node.ID && node.ID == nodeId) {
+                individual.removedIDS.push(node.ID);
                 this.remove();
                 this.stop();
             }
@@ -307,7 +304,7 @@ export default class ASTExplorer {
         mutant.AST = traverse(mutant.AST).forEach(function (node) {
             if (counter == localNodeIndex) {
                 if (node.type && node.type == "BlockStatement") {
-                    console.log("\n" + localNodeIndex + "\n");
+                    //console.log("\n" + localNodeIndex + "\n");
                     this.update({ "type": "BlockStatement", "body": [] });
                     this.stop();
                     return;
