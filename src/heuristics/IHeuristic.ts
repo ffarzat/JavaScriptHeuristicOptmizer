@@ -284,12 +284,7 @@ abstract class IHeuristic extends events.EventEmitter {
                 this.ActualBestForFunctionScope = newBest.Clone();
                 this.bestIndividual = this.nodesSelectionApproach == "ByFunction" ? this.bestIndividual : newBest.Clone();
                 this._logger.Write(`New Best Fit ${this.bestFit}`);
-                var logstringIDs = '';
-                for (let index = 0; index < this.bestIndividual.removedIDS.length; index++) {
-                    const element = this.bestIndividual.removedIDS[index];
-                    logstringIDs = `${element }, `;
-                }
-                this._logger.Write(logstringIDs);
+                this._logger.Write(`Total nodes removed: ${this.bestIndividual.removedIDS.length}`);
                 this._logger.Write('=================================');
                 found = true;
                 this.FoundedAnyBetter = found;

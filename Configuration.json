@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials": 1,
+    "trials": 9,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
@@ -21,7 +21,7 @@
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout": 80,
-    "clientsTotal": 2,
+    "clientsTotal": 4,
     "copyFileTimeout": 1728000,
     "memory": 8192,
     "libraries": [
@@ -37,7 +37,7 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 2,
+                "neighborsToProcess": 4,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,

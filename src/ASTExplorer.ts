@@ -161,47 +161,46 @@ export default class ASTExplorer {
         var randomIndexNodeOne: number = this.GenereateRandom(0, context.First.removedIDS.length);
         var randomIndexNodeTwo: number = this.GenereateRandom(0, context.Second.removedIDS.length);
 
-        //console.log(context.Second.removedIDS[randomIndexNodeTwo]);
-        //console.log(context.First.removedIDS[randomIndexNodeOne]);
-        var newSon: Individual = context.First.Clone();
-        var newDaughter: Individual = context.Second.Clone();
+        var newSon: Individual = context.Original.Clone();
+        newSon.removedIDS.concat(context.First.removedIDS);
+        newSon.removedIDS.concat(context.Second.removedIDS);
 
-        //erases the nodes in each other
-        this.deleteNodeById(context.First, context.Second.removedIDS[randomIndexNodeTwo]);
-        this.deleteNodeById(context.Second, context.First.removedIDS[randomIndexNodeOne]);
-       
+        //var newDaughter: Individual = context.Original.Clone();
+        //newDaughter.removedIDS.push(context.First.removedIDS[randomIndexNodeOne]);
+        //newDaughter.removedIDS.concat(context.Second.removedIDS);
+
 
         //If err in cross...
         try {
-            var novo1 = context.Original.Clone();
             for (let indiceID = 0; indiceID < newSon.removedIDS.length; indiceID++) {
                 const idAtual = newSon.removedIDS[indiceID];
-                this.deleteNodeById(novo1, idAtual);
-                novo1.removedIDS.push(idAtual);
+                this.deleteNodeById(newSon, idAtual);
             }
-            
-            novo1.ToCode();
-            newSon = novo1.Clone();
+
+            var localCode = newSon.ToCode();
+            var resultedCode1 = UglifyJS.minify(localCode, uglifyOptions);
+            newSon.modificationLog.push(`${newSon.LastNodeRemoved};${newSon.typesRemoved[newSon.typesRemoved.length - 1]};${resultedCode1.code.length}`);
         } catch (error) {
             newSon = context.Original.Clone();
         }
 
-        try {
-            var novo2 = context.Original.Clone();
-            for (let indiceID = 0; indiceID < newDaughter.removedIDS.length; indiceID++) {
-                const idAtual = newDaughter.removedIDS[indiceID];
-                this.deleteNodeById(novo2, idAtual);
-                novo2.removedIDS.push(idAtual);
-            }
-            
-            novo2.ToCode();
-            newDaughter = novo2.Clone();
-        } catch (error) {
-            newDaughter = context.Original.Clone();
-        }
-        
-        var result: Individual[] = [newSon, newDaughter];
-        //var result: Individual[] = [newSon, undefined];
+        // try {
+        //     for (let indiceID = 0; indiceID < newDaughter.removedIDS.length; indiceID++) {
+        //         const idAtual = newDaughter.removedIDS[indiceID];
+        //         this.deleteNodeById(newDaughter, idAtual);
+        //     }
+
+        //     newDaughter.ToCode();
+        //     var localCode = newDaughter.ToCode();
+        //     var resultedCode2 = UglifyJS.minify(localCode, uglifyOptions);
+        //     newDaughter.modificationLog.push(`${newDaughter.LastNodeRemoved};${newDaughter.typesRemoved[newDaughter.typesRemoved.length - 1]};${resultedCode2.code.length}`);
+
+        // } catch (error) {
+        //     newDaughter = context.Original.Clone();
+        // }
+
+        //var result: Individual[] = [newSon, newDaughter];
+        var result: Individual[] = [newSon, undefined];
 
         return result;
     }
@@ -242,11 +241,13 @@ export default class ASTExplorer {
         individual.AST = traverse(individual.AST).forEach(function (node) {
             if (node && node.ID && node.ID == nodeId) {
                 individual.removedIDS.push(node.ID);
+                individual.typesRemoved.push(node.type);
+                individual.LastNodeRemoved = 0;
                 this.remove();
                 this.stop();
             }
         });
-    }    
+    }
 
     /**
      * Executes a mutation over the AST
@@ -287,53 +288,30 @@ export default class ASTExplorer {
     MutateBy(context: OperatorContext): Individual {
         const fs = require('fs');
         var mutant = context.First.Clone();
+        var originalLocal = context.Original.Clone();
         var localNodeIndex = context.NodeIndex;
         var localGlobalIndexForinstructionType = context.globalIndexForinstructionType;
         var localType = context.instructionType;
         var counter = 0;
         var removedNodeId = '';
 
-        //console.log(`[ASTExplorer.MutateBy]Index:${localNodeIndex}`);
-        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/mutante-antes.txt`, mutant.ToCode());
-
-        //fs.appendFileSync('/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/nos_excluidos.txt', localNodeIndex + ' = ' + escodegen.generate(this.GetNode(mutant, localNodeIndex)) + '\n\n\n');
-
-        var removedNode = this.GetNode(mutant, localNodeIndex);
+        var removedNode = this.GetNode(originalLocal, localNodeIndex);
         removedNodeId = removedNode.ID;
+        originalLocal.removedIDS.push(removedNodeId);
+        originalLocal.removedIDS.concat(mutant.removedIDS.slice());
 
-        mutant.AST = traverse(mutant.AST).forEach(function (node) {
-            if (counter == localNodeIndex) {
-                if (node.type && node.type == "BlockStatement") {
-                    //console.log("\n" + localNodeIndex + "\n");
-                    this.update({ "type": "BlockStatement", "body": [] });
-                    this.stop();
-                    return;
-                }
+        for (let index = 0; index < originalLocal.removedIDS.length; index++) {
+            const idExcluir = originalLocal.removedIDS[index];
+            this.deleteNodeById(originalLocal, idExcluir);
+        }
 
-                this.remove();
-                //console.log(escodegen.generate(node));
-                //console.log(`[ASTExplorer.MutateBy] Node:${JSON.stringify(node)}`);
-                this.stop();
-            }
-            counter++;
-        });
-
-        //fs.writeFileSync(`/home/fabio/Documents/JavaScriptHeuristicOptmizer/build/results/${localNodeIndex}_mutant.txt`, mutant.ToCode());
-
-
-
-        //fs.writeFileSync(`/home/fabio/Github/JavaScriptHeuristicOptmizer/build/${context.functionName}.txt`, mutant.ToCode());
-        //console.log(`[ASTExplorer.MutateBy] Função: ${context.functionName}`);
-
-
-        mutant = this.ReconstruirIndividio(context, mutant);
-        var localCode = mutant.ToCode();
+        originalLocal = this.ReconstruirIndividio(context, originalLocal);
+        var localCode = originalLocal.ToCode();
         var result = UglifyJS.minify(localCode, uglifyOptions);
 
-        mutant.modificationLog.push(`${localGlobalIndexForinstructionType};${localType};${result.code.length}`);
-        mutant.removedIDS.push(removedNodeId);
+        originalLocal.modificationLog.push(`${localGlobalIndexForinstructionType};${localType};${result.code.length}`);
 
-        return mutant;
+        return originalLocal;
     }
 
     /**
