@@ -157,7 +157,7 @@ export default class ASTExplorer {
         try {
             for (let indiceID = 0; indiceID < newSon.removedIDS.length; indiceID++) {
                 const idAtual = newSon.removedIDS[indiceID];
-                console.log(`===============================> Excluindo nó ${idAtual}`);
+                console.log(`===================================================================================================> Excluindo nó ${idAtual}`);
                 this.deleteNodeById(newSon, idAtual);
             }
 

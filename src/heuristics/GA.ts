@@ -208,9 +208,8 @@ export default class GA extends IHeuristic {
             var element2Index = this._astExplorer.GenereateRandom(0, population.length - 1);
             var individual2 = population[element2Index];
 
-            this._logger.Write(`Cruzando individuos: ${elementIndex} e ${element2Index}`);
-            this._logger.Write(`========================== > Cruzando : ${individual.removedIDS[0]} e ${individual2.removedIDS[0]}`);
-
+            //this._logger.Write(`Cruzando individuos: ${elementIndex} e ${element2Index}`);
+            
             if (operation == 'c') {
                 //this._logger.Write(`[GA] Asking CrossOver for an individual ${elementIndex}`);
                 this.operationsCounter++
@@ -234,18 +233,6 @@ export default class GA extends IHeuristic {
                             var logString = elements[0].modificationLog[elements[0].modificationLog.length - 1];
                             fs.appendFileSync(file, `${this.generationIndexForLog};${logString};c \n`);
                         }
-
-                        /*
-                        isBetter = this.UpdateBest(elements[1]);
-
-                        if (isBetter) {
-                            //Save modifications log
-                            var directory = path.join(this._globalConfig.resultsDirectory, this._lib.name, "GA");
-                            var file = path.join(directory, this.ActualGlobalTrial + "_modifications.csv");
-                            var logString = elements[1].modificationLog[elements[1].modificationLog.length - 1];
-                            fs.appendFileSync(file, `${this.generationIndexForLog};${logString};c \n`);
-                        }
-                        */
 
                     } catch (error) {
                         this._logger.Write(`[GA] ProcessOperations/Crossover error: ${error.stack}`);

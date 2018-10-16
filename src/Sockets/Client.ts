@@ -137,19 +137,8 @@ export default class Client {
                 this.logger.Write(`[Client ${this.id}]  First Fail`);
             }
 
-            if (!(news[1].ToCode() === context.Original.ToCode())) {
-                this.logger.Write(`[Client ${this.id}]  Testing Second son`);
-                this.InitializeTester(context);
-                this._tester.Test(news[1]);
-                this.logger.Write(`[Client ${this.id}]  Tests done.`);
-            } else {
-                news[1] = context.Original.Clone();
-                this.logger.Write(`[Client ${this.id}]  Second Fail`);
-            }
-
-
             ctx.First = news[0];
-            ctx.Second = news[1];
+            ctx.Second = undefined;
         }
         catch (err) {
             this.logger.Write(`[Client ${this.id}]Error: ${err}`);
