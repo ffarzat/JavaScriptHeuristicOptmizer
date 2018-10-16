@@ -131,75 +131,46 @@ export default class ASTExplorer {
         var newDaughter: Individual;
         var originalCode = context.First.ToCode();
 
-        for (var index = 0; index < context.CrossOverTrials; index++) { //todo: adds top limit to mutation tries in config.json or ctx
-            //console.log(`Crossover trial ${index}`)
+        for (var index = 0; index < context.CrossOverTrials; index++) { 
             var news = this.TryCrossOver(context);
 
-            newSon = news[0] || context.First.Clone();
-            newDaughter = news[1] || context.Second.Clone();
-
-            if ((newSon.ToCode() != "" && newSon.ToCode() != originalCode) && (newDaughter.ToCode() != "" && newDaughter.ToCode() != originalCode)) {
+            newSon = news[0];
+            
+            if ((newSon.ToCode() != "" && newSon.ToCode() != originalCode) ) {
                 break;
             }
         }
-
-        if (newSon == undefined || newDaughter == undefined) { //no way to cross! Dammit!
-            newSon = context.First.Clone();
-            newDaughter = context.Second.Clone();
-        }
-
         newSon = this.ReconstruirIndividio(context, newSon);
-        newDaughter = this.ReconstruirIndividio(context, newDaughter);
-
-        return [newSon, newDaughter];
+        return [newSon, undefined];
     }
 
     /**
      * Try to execute single point CrossOver operation
      */
     private TryCrossOver(context: OperatorContext): Individual[] {
-        var randomIndexNodeOne: number = this.GenereateRandom(0, context.First.removedIDS.length);
-        var randomIndexNodeTwo: number = this.GenereateRandom(0, context.Second.removedIDS.length);
-
         var newSon: Individual = context.Original.Clone();
-        newSon.removedIDS.concat(context.First.removedIDS);
-        newSon.removedIDS.concat(context.Second.removedIDS);
+        newSon.removedIDS = newSon.removedIDS.concat(context.First.removedIDS.slice());
+        newSon.removedIDS = newSon.removedIDS.concat(context.Second.removedIDS.slice());
 
-        //var newDaughter: Individual = context.Original.Clone();
-        //newDaughter.removedIDS.push(context.First.removedIDS[randomIndexNodeOne]);
-        //newDaughter.removedIDS.concat(context.Second.removedIDS);
+        //console.log('===============================> Quantos nós para excluir? ' + newSon.removedIDS.length);
 
-
-        //If err in cross...
         try {
             for (let indiceID = 0; indiceID < newSon.removedIDS.length; indiceID++) {
                 const idAtual = newSon.removedIDS[indiceID];
+                console.log(`===============================> Excluindo nó ${idAtual}`);
                 this.deleteNodeById(newSon, idAtual);
             }
 
             var localCode = newSon.ToCode();
             var resultedCode1 = UglifyJS.minify(localCode, uglifyOptions);
             newSon.modificationLog.push(`${newSon.LastNodeRemoved};${newSon.typesRemoved[newSon.typesRemoved.length - 1]};${resultedCode1.code.length}`);
+
+            console.log('===============================> Sucesso no cruzamento. Nova Fit: ' + localCode.length);
         } catch (error) {
+            console.log('===============================> Falhou no cruzamento');
             newSon = context.Original.Clone();
         }
 
-        // try {
-        //     for (let indiceID = 0; indiceID < newDaughter.removedIDS.length; indiceID++) {
-        //         const idAtual = newDaughter.removedIDS[indiceID];
-        //         this.deleteNodeById(newDaughter, idAtual);
-        //     }
-
-        //     newDaughter.ToCode();
-        //     var localCode = newDaughter.ToCode();
-        //     var resultedCode2 = UglifyJS.minify(localCode, uglifyOptions);
-        //     newDaughter.modificationLog.push(`${newDaughter.LastNodeRemoved};${newDaughter.typesRemoved[newDaughter.typesRemoved.length - 1]};${resultedCode2.code.length}`);
-
-        // } catch (error) {
-        //     newDaughter = context.Original.Clone();
-        // }
-
-        //var result: Individual[] = [newSon, newDaughter];
         var result: Individual[] = [newSon, undefined];
 
         return result;
@@ -240,7 +211,7 @@ export default class ASTExplorer {
     private deleteNodeById(individual: Individual, nodeId: string) {
         individual.AST = traverse(individual.AST).forEach(function (node) {
             if (node && node.ID && node.ID == nodeId) {
-                individual.removedIDS.push(node.ID);
+                //individual.removedIDS.push(node.ID);
                 individual.typesRemoved.push(node.type);
                 individual.LastNodeRemoved = 0;
                 this.remove();
@@ -288,30 +259,30 @@ export default class ASTExplorer {
     MutateBy(context: OperatorContext): Individual {
         const fs = require('fs');
         var mutant = context.First.Clone();
-        var originalLocal = context.Original.Clone();
+        //var originalLocal = context.Original.Clone();
         var localNodeIndex = context.NodeIndex;
         var localGlobalIndexForinstructionType = context.globalIndexForinstructionType;
         var localType = context.instructionType;
         var counter = 0;
         var removedNodeId = '';
 
-        var removedNode = this.GetNode(originalLocal, localNodeIndex);
+        var removedNode = this.GetNode(mutant, localNodeIndex);
         removedNodeId = removedNode.ID;
-        originalLocal.removedIDS.push(removedNodeId);
-        originalLocal.removedIDS.concat(mutant.removedIDS.slice());
+        mutant.removedIDS.push(removedNodeId);
+        //originalLocal.removedIDS.concat(mutant.removedIDS.slice());
 
-        for (let index = 0; index < originalLocal.removedIDS.length; index++) {
-            const idExcluir = originalLocal.removedIDS[index];
-            this.deleteNodeById(originalLocal, idExcluir);
+        for (let index = 0; index < mutant.removedIDS.length; index++) {
+            const idExcluir = mutant.removedIDS[index];
+            this.deleteNodeById(mutant, idExcluir);
         }
 
-        originalLocal = this.ReconstruirIndividio(context, originalLocal);
-        var localCode = originalLocal.ToCode();
+        mutant = this.ReconstruirIndividio(context, mutant);
+        var localCode = mutant.ToCode();
         var result = UglifyJS.minify(localCode, uglifyOptions);
 
-        originalLocal.modificationLog.push(`${localGlobalIndexForinstructionType};${localType};${result.code.length}`);
+        mutant.modificationLog.push(`${localGlobalIndexForinstructionType};${localType};${result.code.length}`);
 
-        return originalLocal;
+        return mutant;
     }
 
     /**

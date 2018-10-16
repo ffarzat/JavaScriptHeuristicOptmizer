@@ -205,23 +205,25 @@ export default class GA extends IHeuristic {
         process.nextTick(() => {
             var elementIndex = elements.shift();
             var individual = population[elementIndex];
-            var individual2 = population[this._astExplorer.GenereateRandom(0, population.length - 1)];
+            var element2Index = this._astExplorer.GenereateRandom(0, population.length - 1);
+            var individual2 = population[element2Index];
 
-            //this._logger.Write(`individual tem resultados? ${individual.testResults != undefined}`);
+            this._logger.Write(`Cruzando individuos: ${elementIndex} e ${element2Index}`);
+            this._logger.Write(`========================== > Cruzando : ${individual.removedIDS[0]} e ${individual2.removedIDS[0]}`);
 
             if (operation == 'c') {
                 //this._logger.Write(`[GA] Asking CrossOver for an individual ${elementIndex}`);
                 this.operationsCounter++
                 this.CrossOver(individual, individual2, (elements) => {
                     this._logger.Write(`elements[0] tem resultados? ${elements[0].testResults != undefined}`);
-                    this._logger.Write(`elements[1] tem resultados? ${elements[1].testResults != undefined}`);
+                    //this._logger.Write(`elements[1] tem resultados? ${elements[1].testResults != undefined}`);
 
                     try {
                         this.totalCallBack++;
                         this._logger.Write(`[GA] Crossover done [${this.totalCallBack}]`);
 
                         population.push(elements[0]);
-                        population.push(elements[1]);
+                        //population.push(elements[1]);
 
                         var isBetter = this.UpdateBest(elements[0]);
 
@@ -233,6 +235,7 @@ export default class GA extends IHeuristic {
                             fs.appendFileSync(file, `${this.generationIndexForLog};${logString};c \n`);
                         }
 
+                        /*
                         isBetter = this.UpdateBest(elements[1]);
 
                         if (isBetter) {
@@ -242,7 +245,7 @@ export default class GA extends IHeuristic {
                             var logString = elements[1].modificationLog[elements[1].modificationLog.length - 1];
                             fs.appendFileSync(file, `${this.generationIndexForLog};${logString};c \n`);
                         }
-
+                        */
 
                     } catch (error) {
                         this._logger.Write(`[GA] ProcessOperations/Crossover error: ${error.stack}`);
@@ -299,7 +302,7 @@ export default class GA extends IHeuristic {
                         //this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
                         this._logger.Write(`[GA] ProcessOperations: ${this.totalCallBack}/${this.operationsCounter}`);
 
-                        if (this.operationsCounter == this.totalCallBack) {
+                        if (this.totalCallBack >= this.operationsCounter) {
                             clearInterval(this.RepopulateIntervalId);
                             this.RepopulateIntervalId = undefined;
                             cb();
@@ -448,6 +451,7 @@ export default class GA extends IHeuristic {
 
 
                 population.push(element);
+                //console.log(`Novo individuo: ${element.removedIDS[0]}`)
             });
 
             this._logger.Write(`[GA] Population inside: ${population.length}`);
