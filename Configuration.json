@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials": 9,
+    "trials": 4,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
