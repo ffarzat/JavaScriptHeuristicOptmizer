@@ -157,7 +157,7 @@ export default class ASTExplorer {
         try {
             for (let indiceID = 0; indiceID < newSon.removedIDS.length; indiceID++) {
                 const idAtual = newSon.removedIDS[indiceID];
-                console.log(`===================================================================================================> Excluindo nó ${idAtual}`);
+                //console.log(`===================================================================================================> Excluindo nó ${idAtual}`);
                 this.deleteNodeById(newSon, idAtual);
             }
 
@@ -165,9 +165,9 @@ export default class ASTExplorer {
             var resultedCode1 = UglifyJS.minify(localCode, uglifyOptions);
             newSon.modificationLog.push(`${newSon.LastNodeRemoved};${newSon.typesRemoved[newSon.typesRemoved.length - 1]};${resultedCode1.code.length}`);
 
-            console.log('===============================> Sucesso no cruzamento. Nova Fit: ' + localCode.length);
+            //console.log('===============================> Sucesso no cruzamento. Nova Fit: ' + localCode.length);
         } catch (error) {
-            console.log('===============================> Falhou no cruzamento');
+            //console.log('===============================> Falhou no cruzamento');
             newSon = context.Original.Clone();
         }
 

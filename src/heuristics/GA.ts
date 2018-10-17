@@ -454,7 +454,7 @@ export default class GA extends IHeuristic {
                 //this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
                 this._logger.Write(`[GA] Repopulate: ${this.totalCallBack}/${this.operationsCounter}`);
 
-                if (this.operationsCounter == this.totalCallBack) {
+                if (this.totalCallBack >= this.operationsCounter) {
                     this.totalCallBack = 0;
 
                     this.operationsCounter = 0;
