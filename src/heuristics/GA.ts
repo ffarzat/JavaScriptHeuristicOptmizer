@@ -173,6 +173,7 @@ export default class GA extends IHeuristic {
             cb(); //Done!
         } else {
             this._logger.Write(`[GA] Starting generation ${generationIndex}`);
+            this.generationIndexForLog = generationIndex;
             if (this.nodesSelectionApproach == "ByFunction") {
                 this._logger.Write(`[GA] A função ${this.ActualFunction} será otimizada por ${qtdGeracoes} gerações`);
 
