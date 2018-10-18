@@ -84,7 +84,7 @@ export default class ASTExplorer {
             newCtx.Second = new Individual();
             //newCtx.Second['_astFile'] = new Buffer(oldSecond['_astFile'].data);
             //newCtx.Second.AST = JSON.parse(fs.readFileSync(oldSecond['_astFile'].path).toString());
-            newCtx.Second.AST = oldSecond.astObj;
+            //newCtx.Second.AST = oldSecond.astObj;
             newCtx.Second.testResults = oldSecond.testResults;
             newCtx.Second.typesRemoved = oldSecond.typesRemoved;
             newCtx.Second.modificationLog = oldSecond.modificationLog;
@@ -94,7 +94,7 @@ export default class ASTExplorer {
         if (context.ActualBestForFunctionScope) {
             var oldActualBestForFunctionScope = context.ActualBestForFunctionScope;
             newCtx.ActualBestForFunctionScope = new Individual();
-            newCtx.ActualBestForFunctionScope.AST = oldActualBestForFunctionScope.astObj;
+            //newCtx.ActualBestForFunctionScope.AST = oldActualBestForFunctionScope.astObj;
             newCtx.ActualBestForFunctionScope.testResults = oldActualBestForFunctionScope.testResults;
             newCtx.ActualBestForFunctionScope.typesRemoved = oldActualBestForFunctionScope.typesRemoved;
             newCtx.ActualBestForFunctionScope.modificationLog = oldActualBestForFunctionScope.modificationLog;
@@ -258,7 +258,7 @@ export default class ASTExplorer {
      */
     MutateBy(context: OperatorContext): Individual {
         const fs = require('fs');
-        var mutant = context.First.Clone();
+        var mutant = context.Original.Clone();
         //var originalLocal = context.Original.Clone();
         var localNodeIndex = context.NodeIndex;
         var localGlobalIndexForinstructionType = context.globalIndexForinstructionType;
@@ -268,8 +268,9 @@ export default class ASTExplorer {
 
         var removedNode = this.GetNode(mutant, localNodeIndex);
         removedNodeId = removedNode.ID;
+        mutant.removedIDS = mutant.removedIDS.concat(context.First.removedIDS.slice());
         mutant.removedIDS.push(removedNodeId);
-        //originalLocal.removedIDS.concat(mutant.removedIDS.slice());
+        
 
         for (let index = 0; index < mutant.removedIDS.length; index++) {
             const idExcluir = mutant.removedIDS[index];

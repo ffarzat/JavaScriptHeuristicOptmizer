@@ -364,6 +364,7 @@ abstract class IHeuristic extends events.EventEmitter {
             }
 
             cb(newMsg.ctx.First);
+            newMsg = undefined;
             return;
         });
     }
@@ -466,6 +467,7 @@ abstract class IHeuristic extends events.EventEmitter {
         }
 
         this.Test(this.Original, (testedOriginal) => {
+            testedOriginal.AST = this.Original.AST;
             this.Original = testedOriginal;
 
             //this._logger.Write(`Orginal results: ${this.Original.testResults}`);

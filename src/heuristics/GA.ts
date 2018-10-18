@@ -222,9 +222,6 @@ export default class GA extends IHeuristic {
                         this.totalCallBack++;
                         this._logger.Write(`[GA] Crossover done [${this.totalCallBack}]`);
 
-                        population.push(elements[0]);
-                        //population.push(elements[1]);
-
                         var isBetter = this.UpdateBest(elements[0]);
 
                         if (isBetter) {
@@ -234,6 +231,9 @@ export default class GA extends IHeuristic {
                             var logString = elements[0].modificationLog[elements[0].modificationLog.length - 1];
                             fs.appendFileSync(file, `${this.generationIndexForLog};${logString};c \n`);
                         }
+                        elements[0].AST = {};
+                        population.push(elements[0]);
+                        //population.push(elements[1]);
 
                     } catch (error) {
                         this._logger.Write(`[GA] ProcessOperations/Crossover error: ${error.stack}`);
@@ -248,7 +248,7 @@ export default class GA extends IHeuristic {
                 context.First = individual;
                 this.operationsCounter++
 
-                var indicesDoIndividuo = this.DoIndexes(individual).slice();
+                var indicesDoIndividuo = this.DoIndexes(this.Original).slice();
                 var indexes = indicesDoIndividuo[this._astExplorer.GenereateRandom(0, indicesDoIndividuo.length - 1)];
                 indexes.ActualIndex = this._astExplorer.GenereateRandom(0, indexes.Indexes.length - 1)
 
@@ -261,7 +261,6 @@ export default class GA extends IHeuristic {
                             var localBest = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
                             mutant = localBest.Clone();
                         }
-                        population.push(mutant);
 
                         var isBetter = this.UpdateBest(mutant);
                         if (isBetter) {
@@ -271,6 +270,9 @@ export default class GA extends IHeuristic {
                             var logString = mutant.modificationLog[mutant.modificationLog.length - 1];
                             fs.appendFileSync(file, `${this.generationIndexForLog};${logString};m \n`);
                         }
+                        
+                        mutant.AST = {};
+                        population.push(mutant);
 
                     } catch (error) {
                         this._logger.Write(`[GA] ProcessOperations/Mutate error: ${error.stack}`);
