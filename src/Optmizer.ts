@@ -271,7 +271,7 @@ export default class Optmizer {
         }
         catch (err) {
             this.logger.Write(` [Optmizer] Error inside Trial ${this.trialIndex}. ${err.stack} `);
-            DoOptmizationcb();
+            //DoOptmizationcb();
             return;
         }
     }
