@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials": 4,
+    "trials": 5,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
@@ -26,9 +26,9 @@
     "memory": 8192,
     "libraries": [
         {
-            "name": "uuid",
-            "path": "Libraries/uuid",
-            "mainFilePath": "uuid.js"
+            "name": "exectimer",
+            "path": "Libraries/exectimer",
+            "mainFilePath": "index.js"
         }
     ],
     "trialsConfiguration": [

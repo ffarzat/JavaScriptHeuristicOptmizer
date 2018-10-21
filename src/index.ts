@@ -163,7 +163,7 @@ function ParseConfigAndLibs() {
 
         //Verifca se já existem os clients necessários no scratch
         //for (var clientIndex = 0; clientIndex < configuration.clientsTotal; clientIndex++) {
-        for (var clientIndex = 0; clientIndex < configuration.clientsTotal ; clientIndex++) {
+        for (var clientIndex = 0; clientIndex <= configuration.clientsTotal ; clientIndex++) {
             var tempClientpath = path.join(configuration.tmpDirectory, clientIndex.toString());
             var tempLibPath = path.join(tempClientpath, element.name);
 

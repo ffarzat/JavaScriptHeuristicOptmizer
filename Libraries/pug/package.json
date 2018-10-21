@@ -4,11 +4,11 @@
   "devDependencies": {
     "coveralls": "^2.11.2",
     "jest": "^18.1.0",
-    "lerna": "2.0.0-beta.32"
+    "lerna": "^3.4.3"
   },
   "repository": {
-	   "type": "git",
-	   "url": "https://github.com/pugjs/pug.git"
+    "type": "git",
+    "url": "https://github.com/pugjs/pug.git"
   },
   "scripts": {
     "clean": "lerna clean",
@@ -22,7 +22,9 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "snapshotSerializers": ["./scripts/filename-serializer.js"]
+    "snapshotSerializers": [
+      "./scripts/filename-serializer.js"
+    ]
   },
   "license": "MIT"
 }
