@@ -413,7 +413,8 @@ export default class GA extends IHeuristic {
             }
         }
 
-        var countTotal = Math.floor(population.length - this._config.individuals);
+        //var countTotal = Math.floor(population.length - this._config.individuals);
+        var countTotal = this._config.individuals/2; //soomente metade GenProg
         this._logger.Write(`[GA] Sort population`);
         try {
             population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });
@@ -424,6 +425,9 @@ export default class GA extends IHeuristic {
         this._logger.Write(`[GA] Population cut (${population.length}-${countTotal})`);
         population.splice(this._config.individuals - 1, countTotal);
         this._logger.Write(`[GA] Population now:${population.length}`);
+
+
+        
 
         if (this.elitism) {
             var countElitism = Math.floor((this.individuals * this.elitismPercentual) / 100);
@@ -486,7 +490,7 @@ export default class GA extends IHeuristic {
                 //this._logger.Write(`[GA] wainting totalCallBack ${this.totalCallBack} complete [${this.operationsCounter}]`);
                 this._logger.Write(`[GA] Repopulate: ${this.totalCallBack}/${this.operationsCounter}`);
 
-                if (this.totalCallBack >= this.operationsCounter) {
+                if (this.totalCallBack >= this.operationsCounter && population.length > 0) {
                     this.totalCallBack = 0;
 
                     this.operationsCounter = 0;

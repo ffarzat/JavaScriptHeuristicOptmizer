@@ -60,7 +60,7 @@
                     "AssignmentExpression",
                     "ConditionalExpression"
                 ],
-                "individuals": 10,
+                "individuals": 20,
                 "generations": 5,
                 "crossoverProbability": 100,
                 "mutationProbability": 100,
