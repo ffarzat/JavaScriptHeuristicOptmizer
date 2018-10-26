@@ -26,9 +26,9 @@
     "memory": 8192,
     "libraries": [
         {
-            "name": "exectimer",
-            "path": "Libraries/exectimer",
-            "mainFilePath": "index.js"
+            "name": "uuid",
+            "path": "Libraries/uuid",
+            "mainFilePath": "lib/uuid.js"
         }
     ],
     "trialsConfiguration": [

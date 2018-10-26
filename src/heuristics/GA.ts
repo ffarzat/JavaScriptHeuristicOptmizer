@@ -29,6 +29,11 @@ var uglifyOptions = {
     }
 };
 
+/**
+ * Size of the tournament
+ */
+const TOURNAMENT_SIZE: number = 5;
+
 
 /**
  * Genetic Algorithm for Code Improvement
@@ -210,7 +215,7 @@ export default class GA extends IHeuristic {
             var individual2 = population[element2Index];
 
             //this._logger.Write(`Cruzando individuos: ${elementIndex} e ${element2Index}`);
-            
+
             if (operation == 'c') {
                 //this._logger.Write(`[GA] Asking CrossOver for an individual ${elementIndex}`);
                 this.operationsCounter++
@@ -270,7 +275,7 @@ export default class GA extends IHeuristic {
                             var logString = mutant.modificationLog[mutant.modificationLog.length - 1];
                             fs.appendFileSync(file, `${this.generationIndexForLog};${logString};m \n`);
                         }
-                        
+
                         mutant.AST = {};
                         population.push(mutant);
 
@@ -303,6 +308,27 @@ export default class GA extends IHeuristic {
 
         });
     }
+    private tournamentSelection(population: Individual[]): number {
+        var indexes = [];
+
+        for (var i = 0; i < TOURNAMENT_SIZE; i++)
+            indexes[i] = this.GenereateRandom(0, population.length - 1);
+
+        var bestSolutionValue = population[indexes[0]].testResults.fit;
+        var bestSolutionIndex = indexes[0];
+
+        for (var i = 1; i < TOURNAMENT_SIZE; i++) {
+            var currentSolutionValue = population[indexes[i]].testResults.fit;
+
+            if (currentSolutionValue > bestSolutionValue) {
+                bestSolutionValue = currentSolutionValue;
+                bestSolutionIndex = indexes[i];
+            }
+        }
+
+        return bestSolutionIndex;
+    }
+
 
     /**
      * Calculates crossovers operations over a probability
@@ -313,18 +339,18 @@ export default class GA extends IHeuristic {
         let totalOperationsInternal = 0;
 
         for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
-            var crossoverChance = this.GenereateRandom(0, 100);
-            if (this.crossoverProbability > crossoverChance) {
-                this._logger.Write(`[GA] CrossoverChance: ${crossoverChance}`);
-                try {
-                    totalOperationsInternal++;
-                    crossoverIndexes.push(individualIndex);
-                } catch (error) {
-                    this._logger.Write(`[GA] Crossover error: ${error.stack}`);
-                    cb();
-                    return;
-                }
+            try {
+                var localIndividualIndex1 =  this.tournamentSelection(population);
+                var localIndividualIndex2 =  this.tournamentSelection(population);
+                totalOperationsInternal++;
+                crossoverIndexes.push(localIndividualIndex1);
+                crossoverIndexes.push(localIndividualIndex2);
+            } catch (error) {
+                this._logger.Write(`[GA] Crossover error: ${error.stack}`);
+                cb();
+                return;
             }
+
         }
 
         this.operationsCounter = 0;
@@ -392,11 +418,11 @@ export default class GA extends IHeuristic {
         var countTotal = Math.floor(population.length - this._config.individuals);
         this._logger.Write(`[GA] Sort population`);
         try {
-            population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });    
+            population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });
         } catch (error) {
-            this._logger.Write(`[GA] Population cut error`);    
+            this._logger.Write(`[GA] Population cut error`);
         }
-        
+
         this._logger.Write(`[GA] Population cut (${population.length}-${countTotal})`);
         population.splice(this._config.individuals - 1, countTotal);
         this._logger.Write(`[GA] Population now:${population.length}`);
@@ -536,7 +562,7 @@ export default class GA extends IHeuristic {
 
             this.MutateBy(localBest.Clone(), indexes, (mutant) => {
                 try {
-                    
+
                     if (mutant == undefined) {
                         mutant = localBest.Clone();
                     }
@@ -546,7 +572,7 @@ export default class GA extends IHeuristic {
                 } catch (error) {
                     this._logger.Write(`[GA] Mutant error: ${error.stack}`);
                 }
-                finally{
+                finally {
                     this.totalCallBack++;
                 }
             });
