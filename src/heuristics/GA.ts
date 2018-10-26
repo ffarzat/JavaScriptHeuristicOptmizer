@@ -211,7 +211,7 @@ export default class GA extends IHeuristic {
         process.nextTick(() => {
             var elementIndex = elements.shift();
             var individual = population[elementIndex];
-            var element2Index = this._astExplorer.GenereateRandom(0, population.length - 1);
+            var element2Index = this.tournamentSelection(population);
             var individual2 = population[element2Index];
 
             //this._logger.Write(`Cruzando individuos: ${elementIndex} e ${element2Index}`);
@@ -310,6 +310,7 @@ export default class GA extends IHeuristic {
     }
     private tournamentSelection(population: Individual[]): number {
         var indexes = [];
+        console.log(population.length)
 
         for (var i = 0; i < TOURNAMENT_SIZE; i++)
             indexes[i] = this.GenereateRandom(0, population.length - 1);
@@ -341,10 +342,8 @@ export default class GA extends IHeuristic {
         for (var individualIndex = 0; individualIndex < this.individuals - 1; individualIndex++) {
             try {
                 var localIndividualIndex1 =  this.tournamentSelection(population);
-                var localIndividualIndex2 =  this.tournamentSelection(population);
                 totalOperationsInternal++;
                 crossoverIndexes.push(localIndividualIndex1);
-                crossoverIndexes.push(localIndividualIndex2);
             } catch (error) {
                 this._logger.Write(`[GA] Crossover error: ${error.stack}`);
                 cb();

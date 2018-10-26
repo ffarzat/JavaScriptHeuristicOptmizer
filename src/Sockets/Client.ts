@@ -67,7 +67,7 @@ export default class Client {
                 this.logger.Write(`[Client ${this.id}]  New mutant Fail`);
             }
 
-            ctx.First = newIndividual;
+            ctx.First = newIndividual.testResults.fit == 0 ? context.Original.Clone() : newIndividual;
 
         } catch (err) {
             this.logger.Write(`[Client ${this.id}]Error: ${err}`);

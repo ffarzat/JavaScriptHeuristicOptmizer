@@ -152,6 +152,10 @@ export default class ASTExplorer {
         newSon.removedIDS = newSon.removedIDS.concat(context.First.removedIDS.slice());
         newSon.removedIDS = newSon.removedIDS.concat(context.Second.removedIDS.slice());
 
+        var newSon2: Individual = context.Original.Clone();
+        newSon2.removedIDS = newSon2.removedIDS.concat(context.Second.removedIDS.slice());
+        newSon2.removedIDS = newSon2.removedIDS.concat(context.First.removedIDS.slice());
+
         //console.log('===============================> Quantos nós para excluir? ' + newSon.removedIDS.length);
 
         try {
@@ -171,7 +175,24 @@ export default class ASTExplorer {
             newSon = context.Original.Clone();
         }
 
-        var result: Individual[] = [newSon, undefined];
+        try {
+            for (let indiceID = 0; indiceID < newSon2.removedIDS.length; indiceID++) {
+                const idAtual = newSon2.removedIDS[indiceID];
+                //console.log(`===================================================================================================> Excluindo nó ${idAtual}`);
+                this.deleteNodeById(newSon2, idAtual);
+            }
+
+            var localCode = newSon2.ToCode();
+            var resultedCode1 = UglifyJS.minify(localCode, uglifyOptions);
+            newSon2.modificationLog.push(`${newSon2.LastNodeRemoved};${newSon2.typesRemoved[newSon2.typesRemoved.length - 1]};${resultedCode1.code.length}`);
+
+            //console.log('===============================> Sucesso no cruzamento. Nova Fit: ' + localCode.length);
+        } catch (error) {
+            //console.log('===============================> Falhou no cruzamento');
+            newSon2 = context.Original.Clone();
+        }
+
+        var result: Individual[] = [newSon, newSon2];
 
         return result;
     }
