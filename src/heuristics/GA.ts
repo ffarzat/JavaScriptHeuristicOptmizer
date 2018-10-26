@@ -310,7 +310,6 @@ export default class GA extends IHeuristic {
     }
     private tournamentSelection(population: Individual[]): number {
         var indexes = [];
-        console.log(population.length)
 
         for (var i = 0; i < TOURNAMENT_SIZE; i++)
             indexes[i] = this.GenereateRandom(0, population.length - 1);
