@@ -9,7 +9,8 @@
     "test": "mocha --recursive build/test",
     "pretest": "npm run clean && npm run build",
     "clean": "grunt && tsd install",
-    "start": "npm run clean && npm run build && node --expose-gc --max-old-space-size=8192 build/src/index.js"
+    "start": "npm run clean && npm run build && node --expose-gc --max-old-space-size=8192 build/src/index.js",
+    "restart": "node --expose-gc --max-old-space-size=8192 build/src/index.js"
   },
   "author": {
     "name": "Fabio Farzat",

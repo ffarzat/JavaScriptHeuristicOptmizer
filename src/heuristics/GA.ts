@@ -554,14 +554,14 @@ export default class GA extends IHeuristic {
 
             //this._logger.Write(`[GA] Asking  mutant ${counter}`);
             var localBest = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
-            //var context: OperatorContext = new OperatorContext();
-            //context.First = localBest;
+            var context: OperatorContext = new OperatorContext();
+            context.First = localBest;
             this.operationsCounter++;
             this._logger.Write(`[GA] this.operationsCounter ${this.operationsCounter}`);
 
             var indexes = this.updatedIndexList[this._astExplorer.GenereateRandom(0, this.updatedIndexList.length - 1)];
             indexes.ActualIndex = this._astExplorer.GenereateRandom(0, indexes.Indexes.length - 1)
-
+            /*
             this.MutateBy(localBest.Clone(), indexes, (mutant) => {
                 try {
 
@@ -578,8 +578,8 @@ export default class GA extends IHeuristic {
                     this.totalCallBack++;
                 }
             });
-
-            /*
+            */
+            
             this.Mutate(context, (mutant) => {
 
                 try {
@@ -593,7 +593,7 @@ export default class GA extends IHeuristic {
                     this._logger.Write(`[GA] Mutant error: ${error.stack}`);
                 }
             });
-            */
+            
 
             counter++;
 
