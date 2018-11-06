@@ -174,8 +174,9 @@ export default class GA extends IHeuristic {
      */
     private executeStack(generationIndex: number, population: Individual[], cb: () => void) {
 
-        if (generationIndex == (this._config.generations + 1)) {
+        if (generationIndex > (this._config.generations)) {
             cb(); //Done!
+            return;
         } else {
             this._logger.Write(`[GA] Starting generation ${generationIndex}`);
             this.generationIndexForLog = generationIndex;

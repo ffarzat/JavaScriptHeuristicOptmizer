@@ -1,7 +1,7 @@
 {
     "file": "Configuration.json",
     "trials": 5,
-    "startTrial": 0,
+    "startTrial": 4,
     "fitType": "median",
     "testUntil": 1,
     "mutationTrials": 1,
@@ -25,7 +25,11 @@
     "copyFileTimeout": 1728000,
     "memory": 8192,
     "libraries": [
-        {"name":"browserify",       "path":"Libraries/browserify/",         "mainFilePath":"index.js" }
+        {
+            "name": "exectimer",
+            "path": "Libraries/exectimer",
+            "mainFilePath": "index.js"
+        }
     ],
     "trialsConfiguration": [
         {
