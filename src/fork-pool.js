@@ -63,6 +63,7 @@ Pool.prototype.enqueue = function (data, callback) {
     var instance = this.pool;
     instance.acquire(function (err, client) {
         if (err) {
+            runGC();
             callback(err);
         } else {
             client.send(data);
@@ -73,6 +74,7 @@ Pool.prototype.enqueue = function (data, callback) {
                 };
 
                 instance.release(client);
+                runGC();
                 callback(null, a);
             });
         }
@@ -86,5 +88,25 @@ Pool.prototype.drain = function (callback) {
         callback(null);
     });
 };
+
+function runGC() {
+    if (typeof global.gc != "undefined") {
+        console.log(`Mem Usage Pre-GC ${formatBytes(process.memoryUsage().heapTotal, 2)}`);
+        global.gc();
+        console.log(`Mem Usage ${formatBytes(process.memoryUsage().heapTotal, 2)}`);
+    }
+}
+
+/**
+ * Format for especific size
+ */
+function formatBytes(bytes, decimals) {
+    if (bytes == 0) return '0 Byte';
+    var k = 1000;
+    var dm = decimals + 1 || 3;
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
 
 module.exports = Pool;

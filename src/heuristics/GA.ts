@@ -192,8 +192,11 @@ export default class GA extends IHeuristic {
             }
 
             this.DoCrossovers(population, () => {
+                this.runGC();
                 this.DoMutations(population, () => {
+                    this.runGC();
                     this.DoPopuplationCut(population, () => {
+                        this.runGC();
                         generationIndex++
                         process.nextTick(() => {
                             this.executeStack(generationIndex, population, cb);
@@ -437,14 +440,18 @@ export default class GA extends IHeuristic {
             population.splice(this._config.individuals - 1, countElitism);
 
             this.Repopulate(population, countElitism, (elements) => {
+                this.runGC();
                 cb();
+                return;
             });
         }
         else {
             population.splice(0, this.individuals);
             if (population.length < this.individuals) {
                 this.Repopulate(population, (this.individuals - population.length), (elements) => {
+                    this.runGC();
                     cb();
+                    return;
                 });
             }
         }
@@ -472,13 +479,13 @@ export default class GA extends IHeuristic {
                     var logString = element.modificationLog[element.modificationLog.length - 1];
                     fs.appendFileSync(file, `${this.generationIndexForLog};${logString};m \n`);
                 }
-
-
+                element.AST = {};
                 population.push(element);
                 //console.log(`Novo individuo: ${element.removedIDS[0]}`)
             });
 
             this._logger.Write(`[GA] Population inside: ${population.length}`);
+            this.runGC();
             cb(population);
             return;
         });
@@ -611,6 +618,7 @@ export default class GA extends IHeuristic {
         this.Repopulate([], this.individuals - 1, (newIndividuals: Individual[]) => {
             //newIndividuals.unshift(original);
             cb(newIndividuals);
+            return;
         });
     }
 }

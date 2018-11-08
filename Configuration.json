@@ -1,7 +1,7 @@
 {
     "file": "Configuration.json",
-    "trials": 5,
-    "startTrial": 4,
+    "trials": 1,
+    "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
     "mutationTrials": 1,
@@ -20,15 +20,15 @@
     ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 80,
+    "clientTimeout": 120,
     "clientsTotal": 4,
     "copyFileTimeout": 1728000,
-    "memory": 8192,
+    "memory": 14336,
     "libraries": [
         {
-            "name": "exectimer",
-            "path": "Libraries/exectimer",
-            "mainFilePath": "index.js"
+            "name": "lodash",
+            "path": "Libraries/lodash",
+            "mainFilePath": "lodash.js"
         }
     ],
     "trialsConfiguration": [

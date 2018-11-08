@@ -98,6 +98,7 @@ function ExecuteTrials(globalTrial: number) {
     //process.send(msg); //clean Server
 
     executeHeuristicTrial(globalTrial, configuration, 0, uniquePool, () => {
+        runGC();
         logger.Write(`============================= Optmizer Global trial: ${globalTrial} Done!`);
 
         globalTrial++;
@@ -120,8 +121,10 @@ function executeHeuristicTrial(globalTrial: number, config: IConfiguration, heur
     optmizer = new Optmizer();
 
     optmizer.Setup(configuration, globalTrial, heuristicTrial, ClientsPool, allHosts);
+    runGC();
     optmizer.DoOptmization(0, () => {
         cb();
+        return;
     });
 }
 
@@ -221,3 +224,24 @@ function DisplayConfig() {
     logger.Write(`Total runs [${configuration.trials} * ${configuration.trialsConfiguration.length} * ${configuration.libraries.length} * ${configuration.heuristics.length} ]:  ${totalTrials}`);
     logger.Write('=================================');
 } 
+
+
+function runGC() {
+    if (typeof global.gc != "undefined") {
+        console.log(`Mem Usage Pre-GC ${formatBytes(process.memoryUsage().heapTotal, 2)}`);
+        global.gc();
+        console.log(`Mem Usage ${formatBytes(process.memoryUsage().heapTotal, 2)}`);
+    }
+}
+
+/**
+ * Format for especific size
+ */
+function formatBytes(bytes, decimals) {
+    if (bytes == 0) return '0 Byte';
+    var k = 1000;
+    var dm = decimals + 1 || 3;
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    var i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}

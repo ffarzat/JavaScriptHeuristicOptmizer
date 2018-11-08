@@ -246,7 +246,7 @@ export default class ASTExplorer {
      */
     Mutate(context: OperatorContext): Individual {
         var mutant: Individual;
-        var originalCode = context.First.ToCode();
+        var originalCode = context.Original.ToCode();
 
         for (var index = 0; index < context.MutationTrials; index++) {
             //console.log(`Mutation trial ${index}`)
@@ -332,27 +332,21 @@ export default class ASTExplorer {
      * Try to mutate an individual
      */
     private TryMutate(context: OperatorContext): Individual {
-        var mutant = context.First.Clone();
+        var mutant = context.Original.Clone();
         var indexes: number[] = this.IndexNodes(mutant);
         var counter = 0;
         var randonNodeToPrune: number = this.GenereateRandom(0, indexes.length - 1);
 
-        //console.log(`rd node to remove ${randonNodeToPrune} of ${indexes.length}`);
 
-        mutant.AST = traverse(mutant.AST).map(function (node) {
-            if (counter == indexes[randonNodeToPrune]) {
-                //fs.appendFileSync("mutante_excluidos.txt",JSON.stringify(node) + "\n");
-                var tipo = ASTExplorer.extrairTipo(node);
+        var removedNode = this.GetNode(mutant, randonNodeToPrune);
+        mutant.removedIDS = mutant.removedIDS.concat(context.First.removedIDS.slice());
+        mutant.removedIDS.push(removedNode.ID);
+        
 
-                mutant.LastNodeRemoved = counter;
-                //console.log(tipo);
-                mutant.typesRemoved.push(tipo);
-                mutant.removedIDS.push(node.ID);
-                this.remove();
-                this.stop();
-            }
-            counter++;
-        });
+        for (let index = 0; index < mutant.removedIDS.length; index++) {
+            const idExcluir = mutant.removedIDS[index];
+            this.deleteNodeById(mutant, idExcluir);
+        }
 
         return mutant;
     }
