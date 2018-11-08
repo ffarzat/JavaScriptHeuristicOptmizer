@@ -418,7 +418,7 @@ export default class GA extends IHeuristic {
         }
 
         //var countTotal = Math.floor(population.length - this._config.individuals);
-        var countTotal = this._config.individuals/2; //soomente metade GenProg
+        var countTotal = 50; // this._config.individuals/2; //somente metade - GenProg
         this._logger.Write(`[GA] Sort population`);
         try {
             population.sort((a, b) => { return a.testResults.fit > b.testResults.fit ? 1 : 0; });

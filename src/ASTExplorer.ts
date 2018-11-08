@@ -338,15 +338,19 @@ export default class ASTExplorer {
         var randonNodeToPrune: number = this.GenereateRandom(0, indexes.length - 1);
 
 
-        var removedNode = this.GetNode(mutant, randonNodeToPrune);
-        mutant.removedIDS = mutant.removedIDS.concat(context.First.removedIDS.slice());
-        mutant.removedIDS.push(removedNode.ID);
-        
-
-        for (let index = 0; index < mutant.removedIDS.length; index++) {
-            const idExcluir = mutant.removedIDS[index];
-            this.deleteNodeById(mutant, idExcluir);
-        }
+        mutant.AST = traverse(mutant.AST).map(function (node) {
+            if (counter == indexes[randonNodeToPrune]) {
+                //fs.appendFileSync("mutante_excluidos.txt",JSON.stringify(node) + "\n");
+                var tipo = ASTExplorer.extrairTipo(node);
+                mutant.LastNodeRemoved = counter;
+                //console.log(tipo);
+                mutant.typesRemoved.push(tipo);
+                mutant.removedIDS.push(node.ID);
+                this.remove();
+                this.stop();
+            }
+            counter++;
+        });
 
         return mutant;
     }
