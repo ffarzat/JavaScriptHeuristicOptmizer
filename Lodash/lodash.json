@@ -16,7 +16,7 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "RD"
+        "GA"
     ],
     "port": 5000,
     "url": "ws://localhost",
@@ -62,8 +62,8 @@
                 ],
                 "individuals": 100,
                 "generations": 50,
-                "crossoverProbability": 75,
-                "mutationProbability": 10,
+                "crossoverProbability": 100,
+                "mutationProbability": 100,
                 "elitism": true,
                 "elitismPercentual": 30
             }
