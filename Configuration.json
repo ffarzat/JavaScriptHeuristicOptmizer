@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials": 1,
+    "trials": 5,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
@@ -26,9 +26,9 @@
     "memory": 14336,
     "libraries": [
         {
-            "name": "lodash",
-            "path": "Libraries/lodash",
-            "mainFilePath": "lodash.js"
+            "name": "exectimer",
+            "path": "Libraries/exectimer",
+            "mainFilePath": "index.js"
         }
     ],
     "trialsConfiguration": [

@@ -569,6 +569,7 @@ export default class GA extends IHeuristic {
 
             var indexes = this.updatedIndexList[this._astExplorer.GenereateRandom(0, this.updatedIndexList.length - 1)];
             indexes.ActualIndex = this._astExplorer.GenereateRandom(0, indexes.Indexes.length - 1)
+            
             /*
             this.MutateBy(localBest.Clone(), indexes, (mutant) => {
                 try {
