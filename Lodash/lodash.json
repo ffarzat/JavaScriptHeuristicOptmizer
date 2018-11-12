@@ -16,7 +16,7 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "GA"
+        "RD"
     ],
     "port": 5000,
     "url": "ws://localhost",
@@ -57,8 +57,7 @@
                     "FunctionExpression",
                     "ArrayExpression",
                     "UnaryExpression",
-                    "AssignmentExpression",
-                    "ConditionalExpression"
+                    "AssignmentExpression"
                 ],
                 "individuals": 100,
                 "generations": 50,
