@@ -16,7 +16,7 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "RD"
+        "HC"
     ],
     "port": 5000,
     "url": "ws://localhost",
