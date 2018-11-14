@@ -54,6 +54,7 @@
                     "ArrayExpression",
                     "UnaryExpression",
                     "AssignmentExpression",
+                    "ConditionalExpression",
                     "MemberExpression",
                     "Identifier"
                 ],
