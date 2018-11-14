@@ -514,6 +514,13 @@ export default class HC extends IHeuristic {
             //All neighbors were visited?
             if (!itsover) {
                 this.MutateBy(this.bestIndividual.Clone(), indexes, (mutant) => {
+                    
+                    if (mutant == undefined || mutant.testResults == undefined) {
+                        var localBest = this.nodesSelectionApproach == "ByFunction" ? this.ActualBestForFunctionScope.Clone() : this.bestIndividual.Clone();
+                        mutant = localBest.Clone();
+                    }
+                    
+                    
                     neighbors.push(mutant);
                 });
 
