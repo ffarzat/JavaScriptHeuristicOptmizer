@@ -11,7 +11,7 @@ echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
 echo "----------------"
-#node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 0
+node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 0
 
 #node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 1
 
@@ -21,12 +21,12 @@ echo "----------------"
 
 #node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 4
 
-node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 5
+#node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 5
 
-node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 6
+#node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 6
 
-node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 7
+#node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 7
 
-node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 8
+#node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 8
 
-node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 9
+#node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 9

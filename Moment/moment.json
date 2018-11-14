@@ -57,9 +57,7 @@
                     "FunctionExpression",
                     "ArrayExpression",
                     "UnaryExpression",
-                    "AssignmentExpression",
-                    "MemberExpression",
-                    "Identifier"
+                    "AssignmentExpression"
                 ],
                 "individuals": 100,
                 "generations": 50,
