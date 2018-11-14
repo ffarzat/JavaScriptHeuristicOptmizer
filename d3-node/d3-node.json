@@ -37,7 +37,7 @@
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
-                "ramdonNodes": true,
+                "ramdonNodes": false,
                 "nodesType": [
                     "ExpressionStatement",
                     "VariableDeclaration",
@@ -54,7 +54,6 @@
                     "ArrayExpression",
                     "UnaryExpression",
                     "AssignmentExpression",
-                    "ConditionalExpression",
                     "MemberExpression",
                     "Identifier"
                 ],
