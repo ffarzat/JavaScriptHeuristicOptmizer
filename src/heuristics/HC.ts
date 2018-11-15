@@ -54,6 +54,8 @@ export default class HC extends IHeuristic {
     findBestInThisTrial: boolean;
 
 
+    totalTimeoutByCount: number;
+
     /**
     * Especific Setup
     */
@@ -72,6 +74,7 @@ export default class HC extends IHeuristic {
         this.neighbors = [];
         this.findBestInThisTrial = false;
         this.restartCounter = 0;
+        this.totalTimeoutByCount = 0;
 
     }
 
@@ -534,7 +537,7 @@ export default class HC extends IHeuristic {
         }
 
         //Process all neighbors?
-        if (neighbors.length == this.operationsCount) {
+        if (neighbors.length >= this.operationsCount) {
             cb(neighbors, indexes, false);
             return;
         }
@@ -544,8 +547,10 @@ export default class HC extends IHeuristic {
 
             this.intervalId = setInterval(() => {
                 this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
-
-                if (neighbors.length == this.operationsCount) {
+                
+                this.totalTimeoutByCount = +1;
+                
+                if (neighbors.length >= this.operationsCount) {
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
 
@@ -553,10 +558,18 @@ export default class HC extends IHeuristic {
                         clearInterval(this.intervalId);
                         this.intervalId = undefined;
                         cb(neighbors, indexes, true);
+                        return;
                     }
                     else {
                         cb(neighbors, indexes, false);
+                        return;
                     }
+                }
+
+                if (this.totalTimeoutByCount >= 60 && this._lib.name == 'tleaf')
+                {
+                    cb(neighbors, indexes, false);
+                    return;
                 }
             }, 1 * 1000); //each ten secs
         }
