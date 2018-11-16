@@ -322,6 +322,9 @@ export default class HC extends IHeuristic {
                 this._logger.Write(`[HC] setInterval -> Neighbors ${this.neighbors.length}, Operations ${this.operationsCount}`);
                 //, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
 
+                this.totalTimeoutByCount = + 1;
+                this._logger.Write(`[HC] this.totalTimeoutByCount ${this.totalTimeoutByCount}`);
+
                 if (this.neighbors.length >= this.operationsCount) {
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
@@ -342,6 +345,14 @@ export default class HC extends IHeuristic {
                         cb(this.neighbors, indexes, false);
                     }
                 }
+
+                if (this.totalTimeoutByCount >= 60 && this._lib.name == 'tleaf')
+                {
+                    this.totalTimeoutByCount = 0;
+                    cb(this.neighbors, indexes, false);
+                    return;
+                }
+
             }, 1 * 1000); //each ten secs
         }
 
@@ -548,8 +559,9 @@ export default class HC extends IHeuristic {
             this.intervalId = setInterval(() => {
                 this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
                 
-                this.totalTimeoutByCount = +1;
-                
+                this.totalTimeoutByCount = + 1;
+                this._logger.Write(`[HC] this.totalTimeoutByCount ${this.totalTimeoutByCount}`);
+
                 if (neighbors.length >= this.operationsCount) {
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
@@ -568,6 +580,7 @@ export default class HC extends IHeuristic {
 
                 if (this.totalTimeoutByCount >= 60 && this._lib.name == 'tleaf')
                 {
+                    this.totalTimeoutByCount = 0;
                     cb(neighbors, indexes, false);
                     return;
                 }
