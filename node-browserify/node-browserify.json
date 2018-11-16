@@ -16,7 +16,7 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "RD"
+        "HC"
     ],
     "port": 5000,
     "url": "ws://localhost",
@@ -37,7 +37,7 @@
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
-                "ramdonNodes": true,
+                "ramdonNodes": false,
                 "nodesType": [
                     "ExpressionStatement",
                     "VariableDeclaration",
@@ -53,10 +53,7 @@
                     "FunctionExpression",
                     "ArrayExpression",
                     "UnaryExpression",
-                    "AssignmentExpression",
-                    "ConditionalExpression",
-                    "MemberExpression",
-                    "Identifier"
+                    "AssignmentExpression"
                 ],
                 "individuals": 100,
                 "generations": 50,
