@@ -322,7 +322,7 @@ export default class HC extends IHeuristic {
                 this._logger.Write(`[HC] setInterval -> Neighbors ${this.neighbors.length}, Operations ${this.operationsCount}`);
                 //, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
 
-                this.totalTimeoutByCount = + 1;
+                this.totalTimeoutByCount += + 1;
                 this._logger.Write(`[HC] this.totalTimeoutByCount ${this.totalTimeoutByCount}`);
 
                 if (this.neighbors.length >= this.operationsCount) {
@@ -559,7 +559,7 @@ export default class HC extends IHeuristic {
             this.intervalId = setInterval(() => {
                 this._logger.Write(`[HC] setInterval -> Neighbors ${neighbors.length}, Operations ${this.operationsCount}, typeIndexCounter ${this.typeIndexCounter}, nodesIndexList.length ${nodesIndexList.length}, indexes.ActualIndex ${indexes.ActualIndex}, indexes.Indexes.length ${indexes.Indexes.length}`);
                 
-                this.totalTimeoutByCount = + 1;
+                this.totalTimeoutByCount += + 1;
                 this._logger.Write(`[HC] this.totalTimeoutByCount ${this.totalTimeoutByCount}`);
 
                 if (neighbors.length >= this.operationsCount) {
