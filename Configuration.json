@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials": 10,
+    "trials": 1,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
@@ -16,19 +16,19 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "RD"
+        "HC"
     ],
     "port": 5000,
     "url": "ws://localhost",
     "clientTimeout": 80,
-    "clientsTotal": 10,
+    "clientsTotal": 5,
     "copyFileTimeout": 1728000,
     "memory": 8192,
     "libraries": [
         {
-            "name": "moment",
-            "path": "Libraries/moment",
-            "mainFilePath": "build/umd/moment.js"
+            "name": "tleaf",
+            "path": "Libraries/tleaf",
+            "mainFilePath": "src/ask.js"
         }
     ],
     "trialsConfiguration": [
@@ -37,7 +37,7 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 5,
+                "neighborsToProcess": 2,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
@@ -57,8 +57,7 @@
                     "FunctionExpression",
                     "ArrayExpression",
                     "UnaryExpression",
-                    "AssignmentExpression",
-                    "ConditionalExpression"
+                    "AssignmentExpression"
                 ],
                 "individuals": 50,
                 "generations": 100,

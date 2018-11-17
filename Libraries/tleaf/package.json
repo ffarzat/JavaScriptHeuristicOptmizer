@@ -36,7 +36,7 @@
   },
   "scripts": {
     "test": "npm run test:unit ",
-    "test:unit": "./node_modules/mocha/bin/mocha 'test/specs/**/*.spec.js'",
+    "test:unit": "mocha test/specs/**/*.spec.js",
     "test:app": "npm run test:app:init && npm run test:app:run && npm run test:app:tear",
     "test:app:init": "node test/app/init.js",
     "test:app:run": "./node_modules/karma/bin/karma start test/support/karma.conf.js",
