@@ -328,7 +328,7 @@ export default class HC extends IHeuristic {
                 if (this.neighbors.length >= this.operationsCount) {
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
-
+                    this.totalTimeoutByCount = 0;
                     //Acabou a farra
                     if (this.totalOperationsCounter >= this.trials) {
                         clearInterval(this.intervalId);
@@ -565,6 +565,7 @@ export default class HC extends IHeuristic {
                 if (neighbors.length >= this.operationsCount) {
                     clearInterval(this.intervalId);
                     this.intervalId = undefined;
+                    this.totalTimeoutByCount = 0;
 
                     if (this.typeIndexCounter == (nodesIndexList.length - 1) && (indexes.ActualIndex > indexes.Indexes.length - 1)) {
                         clearInterval(this.intervalId);

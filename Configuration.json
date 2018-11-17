@@ -7,7 +7,7 @@
     "mutationTrials": 1,
     "crossOverTrials": 1,
     "logFilePath": "build/optmization.log",
-    "tmpDirectory": "/media/fabio/Dados1/tmp",
+    "tmpDirectory": "D:\\tmp",
     "logCategory": "optmization",
     "logFileClearing": false,
     "resultsDirectory": "build/results",
