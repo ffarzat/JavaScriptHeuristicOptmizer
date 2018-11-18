@@ -1,6 +1,6 @@
 {
     "file": "Configuration.json",
-    "trials": 1,
+    "trials": 10,
     "startTrial": 0,
     "fitType": "median",
     "testUntil": 1,
@@ -16,7 +16,7 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "HC"
+        "RD"
     ],
     "port": 5000,
     "url": "ws://localhost",
