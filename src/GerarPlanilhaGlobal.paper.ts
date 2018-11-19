@@ -230,7 +230,7 @@ async function ExecutarTeste(DiretorioBiblioteca: string, bufferOption: any, qua
     var msgId = uuid.v4();
     var passedAllTests = true;
 
-    var testCMD = `node --expose-gc --max-old-space-size=2047 'src/client.js' ${msgId} ${DiretorioBiblioteca} 3600000`;
+    var testCMD = `node --expose-gc --max-old-space-size=2047 src/client.js ${msgId} ${DiretorioBiblioteca} 3600000`;
 
     var stdout = "";
     var durations = [];

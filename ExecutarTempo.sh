@@ -1,25 +1,51 @@
 #!/bin/sh
 
+
+# 2018 - DFAHC - Nova rodada sem o Cond. Exp. Para o artigo.
+
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\mathjs' '\\lib\\type\\unit\\Unit.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\mathjs' 1 1 'mathjs'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\node-semver' 'semver.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\node-semver' 1 1 'node-semver'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\express' 'lib/response.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\express' 1 1 'express'
+
+
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\esprima' 'dist/esprima.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\esprima' 1 1 'esprima'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\moment' 'moment.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\moment' 1 1 'moment'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\pug' 'packages/pug/lib/index.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\pug' 1 1 'pug'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\jquery' '\\dist\\jquery.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\jquery' 1 1 'jquery'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\browserify' 'index.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\node-browserify' 1 1 'browserify'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\uuid' 'lib/uuid.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\uuid' 1 1 'uuid'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\exectimer' 'index.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\exectimer' 1 1 'exectimer'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\tleaf' 'src/ask.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\tleaf' 1 1 'tleaf'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\d3-node' 'index.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\d3-node' 1 1 'd3-node'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\plivo-node' 'lib/plivo.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\plivo-node' 1 1 'plivo-node'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\minimist' 'index.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\minimist' 1 1 'minimist'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\xml2js' 'lib/xml2js.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\xml2js' 1 1 'xml2js'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\underscore' 'underscore.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\underscore' 1 1 'underscore'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\lodash' 'lodash.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\lodash' 1 1 'lodash'
+node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\UglifyJS2' 'lib/compress.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\UglifyJS2' 1 1 'UglifyJS2'
+#node build/src/GerarPlanilhaGlobal.paper.js 'D:\\Github\\JavaScriptHeuristicOptmizer\\Libraries\\decimal.js' 'decimal.js' 'D:\\Dropbox\\Doutorado\\2018\\Experimentos\\Fitness_Loc\\DFAHC Conditional Expression\\decimal.js' 1 1 'decimal.js'
+
+
 # 2018 - https://github.com/google/closure-compiler https://www.npmjs.com/package/google-closure-compiler 
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/mathjs/lib/type/unit/Unit.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/mathjs.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/node-semver/semver.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/semver.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/express/lib/response.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/express.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/esprima/dist/esprima.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/esprima.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/moment/moment.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/moment.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/pug/packages/pug/lib/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/pug.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/jquery/dist/jquery.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/jquery.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/browserify/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/browserify.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/uuid/lib/uuid.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/uuid.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/exectimer/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/exectimer.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/tleaf/src/ask.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/tleaf.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/d3-node/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/d3-node.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/plivo-node/lib/plivo.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/plivo-node.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/minimist/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/minimist.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/xml2js/lib/xml2js.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/xml2js.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/underscore/underscore.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/underscore.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/lodash/lodash.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/lodash.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/UglifyJS2/lib/compress.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/UglifyJS2.js
-npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/decimal.js/decimal.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/decimal.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/mathjs/lib/type/unit/Unit.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/mathjs.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/node-semver/semver.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/semver.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/express/lib/response.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/express.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/esprima/dist/esprima.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/esprima.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/moment/moment.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/moment.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/pug/packages/pug/lib/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/pug.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/jquery/dist/jquery.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/jquery.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/browserify/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/browserify.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/uuid/lib/uuid.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/uuid.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/exectimer/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/exectimer.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/tleaf/src/ask.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/tleaf.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/d3-node/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/d3-node.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/plivo-node/lib/plivo.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/plivo-node.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/minimist/index.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/minimist.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/xml2js/lib/xml2js.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/xml2js.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/underscore/underscore.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/underscore.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/lodash/lodash.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/lodash.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/UglifyJS2/lib/compress.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/UglifyJS2.js
+#npx google-closure-compiler --js=/home/fabio/Documents/JavaScriptHeuristicOptmizer/Libraries/decimal.js/decimal.js --js_output_file=/home/fabio/Dropbox/Doutorado/2018/Experimentos/Fitness_Loc/closure-compiler/decimal.js
 
 
 # 2018 - HC. HC4 e RDs - Agrupar tudo em um único csv
