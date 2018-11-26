@@ -16,7 +16,7 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "RD"
+        "HC"
     ],
     "port": 5000,
     "url": "ws://localhost",
@@ -41,7 +41,7 @@
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
-                "ramdonNodes": false,
+                "ramdonNodes": true,
                 "nodesType": [
                     "ExpressionStatement",
                     "VariableDeclaration",
