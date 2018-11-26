@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
-#PBS -N jquery-0
+#PBS -N jquery-1
 #PBS -l walltime=500:00:00
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
@@ -11,9 +11,9 @@ echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
 echo "----------------"
-node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 0
+#node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 0
 
-#node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 1
+node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 1
 
 #node --max-old-space-size=2408000 build/src/index.js jquery/jquery.json null null 2
 
