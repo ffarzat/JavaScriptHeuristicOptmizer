@@ -33,11 +33,11 @@
             "ByFunctionType": "dynamic",
             "especific": {
                 "neighborApproach": "FirstAscent",
-                "neighborsToProcess": 1,
+                "neighborsToProcess": 4,
                 "trials": 5000,
                 "restartAtEnd": true,
                 "ramdonRestart": false,
-                "ramdonNodes": true,
+                "ramdonNodes": false,
                 "nodesType": [
                     "ExpressionStatement",
                     "VariableDeclaration",

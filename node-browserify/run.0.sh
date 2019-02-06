@@ -11,21 +11,21 @@ echo "PBS job running on: `hostname`"
 echo "in directory:       `pwd`"
 echo "nodes: $NPROCS"
 echo "----------------"
-node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 0
+#node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 0
 
-node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 1
+#node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 1
 
-node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 2
+#node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 2
 
-node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 3
+#node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 3
 
-node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 4
+#node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 4
 
-node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 5
+#node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 5
 
-node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 6
+#node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 6
 
-node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 7
+#node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 7
 
 node --max-old-space-size=2408000 build/src/index.js node-browserify/node-browserify.json null null 8
 

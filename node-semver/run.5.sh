@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -k oe
 #PBS -l select=1:ncpus=48
-#PBS -N node-semver-0
+#PBS -N node-semver-5
 #PBS -l walltime=500:00:00
 #PBS -m bea
 #PBS -M ffarzat@cos.ufrj.br
@@ -17,11 +17,11 @@ echo "----------------"
 
 #node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.json null null 2
 
-node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.json null null 3
+#node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.json null null 3
 
 #node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.json null null 4
 
-#node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.json null null 5
+node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.json null null 5
 
 #node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.json null null 6
 
@@ -29,4 +29,4 @@ node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.jso
 
 #node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.json null null 8
 
-node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.json null null 9
+#node --max-old-space-size=2408000 build/src/index.js node-semver/node-semver.json null null 9
