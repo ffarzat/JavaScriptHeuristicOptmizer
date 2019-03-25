@@ -16,11 +16,11 @@
     "tester": "CommandTester",
     "outWriter": "CsvResultsOutWriter",
     "heuristics": [
-        "HC"
+        "GA"
     ],
     "port": 5000,
     "url": "ws://localhost",
-    "clientTimeout": 10,
+    "clientTimeout": 30,
     "copyFileTimeout": 300,
     "clientsTotal": 40,
     "memory": 2408000,
