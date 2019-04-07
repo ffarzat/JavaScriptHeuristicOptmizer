@@ -8,7 +8,7 @@
 ### Specify email address to use for notification.
 #PBS -M ffarzat@cos.ufrj.br
 
-for i in {0..9}
+for i in {10..19}
 do
    echo "Rodada $i"
 
@@ -19,8 +19,8 @@ do
    do
 		mkdir $STR/$i
 
-		cp -r /home/users/ffarzat1981/Otimizador/JavaScriptHeuristicOptmizer/Libraries/esprima $STR/$i
-		echo "c-> esprima $i ok"
+		cp -r /home/users/ffarzat1981/Otimizador/JavaScriptHeuristicOptmizer/Libraries/pug $STR/$i
+		echo "c-> pug $i ok"
 #		cp -r /home/users/ffarzat1981/Otimizador/JavaScriptHeuristicOptmizer/Libraries/jquery $STR/$i
 #		echo "c-> jquery $i ok"
 #		cp -r /home/users/ffarzat1981/Otimizador/JavaScriptHeuristicOptmizer/Libraries/lodash $STR/$i
